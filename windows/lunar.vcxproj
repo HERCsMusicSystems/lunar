@@ -43,7 +43,9 @@
     <ClCompile Include="..\code\keyboard_calculator.cpp" />
     <ClCompile Include="..\code\lunar.cpp" />
     <ClCompile Include="..\code\lunar_moonbase.cpp" />
+    <ClCompile Include="..\code\lunar_operator.cpp" />
     <ClCompile Include="..\code\lunar_prolog_moonbase.cpp" />
+    <ClCompile Include="..\code\lunar_prolog_operator.cpp" />
     <ClCompile Include="..\code\lunar_prolog_oscilloscope.cpp" />
     <ClCompile Include="..\code\multiplatform_audio.cpp" />
     <ClCompile Include="..\code\prcgtk.cpp" />

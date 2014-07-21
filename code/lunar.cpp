@@ -26,6 +26,29 @@
 
 int orbiter_count = 0;
 
+orbiter_core :: orbiter_core (void) {
+	root = 0;
+	pthread_mutex_init (& main_mutex, 0);
+	pthread_mutex_init (& maintenance_mutex, 0);
+}
+
+orbiter_core :: ~ orbiter_core (void) {
+	pthread_mutex_destroy (& main_mutex);
+	pthread_mutex_destroy (& maintenance_mutex);
+}
+
+void orbiter_core :: move_modules (void) {
+	if (root == 0) return;
+	root -> move ();
+	orbiter * orp = root -> next;
+	while (orp != root) {orp -> move (); orp = orp -> next;}
+}
+
+void orbiter_core :: propagate_signals (void) {
+	if (root == 0) return;
+	root -> propagate_signals ();
+}
+
 int orbiter :: numberOfInputs (void) {return 0;}
 int orbiter :: numberOfOutputs (void) {return 0;}
 char * orbiter :: inputName (int ind) {return "VOID";}
@@ -36,16 +59,59 @@ double orbiter :: output (int ind) {return 0.0;}
 double orbiter :: output (char * name) {int ind = outputIndex (name); if (ind < 0 || ind >= numberOfOutputs ()) return 0.0; return output (ind);}
 void orbiter :: input (double signal, int ind) {}
 void orbiter :: input (double signal, char * name) {int ind = inputIndex (name); if (ind < 0 || ind >= numberOfInputs ()) return; input (signal, ind);}
+double * orbiter :: inputAddress (int ind) {return 0;}
+double * orbiter :: outputAddress (int ind) {return 0;}
 void orbiter :: move (void) {}
-void orbiter :: hold (void) {references++;}
-void orbiter :: release (void) {if (--references < 1) delete this;}
+void orbiter :: hold (void) {
+	pthread_mutex_lock (& core -> main_mutex);
+	references++;
+	pthread_mutex_unlock (& core -> main_mutex);
+}
+void orbiter :: release (void) {
+	pthread_mutex_t * mt = & core -> main_mutex;
+	pthread_mutex_lock (mt);
+	if (--references < 1) {
+		delete this;
+	}
+	pthread_mutex_unlock (mt);
+}
+
+void orbiter :: propagate_signals (void) {
+}
 
 orbiter :: orbiter (orbiter_core * core) {
 	this -> core = core;
 	orbiter_count++;
+	number_of_connections = numberOfInputs ();
+	connectors = number_of_connections > 0 ? new dock_pointer [number_of_connections] : 0;
+	connection_addresses = number_of_connections > 0 ? new connection_address [number_of_connections] : 0; 
+	for (int ind = 0; ind < number_of_connections; ind++) {connectors [ind] = 0; connection_addresses [ind] = inputAddress (ind);}
+	pthread_mutex_lock (& core -> main_mutex);
+	if (core -> root == 0) {
+		core -> root = this;
+		next = previous = this;
+	} else {
+		next = core -> root;
+		previous = core -> root -> previous;
+		next -> previous = this;
+		previous -> next = this;
+		core -> root = this;
+	}
+	pthread_mutex_unlock (& core -> main_mutex);
 	printf ("ORBITER CREATED [%i]\n", orbiter_count);
 }
+
 orbiter :: ~ orbiter (void) {
+	if (connectors != 0) {
+		for (int ind = 0; ind < number_of_connections; ind++) delete connectors [ind];
+		delete [] connectors;
+	}
+	if (connection_addresses != 0) delete [] connection_addresses;
 	orbiter_count--;
 	printf ("ORBITER DESTROYED [%i]\n", orbiter_count);
+}
+
+dock :: ~ dock (void) {
+	source -> release ();
+	if (next != 0) delete next;
 }

@@ -24,6 +24,9 @@
 #define _PROLOG_LUNAR_SERVICE_CLASS_
 
 #include "prolog.h"
+#include "lunar.h"
+
+class PrologLunarServiceClass;
 
 class keyboard_class : public PrologNativeCode {
 public:
@@ -40,6 +43,13 @@ public:
 
 class moonbase_class : public PrologNativeCode {
 public:
+	orbiter_core * core;
+	bool code (PrologElement * parameters, PrologResolution * resolution);
+	moonbase_class (orbiter_core * core);
+};
+
+class operator_class : public PrologNativeCode {
+public:
 	bool code (PrologElement * parameters, PrologResolution * resolution);
 };
 
@@ -47,8 +57,8 @@ class PrologLunarServiceClass : public PrologServiceClass {
 public:
 	PrologRoot * root;
 	PrologDirectory * directory;
-	void init (PrologRoot * root);
-	void init_directory (PrologDirectory * directory);
+	orbiter_core core;
+	void init (PrologRoot * root, PrologDirectory * directory);
 	PrologNativeCode * getNativeCode (char * name);
 };
 

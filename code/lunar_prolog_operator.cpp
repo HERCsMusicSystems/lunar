@@ -20,22 +20,22 @@
 // THE SOFTWARE.                                                                 //
 ///////////////////////////////////////////////////////////////////////////////////
 
-#ifndef _LUNAR_MOONBASE_
-#define _LUNAR_MOONBASE_
+#include "prolog_lunar.h"
 
-#include "lunar.h"
-
-class moonbase : public orbiter {
-private:
-	double left, right, mono;
-public:
-	virtual int numberOfInputs (void);
-	virtual char * inputName (int ind);
-	virtual double * inputAddress (int ind);
-	virtual int numberOfOutputs (void);
-	virtual char * outputName (int ind);
-	virtual double * outputAddress (int ind);
-	moonbase (orbiter_core * core);
+class operator_action : public PrologNativeCode {
 };
 
-#endif
+bool operator_class :: code (PrologElement * parameters, PrologResolution * resolution) {
+	PrologElement * atom = 0;
+	while (parameters -> isPair ()) {
+		PrologElement * el = parameters -> getLeft ();
+		if (el -> isAtom ()) atom = el;
+		if (el -> isVar ()) atom = el;
+		parameters = parameters -> getRight ();
+	}
+	if (atom == 0) return false;
+	if (atom -> isVar ()) atom -> setAtom (new PrologAtom ());
+	if (! atom -> isAtom ()) return false;
+	if (atom -> getAtom () -> getMachine () != 0) return false;
+	return true;
+}

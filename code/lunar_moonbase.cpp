@@ -22,34 +22,28 @@
 
 #include "lunar_moonbase.h"
 #include <stdio.h>
-#include "multiplatform_audio.h"
 
-
-class moonbase_alpha;
-extern void alpha_callback (int frames, AudioBuffers * data, void * source);
-
-class moonbase_alpha : public moonbase {
-public:
-	MultiplatformAudio * audio;
-	moonbase_alpha (orbiter_core * core) : moonbase (core) {
-		audio = new MultiplatformAudio (2, core -> sampling_frequency, core -> latency_block_size);
-		int outputs = audio -> getNumberOfOutputDevices ();
-		printf ("Number of outputs = %i\n", outputs);
-		for (int ind = 0; ind < outputs; ind++) printf ("	device [%s]\n", audio -> getOutputDeviceName (ind));
-		audio -> installOutputCallback (alpha_callback, this);
-		audio -> selectOutputDevice (0);
+int moonbase :: numberOfInputs (void) {return 3;}
+char * moonbase :: inputName (int ind) {
+	switch (ind) {
+	case 0: return "MONO"; break;
+	case 1: return "LEFT"; break;
+	case 2: return "RIGHT"; break;
+	default: break;
 	}
-	~ moonbase_alpha (void) {
-		delete audio;
-		printf ("Moonbase ALPHA destroyed.\n");
-	}
-};
-
-void alpha_callback (int frames, AudioBuffers * data, void * source) {
-	moonbase_alpha * alpha = (moonbase_alpha *) source;
-	for (int ind = 0; ind < frames; ind++) data -> insertMono (0.0);
+	return orbiter :: inputName (ind);
 }
+double * moonbase :: inputAddress (int ind) {
+	switch (ind) {
+	case 0: return & mono; break;
+	case 1: return & left; break;
+	case 2: return & right; break;
+	default: break;
+	}
+	return 0;
+}
+int moonbase :: numberOfOutputs (void) {return numberOfInputs ();}
+char * moonbase :: outputName (int ind) {return inputName (ind);}
+double * moonbase :: outputAddress (int ind) {return inputAddress (ind);}
 
 moonbase :: moonbase (orbiter_core * core) : orbiter (core) {}
-
-moonbase * create_moonbase (orbiter_core * core) {return new moonbase_alpha (core);}

@@ -22,14 +22,17 @@
 
 #include "prolog_lunar.h"
 
-void PrologLunarServiceClass :: init (PrologRoot * root) {this -> root = root;}
-void PrologLunarServiceClass :: init_directory (PrologDirectory * directory) {this -> directory = directory;}
+void PrologLunarServiceClass :: init (PrologRoot * root, PrologDirectory * directory) {
+	this -> root = root;
+	this -> directory = directory;
+}
 
 PrologNativeCode * PrologLunarServiceClass :: getNativeCode (char * name) {
 	if (strcmp (name, "small_keyboard") == 0) return new keyboard_class (root, 1);
 	if (strcmp (name, "keyboard") == 0) return new keyboard_class (root, 2);
 	if (strcmp (name, "big_keyboard") == 0) return new keyboard_class (root, 3);
 	if (strcmp (name, "oscilloscope") == 0) return new oscilloscope_class ();
-	if (strcmp (name, "moonbase") == 0) return new moonbase_class ();
+	if (strcmp (name, "moonbase") == 0) return new moonbase_class (& core);
+	if (strcmp (name, "operator") == 0) return new operator_class ();
 	return 0;
 }

@@ -23,18 +23,34 @@
 #ifndef _LUNAR_
 #define _LUNAR_
 
+#include "pthread.h"
+
+class orbiter;
+class dock;
+typedef dock * dock_pointer;
+typedef double * connection_address;
+class orbiter_core;
+
 class orbiter_core {
 public:
 	double sampling_frequency;
 	int latency_block_size;
+	pthread_mutex_t main_mutex;
+	pthread_mutex_t maintenance_mutex;
+	orbiter * root;
+	void move_modules (void);
+	void propagate_signals (void);
+	orbiter_core (void);
+	~ orbiter_core (void);
 };
-
-class dock;
 
 class orbiter {
 public:
 	int references;
 	orbiter_core * core;
+	dock_pointer * connectors;
+	int number_of_connections;
+	connection_address * connection_addresses;
 	orbiter * next, * previous;
 public:
 	virtual int numberOfInputs (void);
@@ -43,11 +59,14 @@ public:
 	virtual char * outputName (int ind);
 	virtual int inputIndex (char * name);
 	virtual int outputIndex (char * name);
-	virtual double output (int ind = 0);
+	virtual double output (int ind);
 	virtual double output (char * name);
-	virtual void input (double signal, int ind = 0);
+	virtual void input (double signal, int ind);
 	virtual void input (double signal, char * name);
+	virtual double * inputAddress (int ind);
+	virtual double * outputAddress (int ind);
 	virtual void move (void);
+	virtual void propagate_signals (void);
 public:
 	void hold (void);
 	void release (void);
@@ -62,7 +81,10 @@ class dock {
 public:
 	orbiter * source;
 	int port;
+	double * location;
 	dock * next;
+	dock (orbiter * source, int location, dock * next);
+	~ dock (void);
 };
 
 #endif

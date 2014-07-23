@@ -39,22 +39,12 @@ void alpha_callback (int frames, AudioBuffers * data, void * source) {
 	pthread_mutex_unlock (& core -> maintenance_mutex);
 }
 
-class moonbase_action : public PrologNativeCode {
+class moonbase_action : public PrologNativeOrbiter {
 public:
-	PrologAtom * atom;
-	moonbase * moon_base;
-	orbiter_core * core;
 	MultiplatformAudio * audio;
-	bool code (PrologElement * parameters, PrologResolution * resolution) {
-		if (parameters -> isEarth ()) {if (atom != 0) atom -> setMachine (0); delete this; return true;}
-		return true;
-	}
-	moonbase_action (PrologAtom * atom, orbiter_core * core) {
+	moonbase_action (PrologAtom * atom, orbiter_core * core) : PrologNativeOrbiter (atom, core, new moonbase (core)) {
+		printf ("..... creating moonbase\n");
 		moonbases++;
-		this -> atom = atom;
-		this -> core = core;
-		moon_base = new moonbase (core);
-		moon_base -> hold ();
 		audio = new MultiplatformAudio (2, (int) core -> sampling_frequency, core -> latency_block_size);
 		int outputs = audio -> getNumberOfOutputDevices ();
 		printf ("Number of outputs = %i\n", outputs);
@@ -64,8 +54,8 @@ public:
 		printf ("Moonbase prolog created.\n");
 	}
 	~ moonbase_action (void) {
+		printf (".... deleting moonbase\n");
 		delete audio;
-		if (moon_base != 0) moon_base -> release (); moon_base = 0;
 		moonbases--;
 		printf ("Moonbase prolog destroyed.\n");
 	}
@@ -96,8 +86,9 @@ bool moonbase_class :: code (PrologElement * parameters, PrologResolution * reso
 	core -> sampling_frequency = sampling_frequency;
 	core -> latency_block_size = latency_block_size;
 	moonbase_action * machine = new moonbase_action (atom -> getAtom (), core);
-	if (! atom -> getAtom () -> setMachine (machine)) {delete machine; return false;}
-	return true;
+	if (atom -> getAtom () -> setMachine (machine)) return true;
+	delete machine;
+	return false;
 }
 
 moonbase_class :: moonbase_class (orbiter_core * core) {this -> core = core;}

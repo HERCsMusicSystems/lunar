@@ -20,22 +20,12 @@
 // THE SOFTWARE.                                                                 //
 ///////////////////////////////////////////////////////////////////////////////////
 
+/////////////////////////////////////////////////////////////////////
+// This file was created on Monday, 21st July 2014 at 11:24:55 AM. //
+/////////////////////////////////////////////////////////////////////
+
 #include "prolog_lunar.h"
+#include "lunar_operator.h"
 
-class operator_action : public PrologNativeCode {
-};
-
-bool operator_class :: code (PrologElement * parameters, PrologResolution * resolution) {
-	PrologElement * atom = 0;
-	while (parameters -> isPair ()) {
-		PrologElement * el = parameters -> getLeft ();
-		if (el -> isAtom ()) atom = el;
-		if (el -> isVar ()) atom = el;
-		parameters = parameters -> getRight ();
-	}
-	if (atom == 0) return false;
-	if (atom -> isVar ()) atom -> setAtom (new PrologAtom ());
-	if (! atom -> isAtom ()) return false;
-	if (atom -> getAtom () -> getMachine () != 0) return false;
-	return true;
-}
+orbiter * operator_class :: create_orbiter (void) {return new lunar_operator (core);}
+operator_class :: operator_class (orbiter_core * core) : PrologNativeOrbiterCreator (core) {}

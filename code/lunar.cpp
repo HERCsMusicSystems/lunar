@@ -20,6 +20,10 @@
 // THE SOFTWARE.                                                                 //
 ///////////////////////////////////////////////////////////////////////////////////
 
+//////////////////////////////////////////////////////////////////////
+// This file was created on Tuesday, 15th July 2014 at 15:55:28 PM. //
+//////////////////////////////////////////////////////////////////////
+
 #include "lunar.h"
 #include <stdio.h>
 #include <string.h>
@@ -50,9 +54,9 @@ void orbiter_core :: propagate_signals (void) {
 }
 
 int orbiter :: numberOfInputs (void) {return 0;}
-int orbiter :: numberOfOutputs (void) {return 0;}
+int orbiter :: numberOfOutputs (void) {return 1;}
 char * orbiter :: inputName (int ind) {return "VOID";}
-char * orbiter :: outputName (int ind) {return "VOID";}
+char * orbiter :: outputName (int ind) {return "SIGNAL";}
 int orbiter :: inputIndex (char * name) {for (int ind = 0; ind < numberOfInputs (); ind++) {if (strcmp (name, inputName (ind)) == 0) return ind;} return -1;}
 int orbiter :: outputIndex (char * name) {for (int ind = 0; ind < numberOfOutputs (); ind++) {if (strcmp (name, outputName (ind)) == 0) return ind;} return -1;}
 double orbiter :: output (int ind) {return 0.0;}
@@ -60,7 +64,7 @@ double orbiter :: output (char * name) {int ind = outputIndex (name); if (ind < 
 void orbiter :: input (double signal, int ind) {}
 void orbiter :: input (double signal, char * name) {int ind = inputIndex (name); if (ind < 0 || ind >= numberOfInputs ()) return; input (signal, ind);}
 double * orbiter :: inputAddress (int ind) {return 0;}
-double * orbiter :: outputAddress (int ind) {return 0;}
+double * orbiter :: outputAddress (int ind) {return ind == 0 ? & signal : 0;}
 void orbiter :: move (void) {}
 void orbiter :: hold (void) {
 	pthread_mutex_lock (& core -> main_mutex);
@@ -75,6 +79,19 @@ void orbiter :: release (void) {
 	}
 	pthread_mutex_unlock (mt);
 }
+bool orbiter :: connect (int destination, orbiter * source, int port) {
+	if (destination < 0) return false;
+	if (destination >= number_of_connections) return false;
+	if (source == 0) return false;
+	if (port < 0) return false;
+	if (port >= source -> numberOfOutputs ()) return false;
+	double * location = source -> outputAddress (port);
+	if (location == 0) return false;
+	source -> hold ();
+	connectors [destination] = new dock (source, port, connection_addresses [destination], connectors [destination]);
+	return true;
+}
+bool orbiter :: connect (char * destination, orbiter * source, char * port) {return source == 0 ? false : connect (inputIndex (destination), source, source -> inputIndex (port));}
 
 void orbiter :: propagate_signals (void) {
 }
@@ -102,6 +119,12 @@ orbiter :: orbiter (orbiter_core * core) {
 }
 
 orbiter :: ~ orbiter (void) {
+	if (next == previous) core -> root = 0;
+	else {
+		next -> previous = previous;
+		previous -> next = next;
+		if (core -> root == this) core -> root = next;
+	}
 	if (connectors != 0) {
 		for (int ind = 0; ind < number_of_connections; ind++) delete connectors [ind];
 		delete [] connectors;
@@ -109,6 +132,13 @@ orbiter :: ~ orbiter (void) {
 	if (connection_addresses != 0) delete [] connection_addresses;
 	orbiter_count--;
 	printf ("ORBITER DESTROYED [%i]\n", orbiter_count);
+}
+
+dock :: dock (orbiter * source, int port, double * destination, dock * next) {
+	this -> source = source;
+	this -> port = port;
+	this -> destination = destination;
+	this -> next = next;
 }
 
 dock :: ~ dock (void) {

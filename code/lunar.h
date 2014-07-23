@@ -20,6 +20,10 @@
 // THE SOFTWARE.                                                                 //
 ///////////////////////////////////////////////////////////////////////////////////
 
+/////////////////////////////////////////////////////////////////////
+// This file was created on Tuesday, ?15th ?July ?2014, 15?3:55:28 PM. //
+/////////////////////////////////////////////////////////////////////
+
 #ifndef _LUNAR_
 #define _LUNAR_
 
@@ -46,6 +50,7 @@ public:
 
 class orbiter {
 public:
+	double signal;
 	int references;
 	orbiter_core * core;
 	dock_pointer * connectors;
@@ -70,8 +75,10 @@ public:
 public:
 	void hold (void);
 	void release (void);
-	void connect (orbiter * source, int port);
-	void connect (orbiter * source, char * port);
+	bool connect (int destination, orbiter * source, int port);
+	bool connect (char * destination, orbiter * source, char * port);
+	bool disconnect (int destination, orbiter * source, int port);
+	bool disconnect (char * destination, orbiter * source, char * port);
 public:
 	orbiter (orbiter_core * core);
 	virtual ~ orbiter (void);
@@ -81,9 +88,9 @@ class dock {
 public:
 	orbiter * source;
 	int port;
-	double * location;
+	double * destination;
 	dock * next;
-	dock (orbiter * source, int location, dock * next);
+	dock (orbiter * source, int port, double * destination, dock * next);
 	~ dock (void);
 };
 

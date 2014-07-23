@@ -28,6 +28,27 @@
 
 class PrologLunarServiceClass;
 
+class PrologNativeOrbiter : public PrologNativeCode {
+public:
+	PrologAtom * atom;
+	orbiter_core * core;
+	orbiter * module;
+	static char * name (void);
+	virtual char * codeName (void);
+	virtual bool isTypeOf (char * code_name);
+	virtual bool code (PrologElement * parameters, PrologResolution * resolution);
+	PrologNativeOrbiter (PrologAtom * atom, orbiter_core * core, orbiter * module);
+	~ PrologNativeOrbiter (void);
+};
+
+class PrologNativeOrbiterCreator : public PrologNativeCode {
+public:
+	orbiter_core * core;
+	virtual orbiter * create_orbiter (void) = 0;
+	virtual bool code (PrologElement * parameters, PrologResolution * resolution);
+	PrologNativeOrbiterCreator (orbiter_core * core);
+};
+
 class keyboard_class : public PrologNativeCode {
 public:
 	int size;
@@ -48,9 +69,10 @@ public:
 	moonbase_class (orbiter_core * core);
 };
 
-class operator_class : public PrologNativeCode {
+class operator_class : public PrologNativeOrbiterCreator {
 public:
-	bool code (PrologElement * parameters, PrologResolution * resolution);
+	virtual orbiter * create_orbiter (void);
+	operator_class (orbiter_core * core);
 };
 
 class PrologLunarServiceClass : public PrologServiceClass {

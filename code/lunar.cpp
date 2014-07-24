@@ -74,10 +74,17 @@ void orbiter :: hold (void) {
 void orbiter :: release (void) {
 	pthread_mutex_t * mt = & core -> main_mutex;
 	pthread_mutex_lock (mt);
-	if (--references < 1) {
-		delete this;
-	}
+	if (-- references > 0) {pthread_mutex_unlock (mt); return;}
+	dock_pointer * connectors_to_delete = connectors;
+	int number_to_delete = number_of_connections;
+	delete this;
 	pthread_mutex_unlock (mt);
+	if (connectors_to_delete == 0) return;
+	for (int ind = 0; ind < number_to_delete; ind++) {
+		if (connectors_to_delete [ind] != 0)
+			delete connectors_to_delete [ind];
+	}
+	delete [] connectors_to_delete;
 }
 bool orbiter :: connect (int destination, orbiter * source, int port) {
 	if (destination < 0) return false;
@@ -96,9 +103,7 @@ bool orbiter :: connect (char * destination, orbiter * source, char * port) {ret
 void orbiter :: propagate_signals (void) {
 }
 
-orbiter :: orbiter (orbiter_core * core) {
-	this -> core = core;
-	orbiter_count++;
+void orbiter :: activate (void) {
 	number_of_connections = numberOfInputs ();
 	connectors = number_of_connections > 0 ? new dock_pointer [number_of_connections] : 0;
 	connection_addresses = number_of_connections > 0 ? new connection_address [number_of_connections] : 0; 
@@ -115,20 +120,30 @@ orbiter :: orbiter (orbiter_core * core) {
 		core -> root = this;
 	}
 	pthread_mutex_unlock (& core -> main_mutex);
-	printf ("ORBITER CREATED [%i]\n", orbiter_count);
+	printf ("ORBITER ACTIVATED [%i]\n", orbiter_count);
+}
+
+orbiter :: orbiter (orbiter_core * core) {
+	references = 0;
+	this -> core = core;
+	orbiter_count++;
+	number_of_connections = 0;
+	connectors = 0;
+	connection_addresses = 0;
+	previous = next = 0;
 }
 
 orbiter :: ~ orbiter (void) {
-	if (next == previous) core -> root = 0;
+	if (next == this || previous == this) core -> root = 0;
 	else {
 		next -> previous = previous;
 		previous -> next = next;
 		if (core -> root == this) core -> root = next;
 	}
-	if (connectors != 0) {
-		for (int ind = 0; ind < number_of_connections; ind++) delete connectors [ind];
-		delete [] connectors;
-	}
+	//if (connectors != 0) {
+	//	for (int ind = 0; ind < number_of_connections; ind++) delete connectors [ind];
+	//	delete [] connectors;
+	//}
 	if (connection_addresses != 0) delete [] connection_addresses;
 	orbiter_count--;
 	printf ("ORBITER DESTROYED [%i]\n", orbiter_count);

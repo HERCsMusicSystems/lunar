@@ -42,6 +42,7 @@ PrologNativeOrbiter :: PrologNativeOrbiter (PrologAtom * atom, orbiter_core * co
 	this -> atom = atom;
 	this -> core = core;
 	this -> module = module;
+	module -> activate ();
 	module -> hold ();
 	printf ("	NATIVE ORBITER CREATED\n");
 }

@@ -64,27 +64,32 @@ public:
 bool moonbase_class :: code (PrologElement * parameters, PrologResolution * resolution) {
 	if (moonbases > 0) return false;
 	PrologElement * atom = 0;
-	double sampling_frequency = -1;
+	double centre_frequency = -1;
+	int sampling_frequency = -1;
 	int latency_block_size = -1;
 	while (parameters -> isPair ()) {
 		PrologElement * el = parameters -> getLeft ();
 		if (el -> isAtom ()) atom = el;
 		if (el -> isVar ()) atom = el;
 		if (el -> isInteger ()) {
-			if (sampling_frequency < 0.0) sampling_frequency = (double) el -> getInteger ();
+			if (centre_frequency < 0.0) centre_frequency = (double) el -> getInteger ();
+			else if (sampling_frequency < 0.0) sampling_frequency = el -> getInteger ();
 			else latency_block_size = el -> getInteger ();
 		}
-		if (el -> isDouble ()) sampling_frequency = el -> getInteger ();
+		if (el -> isDouble ()) centre_frequency = el -> getDouble ();
 		parameters = parameters -> getRight ();
 	}
+	if (centre_frequency < 0.0) centre_frequency = 330.0;
 	if (sampling_frequency < 0.0) sampling_frequency = 44100;
 	if (latency_block_size < 16) latency_block_size = 512;
 	if (atom == 0) return false;
 	if (atom -> isVar ()) atom -> setAtom (new PrologAtom ());
 	if (! atom -> isAtom ()) return false;
 	if (atom -> getAtom () -> getMachine () != 0) return false;
-	core -> sampling_frequency = sampling_frequency;
+	core -> centre_frequency = centre_frequency;
+	core -> sampling_frequency = (double) sampling_frequency;
 	core -> latency_block_size = latency_block_size;
+	core -> recalculate ();
 	moonbase_action * machine = new moonbase_action (atom -> getAtom (), core);
 	if (atom -> getAtom () -> setMachine (machine)) return true;
 	delete machine;

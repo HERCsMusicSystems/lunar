@@ -42,6 +42,7 @@ PrologNativeOrbiter :: PrologNativeOrbiter (PrologAtom * atom, orbiter_core * co
 	this -> atom = atom;
 	this -> core = core;
 	this -> module = module;
+	if (module == 0) return;
 	module -> activate ();
 	module -> hold ();
 	printf ("	NATIVE ORBITER CREATED\n");
@@ -51,6 +52,9 @@ PrologNativeOrbiter :: ~ PrologNativeOrbiter (void) {
 	if (module != 0) module -> release (); module = 0;
 	printf ("	NATIVE ORBITER DESTROYED\n");
 }
+
+PrologNativeOrbiter * PrologNativeOrbiterCreator :: create_native_orbiter (PrologAtom * atom, orbiter * module) {return new PrologNativeOrbiter (atom, core, module);}
+void PrologNativeOrbiterCreator :: code_created (PrologNativeOrbiter * machine) {}
 
 bool PrologNativeOrbiterCreator :: code (PrologElement * parameters, PrologResolution * resolution) {
 	PrologElement * atom = 0;
@@ -64,8 +68,9 @@ bool PrologNativeOrbiterCreator :: code (PrologElement * parameters, PrologResol
 	if (atom -> isVar ()) atom -> setAtom (new PrologAtom ());
 	if (! atom -> isAtom ()) return false;
 	if (atom -> getAtom () -> getMachine () != 0) return false;
-	PrologNativeOrbiter * machine = new PrologNativeOrbiter (atom -> getAtom (), core, create_orbiter ());
-	if (atom -> getAtom () -> setMachine (machine)) return true;
+	PrologNativeOrbiter * machine = create_native_orbiter (atom -> getAtom (), create_orbiter ());
+	if (machine == 0) return false;
+	if (atom -> getAtom () -> setMachine (machine)) {code_created (machine); return true;}
 	delete machine;
 	return false;
 }
@@ -114,7 +119,7 @@ PrologNativeCode * PrologLunarServiceClass :: getNativeCode (char * name) {
 	if (strcmp (name, "small_keyboard") == 0) return new keyboard_class (root, 1);
 	if (strcmp (name, "keyboard") == 0) return new keyboard_class (root, 2);
 	if (strcmp (name, "big_keyboard") == 0) return new keyboard_class (root, 3);
-	if (strcmp (name, "oscilloscope") == 0) return new oscilloscope_class ();
+	if (strcmp (name, "oscilloscope") == 0) return new oscilloscope_class (& core);
 	if (strcmp (name, "moonbase") == 0) return new moonbase_class (& core);
 	if (strcmp (name, "operator") == 0) return new operator_class (& core);
 	return 0;

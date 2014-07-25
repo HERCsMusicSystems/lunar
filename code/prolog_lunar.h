@@ -49,6 +49,8 @@ class PrologNativeOrbiterCreator : public PrologNativeCode {
 public:
 	orbiter_core * core;
 	virtual orbiter * create_orbiter (void) = 0;
+	virtual PrologNativeOrbiter * create_native_orbiter (PrologAtom * atom, orbiter * module);
+	virtual void code_created (PrologNativeOrbiter * machine);
 	virtual bool code (PrologElement * parameters, PrologResolution * resolution);
 	PrologNativeOrbiterCreator (orbiter_core * core);
 };
@@ -61,9 +63,12 @@ public:
 	keyboard_class (PrologRoot * root, int size);
 };
 
-class oscilloscope_class : public PrologNativeCode {
+class oscilloscope_class : public PrologNativeOrbiterCreator {
 public:
-	bool code (PrologElement * parameters, PrologResolution * resolution);
+	virtual orbiter * create_orbiter (void);
+	virtual PrologNativeOrbiter * create_native_orbiter (PrologAtom * atom, orbiter * module);
+	virtual void code_created (PrologNativeOrbiter * machine);
+	oscilloscope_class (orbiter_core * core);
 };
 
 class moonbase_class : public PrologNativeCode {

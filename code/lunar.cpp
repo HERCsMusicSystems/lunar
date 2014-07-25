@@ -27,11 +27,14 @@
 #include "lunar.h"
 #include <stdio.h>
 #include <string.h>
+#define _USE_MATH_DEFINES
+#include <math.h>
 
 int orbiter_count = 0;
 
 orbiter_core :: orbiter_core (void) {
 	root = 0;
+	time_delta = time_deltas + 16384;
 	pthread_mutex_init (& main_mutex, 0);
 	pthread_mutex_init (& maintenance_mutex, 0);
 }
@@ -51,6 +54,16 @@ void orbiter_core :: move_modules (void) {
 void orbiter_core :: propagate_signals (void) {
 	if (root == 0) return;
 	root -> propagate_signals ();
+	orbiter * orp = root -> next;
+	while (orp != root) {orp -> propagate_signals (); orp = orp -> next;}
+}
+
+void orbiter_core :: recalculate (void) {
+	double delay = sampling_frequency > 0.0 ? centre_frequency  / sampling_frequency : centre_frequency;
+	for (int ind = 0; ind < 32768; ind++) {
+		time_deltas [ind] = delay * pow (2.0, ((double) (ind - 16384) / -1536.0));
+	}
+	time_delta = time_deltas + 16384;
 }
 
 int orbiter :: numberOfInputs (void) {return 0;}
@@ -98,9 +111,20 @@ bool orbiter :: connect (int destination, orbiter * source, int port) {
 	connectors [destination] = new dock (source, port, connection_addresses [destination], connectors [destination]);
 	return true;
 }
-bool orbiter :: connect (char * destination, orbiter * source, char * port) {return source == 0 ? false : connect (inputIndex (destination), source, source -> inputIndex (port));}
+bool orbiter :: connect (char * destination, orbiter * source, char * port) {return source == 0 ? false : connect (outputIndex (destination), source, source -> inputIndex (port));}
 
 void orbiter :: propagate_signals (void) {
+	dock_pointer dcp;
+	for (int ind = 0; ind < number_of_connections; ind++) {
+		if ((dcp = connectors [ind]) != 0) {
+			double signal = 0.0;
+			while (dcp != 0) {
+				signal += * dcp -> destination;
+				dcp = dcp -> next;
+			}
+			* connection_addresses [ind] = signal;
+		}
+	}
 }
 
 void orbiter :: activate (void) {

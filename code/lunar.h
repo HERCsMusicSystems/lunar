@@ -37,11 +37,15 @@ class orbiter_core;
 
 class orbiter_core {
 public:
+	double centre_frequency;
 	double sampling_frequency;
 	int latency_block_size;
+	double time_deltas [32768];
+	double * time_delta;
 	pthread_mutex_t main_mutex;
 	pthread_mutex_t maintenance_mutex;
 	orbiter * root;
+	void recalculate (void);
 	void move_modules (void);
 	void propagate_signals (void);
 	orbiter_core (void);

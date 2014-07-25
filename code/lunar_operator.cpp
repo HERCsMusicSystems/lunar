@@ -25,6 +25,8 @@
 /////////////////////////////////////////////////////////////////////
 
 #include "lunar_operator.h"
+#define _USE_MATH_DEFINES
+#include <math.h>
 
 int lunar_operator :: numberOfInputs (void) {return 3;}
 char * lunar_operator :: inputName (int ind) {
@@ -46,4 +48,10 @@ double * lunar_operator :: inputAddress (int ind) {
 	return 0;
 }
 
-lunar_operator :: lunar_operator (orbiter_core * core) : orbiter (core) {freq = 0.0; amp = 0.0;}
+void lunar_operator :: move (void) {
+	this -> signal = sin (time * omega);
+	time += * (core -> time_delta + (int) freq);
+	if (time > 1.0) time -= 1.0;
+}
+
+lunar_operator :: lunar_operator (orbiter_core * core) : orbiter (core) {freq = 0.0; amp = 0.0; time = 0.0; omega = 2.0 * M_PI;}

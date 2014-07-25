@@ -99,19 +99,18 @@ void orbiter :: release (void) {
 	}
 	delete [] connectors_to_delete;
 }
-bool orbiter :: connect (int destination, orbiter * source, int port) {
-	if (destination < 0) return false;
-	if (destination >= number_of_connections) return false;
+bool orbiter :: connect (int destination_port, orbiter * source, int source_port) {
+	if (destination_port < 0) return false;
+	if (destination_port >= number_of_connections) return false;
 	if (source == 0) return false;
-	if (port < 0) return false;
-	if (port >= source -> numberOfOutputs ()) return false;
-	double * location = source -> outputAddress (port);
+	if (source_port < 0) return false;
+	if (source_port >= source -> numberOfOutputs ()) return false;
+	double * location = source -> outputAddress (source_port);
 	if (location == 0) return false;
 	source -> hold ();
-	connectors [destination] = new dock (source, port, connection_addresses [destination], connectors [destination]);
+	connectors [destination_port] = new dock (source, source_port, source -> outputAddress (source_port), connectors [destination_port]);
 	return true;
 }
-bool orbiter :: connect (char * destination, orbiter * source, char * port) {return source == 0 ? false : connect (outputIndex (destination), source, source -> inputIndex (port));}
 
 void orbiter :: propagate_signals (void) {
 	dock_pointer dcp;
@@ -119,7 +118,7 @@ void orbiter :: propagate_signals (void) {
 		if ((dcp = connectors [ind]) != 0) {
 			double signal = 0.0;
 			while (dcp != 0) {
-				signal += * dcp -> destination;
+				signal += * dcp -> source_address;
 				dcp = dcp -> next;
 			}
 			* connection_addresses [ind] = signal;
@@ -148,6 +147,7 @@ void orbiter :: activate (void) {
 }
 
 orbiter :: orbiter (orbiter_core * core) {
+	signal = 0.0;
 	references = 0;
 	this -> core = core;
 	orbiter_count++;
@@ -173,10 +173,10 @@ orbiter :: ~ orbiter (void) {
 	printf ("ORBITER DESTROYED [%i]\n", orbiter_count);
 }
 
-dock :: dock (orbiter * source, int port, double * destination, dock * next) {
+dock :: dock (orbiter * source, int source_port, double * source_address, dock * next) {
 	this -> source = source;
-	this -> port = port;
-	this -> destination = destination;
+	this -> source_port = source_port;
+	this -> source_address = source_address;
 	this -> next = next;
 }
 

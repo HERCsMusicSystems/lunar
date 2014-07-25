@@ -36,20 +36,19 @@ public:
 	GtkWidget * viewport;
 	double wave [256];
 	int frame_count;
-	double level;
+	virtual int numberOfInputs (void) {return numberOfOutputs ();}
+	virtual char * inputName (int ind) {return outputName (ind);}
+	virtual double * inputAddress (int ind) {return outputAddress (ind);}
 	virtual void move (void) {
-		if (frame_count-- > 0) return;
-		for (int ind = 0; ind < 256; ind++) wave [ind] = level;
-		frame_count = 48;
-		level += 0.125;
-		if (level > 0.5) level = -0.5;
+		if (frame_count < 0) {frame_count++; return;}
+		wave [frame_count++] = signal;
+		if (frame_count < 256) return;
+		frame_count = -44100;
 		gtk_widget_queue_draw (viewport);
 	}
 	lunar_oscilloscope (orbiter_core * core) : orbiter (core) {
-		viewport = 0;
-		frame_count = 48;
-		level = -0.5;
-		for (int ind = 0; ind < 256; ind++) wave [ind] = sin ((double) ind * M_PI * 2.0 / 256.0);
+		frame_count = 0;
+		for (int ind = 0; ind < 256; ind++) wave [ind] = 0;
 	}
 };
 

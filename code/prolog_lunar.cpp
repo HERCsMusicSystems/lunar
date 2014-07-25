@@ -80,27 +80,39 @@ PrologNativeOrbiterCreator :: PrologNativeOrbiterCreator (orbiter_core * core) {
 class dock_class : public PrologNativeCode {
 public:
 	bool code (PrologElement * parameters, PrologResolution * resolution) {
-		PrologElement * destination = 0;
-		PrologElement * source = 0;
-		PrologElement * input = 0;
-		PrologElement * port = 0;
+		PrologElement * source_module = 0;
+		PrologElement * source_port = 0;
+		PrologElement * destination_module = 0;
+		PrologElement * destination_port = 0;
 		while (parameters -> isPair ()) {
 			PrologElement * el = parameters -> getLeft ();
-			if (el -> isAtom ()) if (destination == 0) destination = el; else source = el;
-			if (el -> isInteger ()) if (input == 0) input = el; else; port = el;
-			if (el -> isText ()) if (input == 0) input = el; else port = el;
+			if (el -> isAtom ()) if (destination_module == 0) destination_module = el; else source_module = el;
+			if (el -> isInteger ()) if (destination_port == 0) destination_port = el; else source_port = el;
+			if (el -> isText ()) if (destination_port == 0) destination_port = el; else source_port = el;
 			parameters = parameters -> getRight ();
 		}
-		if (destination == 0 || source == 0 || input == 0 || port == 0) return false;
-		PrologNativeCode * destination_machine = destination -> getAtom () -> getMachine ();
+		if (destination_module == 0 || source_module == 0) return false;
+		PrologNativeCode * destination_machine = destination_module -> getAtom () -> getMachine ();
+		if (destination_machine == 0) return false;
 		if (! destination_machine -> isTypeOf (PrologNativeOrbiter :: name ())) return false;
-		PrologNativeCode * source_machine = source -> getAtom () -> getMachine ();
+		PrologNativeCode * source_machine = source_module -> getAtom () -> getMachine ();
+		if (source_machine == 0) return false;
 		if (! source_machine -> isTypeOf (PrologNativeOrbiter :: name ())) return false;
-		if (input -> isInteger () && port -> isInteger ())
-			return ((PrologNativeOrbiter *) destination_machine) -> module -> connect (input -> getInteger (), ((PrologNativeOrbiter *) source_machine) -> module, port -> getInteger ());
-		if (input -> isText () && port -> isText ())
-			return ((PrologNativeOrbiter *) destination_machine) -> module -> connect (input -> getText (), ((PrologNativeOrbiter *) source_machine) -> module, port -> getText ());
-		return false;
+		int destination_port_index = 0;
+		if (destination_port != 0) {
+			if (destination_port -> isInteger ()) destination_port_index = destination_port -> getInteger ();
+			if (destination_port -> isText ()) destination_port_index = ((PrologNativeOrbiter *) destination_machine) -> module -> inputIndex (destination_port -> getText ());
+		}
+		int source_port_index = 0;
+		if (source_port != 0) {
+			if (source_port -> isInteger ()) source_port_index = source_port -> getInteger ();
+			if (source_port -> isText ()) source_port_index = ((PrologNativeOrbiter *) source_machine) -> module -> outputIndex (source_port -> getText ());
+		}
+		return ((PrologNativeOrbiter *) destination_machine) -> module -> connect (destination_port_index, ((PrologNativeOrbiter *) source_machine) -> module, source_port_index);
+		//if (input -> isInteger () && port -> isInteger ())
+		//	return ((PrologNativeOrbiter *) destination_machine) -> module -> connect (input -> getInteger (), ((PrologNativeOrbiter *) source_machine) -> module, port -> getInteger ());
+		//if (input -> isText () && port -> isText ())
+		//	return ((PrologNativeOrbiter *) destination_machine) -> module -> connect (input -> getText (), ((PrologNativeOrbiter *) source_machine) -> module, port -> getText ());
 	}
 };
 

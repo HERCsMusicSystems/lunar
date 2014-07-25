@@ -79,10 +79,8 @@ public:
 public:
 	void hold (void);
 	void release (void);
-	bool connect (int destination, orbiter * source, int port);
-	bool connect (char * destination, orbiter * source, char * port);
-	bool disconnect (int destination, orbiter * source, int port);
-	bool disconnect (char * destination, orbiter * source, char * port);
+	bool connect (int destination_port, orbiter * source, int source_port);
+	bool disconnect (int destination_port, orbiter * source, int source_port);
 public:
 	void activate (void);
 	orbiter (orbiter_core * core);
@@ -92,10 +90,10 @@ public:
 class dock {
 public:
 	orbiter * source;
-	int port;
-	double * destination;
+	int source_port;
+	double * source_address;
 	dock * next;
-	dock (orbiter * source, int port, double * destination, dock * next);
+	dock (orbiter * source, int source_port, double * source_address, dock * next);
 	~ dock (void);
 };
 

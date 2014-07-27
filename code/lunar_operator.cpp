@@ -47,3 +47,4 @@ double * lunar_operator :: inputAddress (int ind) {
 }
 
 lunar_operator :: lunar_operator (orbiter_core * core) : orbiter (core) {freq = 0.0; amp = 0.0;}
+

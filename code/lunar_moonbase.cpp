@@ -47,3 +47,4 @@ char * moonbase :: outputName (int ind) {return inputName (ind);}
 double * moonbase :: outputAddress (int ind) {return inputAddress (ind);}
 
 moonbase :: moonbase (orbiter_core * core) : orbiter (core) {}
+

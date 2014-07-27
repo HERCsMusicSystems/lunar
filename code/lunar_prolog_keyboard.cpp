@@ -152,3 +152,4 @@ bool keyboard_class :: code (PrologElement * parameters, PrologResolution * reso
 }
 
 keyboard_class :: keyboard_class (PrologRoot * root, int size) {this -> root = root; this -> size = size;}
+

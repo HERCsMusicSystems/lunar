@@ -130,3 +130,4 @@ bool oscilloscope_class :: code (PrologElement * parameters, PrologResolution * 
 	g_idle_add ((GSourceFunc) CreateOscilloscopeIdleCode, machine);
 	return true;
 }
+

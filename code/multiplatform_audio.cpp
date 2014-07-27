@@ -187,7 +187,7 @@ static void * start_pcm_capture (void * parameters) {
 	while (capture_running) {
 		audio_dx_stereo_buffers buffers (buffer);
 		res = snd_pcm_readi (input_pcm, buffer, pcm_block_size);
-		if (input_callback != NULL) input_callback (res, & buffers);
+		if (input_callback != NULL) input_callback (res, & buffers, input_source);
 	}
 	capture_running = true;
 	return 0;
@@ -227,7 +227,7 @@ static void * start_pcm (void * parameters) {
 		if (res > pcm_block_size) res = pcm_block_size;
 		if (output_callback != NULL) {
 			audio_dx_stereo_buffers buffers (buffer);
-			output_callback (res, & buffers);
+			output_callback (res, & buffers, output_source);
 		}
 		res = snd_pcm_writei (output_pcm, buffer, res);
 		if (res < 0) {
@@ -290,7 +290,7 @@ void MultiplatformAudio :: selectOutputDevice (int ind) {
 	}
 }
 
-MultiplatformAudio :: MultiplatformAudio (void * hwnd, int channels, int sampling_freq, int latency_samples) {
+MultiplatformAudio :: MultiplatformAudio (int channels, int sampling_freq, int latency_samples, void * hwnd) {
 	pcm_channels = channels;
 	pcm_sampling_freq = sampling_freq;
 	pcm_block_size = latency_samples;

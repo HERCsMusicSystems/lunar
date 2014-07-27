@@ -95,3 +95,4 @@ void keyboard_calculator :: set_keyboard_layout_y (int white, int black) {
 	white_length = white;
 	black_length = black;
 }
+

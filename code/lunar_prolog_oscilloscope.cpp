@@ -132,23 +132,3 @@ orbiter * oscilloscope_class :: create_orbiter (void) {return new lunar_oscillos
 PrologNativeOrbiter * oscilloscope_class :: create_native_orbiter (PrologAtom * atom, orbiter * module) {return new oscilloscope_action (atom, core, module);}
 void oscilloscope_class :: code_created (PrologNativeOrbiter * machine) {g_idle_add ((GSourceFunc) CreateOscilloscopeIdleCode, machine);}
 oscilloscope_class :: oscilloscope_class (orbiter_core * core) : PrologNativeOrbiterCreator (core) {}
-
-/*
-bool oscilloscope_class :: code (PrologElement * parameters, PrologResolution * resolution) {
-	PrologElement * atom = 0;
-	while (parameters -> isPair ()) {
-		PrologElement * el = parameters -> getLeft ();
-		if (el -> isAtom ()) atom = el;
-		if (el -> isVar ()) atom = el;
-		parameters = parameters -> getRight ();
-	}
-	if (atom == 0) return false;
-	if (atom -> isVar ()) atom -> setAtom (new PrologAtom ());
-	if (! atom -> isAtom ()) return false;
-	if (atom -> getAtom () -> getMachine () != 0) return false;
-	oscilloscope_action * machine = new oscilloscope_action (atom -> getAtom ());
-	if (! atom -> getAtom () -> setMachine (machine)) {delete machine; return false;}
-	g_idle_add ((GSourceFunc) CreateOscilloscopeIdleCode, machine);
-	return true;
-}
-*/

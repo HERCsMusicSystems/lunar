@@ -97,3 +97,4 @@ bool moonbase_class :: code (PrologElement * parameters, PrologResolution * reso
 }
 
 moonbase_class :: moonbase_class (orbiter_core * core) {this -> core = core;}
+

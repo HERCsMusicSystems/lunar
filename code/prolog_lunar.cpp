@@ -27,6 +27,7 @@
 #include "prolog_lunar.h"
 
 #include <stdio.h>
+#include <string.h>
 
 static char * orbiter_action_code = "Orbiter Action Code";
 char * PrologNativeOrbiter :: name (void) {return orbiter_action_code;}
@@ -136,3 +137,4 @@ PrologNativeCode * PrologLunarServiceClass :: getNativeCode (char * name) {
 	if (strcmp (name, "operator") == 0) return new operator_class (& core);
 	return 0;
 }
+

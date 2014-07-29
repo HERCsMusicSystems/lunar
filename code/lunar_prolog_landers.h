@@ -20,32 +20,19 @@
 // THE SOFTWARE.                                                                 //
 ///////////////////////////////////////////////////////////////////////////////////
 
-/////////////////////////////////////////////////////////////////////
-// This file was created on Monday, 21st July 2014 at 11:24:55 AM. //
-/////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////
+// This file was created on Tuesday, 29th July 2014, 13:48:00 PM. //
+////////////////////////////////////////////////////////////////////
 
-#ifndef _LUNAR_OPERATOR_
-#define _LUNAR_OPERATOR_
+#ifndef _LUNAR_PROLOG_LANDERS_
+#define _LUNAR_PROLOG_LANDERS_
 
-#include "lunar.h"
+#include "prolog_lunar.h"
 
-class lunar_operator : public orbiter {
-private:
-	double time;
-	double omega;
-	double freq;
-	double ratio;
-	double shift;
-	double sync;
-	double amp;
-	double slope;
+class parameter_block_class : public PrologNativeOrbiterCreator {
 public:
-	virtual int numberOfInputs (void);
-	virtual char * inputName (int ind);
-	virtual double * inputAddress (int ind);
-	virtual void move (void);
-	lunar_operator (orbiter_core * core);
+	virtual orbiter * create_orbiter (PrologElement * parameters);
+	parameter_block_class (orbiter_core * core);
 };
 
 #endif
-

@@ -24,7 +24,7 @@
 // This file was created on Tuesday, 15th July 2014 at 15:47:20 PM. //
 //////////////////////////////////////////////////////////////////////
 
-#include "prolog_lunar.h"
+#include "lunar_prolog_landers.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -36,7 +36,51 @@ bool PrologNativeOrbiter :: isTypeOf (char * code_name) {return orbiter_action_c
 
 bool PrologNativeOrbiter :: code (PrologElement * parameters, PrologResolution * resolution) {
 	if (parameters -> isEarth ()) {if (atom != 0) atom -> setMachine (0); delete this; return true;}
-	return true;
+	PrologElement * atom = 0;
+	PrologElement * port = 0;
+	PrologElement * value = 0;
+	PrologElement * ret = 0;
+	while (parameters -> isPair ()) {
+		PrologElement * el = parameters -> getLeft ();
+		if (el -> isAtom ()) atom = el;
+		if (el -> isInteger ()) if (port == 0) port = el; else value = el;
+		if (el -> isText ()) if (port == 0) port = el; else value = el;
+		if (el -> isDouble ()) value = el;
+		if (el -> isVar ()) ret = el;
+		if (el -> isEarth ()) value = el;
+		parameters = parameters -> getRight ();
+	}
+	if (parameters -> isVar ()) ret = parameters;
+	int destination_port = 0;
+	if (port != 0) {
+		if (port -> isInteger ()) destination_port = port -> getInteger ();
+		if (port -> isText ()) destination_port = module -> inputIndex (port -> getText ());
+	}
+	if (atom != 0) {
+		PrologNativeCode * machine = atom -> getAtom () -> getMachine ();
+		if (! machine -> isTypeOf (PrologNativeOrbiter :: name ())) return false;
+		int source_port = 0;
+		if (value != 0) {
+			if (value -> isInteger ()) source_port = value -> getInteger ();
+			if (value -> isText ()) source_port = ((PrologNativeOrbiter *) machine) -> module -> outputIndex (value -> getText ());
+		}
+		if (value == 0) return module -> connect (destination_port, ((PrologNativeOrbiter *) machine) -> module, source_port);
+		return module -> disconnect (destination_port, ((PrologNativeOrbiter *) machine) -> module, source_port);
+	}
+	if (ret != 0) {double * adres = module -> outputAddress (destination_port); if (adres == 0) return false; ret -> setDouble (* adres); return true;}
+	if (value != 0) {
+		double * adres = module -> inputAddress (destination_port);
+		if (adres == 0) return false;
+		if (value -> isDouble ()) {* adres = value -> getDouble (); return true;}
+		if (value -> isInteger ()) {* adres = (double) value -> getInteger (); return true;}
+	}
+	if (port != 0) {
+		double * adres = module -> inputAddress (0);
+		if (adres == 0) return false;
+		if (port -> isDouble ()) {* adres = port -> getDouble (); return true;}
+		if (port -> isInteger ()) {* adres = (double) port -> getInteger (); return true;}
+	}
+	return false;
 }
 
 PrologNativeOrbiter :: PrologNativeOrbiter (PrologAtom * atom, orbiter_core * core, orbiter * module) {
@@ -59,7 +103,7 @@ void PrologNativeOrbiterCreator :: code_created (PrologNativeOrbiter * machine) 
 
 bool PrologNativeOrbiterCreator :: code (PrologElement * parameters, PrologResolution * resolution) {
 	PrologElement * atom = 0;
-	while (parameters -> isPair ()) {
+	if (parameters -> isPair ()) {
 		PrologElement * el = parameters -> getLeft ();
 		if (el -> isAtom ()) atom = el;
 		if (el -> isVar ()) atom = el;
@@ -69,7 +113,7 @@ bool PrologNativeOrbiterCreator :: code (PrologElement * parameters, PrologResol
 	if (atom -> isVar ()) atom -> setAtom (new PrologAtom ());
 	if (! atom -> isAtom ()) return false;
 	if (atom -> getAtom () -> getMachine () != 0) return false;
-	PrologNativeOrbiter * machine = create_native_orbiter (atom -> getAtom (), create_orbiter ());
+	PrologNativeOrbiter * machine = create_native_orbiter (atom -> getAtom (), create_orbiter (parameters));
 	if (machine == 0) return false;
 	if (atom -> getAtom () -> setMachine (machine)) {code_created (machine); return true;}
 	delete machine;
@@ -110,10 +154,6 @@ public:
 			if (source_port -> isText ()) source_port_index = ((PrologNativeOrbiter *) source_machine) -> module -> outputIndex (source_port -> getText ());
 		}
 		return ((PrologNativeOrbiter *) destination_machine) -> module -> connect (destination_port_index, ((PrologNativeOrbiter *) source_machine) -> module, source_port_index);
-		//if (input -> isInteger () && port -> isInteger ())
-		//	return ((PrologNativeOrbiter *) destination_machine) -> module -> connect (input -> getInteger (), ((PrologNativeOrbiter *) source_machine) -> module, port -> getInteger ());
-		//if (input -> isText () && port -> isText ())
-		//	return ((PrologNativeOrbiter *) destination_machine) -> module -> connect (input -> getText (), ((PrologNativeOrbiter *) source_machine) -> module, port -> getText ());
 	}
 };
 
@@ -135,6 +175,7 @@ PrologNativeCode * PrologLunarServiceClass :: getNativeCode (char * name) {
 	if (strcmp (name, "oscilloscope") == 0) return new oscilloscope_class (& core);
 	if (strcmp (name, "moonbase") == 0) return new moonbase_class (& core);
 	if (strcmp (name, "operator") == 0) return new operator_class (& core);
+	if (strcmp (name, "parameter_block") == 0) return new parameter_block_class (& core);
 	return 0;
 }
 

@@ -42,9 +42,14 @@ public:
 	int latency_block_size;
 	double time_deltas [32768];
 	double * time_delta;
+	double amplitudes [16384];
+	double * amplitude;
+	double sine_wave [16384];
 	pthread_mutex_t main_mutex;
 	pthread_mutex_t maintenance_mutex;
 	orbiter * root;
+	double TimeDelta (double ind);
+	double Amplitude (double ind);
 	void recalculate (void);
 	void move_modules (void);
 	void propagate_signals (void);

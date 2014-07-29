@@ -20,32 +20,23 @@
 // THE SOFTWARE.                                                                 //
 ///////////////////////////////////////////////////////////////////////////////////
 
-/////////////////////////////////////////////////////////////////////
-// This file was created on Monday, 21st July 2014 at 11:24:55 AM. //
-/////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////
+// This file was created on Tuesday, 29th July 2014, 13:48:00 PM. //
+////////////////////////////////////////////////////////////////////
 
-#ifndef _LUNAR_OPERATOR_
-#define _LUNAR_OPERATOR_
+#include "lunar_landers.h"
 
-#include "lunar.h"
-
-class lunar_operator : public orbiter {
-private:
-	double time;
-	double omega;
-	double freq;
-	double ratio;
-	double shift;
-	double sync;
-	double amp;
-	double slope;
-public:
-	virtual int numberOfInputs (void);
-	virtual char * inputName (int ind);
-	virtual double * inputAddress (int ind);
-	virtual void move (void);
-	lunar_operator (orbiter_core * core);
-};
-
-#endif
-
+int lunar_parameter_block :: numberOfInputs (void) {return 1;}
+char * lunar_parameter_block :: inputName (int ind) {return ind == 0 ? "SIGNAL": orbiter :: inputName (ind);}
+double * lunar_parameter_block :: inputAddress (int ind) {return ind == 0 ? & enter : 0;}
+lunar_parameter_block :: lunar_parameter_block (orbiter_core * core, double maximum_change) : orbiter (core) {
+	if (maximum_change < 0.0) maximum_change = 0.0;
+	this -> maximum_change = maximum_change * 48000.0 / core -> sampling_frequency;
+}
+void lunar_parameter_block :: move (void) {
+	if (maximum_change == 0.0) {signal = enter; return;}
+	if (enter == signal) return;
+	if (enter > signal) {signal += maximum_change; if (signal > enter) signal = enter;}
+	signal -= maximum_change;
+	if (signal < enter) signal = enter;
+}

@@ -34,7 +34,11 @@ int orbiter_count = 0;
 
 orbiter_core :: orbiter_core (void) {
 	root = 0;
+	this -> centre_frequency = 330.0;
+	this -> sampling_frequency = 48000.0;
+	this -> latency_block_size = 128;
 	time_delta = time_deltas + 16384;
+	amplitude = amplitudes + 16383;
 	pthread_mutex_init (& main_mutex, 0);
 	pthread_mutex_init (& maintenance_mutex, 0);
 }
@@ -58,12 +62,25 @@ void orbiter_core :: propagate_signals (void) {
 	while (orp != root) {orp -> propagate_signals (); orp = orp -> next;}
 }
 
+double orbiter_core :: TimeDelta (double index) {
+	int ind = (int) index;
+	if (ind > 16383) return * (time_delta + 16383);
+	if (ind < -16384) return * (time_delta - 16384);
+	return * (time_delta + ind);
+}
+
+double orbiter_core :: Amplitude (double index) {
+	int ind = (int) index;
+	if (ind > 0) return * amplitude;
+	if (ind < -16383) return * (amplitude - 16383);
+	return * (amplitude + ind);
+}
+
 void orbiter_core :: recalculate (void) {
 	double delay = sampling_frequency > 0.0 ? centre_frequency  / sampling_frequency : centre_frequency;
-	for (int ind = 0; ind < 32768; ind++) {
-		time_deltas [ind] = delay * pow (2.0, ((double) (ind - 16384) / -1536.0));
-	}
-	time_delta = time_deltas + 16384;
+	for (int ind = 0; ind < 32768; ind++) time_deltas [ind] = delay * pow (2.0, ((double) (ind - 16384) / 1536.0));
+	for (int ind = 0; ind > -16384; ind--) * (amplitude + ind) = pow (2.0, (double) ind / 1536.0);
+	* amplitudes = 0.0;
 }
 
 int orbiter :: numberOfInputs (void) {return 0;}
@@ -107,9 +124,32 @@ bool orbiter :: connect (int destination_port, orbiter * source, int source_port
 	if (source_port >= source -> numberOfOutputs ()) return false;
 	double * location = source -> outputAddress (source_port);
 	if (location == 0) return false;
-	source -> hold ();
 	connectors [destination_port] = new dock (source, source_port, source -> outputAddress (source_port), connectors [destination_port]);
 	return true;
+}
+bool orbiter :: disconnect (int destination_port, orbiter * source, int source_port) {
+	if (destination_port < 0) return false;
+	if (destination_port >= number_of_connections) return false;
+	if (source == 0) return false;
+	dock * dp = connectors [destination_port];
+	if (dp == 0) return false;
+	if (dp -> source == source && dp -> source_port == source_port) {
+		connectors [destination_port] = dp -> next;
+		dp -> next = 0;
+		delete dp;
+		return true;
+	}
+	while (dp -> next != 0) {
+		if (dp -> next -> source == source && dp -> next -> source_port == source_port) {
+			dock * to_delete = dp -> next;
+			dp -> next = dp -> next -> next;
+			to_delete -> next = 0;
+			delete to_delete;
+			return true;
+		}
+		dp = dp -> next;
+	}
+	return false;
 }
 
 void orbiter :: propagate_signals (void) {
@@ -174,6 +214,7 @@ orbiter :: ~ orbiter (void) {
 }
 
 dock :: dock (orbiter * source, int source_port, double * source_address, dock * next) {
+	source -> hold ();
 	this -> source = source;
 	this -> source_port = source_port;
 	this -> source_address = source_address;

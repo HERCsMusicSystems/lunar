@@ -28,12 +28,14 @@
 #define _USE_MATH_DEFINES
 #include <math.h>
 
-int lunar_operator :: numberOfInputs (void) {return 3;}
+int lunar_operator :: numberOfInputs (void) {return 5;}
 char * lunar_operator :: inputName (int ind) {
 	switch (ind) {
 	case 0: return "FREQ"; break;
 	case 1: return "AMP"; break;
-	case 2: return "SYNC"; break;
+	case 2: return "RATIO"; break;
+	case 3: return "SHIFT"; break;
+	case 4: return "SYNC"; break;
 	default: break;
 	}
 	return orbiter :: inputName (ind);
@@ -42,16 +44,23 @@ double * lunar_operator :: inputAddress (int ind) {
 	switch (ind) {
 	case 0: return & freq; break;
 	case 1: return & amp; break;
-	case 2: return & sync; break;
+	case 2: return & ratio; break;
+	case 3: return & shift; break;
+	case 4: return & sync; break;
 	default: break;
 	}
 	return 0;
 }
 
 void lunar_operator :: move (void) {
-	this -> signal = sin (time * omega);
-	time += * (core -> time_delta + (int) freq);
+	if (slope != sync) if (sync > 0.0) time = 0.0; slope = sync;
+	double angle = (time + shift) * omega;
+	this -> signal = core -> Amplitude (amp) * sin (angle);
+	time += core -> TimeDelta (freq);
 	if (time > 1.0) time -= 1.0;
 }
 
-lunar_operator :: lunar_operator (orbiter_core * core) : orbiter (core) {freq = 0.0; amp = 0.0; time = 0.0; omega = 2.0 * M_PI;}
+lunar_operator :: lunar_operator (orbiter_core * core) : orbiter (core) {
+	freq = amp = ratio = shift = sync = slope = 0.0;
+	time = 0.0; omega = 2.0 * M_PI;
+}

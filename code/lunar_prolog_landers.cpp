@@ -20,32 +20,19 @@
 // THE SOFTWARE.                                                                 //
 ///////////////////////////////////////////////////////////////////////////////////
 
-/////////////////////////////////////////////////////////////////////
-// This file was created on Monday, 21st July 2014 at 11:24:55 AM. //
-/////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////
+// This file was created on Tuesday, 29th July 2014, 13:48:00 PM. //
+////////////////////////////////////////////////////////////////////
 
-#ifndef _LUNAR_OPERATOR_
-#define _LUNAR_OPERATOR_
+#include "lunar_prolog_landers.h"
+#include "lunar_landers.h"
 
-#include "lunar.h"
+orbiter * parameter_block_class :: create_orbiter (PrologElement * parameters) {
+	if (parameters -> isEarth ()) return new lunar_parameter_block (core, 0.0);
+	if (parameters -> isPair ()) parameters = parameters -> getLeft ();
+	if (parameters -> isInteger ()) return new lunar_parameter_block (core, (double) parameters -> getInteger ());
+	if (parameters -> isDouble ()) return new lunar_parameter_block (core, parameters -> getDouble ());
+	return new lunar_parameter_block (core, 0.0);
+}
 
-class lunar_operator : public orbiter {
-private:
-	double time;
-	double omega;
-	double freq;
-	double ratio;
-	double shift;
-	double sync;
-	double amp;
-	double slope;
-public:
-	virtual int numberOfInputs (void);
-	virtual char * inputName (int ind);
-	virtual double * inputAddress (int ind);
-	virtual void move (void);
-	lunar_operator (orbiter_core * core);
-};
-
-#endif
-
+parameter_block_class :: parameter_block_class (orbiter_core * core) : PrologNativeOrbiterCreator (core) {}

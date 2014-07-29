@@ -27,5 +27,5 @@
 #include "prolog_lunar.h"
 #include "lunar_operator.h"
 
-orbiter * operator_class :: create_orbiter (void) {return new lunar_operator (core);}
+orbiter * operator_class :: create_orbiter (PrologElement * parameters) {return new lunar_operator (core);}
 operator_class :: operator_class (orbiter_core * core) : PrologNativeOrbiterCreator (core) {}

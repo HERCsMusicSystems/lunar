@@ -48,7 +48,7 @@ public:
 class PrologNativeOrbiterCreator : public PrologNativeCode {
 public:
 	orbiter_core * core;
-	virtual orbiter * create_orbiter (void) = 0;
+	virtual orbiter * create_orbiter (PrologElement * parameters) = 0;
 	virtual PrologNativeOrbiter * create_native_orbiter (PrologAtom * atom, orbiter * module);
 	virtual void code_created (PrologNativeOrbiter * machine);
 	virtual bool code (PrologElement * parameters, PrologResolution * resolution);
@@ -65,7 +65,7 @@ public:
 
 class oscilloscope_class : public PrologNativeOrbiterCreator {
 public:
-	virtual orbiter * create_orbiter (void);
+	virtual orbiter * create_orbiter (PrologElement * parameters);
 	virtual PrologNativeOrbiter * create_native_orbiter (PrologAtom * atom, orbiter * module);
 	virtual void code_created (PrologNativeOrbiter * machine);
 	oscilloscope_class (orbiter_core * core);
@@ -80,7 +80,7 @@ public:
 
 class operator_class : public PrologNativeOrbiterCreator {
 public:
-	virtual orbiter * create_orbiter (void);
+	virtual orbiter * create_orbiter (PrologElement * parameters);
 	operator_class (orbiter_core * core);
 };
 

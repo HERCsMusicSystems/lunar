@@ -88,7 +88,6 @@ PrologNativeOrbiter :: PrologNativeOrbiter (PrologAtom * atom, orbiter_core * co
 	this -> core = core;
 	this -> module = module;
 	if (module == 0) return;
-	module -> activate ();
 	module -> hold ();
 	printf ("	NATIVE ORBITER CREATED\n");
 }
@@ -161,6 +160,9 @@ class undock_class : public PrologNativeCode {
 public:
 };
 
+class key_map_class : public PrologNativeCode {
+};
+
 void PrologLunarServiceClass :: init (PrologRoot * root, PrologDirectory * directory) {
 	this -> root = root;
 	this -> directory = directory;
@@ -176,6 +178,9 @@ PrologNativeCode * PrologLunarServiceClass :: getNativeCode (char * name) {
 	if (strcmp (name, "moonbase") == 0) return new moonbase_class (& core);
 	if (strcmp (name, "operator") == 0) return new operator_class (& core);
 	if (strcmp (name, "parameter_block") == 0) return new parameter_block_class (& core);
+	if (strcmp (name, "key_map") == 0) return new key_map_class ();
+	if (strcmp (name, "impulse") == 0) return new impulse_class (& core);
+	if (strcmp (name, "trigger") == 0) return new trigger_class (& core);
 	return 0;
 }
 

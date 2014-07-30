@@ -21,7 +21,7 @@
 ///////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////
-// This file was created on Tuesday, 29th July 2014, 13:48:00 PM. //
+// This file was created on Tuesday, 29th July 2014, 13:47:30 PM. //
 ////////////////////////////////////////////////////////////////////
 
 #ifndef _LUNAR_LANDERS_
@@ -29,7 +29,15 @@
 
 #include "lunar.h"
 
-class lunar_parameter_block : public orbiter {
+class lunar_inactive_parameter_block : public orbiter {
+public:
+	virtual int numberOfInputs (void);
+	virtual char * inputName (int ind);
+	virtual double * inputAddress (int ind);
+	lunar_inactive_parameter_block (orbiter_core * core);
+};
+
+class lunar_active_parameter_block : public orbiter {
 private:
 	double enter;
 	double maximum_change;
@@ -38,10 +46,28 @@ public:
 	virtual char * inputName (int ind);
 	virtual double * inputAddress (int ind);
 	virtual void move (void);
-	lunar_parameter_block (orbiter_core * core, double maximum_change);
+	lunar_active_parameter_block (orbiter_core * core, double maximum_change);
+};
+
+class lunar_map : public orbiter {
+public:
+	double map [128];
+	virtual int numberOfOutputs (void);
+	lunar_map (orbiter_core * core);
 };
 
 class lunar_trigger : public orbiter {
+private:
+	lunar_map * map;
+public:
+	void set_map (lunar_map * map);
+	lunar_trigger (orbiter_core * core);
+	~ lunar_trigger (void);
+};
+
+class lunar_impulse : public orbiter {
+public:
+	lunar_impulse (orbiter_core * core);
 };
 
 #endif

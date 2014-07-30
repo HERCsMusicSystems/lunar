@@ -63,4 +63,5 @@ void lunar_operator :: move (void) {
 lunar_operator :: lunar_operator (orbiter_core * core) : orbiter (core) {
 	freq = amp = ratio = shift = sync = slope = 0.0;
 	time = 0.0; omega = 2.0 * M_PI;
+	initialise (); activate ();
 }

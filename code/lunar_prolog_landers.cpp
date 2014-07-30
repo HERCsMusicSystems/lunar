@@ -21,18 +21,23 @@
 ///////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////
-// This file was created on Tuesday, 29th July 2014, 13:48:00 PM. //
+// This file was created on Tuesday, 29th July 2014, 13:56:00 PM. //
 ////////////////////////////////////////////////////////////////////
 
 #include "lunar_prolog_landers.h"
 #include "lunar_landers.h"
 
 orbiter * parameter_block_class :: create_orbiter (PrologElement * parameters) {
-	if (parameters -> isEarth ()) return new lunar_parameter_block (core, 0.0);
+	if (parameters -> isEarth ()) return new lunar_inactive_parameter_block (core);
 	if (parameters -> isPair ()) parameters = parameters -> getLeft ();
-	if (parameters -> isInteger ()) return new lunar_parameter_block (core, (double) parameters -> getInteger ());
-	if (parameters -> isDouble ()) return new lunar_parameter_block (core, parameters -> getDouble ());
-	return new lunar_parameter_block (core, 0.0);
+	if (parameters -> isInteger ()) return new lunar_active_parameter_block (core, (double) parameters -> getInteger ());
+	if (parameters -> isDouble ()) return new lunar_active_parameter_block (core, parameters -> getDouble ());
+	return new lunar_inactive_parameter_block (core);
 }
-
 parameter_block_class :: parameter_block_class (orbiter_core * core) : PrologNativeOrbiterCreator (core) {}
+
+orbiter * impulse_class :: create_orbiter (PrologElement * parameters) {return new lunar_impulse (core);}
+impulse_class :: impulse_class (orbiter_core * core) : PrologNativeOrbiterCreator (core) {}
+
+orbiter * trigger_class :: create_orbiter (PrologElement * parameters) {return new lunar_trigger (core);}
+trigger_class :: trigger_class (orbiter_core * core) : PrologNativeOrbiterCreator (core) {}

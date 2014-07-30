@@ -53,6 +53,8 @@ public:
 	void recalculate (void);
 	void move_modules (void);
 	void propagate_signals (void);
+	void activate (orbiter * module);
+	void deactivate (orbiter * module);
 	orbiter_core (void);
 	~ orbiter_core (void);
 };
@@ -87,6 +89,7 @@ public:
 	bool connect (int destination_port, orbiter * source, int source_port);
 	bool disconnect (int destination_port, orbiter * source, int source_port);
 public:
+	void initialise (void);
 	void activate (void);
 	orbiter (orbiter_core * core);
 	virtual ~ orbiter (void);

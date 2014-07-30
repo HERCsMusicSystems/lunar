@@ -21,7 +21,7 @@
 ///////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////
-// This file was created on Tuesday, 29th July 2014, 13:48:00 PM. //
+// This file was created on Tuesday, 29th July 2014, 13:56:00 PM. //
 ////////////////////////////////////////////////////////////////////
 
 #ifndef _LUNAR_PROLOG_LANDERS_
@@ -33,6 +33,18 @@ class parameter_block_class : public PrologNativeOrbiterCreator {
 public:
 	virtual orbiter * create_orbiter (PrologElement * parameters);
 	parameter_block_class (orbiter_core * core);
+};
+
+class impulse_class : public PrologNativeOrbiterCreator {
+public:
+	virtual orbiter * create_orbiter (PrologElement * parameters);
+	impulse_class (orbiter_core * core);
+};
+
+class trigger_class : public PrologNativeOrbiterCreator {
+public:
+	virtual orbiter * create_orbiter (PrologElement * parameters);
+	trigger_class (orbiter_core * core);
 };
 
 #endif

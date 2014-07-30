@@ -51,6 +51,7 @@ public:
 		viewport = 0;
 		frame_count = 0;
 		for (int ind = 0; ind < 256; ind++) wave [ind] = 0;
+		initialise (); activate ();
 	}
 };
 

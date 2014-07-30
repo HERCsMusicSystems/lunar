@@ -21,22 +21,43 @@
 ///////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////
-// This file was created on Tuesday, 29th July 2014, 13:48:00 PM. //
+// This file was created on Tuesday, 29th July 2014, 13:47:30 PM. //
 ////////////////////////////////////////////////////////////////////
 
 #include "lunar_landers.h"
 
-int lunar_parameter_block :: numberOfInputs (void) {return 1;}
-char * lunar_parameter_block :: inputName (int ind) {return ind == 0 ? "SIGNAL": orbiter :: inputName (ind);}
-double * lunar_parameter_block :: inputAddress (int ind) {return ind == 0 ? & enter : 0;}
-lunar_parameter_block :: lunar_parameter_block (orbiter_core * core, double maximum_change) : orbiter (core) {
+int lunar_active_parameter_block :: numberOfInputs (void) {return 1;}
+char * lunar_active_parameter_block :: inputName (int ind) {return ind == 0 ? "SIGNAL": orbiter :: inputName (ind);}
+double * lunar_active_parameter_block :: inputAddress (int ind) {return ind == 0 ? & enter : 0;}
+lunar_active_parameter_block :: lunar_active_parameter_block (orbiter_core * core, double maximum_change) : orbiter (core) {
 	if (maximum_change < 0.0) maximum_change = 0.0;
 	this -> maximum_change = maximum_change * 48000.0 / core -> sampling_frequency;
+	initialise (); activate ();
 }
-void lunar_parameter_block :: move (void) {
+void lunar_active_parameter_block :: move (void) {
 	if (maximum_change == 0.0) {signal = enter; return;}
 	if (enter == signal) return;
 	if (enter > signal) {signal += maximum_change; if (signal > enter) signal = enter;}
 	signal -= maximum_change;
 	if (signal < enter) signal = enter;
 }
+
+int lunar_inactive_parameter_block :: numberOfInputs (void) {return orbiter :: numberOfOutputs ();}
+char * lunar_inactive_parameter_block :: inputName (int ind) {return orbiter :: outputName (ind);}
+double * lunar_inactive_parameter_block :: inputAddress (int ind) {return orbiter :: outputAddress (ind);}
+lunar_inactive_parameter_block :: lunar_inactive_parameter_block (orbiter_core * core) : orbiter (core) {initialise ();}
+
+int lunar_map :: numberOfOutputs (void) {return 0;}
+lunar_map :: lunar_map (orbiter_core * core) : orbiter (core) {
+	for (int ind = 0; ind < 128; ind++) map [ind] = (double) (ind - 64) * 128.0;
+	initialise ();
+}
+
+void lunar_trigger :: set_map (lunar_map * map) {
+	if (this -> map != 0) this -> map -> release ();
+	this -> map = map;
+	if (map != 0) map -> hold ();
+}
+lunar_trigger :: lunar_trigger (orbiter_core * core) : orbiter (core) {map = 0; initialise ();}
+lunar_trigger :: ~ lunar_trigger (void) {if (map != 0) map -> release ();}
+lunar_impulse :: lunar_impulse (orbiter_core * core) : orbiter (core) {initialise (); activate ();}

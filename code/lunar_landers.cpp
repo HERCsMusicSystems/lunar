@@ -27,7 +27,7 @@
 #include "lunar_landers.h"
 
 int lunar_active_parameter_block :: numberOfInputs (void) {return 1;}
-char * lunar_active_parameter_block :: inputName (int ind) {return ind == 0 ? "SIGNAL": orbiter :: inputName (ind);}
+char * lunar_active_parameter_block :: inputName (int ind) {if (ind == 0) return "SIGNAL"; else return  orbiter :: inputName (ind);}
 double * lunar_active_parameter_block :: inputAddress (int ind) {return ind == 0 ? & enter : 0;}
 lunar_active_parameter_block :: lunar_active_parameter_block (orbiter_core * core, double maximum_change) : orbiter (core) {
 	if (maximum_change < 0.0) maximum_change = 0.0;
@@ -90,7 +90,7 @@ lunar_trigger :: lunar_trigger (orbiter_core * core) : orbiter (core) {key = tri
 lunar_trigger :: ~ lunar_trigger (void) {if (map != 0) map -> release ();}
 
 int lunar_impulse :: numberOfInputs (void) {return 1;}
-char * lunar_impulse :: inputName (int ind) {return ind == 0 ? "ENTER" : orbiter :: inputName (ind);}
+char * lunar_impulse :: inputName (int ind) {if (ind == 0) return "ENTER"; else return orbiter :: inputName (ind);}
 double * lunar_impulse :: inputAddress (int ind) {return ind == 0 ? & enter : orbiter :: inputAddress (ind);}
 void lunar_impulse :: move (void) {signal = enter > 0.0 && sync == 0.0 ? 1.0 : 0.0; sync = enter;}
 lunar_impulse :: lunar_impulse (orbiter_core * core) : orbiter (core) {enter = sync = 0.0; initialise (); activate ();}

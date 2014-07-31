@@ -76,10 +76,18 @@ double orbiter_core :: Amplitude (double index) {
 	return * (amplitude + ind);
 }
 
+double orbiter_core :: Sine (double index) {
+	int ind = (int) (index * 16384.0);
+	while (ind < 0) ind += 16384;
+	while (ind > 16383) ind -= 16384;
+	return sine_wave [ind];
+}
+
 void orbiter_core :: recalculate (void) {
 	double delay = sampling_frequency > 0.0 ? centre_frequency  / sampling_frequency : centre_frequency;
 	for (int ind = 0; ind < 32768; ind++) time_deltas [ind] = delay * pow (2.0, ((double) (ind - 16384) / 1536.0));
 	for (int ind = 0; ind > -16384; ind--) * (amplitude + ind) = pow (2.0, (double) ind / 1536.0);
+	for (int ind = 0; ind < 16384; ind++) sine_wave [ind] = sin ((double) ind * M_PI * 2.0 / 16384.0);
 	* amplitudes = 0.0;
 }
 

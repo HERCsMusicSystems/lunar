@@ -54,8 +54,7 @@ double * lunar_operator :: inputAddress (int ind) {
 
 void lunar_operator :: move (void) {
 	if (slope != sync) if (sync > 0.0) time = 0.0; slope = sync;
-	double angle = (time + shift) * omega;
-	this -> signal = core -> Amplitude (amp) * sin (angle);
+	this -> signal = core -> Amplitude (amp) * core -> Sine (time + shift);
 	time += core -> TimeDelta (freq);
 	if (time > 1.0) time -= 1.0;
 }

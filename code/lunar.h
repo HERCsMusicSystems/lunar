@@ -50,6 +50,7 @@ public:
 	orbiter * root;
 	double TimeDelta (double ind);
 	double Amplitude (double ind);
+	double Sine (double angle); // 0 .... 1.0 per cycle
 	void recalculate (void);
 	void move_modules (void);
 	void propagate_signals (void);

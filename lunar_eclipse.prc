@@ -9,7 +9,7 @@ program lunar_eclipse [base op1 op2 radar tg]
 ;end := [[command]] .
 end := [
 			[auto_atoms]
-			[moonbase base]
+			[moonbase base 330 22050 1024]
 			[trigger tg]
 			[operator op1]
 			[operator op2]
@@ -20,5 +20,6 @@ end := [
 				[op1 "SHIFT" op2]
 				[op2 "SYNC" tg "TRIGGER"]
 				[op1 "SYNC" tg "TRIGGER"]
+				[base op1]
 			[command]
 		] .

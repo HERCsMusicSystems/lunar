@@ -881,7 +881,8 @@ static void oscilloscope_audio_capture_dx_init (int sampling_frequency) {
 
 
 MultiplatformAudio :: MultiplatformAudio (int channels, int sampling_freq, int latency_samples, void * hwnd) {
-	if (hwnd == 0) hwnd = FindWindow (0, 0);
+	if (hwnd == 0) hwnd = GetForegroundWindow ();
+	if (hwnd == 0) hwnd = GetDesktopWindow ();
 	record_sampling_freq = sampling_freq;
 	audio_channels = channels;
 	if (audio_channels < 1) audio_channels = 1;

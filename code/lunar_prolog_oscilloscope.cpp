@@ -30,6 +30,7 @@
 #include "gtk/gtk.h"
 
 static gboolean RemoveOscilloscopeIdleCode (GtkWidget * viewport) {gtk_widget_destroy (viewport); return FALSE;}
+static gboolean RepaintOscilloscopeIdleCode (GtkWidget * viewport) {gtk_widget_queue_draw (viewport); return FALSE;}
 
 class lunar_oscilloscope : public orbiter {
 public:
@@ -46,7 +47,7 @@ public:
 		wave [frame_count++] = signal;
 		if (frame_count < 256) return;
 		frame_count = -2000;
-		gtk_widget_queue_draw (viewport);
+		g_idle_add ((GSourceFunc) RepaintOscilloscopeIdleCode, viewport);
 	}
 	lunar_oscilloscope (orbiter_core * core) : orbiter (core) {
 		viewport = 0;
@@ -135,3 +136,4 @@ orbiter * oscilloscope_class :: create_orbiter (PrologElement * parameters) {ret
 PrologNativeOrbiter * oscilloscope_class :: create_native_orbiter (PrologAtom * atom, orbiter * module) {return new oscilloscope_action (atom, core, module);}
 void oscilloscope_class :: code_created (PrologNativeOrbiter * machine) {g_idle_add ((GSourceFunc) CreateOscilloscopeIdleCode, machine);}
 oscilloscope_class :: oscilloscope_class (orbiter_core * core) : PrologNativeOrbiterCreator (core) {}
+

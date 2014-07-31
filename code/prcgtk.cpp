@@ -154,7 +154,8 @@ void * studio_runner (void * parameter) {
 	PrologCommand * command = new PrologWindowsConsole ();
 #endif
 	root -> insertCommander (command);
-	root -> resolution ("lunar.prc");
+	if (parameter == 0) root -> resolution ();
+	else root -> resolution ((char *) parameter);
 	delete root;
 	delete command;
 	drop_object_counter ();
@@ -164,7 +165,7 @@ void * studio_runner (void * parameter) {
 
 int main (int args, char * * argv) {
 	gtk_init (& args, & argv);
-	pthread_t thread; pthread_create (& thread, 0, studio_runner, 0); pthread_detach (thread);
+	pthread_t thread; pthread_create (& thread, 0, studio_runner, args > 1 ? argv [1] : 0); pthread_detach (thread);
 	gtk_main ();
 	getchar ();
 }

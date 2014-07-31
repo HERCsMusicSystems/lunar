@@ -20,9 +20,9 @@
 // THE SOFTWARE.                                                                 //
 ///////////////////////////////////////////////////////////////////////////////////
 
-/////////////////////////////////////////////////////////////////////
-// This file was created on Thursday, 17th July 2014, 11:50:04 AM. //
-/////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////
+// This file was created on Thursday, 17th July 2014 at 11:50:04 AM. //
+///////////////////////////////////////////////////////////////////////
 
 #include "lunar_moonbase.h"
 #include "prolog_lunar.h"
@@ -30,18 +30,7 @@
 
 static int moonbases = 0;
 
-void alpha_callback (int frames, AudioBuffers * data, void * source) {
-	orbiter_core * core = (orbiter_core *) source;
-	pthread_mutex_lock (& core -> maintenance_mutex);
-	pthread_mutex_lock (& core -> main_mutex);
-	for (int ind = 0; ind < frames; ind++) {
-		core -> move_modules ();
-		core -> propagate_signals ();
-		data -> insertMono (0.0);
-	}
-	pthread_mutex_unlock (& core -> main_mutex);
-	pthread_mutex_unlock (& core -> maintenance_mutex);
-}
+extern void alpha_callback (int frames, AudioBuffers * data, void * source);
 
 class moonbase_action : public PrologNativeOrbiter {
 public:
@@ -53,7 +42,7 @@ public:
 		int outputs = audio -> getNumberOfOutputDevices ();
 		printf ("Number of outputs = %i\n", outputs);
 		for (int ind = 0; ind < outputs; ind++) printf ("	device [%s]\n", audio -> getOutputDeviceName (ind));
-		audio -> installOutputCallback (alpha_callback, core);
+		audio -> installOutputCallback (alpha_callback, this);
 		audio -> selectOutputDevice (0);
 		printf ("Moonbase prolog created.\n");
 	}
@@ -64,6 +53,21 @@ public:
 		printf ("Moonbase prolog destroyed.\n");
 	}
 };
+
+void alpha_callback (int frames, AudioBuffers * data, void * source) {
+	moonbase_action * base = (moonbase_action *) source;
+	orbiter_core * core = base -> core;
+	double * moon = base -> module -> outputAddress (0);
+	pthread_mutex_lock (& core -> maintenance_mutex);
+	pthread_mutex_lock (& core -> main_mutex);
+	for (int ind = 0; ind < frames; ind++) {
+		core -> move_modules ();
+		core -> propagate_signals ();
+		data -> insertMono ((* moon) * 0.2);
+	}
+	pthread_mutex_unlock (& core -> main_mutex);
+	pthread_mutex_unlock (& core -> maintenance_mutex);
+}
 
 bool moonbase_class :: code (PrologElement * parameters, PrologResolution * resolution) {
 	if (moonbases > 0) return false;

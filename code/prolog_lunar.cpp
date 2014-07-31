@@ -40,6 +40,7 @@ bool PrologNativeOrbiter :: code (PrologElement * parameters, PrologResolution *
 	PrologElement * port = 0;
 	PrologElement * value = 0;
 	PrologElement * ret = 0;
+	PrologElement * disconnector = 0;
 	while (parameters -> isPair ()) {
 		PrologElement * el = parameters -> getLeft ();
 		if (el -> isAtom ()) atom = el;
@@ -47,7 +48,7 @@ bool PrologNativeOrbiter :: code (PrologElement * parameters, PrologResolution *
 		if (el -> isText ()) if (port == 0) port = el; else value = el;
 		if (el -> isDouble ()) value = el;
 		if (el -> isVar ()) ret = el;
-		if (el -> isEarth ()) value = el;
+		if (el -> isEarth ()) disconnector = el;
 		parameters = parameters -> getRight ();
 	}
 	if (parameters -> isVar ()) ret = parameters;
@@ -64,7 +65,7 @@ bool PrologNativeOrbiter :: code (PrologElement * parameters, PrologResolution *
 			if (value -> isInteger ()) source_port = value -> getInteger ();
 			if (value -> isText ()) source_port = ((PrologNativeOrbiter *) machine) -> module -> outputIndex (value -> getText ());
 		}
-		if (value == 0) return module -> connect (destination_port, ((PrologNativeOrbiter *) machine) -> module, source_port);
+		if (disconnector == 0) return module -> connect (destination_port, ((PrologNativeOrbiter *) machine) -> module, source_port);
 		return module -> disconnect (destination_port, ((PrologNativeOrbiter *) machine) -> module, source_port);
 	}
 	if (ret != 0) {double * adres = module -> outputAddress (destination_port); if (adres == 0) return false; ret -> setDouble (* adres); return true;}

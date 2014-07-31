@@ -44,6 +44,7 @@ public:
 class trigger_class : public PrologNativeOrbiterCreator {
 public:
 	virtual orbiter * create_orbiter (PrologElement * parameters);
+	virtual PrologNativeOrbiter * create_native_orbiter (PrologAtom * atom, orbiter * module);
 	trigger_class (orbiter_core * core);
 };
 

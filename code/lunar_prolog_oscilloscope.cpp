@@ -42,9 +42,10 @@ public:
 	virtual void move (void) {
 		if (viewport == 0) return;
 		if (frame_count < 0) {frame_count++; return;}
+		if (frame_count == 0 && signal < 0.0) return;
 		wave [frame_count++] = signal;
 		if (frame_count < 256) return;
-		frame_count = -10000;
+		frame_count = -2000;
 		gtk_widget_queue_draw (viewport);
 	}
 	lunar_oscilloscope (orbiter_core * core) : orbiter (core) {

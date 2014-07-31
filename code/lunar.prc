@@ -24,4 +24,4 @@ program lunar #machine := "prolog.lunar"
 #machine moonbase := "moonbase"
 #machine operator := "operator"
 
-end := [[command]] .
+end .

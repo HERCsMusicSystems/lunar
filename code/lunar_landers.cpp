@@ -53,11 +53,44 @@ lunar_map :: lunar_map (orbiter_core * core) : orbiter (core) {
 	initialise ();
 }
 
+int lunar_trigger :: numberOfInputs (void) {return 0;}
+int lunar_trigger :: numberOfOutputs (void) {return 3;}
+char * lunar_trigger :: outputName (int ind) {
+	switch (ind) {
+	case 0: return "KEY"; break;
+	case 1: return "VELOCITY"; break;
+	case 2: return "TRIGGER"; break;
+	default: break;
+	}
+	return orbiter :: outputName (ind);
+}
+double * lunar_trigger :: outputAddress (int ind) {
+	switch (ind) {
+	case 0: return & key; break;
+	case 1: return & velocity; break;
+	case 2: return & trigger; break;
+	default: break;
+	}
+	return orbiter :: outputAddress (ind);
+}
 void lunar_trigger :: set_map (lunar_map * map) {
 	if (this -> map != 0) this -> map -> release ();
 	this -> map = map;
 	if (map != 0) map -> hold ();
 }
-lunar_trigger :: lunar_trigger (orbiter_core * core) : orbiter (core) {map = 0; initialise ();}
+void lunar_trigger :: keyon (int key) {
+	if (key < 0) key = 0;
+	if (key > 127) key = 127;
+	this -> key = map == 0 ? (double) key * 128.0 : map -> map [key];
+	trigger = 1.0;
+}
+void lunar_trigger :: keyon (int key, int velocity) {this -> velocity = (double) velocity * 128.0; keyon (key);}
+void lunar_trigger :: keyoff (void) {trigger = 0.0;}
+lunar_trigger :: lunar_trigger (orbiter_core * core) : orbiter (core) {key = trigger = 0.0; velocity = 12800.0; map = 0; initialise ();}
 lunar_trigger :: ~ lunar_trigger (void) {if (map != 0) map -> release ();}
-lunar_impulse :: lunar_impulse (orbiter_core * core) : orbiter (core) {initialise (); activate ();}
+
+int lunar_impulse :: numberOfInputs (void) {return 1;}
+char * lunar_impulse :: inputName (int ind) {return ind == 0 ? "ENTER" : orbiter :: inputName (ind);}
+double * lunar_impulse :: inputAddress (int ind) {return ind == 0 ? & enter : orbiter :: inputAddress (ind);}
+void lunar_impulse :: move (void) {signal = enter > 0.0 && sync == 0.0 ? 1.0 : 0.0; sync = enter;}
+lunar_impulse :: lunar_impulse (orbiter_core * core) : orbiter (core) {enter = sync = 0.0; initialise (); activate ();}

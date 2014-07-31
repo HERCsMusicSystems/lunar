@@ -46,5 +46,5 @@ int moonbase :: numberOfOutputs (void) {return numberOfInputs ();}
 char * moonbase :: outputName (int ind) {return inputName (ind);}
 double * moonbase :: outputAddress (int ind) {return inputAddress (ind);}
 
-moonbase :: moonbase (orbiter_core * core) : orbiter (core) {initialise (); activate ();}
+moonbase :: moonbase (orbiter_core * core) : orbiter (core) {mono = left = right = 0.0; initialise (); activate ();}
 

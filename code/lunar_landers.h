@@ -59,14 +59,28 @@ public:
 class lunar_trigger : public orbiter {
 private:
 	lunar_map * map;
+	double key, velocity, trigger;
 public:
+	virtual int numberOfInputs (void);
+	virtual int numberOfOutputs (void);
+	virtual char * outputName (int ind);
+	virtual double * outputAddress (int ind);
 	void set_map (lunar_map * map);
+	void keyon (int key);
+	void keyon (int key, int velocity);
+	void keyoff (void);
 	lunar_trigger (orbiter_core * core);
 	~ lunar_trigger (void);
 };
 
 class lunar_impulse : public orbiter {
+private:
+	double enter, sync;
 public:
+	virtual int numberOfInputs (void);
+	virtual char * inputName (int ind);
+	virtual double * inputAddress (int ind);
+	virtual void move (void);
 	lunar_impulse (orbiter_core * core);
 };
 

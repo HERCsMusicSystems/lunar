@@ -4,13 +4,15 @@
 import studio
 import lunar
 
-program lunar_eclipse [base op1 op2 radar tg]
+program lunar_eclipse [base op1 op2 radar tg map]
 
 ;end := [[command]] .
 end := [
 			[auto_atoms]
 			[moonbase base 330 22050 1024]
 			[trigger tg]
+			[key_map map]
+				;[map tg]
 			[operator op1]
 			[operator op2]
 				[op2 "AMP" -3000]

@@ -86,7 +86,7 @@ public:
 	virtual void propagate_signals (void);
 public:
 	void hold (void);
-	void release (void);
+	virtual bool release (void);
 	bool connect (int destination_port, orbiter * source, int source_port);
 	bool disconnect (int destination_port, orbiter * source, int source_port);
 public:

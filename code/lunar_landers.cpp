@@ -81,13 +81,22 @@ void lunar_trigger :: set_map (lunar_map * map) {
 void lunar_trigger :: keyon (int key) {
 	if (key < 0) key = 0;
 	if (key > 127) key = 127;
-	this -> key = map == 0 ? (double) key * 128.0 : map -> map [key];
+	this -> key = map == 0 ? (double) (key - 64) * 128.0 : map -> map [key];
 	trigger = 1.0;
 }
-void lunar_trigger :: keyon (int key, int velocity) {this -> velocity = (double) velocity * 128.0; keyon (key);}
+void lunar_trigger :: keyon (int key, int velocity) {
+	if (velocity < 1) {keyoff (); return;}
+	this -> velocity = (double) velocity * 128.0;
+	keyon (key);
+}
 void lunar_trigger :: keyoff (void) {trigger = 0.0;}
+bool lunar_trigger :: release (void) {
+	lunar_map * to_delete = map;
+	bool ret = orbiter :: release ();
+	if (ret && to_delete != 0) to_delete -> release ();
+	return ret;
+}
 lunar_trigger :: lunar_trigger (orbiter_core * core) : orbiter (core) {key = trigger = 0.0; velocity = 12800.0; map = 0; initialise ();}
-lunar_trigger :: ~ lunar_trigger (void) {if (map != 0) map -> release ();}
 
 int lunar_impulse :: numberOfInputs (void) {return 1;}
 char * lunar_impulse :: inputName (int ind) {if (ind == 0) return "ENTER"; else return orbiter :: inputName (ind);}

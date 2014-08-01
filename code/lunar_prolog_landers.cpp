@@ -36,7 +36,12 @@ orbiter * parameter_block_class :: create_orbiter (PrologElement * parameters) {
 }
 parameter_block_class :: parameter_block_class (orbiter_core * core) : PrologNativeOrbiterCreator (core) {}
 
-class key_map_native_orbiter : public PrologNativeOrbiter {
+static char * key_orbiter_action_code = "Lunar Map Action";
+char * PrologNativeKeyOrbiter :: name (void) {return key_orbiter_action_code;}
+bool PrologNativeKeyOrbiter :: isTypeOf (char * code_name) {return key_orbiter_action_code == code_name ? true : PrologNativeOrbiter :: isTypeOf (code_name);}
+PrologNativeKeyOrbiter :: PrologNativeKeyOrbiter (PrologAtom * atom, orbiter_core * core, orbiter * module) : PrologNativeOrbiter (atom, core, module) {}
+
+class key_map_native_orbiter : public PrologNativeKeyOrbiter {
 public:
 	virtual bool code (PrologElement * parameters, PrologResolution * resolution) {
 		if (parameters -> isEarth ()) return onEarth ();
@@ -50,9 +55,35 @@ public:
 			}
 			return true;
 		}
-		return true;
+		int double_count = 0;
+		PrologElement * doubles [128];
+		PrologElement * ret = 0;
+		while (parameters -> isPair ()) {
+			PrologElement * el = parameters -> getLeft ();
+			if (el -> isNumber ()) if (double_count < 128) doubles [double_count++] = el;
+			if (el -> isVar ()) ret = el;
+			parameters = parameters -> getRight ();
+		}
+		if (parameters -> isVar ()) ret = parameters;
+		if (ret != 0) {
+			if (double_count < 1) return false;
+			if (! doubles [0] -> isInteger ()) return false;
+			int index = doubles [0] -> getInteger ();
+			if (index < 0 || index > 127) return false;
+			ret -> setDouble (map -> map [index]);
+			return true;
+		}
+		if (double_count == 2) {
+			if (! doubles [0] -> isInteger ()) return false;
+			int index = doubles [0] -> getInteger ();
+			if (index < 0 || index > 127) return false;
+			map -> map [index] = doubles [1] -> getNumber ();
+			return true;
+		}
+		if (double_count == 128) {for (int ind = 0; ind < 128; ind++) map -> map [ind] = doubles [ind] -> getNumber (); return true;}
+		return false;
 	}
-	key_map_native_orbiter (PrologAtom * atom, orbiter_core * core, orbiter * module) : PrologNativeOrbiter (atom, core, module) {}
+	key_map_native_orbiter (PrologAtom * atom, orbiter_core * core, orbiter * module) : PrologNativeKeyOrbiter (atom, core, module) {}
 };
 
 orbiter * key_map_class :: create_orbiter (PrologElement * parameters) {return new lunar_map (core);}
@@ -63,26 +94,47 @@ orbiter * impulse_class :: create_orbiter (PrologElement * parameters) {return n
 impulse_class :: impulse_class (orbiter_core * core) : PrologNativeOrbiterCreator (core) {}
 
 class trigger_native_orbiter : public PrologNativeOrbiter {
+private:
+	PrologAtom * keyon, * keyoff;
 public:
 	virtual bool code (PrologElement * parameters, PrologResolution * resolution) {
-		if (parameters -> isEarth ()) return onEarth ();
+		PrologElement * atom = 0;
 		PrologElement * key = 0;
 		PrologElement * velocity = 0;
-		while (parameters -> isPair ()) {
-			PrologElement * el = parameters -> getLeft ();
+		PrologElement * pp = parameters;
+		while (pp -> isPair ()) {
+			PrologElement * el = pp -> getLeft ();
+			if (el -> isAtom ()) atom = el;
+			if (el -> isEarth ()) atom = el;
 			if (el -> isInteger ()) if (key == 0) key = el; else velocity = el;
-			parameters = parameters -> getRight ();
+			pp = pp -> getRight ();
 		}
 		lunar_trigger * trigger = (lunar_trigger *) module;
-		if (key == 0) {trigger -> keyoff (); return true;}
-		if (velocity == 0) {trigger -> keyon (key -> getInteger (), 100); return true;}
-		int v = velocity -> getInteger ();
-		if (v == 0) {trigger -> keyoff (); return true;}
-		trigger -> keyon (key -> getInteger (), v);
-		return true;
+		if (atom != 0) {
+			if (atom -> isEarth ()) {trigger -> set_map (0); return true;}
+			if (atom -> isAtom ()) {
+				PrologAtom * a = atom -> getAtom ();
+				if (a == keyon) {
+					if (key == 0) return false;
+					if (velocity == 0) trigger -> keyon (key -> getInteger ());
+					else trigger -> keyon (key -> getInteger (), velocity -> getInteger ());
+					return true;
+				}
+				if (a == keyoff) {trigger -> keyoff (); return true;}
+				PrologNativeCode * machine = a -> getMachine ();
+				if (machine == 0) return false;
+				if (machine -> isTypeOf (key_map_native_orbiter :: name ())) {trigger -> set_map ((lunar_map *) ((key_map_native_orbiter *) machine) -> module); return true;}
+			}
+		}
+		return PrologNativeOrbiter :: code (parameters, resolution);
 	}
-	trigger_native_orbiter (PrologAtom * atom, orbiter_core * core, orbiter * module) : PrologNativeOrbiter (atom, core, module) {}
+	trigger_native_orbiter (PrologDirectory * dir, PrologAtom * atom, orbiter_core * core, orbiter * module) : PrologNativeOrbiter (atom, core, module) {
+		keyon = keyoff = 0;
+		if (dir == 0) return;
+		keyon = dir -> searchAtom ("keyon");
+		keyoff = dir -> searchAtom ("keyoff");
+	}
 };
 orbiter * trigger_class :: create_orbiter (PrologElement * parameters) {return new lunar_trigger (core);}
-PrologNativeOrbiter * trigger_class :: create_native_orbiter (PrologAtom * atom, orbiter * module) {return new trigger_native_orbiter (atom, core, module);}
-trigger_class :: trigger_class (orbiter_core * core) : PrologNativeOrbiterCreator (core) {}
+PrologNativeOrbiter * trigger_class :: create_native_orbiter (PrologAtom * atom, orbiter * module) {return new trigger_native_orbiter (dir, atom, core, module);}
+trigger_class :: trigger_class (PrologDirectory * dir, orbiter_core * core) : PrologNativeOrbiterCreator (core) {this -> dir = dir;}

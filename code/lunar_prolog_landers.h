@@ -28,11 +28,19 @@
 #define _LUNAR_PROLOG_LANDERS_
 
 #include "prolog_lunar.h"
+#include "lunar_landers.h"
 
 class parameter_block_class : public PrologNativeOrbiterCreator {
 public:
 	virtual orbiter * create_orbiter (PrologElement * parameters);
 	parameter_block_class (orbiter_core * core);
+};
+
+class PrologNativeKeyOrbiter : public PrologNativeOrbiter {
+public:
+	static char * name (void);
+	virtual bool isTypeOf (char * code_name);
+	PrologNativeKeyOrbiter (PrologAtom * atom, orbiter_core * core, orbiter * module);
 };
 
 class key_map_class : public PrologNativeOrbiterCreator {
@@ -49,10 +57,12 @@ public:
 };
 
 class trigger_class : public PrologNativeOrbiterCreator {
+private:
+	PrologDirectory * dir;
 public:
 	virtual orbiter * create_orbiter (PrologElement * parameters);
 	virtual PrologNativeOrbiter * create_native_orbiter (PrologAtom * atom, orbiter * module);
-	trigger_class (orbiter_core * core);
+	trigger_class (PrologDirectory * dir, orbiter_core * core);
 };
 
 #endif

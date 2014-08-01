@@ -53,14 +53,15 @@ bool PrologNativeOrbiter :: code (PrologElement * parameters, PrologResolution *
 	}
 	if (parameters -> isVar ()) ret = parameters;
 	int destination_port = 0;
+	int source_port = 0;
 	if (port != 0) {
-		if (port -> isInteger ()) destination_port = port -> getInteger ();
-		if (port -> isText ()) destination_port = module -> inputIndex (port -> getText ());
+		if (port -> isInteger ()) source_port = destination_port = port -> getInteger ();
+		if (port -> isText ()) {destination_port = module -> inputIndex (port -> getText ()); source_port = module -> outputIndex (port -> getText ());}
 	}
 	if (atom != 0) {
 		PrologNativeCode * machine = atom -> getAtom () -> getMachine ();
 		if (! machine -> isTypeOf (PrologNativeOrbiter :: name ())) return false;
-		int source_port = 0;
+		source_port = 0;
 		if (value != 0) {
 			if (value -> isInteger ()) source_port = value -> getInteger ();
 			if (value -> isText ()) source_port = ((PrologNativeOrbiter *) machine) -> module -> outputIndex (value -> getText ());
@@ -68,18 +69,16 @@ bool PrologNativeOrbiter :: code (PrologElement * parameters, PrologResolution *
 		if (disconnector == 0) return module -> connect (destination_port, ((PrologNativeOrbiter *) machine) -> module, source_port);
 		return module -> disconnect (destination_port, ((PrologNativeOrbiter *) machine) -> module, source_port);
 	}
-	if (ret != 0) {double * adres = module -> outputAddress (destination_port); if (adres == 0) return false; ret -> setDouble (* adres); return true;}
+	if (ret != 0) {double * adres = module -> outputAddress (source_port); if (adres == 0) return false; ret -> setDouble (* adres); return true;}
 	if (value != 0) {
 		double * adres = module -> inputAddress (destination_port);
 		if (adres == 0) return false;
-		if (value -> isDouble ()) {* adres = value -> getDouble (); return true;}
-		if (value -> isInteger ()) {* adres = (double) value -> getInteger (); return true;}
+		if (value -> isNumber ()) {* adres = value -> getNumber (); return true;}
 	}
 	if (port != 0) {
 		double * adres = module -> inputAddress (0);
 		if (adres == 0) return false;
-		if (port -> isDouble ()) {* adres = port -> getDouble (); return true;}
-		if (port -> isInteger ()) {* adres = (double) port -> getInteger (); return true;}
+		if (port -> isNumber ()) {* adres = port -> getNumber (); return true;}
 	}
 	return false;
 }
@@ -178,7 +177,7 @@ PrologNativeCode * PrologLunarServiceClass :: getNativeCode (char * name) {
 	if (strcmp (name, "parameter_block") == 0) return new parameter_block_class (& core);
 	if (strcmp (name, "key_map") == 0) return new key_map_class (& core);
 	if (strcmp (name, "impulse") == 0) return new impulse_class (& core);
-	if (strcmp (name, "trigger") == 0) return new trigger_class (& core);
+	if (strcmp (name, "trigger") == 0) return new trigger_class (directory, & core);
 	return 0;
 }
 

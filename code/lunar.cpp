@@ -112,20 +112,21 @@ void orbiter :: hold (void) {
 	references++;
 	pthread_mutex_unlock (& core -> main_mutex);
 }
-void orbiter :: release (void) {
+bool orbiter :: release (void) {
 	pthread_mutex_t * mt = & core -> main_mutex;
 	pthread_mutex_lock (mt);
-	if (-- references > 0) {pthread_mutex_unlock (mt); return;}
+	if (-- references > 0) {pthread_mutex_unlock (mt); return false;}
 	dock_pointer * connectors_to_delete = connectors;
 	int number_to_delete = number_of_connections;
 	delete this;
 	pthread_mutex_unlock (mt);
-	if (connectors_to_delete == 0) return;
+	if (connectors_to_delete == 0) return true;
 	for (int ind = 0; ind < number_to_delete; ind++) {
 		if (connectors_to_delete [ind] != 0)
 			delete connectors_to_delete [ind];
 	}
 	delete [] connectors_to_delete;
+	return true;
 }
 bool orbiter :: connect (int destination_port, orbiter * source, int source_port) {
 	if (destination_port < 0) return false;

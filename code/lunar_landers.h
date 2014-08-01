@@ -69,8 +69,8 @@ public:
 	void keyon (int key);
 	void keyon (int key, int velocity);
 	void keyoff (void);
+	virtual bool release (void);
 	lunar_trigger (orbiter_core * core);
-	~ lunar_trigger (void);
 };
 
 class lunar_impulse : public orbiter {

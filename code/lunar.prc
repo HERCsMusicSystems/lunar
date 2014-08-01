@@ -8,6 +8,7 @@ program lunar #machine := "prolog.lunar"
 				small_keyboard keyboard big_keyboard oscilloscope
 				dock undock
 				moonbase operator parameter_block key_map impulse trigger
+				keyon keyoff
 			]
 
 #machine small_keyboard := "small_keyboard"

@@ -36,13 +36,36 @@ orbiter * parameter_block_class :: create_orbiter (PrologElement * parameters) {
 }
 parameter_block_class :: parameter_block_class (orbiter_core * core) : PrologNativeOrbiterCreator (core) {}
 
+class key_map_native_orbiter : public PrologNativeOrbiter {
+public:
+	virtual bool code (PrologElement * parameters, PrologResolution * resolution) {
+		if (parameters -> isEarth ()) return onEarth ();
+		lunar_map * map = (lunar_map *) module;
+		if (parameters -> isVar ()) {
+			int ind = 0;
+			while (ind < 128) {
+				parameters -> setPair ();
+				parameters -> getLeft () -> setDouble (map -> map [ind++]);
+				parameters = parameters -> getRight ();
+			}
+			return true;
+		}
+		return true;
+	}
+	key_map_native_orbiter (PrologAtom * atom, orbiter_core * core, orbiter * module) : PrologNativeOrbiter (atom, core, module) {}
+};
+
+orbiter * key_map_class :: create_orbiter (PrologElement * parameters) {return new lunar_map (core);}
+PrologNativeOrbiter * key_map_class :: create_native_orbiter (PrologAtom * atom, orbiter * module) {return new key_map_native_orbiter (atom, core, module);}
+key_map_class :: key_map_class (orbiter_core * core) : PrologNativeOrbiterCreator (core) {}
+
 orbiter * impulse_class :: create_orbiter (PrologElement * parameters) {return new lunar_impulse (core);}
 impulse_class :: impulse_class (orbiter_core * core) : PrologNativeOrbiterCreator (core) {}
 
 class trigger_native_orbiter : public PrologNativeOrbiter {
 public:
 	virtual bool code (PrologElement * parameters, PrologResolution * resolution) {
-		if (parameters -> isEarth ()) {if (atom != 0) atom -> setMachine (0); delete this; return true;}
+		if (parameters -> isEarth ()) return onEarth ();
 		PrologElement * key = 0;
 		PrologElement * velocity = 0;
 		while (parameters -> isPair ()) {
@@ -58,8 +81,8 @@ public:
 		trigger -> keyon (key -> getInteger (), v);
 		return true;
 	}
-	trigger_native_orbiter (PrologAtom * atom, orbiter * module) : PrologNativeOrbiter (atom, core, module) {}
+	trigger_native_orbiter (PrologAtom * atom, orbiter_core * core, orbiter * module) : PrologNativeOrbiter (atom, core, module) {}
 };
 orbiter * trigger_class :: create_orbiter (PrologElement * parameters) {return new lunar_trigger (core);}
-PrologNativeOrbiter * trigger_class :: create_native_orbiter (PrologAtom * atom, orbiter * module) {return new trigger_native_orbiter (atom, module);}
+PrologNativeOrbiter * trigger_class :: create_native_orbiter (PrologAtom * atom, orbiter * module) {return new trigger_native_orbiter (atom, core, module);}
 trigger_class :: trigger_class (orbiter_core * core) : PrologNativeOrbiterCreator (core) {}

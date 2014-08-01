@@ -33,9 +33,9 @@ static char * orbiter_action_code = "Orbiter Action Code";
 char * PrologNativeOrbiter :: name (void) {return orbiter_action_code;}
 char * PrologNativeOrbiter :: codeName (void) {return orbiter_action_code;}
 bool PrologNativeOrbiter :: isTypeOf (char * code_name) {return orbiter_action_code == code_name ? true : PrologNativeCode :: isTypeOf (code_name);}
-
+bool PrologNativeOrbiter :: onEarth (void) {if (atom != 0) atom -> setMachine (0); delete this; return true;}
 bool PrologNativeOrbiter :: code (PrologElement * parameters, PrologResolution * resolution) {
-	if (parameters -> isEarth ()) {if (atom != 0) atom -> setMachine (0); delete this; return true;}
+	if (parameters -> isEarth ()) return onEarth ();
 	PrologElement * atom = 0;
 	PrologElement * port = 0;
 	PrologElement * value = 0;
@@ -161,9 +161,6 @@ class undock_class : public PrologNativeCode {
 public:
 };
 
-class key_map_class : public PrologNativeCode {
-};
-
 void PrologLunarServiceClass :: init (PrologRoot * root, PrologDirectory * directory) {
 	this -> root = root;
 	this -> directory = directory;
@@ -179,7 +176,7 @@ PrologNativeCode * PrologLunarServiceClass :: getNativeCode (char * name) {
 	if (strcmp (name, "moonbase") == 0) return new moonbase_class (& core);
 	if (strcmp (name, "operator") == 0) return new operator_class (& core);
 	if (strcmp (name, "parameter_block") == 0) return new parameter_block_class (& core);
-	if (strcmp (name, "key_map") == 0) return new key_map_class ();
+	if (strcmp (name, "key_map") == 0) return new key_map_class (& core);
 	if (strcmp (name, "impulse") == 0) return new impulse_class (& core);
 	if (strcmp (name, "trigger") == 0) return new trigger_class (& core);
 	return 0;

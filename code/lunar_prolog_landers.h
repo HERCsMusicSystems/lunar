@@ -35,6 +35,13 @@ public:
 	parameter_block_class (orbiter_core * core);
 };
 
+class key_map_class : public PrologNativeOrbiterCreator {
+public:
+	virtual orbiter * create_orbiter (PrologElement * parameters);
+	virtual PrologNativeOrbiter * create_native_orbiter (PrologAtom * atom, orbiter * module);
+	key_map_class (orbiter_core * core);
+};
+
 class impulse_class : public PrologNativeOrbiterCreator {
 public:
 	virtual orbiter * create_orbiter (PrologElement * parameters);

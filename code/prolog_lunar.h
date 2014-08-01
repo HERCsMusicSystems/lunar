@@ -41,6 +41,7 @@ public:
 	virtual char * codeName (void);
 	virtual bool isTypeOf (char * code_name);
 	virtual bool code (PrologElement * parameters, PrologResolution * resolution);
+	bool onEarth (void);
 	PrologNativeOrbiter (PrologAtom * atom, orbiter_core * core, orbiter * module);
 	~ PrologNativeOrbiter (void);
 };

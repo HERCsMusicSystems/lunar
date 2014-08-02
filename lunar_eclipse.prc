@@ -4,11 +4,12 @@
 import studio
 import lunar
 
-program lunar_eclipse [base op1 op2 radar tg map]
+program lunar_eclipse [base op1 op2 radar tg map manual]
 
 ;end := [[command]] .
 end := [
 			[auto_atoms]
+			[keyboard manual tg]
 			[moonbase base 330 22050 1024]
 			[trigger tg]
 			[key_map map]
@@ -23,5 +24,7 @@ end := [
 				[op2 "SYNC" tg "TRIGGER"]
 				[op1 "SYNC" tg "TRIGGER"]
 				[base op1]
+				[op1 "FREQ" tg "KEY"]
+				[op2 "FREQ" tg "KEY"]
 			[command]
 		] .

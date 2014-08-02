@@ -60,8 +60,9 @@ class keyboard_class : public PrologNativeCode {
 public:
 	int size;
 	PrologRoot * root;
+	PrologDirectory * directory;
 	bool code (PrologElement * parameters, PrologResolution * resolution);
-	keyboard_class (PrologRoot * root, int size);
+	keyboard_class (PrologRoot * root, PrologDirectory * directory, int size);
 };
 
 class oscilloscope_class : public PrologNativeOrbiterCreator {

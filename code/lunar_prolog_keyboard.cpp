@@ -29,6 +29,7 @@ static gboolean RemoveViewportIdleCode (GtkWidget * viewport) {gtk_widget_destro
 class keyboard_action : public PrologNativeCode {
 public:
 	PrologRoot * root;
+	PrologAtom * keyon;
 	PrologAtom * atom;
 	PrologAtom * command;
 	GtkWidget * viewport;
@@ -39,9 +40,10 @@ public:
 	void action (int velocity, int x, int y) {
 		int key = kb . get (x, y);
 		PrologElement * query = root -> pair (root -> atom (command),
+								root -> pair (root -> atom (keyon),
 								root -> pair (root -> integer (key),
 								root -> pair (root -> integer (velocity),
-								root -> earth ())));
+								root -> earth ()))));
 		query = root -> pair (root -> head (0), root -> pair (query, root -> earth ()));
 		root -> resolution (query);
 		delete query;
@@ -55,8 +57,9 @@ public:
 		if (parameters -> isEarth ()) return remove ();
 		return true;
 	}
-	keyboard_action (PrologRoot * root, PrologAtom * atom, PrologAtom * command, int size) : kb (0, 0) {
+	keyboard_action (PrologRoot * root, PrologDirectory * directory, PrologAtom * atom, PrologAtom * command, int size) : kb (0, 0) {
 		this -> root = root;
+		keyon = directory == 0 ? 0 : directory -> searchAtom ("keyon");
 		this -> atom = atom; COLLECTOR_REFERENCE_INC (atom);
 		this -> command = command; COLLECTOR_REFERENCE_INC (command);
 		viewport = 0;
@@ -145,11 +148,15 @@ bool keyboard_class :: code (PrologElement * parameters, PrologResolution * reso
 	if (atom -> isVar ()) atom -> setAtom (new PrologAtom ());
 	if (! atom -> isAtom ()) return false;
 	if (atom -> getAtom () -> getMachine () != 0) return false;
-	keyboard_action * machine = new keyboard_action (root, atom -> getAtom (), command -> getAtom (), size);
+	keyboard_action * machine = new keyboard_action (root, directory, atom -> getAtom (), command -> getAtom (), size);
 	if (! atom -> getAtom () -> setMachine (machine)) {delete machine; return false;}
 	g_idle_add ((GSourceFunc) CreateKeyboardIdleCode, machine);
 	return true;
 }
 
-keyboard_class :: keyboard_class (PrologRoot * root, int size) {this -> root = root; this -> size = size;}
+keyboard_class :: keyboard_class (PrologRoot * root, PrologDirectory * directory, int size) {
+	this -> root = root;
+	this -> directory = directory;
+	this -> size = size;
+}
 

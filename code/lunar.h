@@ -46,13 +46,14 @@ public:
 	double * time_delta;
 	double amplitudes [16384];
 	double * amplitude;
-	double sine_wave [16384];
+	double sine_wave [16385];
 	pthread_mutex_t main_mutex;
 	pthread_mutex_t maintenance_mutex;
 	orbiter * root;
 	double TimeDelta (double ind);
 	double Amplitude (double ind);
 	double Sine (double angle); // 0 .... 1.0 per cycle
+	double SineApproximated (double angle);
 	void recalculate (void);
 	void move_modules (void);
 	void propagate_signals (void);

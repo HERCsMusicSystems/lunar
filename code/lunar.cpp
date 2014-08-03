@@ -39,6 +39,8 @@ orbiter_core :: orbiter_core (void) {
 	this -> latency_block_size = 128;
 	time_delta = time_deltas + 16384;
 	amplitude = amplitudes + 16383;
+	for (int ind = 0; ind > -16384; ind--) * (amplitude + ind) = pow (2.0, (double) ind / 1536.0); * amplitudes = 0.0;
+	for (int ind = 0; ind <= 16384; ind++) sine_wave [ind] = sin ((double) ind * M_PI * 2.0 / 16384.0);
 	recalculate ();
 	pthread_mutex_init (& main_mutex, 0);
 	pthread_mutex_init (& maintenance_mutex, 0);
@@ -84,14 +86,19 @@ double orbiter_core :: Sine (double index) {
 	return sine_wave [ind];
 }
 
+double orbiter_core :: SineApproximated (double index) {
+	int ind = (int) (index * 16384.0);
+	double sub = index - (double) ind;
+	while (ind < 0) ind += 16384;
+	while (ind > 16384) ind -= 16384;
+	return sine_wave [ind] * (1.0 - sub) + sine_wave [ind + 1] * sub;
+}
+
 void orbiter_core :: recalculate (void) {
 	gate_gap = sampling_frequency / 2048.0;
 	gate_delay = 48000.0 / sampling_frequency;
 	double delay = sampling_frequency > 0.0 ? centre_frequency  / sampling_frequency : centre_frequency;
 	for (int ind = 0; ind < 32768; ind++) time_deltas [ind] = delay * pow (2.0, ((double) (ind - 16384) / 1536.0));
-	for (int ind = 0; ind > -16384; ind--) * (amplitude + ind) = pow (2.0, (double) ind / 1536.0);
-	for (int ind = 0; ind < 16384; ind++) sine_wave [ind] = sin ((double) ind * M_PI * 2.0 / 16384.0);
-	* amplitudes = 0.0;
 }
 
 void orbiter_core :: activate (orbiter * module) {}

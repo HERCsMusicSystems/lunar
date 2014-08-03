@@ -46,6 +46,12 @@ char * lunar_inactive_parameter_block :: inputName (int ind) {return orbiter :: 
 double * lunar_inactive_parameter_block :: inputAddress (int ind) {return orbiter :: outputAddress (ind);}
 lunar_inactive_parameter_block :: lunar_inactive_parameter_block (orbiter_core * core) : orbiter (core) {initialise ();}
 
+int lunar_mixer :: numberOfInputs (void) {return 1;}
+char * lunar_mixer :: inputName (int ind) {if (ind == 0) return "ENTER"; else return orbiter :: inputName (ind);}
+double * lunar_mixer :: inputAddress (int ind) {return ind == 0 ? & enter : orbiter :: inputAddress (ind);}
+void lunar_mixer :: move (void) {signal = enter;}
+lunar_mixer :: lunar_mixer (orbiter_core * core) : orbiter (core) {enter = 0.0;}
+
 int lunar_map :: numberOfOutputs (void) {return 0;}
 lunar_map :: lunar_map (orbiter_core * core) : orbiter (core) {
 	for (int ind = 0; ind < 128; ind++) map [ind] = (double) (ind - 64) * 128.0;
@@ -102,3 +108,4 @@ char * lunar_impulse :: inputName (int ind) {if (ind == 0) return "ENTER"; else 
 double * lunar_impulse :: inputAddress (int ind) {return ind == 0 ? & enter : orbiter :: inputAddress (ind);}
 void lunar_impulse :: move (void) {signal = enter > 0.0 && sync == 0.0 ? 1.0 : 0.0; sync = enter;}
 lunar_impulse :: lunar_impulse (orbiter_core * core) : orbiter (core) {enter = sync = 0.0; initialise (); activate ();}
+

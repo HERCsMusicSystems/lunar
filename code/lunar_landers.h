@@ -49,6 +49,17 @@ public:
 	lunar_active_parameter_block (orbiter_core * core, double maximum_change);
 };
 
+class lunar_mixer : public orbiter {
+private:
+	double enter;
+public:
+	virtual int numberOfInputs (void);
+	virtual char * inputName (int ind);
+	virtual double * inputAddress (int ind);
+	virtual void move (void);
+	lunar_mixer (orbiter_core * core);
+};
+
 class lunar_map : public orbiter {
 public:
 	double map [128];

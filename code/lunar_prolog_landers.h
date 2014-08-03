@@ -65,4 +65,11 @@ public:
 	trigger_class (PrologDirectory * dir, orbiter_core * core);
 };
 
+class mixer_class : public PrologNativeOrbiterCreator {
+public:
+	virtual orbiter * create_orbiter (PrologElement * parameters);
+	mixer_class (orbiter_core * core);
+};
+
 #endif
+

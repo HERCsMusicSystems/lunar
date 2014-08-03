@@ -31,14 +31,13 @@ char * lunar_active_parameter_block :: inputName (int ind) {if (ind == 0) return
 double * lunar_active_parameter_block :: inputAddress (int ind) {return ind == 0 ? & enter : 0;}
 lunar_active_parameter_block :: lunar_active_parameter_block (orbiter_core * core, double maximum_change) : orbiter (core) {
 	if (maximum_change < 0.0) maximum_change = 0.0;
-	this -> maximum_change = maximum_change * 48000.0 / core -> sampling_frequency;
 	initialise (); activate ();
 }
 void lunar_active_parameter_block :: move (void) {
 	if (maximum_change == 0.0) {signal = enter; return;}
 	if (enter == signal) return;
-	if (enter > signal) {signal += maximum_change; if (signal > enter) signal = enter;}
-	signal -= maximum_change;
+	if (enter > signal) {signal += maximum_change * core -> gate_delay; if (signal > enter) signal = enter;}
+	signal -= maximum_change * core -> gate_delay;
 	if (signal < enter) signal = enter;
 }
 

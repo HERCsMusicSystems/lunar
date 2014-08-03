@@ -40,6 +40,8 @@ public:
 	double centre_frequency;
 	double sampling_frequency;
 	int latency_block_size;
+	double gate_gap;
+	double gate_delay;
 	double time_deltas [32768];
 	double * time_delta;
 	double amplitudes [16384];

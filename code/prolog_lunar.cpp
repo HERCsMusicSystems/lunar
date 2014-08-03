@@ -179,6 +179,7 @@ PrologNativeCode * PrologLunarServiceClass :: getNativeCode (char * name) {
 	if (strcmp (name, "impulse") == 0) return new impulse_class (& core);
 	if (strcmp (name, "trigger") == 0) return new trigger_class (directory, & core);
 	if (strcmp (name, "mixer") == 0) return new mixer_class (& core);
+	if (strcmp (name, "lfo") == 0) return new lfo_class (& core);
 	return 0;
 }
 

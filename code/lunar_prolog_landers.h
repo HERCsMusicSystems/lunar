@@ -71,5 +71,11 @@ public:
 	mixer_class (orbiter_core * core);
 };
 
+class lfo_class : public PrologNativeOrbiterCreator {
+public:
+	virtual orbiter * create_orbiter (PrologElement * parameters);
+	lfo_class (orbiter_core * core);
+};
+
 #endif
 

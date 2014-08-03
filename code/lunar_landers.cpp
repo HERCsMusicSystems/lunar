@@ -109,3 +109,33 @@ double * lunar_impulse :: inputAddress (int ind) {return ind == 0 ? & enter : or
 void lunar_impulse :: move (void) {signal = enter > 0.0 && sync == 0.0 ? 1.0 : 0.0; sync = enter;}
 lunar_impulse :: lunar_impulse (orbiter_core * core) : orbiter (core) {enter = sync = 0.0; initialise (); activate ();}
 
+int lunar_lfo :: numberOfInputs (void) {return 5;}
+char * lunar_lfo :: inputName (int ind) {
+	switch (ind) {
+	case 0: return "SPEED"; break;
+	case 1: return "WAVE"; break;
+	case 2: return "PULSE"; break;
+	case 3: return "PHASE"; break;
+	case 4: return "SYNC"; break;
+	default: break;
+	}
+	return orbiter :: inputName (ind);
+}
+double * lunar_lfo :: inputAddress (int ind) {
+	switch (ind) {
+	case 0: return & speed; break;
+	case 1: return & wave; break;
+	case 2: return & pulse; break;
+	case 3: return & phase; break;
+	case 4: return & sync; break;
+	default: break;
+	}
+	return orbiter :: inputAddress (ind);
+}
+int lunar_lfo :: numberOfOutputs (void) {return 2;}
+char * lunar_lfo :: outputName (int ind) {if (ind == 1) return "POSITIVE"; else return orbiter :: outputName (ind);}
+double * lunar_lfo :: outputAddress (int ind) {return ind == 1 ? & positive : orbiter :: outputAddress (ind);}
+void lunar_lfo :: move (void) {
+}
+lunar_lfo :: lunar_lfo (orbiter_core * core) : orbiter (core) {speed = wave = pulse = phase = sync = positive = 0.0; initialise (); activate ();}
+

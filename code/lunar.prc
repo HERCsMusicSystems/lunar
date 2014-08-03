@@ -7,7 +7,7 @@ program lunar #machine := "prolog.lunar"
 			[
 				small_keyboard keyboard big_keyboard oscilloscope
 				dock undock
-				moonbase operator parameter_block key_map impulse trigger mixer
+				moonbase operator parameter_block key_map impulse trigger mixer lfo
 				keyon keyoff
 			]
 
@@ -22,6 +22,7 @@ program lunar #machine := "prolog.lunar"
 #machine impulse := "impulse"
 #machine trigger := "trigger"
 #machine mixer := "mixer"
+#machine lfo := "lfo"
 
 #machine moonbase := "moonbase"
 #machine operator := "operator"

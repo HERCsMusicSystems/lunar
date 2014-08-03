@@ -95,4 +95,20 @@ public:
 	lunar_impulse (orbiter_core * core);
 };
 
+class lunar_lfo : public orbiter {
+private:
+	double speed, wave, pulse, phase, sync;
+	double positive;
+public:
+	virtual int numberOfInputs (void);
+	virtual char * inputName (int ind);
+	virtual double * inputAddress (int ind);
+	virtual int numberOfOutputs (void);
+	virtual char * outputName (int ind);
+	virtual double * outputAddress (int ind);
+	virtual void move (void);
+	lunar_lfo (orbiter_core * core);
+};
+
 #endif
+

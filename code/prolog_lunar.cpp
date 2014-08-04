@@ -36,6 +36,14 @@ bool PrologNativeOrbiter :: isTypeOf (char * code_name) {return orbiter_action_c
 bool PrologNativeOrbiter :: onEarth (void) {if (atom != 0) atom -> setMachine (0); delete this; return true;}
 bool PrologNativeOrbiter :: code (PrologElement * parameters, PrologResolution * resolution) {
 	if (parameters -> isEarth ()) return onEarth ();
+	if (parameters -> isVar ()) {
+		parameters -> setPair ();
+		PrologElement * inputs = parameters -> getLeft ();
+		PrologElement * outputs = parameters -> getRight (); outputs -> setPair (); outputs = outputs -> getLeft ();
+		for (int ind = 0; ind < module -> numberOfInputs (); ind++) {inputs -> setPair (); inputs -> getLeft () -> setText (module -> inputName (ind)); inputs = inputs -> getRight ();}
+		for (int ind = 0; ind < module -> numberOfOutputs (); ind++) {outputs -> setPair (); outputs -> getLeft () -> setText (module -> outputName (ind)); outputs = outputs -> getRight ();}
+		return true;
+	}
 	PrologElement * atom = 0;
 	PrologElement * port = 0;
 	PrologElement * value = 0;

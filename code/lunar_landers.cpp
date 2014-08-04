@@ -52,6 +52,14 @@ double * lunar_mixer :: inputAddress (int ind) {return ind == 0 ? & enter : orbi
 void lunar_mixer :: move (void) {signal = enter;}
 lunar_mixer :: lunar_mixer (orbiter_core * core) : orbiter (core) {enter = 0.0;}
 
+int lunar_gateway :: numberOfInputs (void) {return 2;}
+char * lunar_gateway :: inputName (int ind) {if (ind == 0) return "ENTER"; if (ind == 1) return "GATEWAY"; return orbiter :: inputName (ind);}
+double * lunar_gateway :: inputAddress (int ind) {if (ind == 0) return & enter; if (ind == 1) return & gateway; return orbiter :: inputAddress (ind);}
+void lunar_gateway :: move (void) {
+	signal = enter * gateway;
+}
+lunar_gateway :: lunar_gateway (orbiter_core * core) : orbiter (core) {enter = 0.0; gateway = 1.0; initialise (); activate ();}
+
 int lunar_map :: numberOfOutputs (void) {return 0;}
 lunar_map :: lunar_map (orbiter_core * core) : orbiter (core) {
 	for (int ind = 0; ind < 128; ind++) map [ind] = (double) (ind - 64) * 128.0;
@@ -136,6 +144,29 @@ int lunar_lfo :: numberOfOutputs (void) {return 2;}
 char * lunar_lfo :: outputName (int ind) {if (ind == 1) return "POSITIVE"; else return orbiter :: outputName (ind);}
 double * lunar_lfo :: outputAddress (int ind) {return ind == 1 ? & positive : orbiter :: outputAddress (ind);}
 void lunar_lfo :: move (void) {
+	double t = 0.5 + pulse * 0.0001220703125;
+	switch ((int) wave) {
+	case 0: // sine
+		signal = positive = 0.0;
+		break;
+	case 1: // triangle
+		if (t == 0) positive = 1.0 - time;
+		else if (t == 1.0) positive = time;
+		else if (time < t) positive = time / t;
+		else positive = (1.0 - time) / (1.0 - t);
+		signal = positive * 2.0 - 1.0;
+		break;
+	case 2: // square
+		if (time < t) signal = positive = 1.0;
+		else {signal = -1.0; positive = 0.0;}
+		break;
+	case 3: // random
+		break;
+	case 4: // S/H
+		break;
+	}
+	time += core -> ControlTimeDelta (speed);
+	if (time >= 1.0) time -= 1.0;
 }
-lunar_lfo :: lunar_lfo (orbiter_core * core) : orbiter (core) {speed = wave = pulse = phase = sync = positive = 0.0; initialise (); activate ();}
+lunar_lfo :: lunar_lfo (orbiter_core * core) : orbiter (core) {time = speed = wave = pulse = phase = sync = positive = 0.0; initialise (); activate ();}
 

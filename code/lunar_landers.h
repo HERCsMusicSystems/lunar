@@ -60,6 +60,18 @@ public:
 	lunar_mixer (orbiter_core * core);
 };
 
+class lunar_gateway : public orbiter {
+private:
+	double enter;
+	double gateway;
+public:
+	virtual int numberOfInputs (void);
+	virtual char * inputName (int ind);
+	virtual double * inputAddress (int ind);
+	virtual void move (void);
+	lunar_gateway (orbiter_core * core);
+};
+
 class lunar_map : public orbiter {
 public:
 	double map [128];
@@ -97,6 +109,7 @@ public:
 
 class lunar_lfo : public orbiter {
 private:
+	double time;
 	double speed, wave, pulse, phase, sync;
 	double positive;
 public:

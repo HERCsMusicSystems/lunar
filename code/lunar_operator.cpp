@@ -56,7 +56,7 @@ void lunar_operator :: move (void) {
 	if (slope != sync) if (sync > 0.0) time = 0.0; slope = sync;
 	this -> signal = core -> Amplitude (amp) * core -> Sine (time + shift);
 	time += core -> TimeDelta (freq);
-	if (time > 1.0) time -= 1.0;
+	if (time >= 1.0) time -= 1.0;
 }
 
 lunar_operator :: lunar_operator (orbiter_core * core) : orbiter (core) {

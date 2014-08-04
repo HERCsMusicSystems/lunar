@@ -73,11 +73,11 @@ public:
 	oscilloscope_class (orbiter_core * core);
 };
 
-class moonbase_class : public PrologNativeCode {
+class core_class : public PrologNativeCode {
 public:
 	orbiter_core * core;
 	bool code (PrologElement * parameters, PrologResolution * resolution);
-	moonbase_class (orbiter_core * core);
+	core_class (orbiter_core * core);
 };
 
 class operator_class : public PrologNativeOrbiterCreator {

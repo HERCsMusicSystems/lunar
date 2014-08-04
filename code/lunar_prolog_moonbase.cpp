@@ -28,16 +28,16 @@
 #include "prolog_lunar.h"
 #include "multiplatform_audio.h"
 
-static int moonbases = 0;
+static int cores = 0;
 
 extern void alpha_callback (int frames, AudioBuffers * data, void * source);
 
-class moonbase_action : public PrologNativeOrbiter {
+class core_action : public PrologNativeOrbiter {
 public:
 	MultiplatformAudio * audio;
-	moonbase_action (PrologAtom * atom, orbiter_core * core) : PrologNativeOrbiter (atom, core, new moonbase (core)) {
+	core_action (PrologAtom * atom, orbiter_core * core) : PrologNativeOrbiter (atom, core, new moonbase (core)) {
 		printf ("..... creating moonbase\n");
-		moonbases++;
+		cores++;
 		audio = new MultiplatformAudio (2, (int) core -> sampling_frequency, core -> latency_block_size);
 		int outputs = audio -> getNumberOfOutputDevices ();
 		printf ("Number of outputs = %i\n", outputs);
@@ -46,16 +46,16 @@ public:
 		audio -> selectOutputDevice (0);
 		printf ("Moonbase prolog created.\n");
 	}
-	~ moonbase_action (void) {
+	~ core_action (void) {
 		printf (".... deleting moonbase\n");
 		delete audio;
-		moonbases--;
+		cores--;
 		printf ("Moonbase prolog destroyed.\n");
 	}
 };
 
 void alpha_callback (int frames, AudioBuffers * data, void * source) {
-	moonbase_action * base = (moonbase_action *) source;
+	core_action * base = (core_action *) source;
 	orbiter_core * core = base -> core;
 	double * moon = base -> module -> outputAddress (0);
 	pthread_mutex_lock (& core -> maintenance_mutex);
@@ -69,8 +69,8 @@ void alpha_callback (int frames, AudioBuffers * data, void * source) {
 	pthread_mutex_unlock (& core -> maintenance_mutex);
 }
 
-bool moonbase_class :: code (PrologElement * parameters, PrologResolution * resolution) {
-	if (moonbases > 0) return false;
+bool core_class :: code (PrologElement * parameters, PrologResolution * resolution) {
+	if (cores > 0) return false;
 	PrologElement * atom = 0;
 	double centre_frequency = -1;
 	int sampling_frequency = -1;
@@ -98,11 +98,11 @@ bool moonbase_class :: code (PrologElement * parameters, PrologResolution * reso
 	core -> sampling_frequency = (double) sampling_frequency;
 	core -> latency_block_size = latency_block_size;
 	core -> recalculate ();
-	moonbase_action * machine = new moonbase_action (atom -> getAtom (), core);
+	core_action * machine = new core_action (atom -> getAtom (), core);
 	if (atom -> getAtom () -> setMachine (machine)) return true;
 	delete machine;
 	return false;
 }
 
-moonbase_class :: moonbase_class (orbiter_core * core) {this -> core = core;}
+core_class :: core_class (orbiter_core * core) {this -> core = core;}
 

@@ -122,6 +122,9 @@ int orbiter :: numberOfInputs (void) {return 0;}
 int orbiter :: numberOfOutputs (void) {return 1;}
 char * orbiter :: inputName (int ind) {return "VOID";}
 char * orbiter :: outputName (int ind) {return "SIGNAL";}
+#ifdef WIN32
+#define strcasecmp _strcmpi
+#endif
 int orbiter :: inputIndex (char * name) {for (int ind = 0; ind < numberOfInputs (); ind++) {if (strcasecmp (name, inputName (ind)) == 0) return ind;} return -1;}
 int orbiter :: outputIndex (char * name) {for (int ind = 0; ind < numberOfOutputs (); ind++) {if (strcasecmp (name, outputName (ind)) == 0) return ind;} return -1;}
 double orbiter :: output (int ind) {return 0.0;}

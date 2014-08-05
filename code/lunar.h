@@ -49,6 +49,7 @@ public:
 	double amplitudes [16384];
 	double * amplitude;
 	double sine_wave [16385];
+	int noise14b;
 	pthread_mutex_t main_mutex;
 	pthread_mutex_t maintenance_mutex;
 	orbiter * root;

@@ -35,6 +35,7 @@ int orbiter_count = 0;
 orbiter_core :: orbiter_core (void) {
 	pthread_mutex_init (& main_mutex, 0);
 	pthread_mutex_init (& maintenance_mutex, 0);
+	noise14b = 0;
 	root = 0;
 	this -> centre_frequency = 330.0;
 	this -> sampling_frequency = 48000.0;
@@ -64,6 +65,7 @@ void orbiter_core :: recalculate (void) {
 }
 
 void orbiter_core :: move_modules (void) {
+	noise14b = (noise14b * 0x5599d1 + 1) & 0x3fff;
 	if (root == 0) return;
 	root -> move ();
 	orbiter * orp = root -> next;

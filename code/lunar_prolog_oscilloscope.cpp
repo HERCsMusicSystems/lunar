@@ -30,32 +30,35 @@
 #include "gtk/gtk.h"
 
 static gboolean RemoveOscilloscopeIdleCode (GtkWidget * viewport) {gtk_widget_destroy (viewport); return FALSE;}
-static gboolean RepaintOscilloscopeIdleCode (GtkWidget * viewport) {gtk_widget_queue_draw (viewport); return FALSE;}
 
 class lunar_oscilloscope : public orbiter {
 public:
 	GtkWidget * viewport;
+	bool no_redraw;
 	double wave [256];
 	int frame_count;
 	virtual int numberOfInputs (void) {return numberOfOutputs ();}
 	virtual char * inputName (int ind) {return outputName (ind);}
 	virtual double * inputAddress (int ind) {return outputAddress (ind);}
-	virtual void move (void) {
-		if (viewport == 0) return;
-		if (frame_count < 0) {frame_count++; return;}
-		if (frame_count == 0 && signal < 0.0) return;
-		wave [frame_count++] = signal;
-		if (frame_count < 256) return;
-		frame_count = -2000;
-		g_idle_add ((GSourceFunc) RepaintOscilloscopeIdleCode, viewport);
-	}
+	virtual void move (void);
 	lunar_oscilloscope (orbiter_core * core) : orbiter (core) {
 		viewport = 0;
+		no_redraw = false;
 		frame_count = 0;
 		for (int ind = 0; ind < 256; ind++) wave [ind] = 0;
 		initialise (); activate ();
 	}
 };
+static gboolean RepaintOscilloscopeIdleCode (lunar_oscilloscope * osc) {if (osc -> no_redraw) return FALSE; gtk_widget_queue_draw (osc -> viewport); return FALSE;}
+void lunar_oscilloscope :: move (void) {
+	if (viewport == 0) return;
+	if (frame_count < 0) {frame_count++; return;}
+	if (frame_count == 0 && signal < 0.0) return;
+	wave [frame_count++] = signal;
+	if (frame_count < 256) return;
+	frame_count = -2000;
+	g_idle_add ((GSourceFunc) RepaintOscilloscopeIdleCode, this);
+}
 
 class oscilloscope_action : public PrologNativeOrbiter {
 public:
@@ -76,6 +79,7 @@ public:
 };
 
 static gboolean DeleteOscilloscopeEvent (GtkWidget * viewport, GdkEvent * event, oscilloscope_action * osc) {
+	((lunar_oscilloscope *) osc -> module) -> no_redraw = true;
 	gtk_widget_destroy (((lunar_oscilloscope *) osc -> module) -> viewport);
 	osc -> remove_by_gtk ();
 	return FALSE;

@@ -109,6 +109,10 @@ public:
 
 class lunar_lfo : public orbiter {
 private:
+	bool stage_one;
+	double origin;
+	double target;
+	double reversed_delta;
 	double time;
 	double speed, wave, pulse, phase, sync;
 	double positive;

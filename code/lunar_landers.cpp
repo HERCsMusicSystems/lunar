@@ -161,12 +161,42 @@ void lunar_lfo :: move (void) {
 		else {signal = -1.0; positive = 0.0;}
 		break;
 	case 3: // random
+		if (time < t) {if (! stage_one) {
+			origin = target;
+			target = 0.00006103515625 * (double) core -> noise14b;
+			reversed_delta = target == origin ? 0.0 : 1.0 / (target - origin);
+			stage_one = true;
+		}} else {if (stage_one) {
+			origin = target;
+			target = 0.00006103515625 * (double) core -> noise14b;
+			reversed_delta = target == origin ? 0.0 : 1.0 / (target - origin);
+			stage_one = false;
+		}}
+		if (t == 0) positive = origin + reversed_delta * time;
+		else if (t == 1.0) positive = origin + reversed_delta * time;
+		else if (time < t) positive = origin + reversed_delta * time / t;
+		else positive = origin + reversed_delta * (time - t) / (1.0 - t);
+		signal = positive * 2.0 - 1.0;
 		break;
 	case 4: // S/H
+		if (time < t) {if (! stage_one) {
+			signal = 0.0001220703125 * (double) core -> noise14b - 1.0;
+			positive = 0.00006103515625 * (double) core -> noise14b;
+			stage_one = true;
+		}} else {if (stage_one) {
+			signal = 0.0001220703125 * (double) core -> noise14b - 1.0;
+			positive = 0.00006103515625 * (double) core -> noise14b;
+			stage_one = false;
+		}}
 		break;
 	}
 	time += core -> ControlTimeDelta (speed);
 	if (time >= 1.0) time -= 1.0;
 }
-lunar_lfo :: lunar_lfo (orbiter_core * core) : orbiter (core) {time = speed = wave = pulse = phase = sync = positive = 0.0; initialise (); activate ();}
+lunar_lfo :: lunar_lfo (orbiter_core * core) : orbiter (core) {
+	stage_one = true;
+	origin = target = reversed_delta = 0.0;
+	time = speed = wave = pulse = phase = sync = positive = 0.0;
+	initialise (); activate ();
+}
 

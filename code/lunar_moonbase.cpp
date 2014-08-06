@@ -39,16 +39,29 @@ char * moonbase :: inputName (int ind) {
 }
 double * moonbase :: inputAddress (int ind) {
 	switch (ind) {
-	case 0: return & mono; break;
-	case 1: return & left; break;
-	case 2: return & right; break;
+	case 0: return & mono_input; break;
+	case 1: return & left_input; break;
+	case 2: return & right_input; break;
 	default: break;
 	}
 	return 0;
 }
 int moonbase :: numberOfOutputs (void) {return numberOfInputs ();}
 char * moonbase :: outputName (int ind) {return inputName (ind);}
-double * moonbase :: outputAddress (int ind) {return inputAddress (ind);}
+double * moonbase :: outputAddress (int ind) {
+	switch (ind) {
+	case 0: return & mono_output; break;
+	case 1: return & left_output; break;
+	case 2: return & right_output; break;
+	default: break;
+	}
+	return 0;
+}
+void moonbase :: move (void) {mono_output = mono_input; left_output = left_input; right_output = right_input;}
 
-moonbase :: moonbase (orbiter_core * core) : orbiter (core) {mono = left = right = 0.0; initialise (); activate ();}
+moonbase :: moonbase (orbiter_core * core) : orbiter (core) {
+	mono_input = left_input = right_input = 0.0;
+	mono_output = left_output = right_output = 0.0;
+	initialise (); activate ();
+}
 

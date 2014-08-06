@@ -32,10 +32,39 @@ static int cores = 0;
 
 extern void alpha_callback (int frames, AudioBuffers * data, void * source);
 
+class lunar_core : public orbiter {
+public:
+	double mono, left, right;
+	virtual int numberOfInputs (void) {return 3;}
+	virtual char * inputName (int ind) {
+		switch (ind) {
+		case 0: return "MONO"; break;
+		case 1: return "LEFT"; break;
+		case 2: return "RIGHT"; break;
+		default: break;
+		}
+		return orbiter :: inputName (ind);
+	}
+	virtual double * inputAddress (int ind) {
+		switch (ind) {
+		case 0: return & mono; break;
+		case 1: return & left; break;
+		case 2: return & right; break;
+		default: break;
+		}
+		return orbiter :: inputAddress (ind);
+	}
+	virtual int numberOfOutputs (int ind) {return numberOfInputs ();}
+	virtual char * outputName (int ind) {return inputName (ind);}
+	virtual double * outputAddress (int ind) {return inputAddress (ind);}
+	virtual int numberOfOutputs (void) {return 0;}
+	lunar_core (orbiter_core * core) : orbiter (core) {mono = left = right = 0.0; initialise (); activate ();}
+};
+
 class core_action : public PrologNativeOrbiter {
 public:
 	MultiplatformAudio * audio;
-	core_action (PrologAtom * atom, orbiter_core * core) : PrologNativeOrbiter (atom, core, new moonbase (core)) {
+	core_action (PrologAtom * atom, orbiter_core * core) : PrologNativeOrbiter (atom, core, new lunar_core (core)) {
 		printf ("..... creating moonbase\n");
 		cores++;
 		audio = new MultiplatformAudio (2, (int) core -> sampling_frequency, core -> latency_block_size);

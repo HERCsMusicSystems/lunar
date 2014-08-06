@@ -108,7 +108,8 @@ double orbiter_core :: Sine (double index) {
 }
 
 double orbiter_core :: SineApproximated (double index) {
-	int ind = (int) (index * 16384.0);
+	index *= 16384.0;
+	int ind = (int) index;
 	double sub = index - (double) ind;
 	while (ind < 0) ind += 16384;
 	while (ind > 16384) ind -= 16384;

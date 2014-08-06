@@ -83,5 +83,11 @@ public:
 	lfo_class (orbiter_core * core);
 };
 
+class moonbase_class : public PrologNativeOrbiterCreator {
+public:
+	virtual orbiter * create_orbiter (PrologElement * parameters);
+	moonbase_class (orbiter_core * core);
+};
+
 #endif
 

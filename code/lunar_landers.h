@@ -112,7 +112,7 @@ private:
 	bool stage_one;
 	double origin;
 	double target;
-	double reversed_delta;
+	double delta;
 	double time;
 	double speed, wave, pulse, phase, sync;
 	double positive;

@@ -31,7 +31,12 @@
 
 class moonbase : public orbiter {
 private:
-	double left, right, mono;
+	double mono_input;
+	double left_input;
+	double right_input;
+	double mono_output;
+	double left_output;
+	double right_output;
 public:
 	virtual int numberOfInputs (void);
 	virtual char * inputName (int ind);
@@ -39,6 +44,7 @@ public:
 	virtual int numberOfOutputs (void);
 	virtual char * outputName (int ind);
 	virtual double * outputAddress (int ind);
+	virtual void move (void);
 	moonbase (orbiter_core * core);
 };
 

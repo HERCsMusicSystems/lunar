@@ -26,6 +26,7 @@
 
 #include "lunar_prolog_landers.h"
 #include "lunar_landers.h"
+#include "lunar_moonbase.h"
 
 orbiter * parameter_block_class :: create_orbiter (PrologElement * parameters) {
 	if (parameters -> isEarth ()) return new lunar_inactive_parameter_block (core);
@@ -148,3 +149,5 @@ gateway_class :: gateway_class (orbiter_core * core) : PrologNativeOrbiterCreato
 orbiter * lfo_class :: create_orbiter (PrologElement * parmaeters) {return new lunar_lfo (core);}
 lfo_class :: lfo_class (orbiter_core * core) : PrologNativeOrbiterCreator (core) {}
 
+orbiter * moonbase_class :: create_orbiter (PrologElement * parmaeters) {return new moonbase (core);}
+moonbase_class :: moonbase_class (orbiter_core * core) : PrologNativeOrbiterCreator (core) {}

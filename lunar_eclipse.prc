@@ -7,10 +7,11 @@ import lunar
 program lunar_eclipse [base op1 op2 radar tg map manual lf gate eagle reactor]
 
 [[eagle]
-	[DockLander moonbase base]
-	[DockLander operator base operator 1]
+	[Dock moonbase base]
+	[Dock operator base operator 1]
 	[oscilloscope radar]
-	[GetLander *op base operator 1]
+	[Lander *op base operator 1]
+	[Dock [base] "mono" [operator 1]]
 	[radar *op]
 ]
 

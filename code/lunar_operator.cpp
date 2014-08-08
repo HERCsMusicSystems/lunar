@@ -57,12 +57,13 @@ double * lunar_operator :: inputAddress (int ind) {
 void lunar_operator :: move (void) {
 	if (slope != trigger) if (sync != 0.0 && trigger > 0.0) time = 0.0; trigger = sync;
 	this -> signal = core -> Amplitude (amp) * core -> Sine (time + shift);
-	time += core -> TimeDelta (freq);
+	time += core -> TimeDelta (freq) * ratio;
 	if (time >= 1.0) time -= 1.0;
 }
 
 lunar_operator :: lunar_operator (orbiter_core * core) : orbiter (core) {
-	freq = amp = ratio = shift = sync = trigger = slope = 0.0;
+	freq = amp = shift = sync = trigger = slope = 0.0;
+	ratio = 1.0;
 	time = 0.0; omega = 2.0 * M_PI;
 	initialise (); activate ();
 }

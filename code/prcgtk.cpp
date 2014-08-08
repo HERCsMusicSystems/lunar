@@ -163,7 +163,12 @@ void * studio_runner (void * parameter) {
 	return 0;
 }
 
+extern char _binary_keyboard_txt_start;
+extern char _binary_keyboard_txt_end;
+
 int main (int args, char * * argv) {
+	char * cp = & _binary_keyboard_txt_start;
+	while (cp != & _binary_keyboard_txt_end) {printf ("[%c] ", * cp++);}
 	gtk_init (& args, & argv);
 	pthread_t thread; pthread_create (& thread, 0, studio_runner, args > 1 ? argv [1] : 0); pthread_detach (thread);
 	gtk_main ();

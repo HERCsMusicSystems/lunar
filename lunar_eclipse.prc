@@ -4,9 +4,17 @@
 import studio
 import lunar
 
-program lunar_eclipse [base op1 op2 radar tg map manual lf gate]
+program lunar_eclipse [base op1 op2 radar tg map manual lf gate eagle reactor]
 
-;end := [[command]] .
+[[eagle]
+	[DockLander moonbase base]
+	[DockLander operator base operator 1]
+	[oscilloscope radar]
+	[GetLander *op base operator 1]
+	[radar *op]
+]
+
+end := [[core reactor 330 22050 1024] [eagle] [command]] .
 end := [
 			[auto_atoms]
 			;[keyboard manual tg]

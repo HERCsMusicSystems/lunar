@@ -37,6 +37,7 @@ private:
 	double ratio;
 	double shift;
 	double sync;
+	double trigger;
 	double amp;
 	double slope;
 public:

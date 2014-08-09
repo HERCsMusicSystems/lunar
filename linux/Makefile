@@ -79,15 +79,28 @@ lunar_prolog_keyboard.o: ../code/lunar_prolog_keyboard.cpp ../code/lunar.h ../co
 prolog_lunar.o: ../code/prolog_lunar.h ../code/prolog_lunar.cpp ../code/lunar.h $(pc)prolog.h
 	g++ -Wno-write-strings -I. -I$(pc) ../code/prolog_lunar.cpp -c -o prolog_lunar.o
 
-keyboard.o: keyboard.txt
-	objcopy --input binary --output elf64-x86-64 --binary-architecture i386 keyboard.txt keyboard.o
+small_keyboard.o: ../graphics/small_keyboard.png
+	objcopy --input binary --output elf64-x86-64 --binary-architecture i386\
+		--redefine-sym _binary____graphics_small_keyboard_png_start=_binary_small_keyboard_png_start\
+		--redefine-sym _binary____graphics_small_keyboard_png_end=_binary_small_keyboard_png_end\
+		../graphics/small_keyboard.png small_keyboard.o
+keyboard.o: ../graphics/keyboard.png
+	objcopy --input binary --output elf64-x86-64 --binary-architecture i386\
+		--redefine-sym _binary____graphics_keyboard_png_start=_binary_keyboard_png_start\
+		--redefine-sym _binary____graphics_keyboard_png_end=_binary_keyboard_png_end\
+		../graphics/keyboard.png keyboard.o
+big_keyboard.o: ../graphics/big_keyboard.png
+	objcopy --input binary --output elf64-x86-64 --binary-architecture i386\
+		--redefine-sym _binary____graphics_big_keyboard_png_start=_binary_big_keyboard_png_start\
+		--redefine-sym _binary____graphics_big_keyboard_png_end=_binary_big_keyboard_png_end\
+		../graphics/big_keyboard.png big_keyboard.o
 prcgtk.o: ../code/prcgtk.cpp ../code/prolog_lunar.h\
 	$(pc)prolog.h $(pc)prolog_conductor.h $(pc)prolog_midi.h $(pc)prolog_neural.h $(pc)prolog_xml.h\
 	$(pc)prolog_http.h $(pc)prolog_distribution.h $(pc)prolog_control.h
 	g++ -Wno-write-strings -I. -I$(pc) ../code/prcgtk.cpp -c -o prcgtk.o `pkg-config --cflags gtk+-2.0`
 
-~/bin/lunar: $(lunar_objects) $(objects) keyboard.o
-	g++ $(lunar_objects) $(objects) keyboard.o -o ~/bin/lunar -lpthread -ldl -lreadline -lasound `pkg-config --libs gtk+-2.0`
+~/bin/lunar: $(lunar_objects) $(objects) small_keyboard.o keyboard.o big_keyboard.o
+	g++ $(lunar_objects) $(objects) small_keyboard.o keyboard.o big_keyboard.o -o ~/bin/lunar -lpthread -ldl -lreadline -lasound `pkg-config --libs gtk+-2.0`
 
 lunar: ~/bin/lunar
 

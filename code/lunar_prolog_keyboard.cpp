@@ -26,6 +26,29 @@
 
 static gboolean RemoveViewportIdleCode (GtkWidget * viewport) {gtk_widget_destroy (viewport); return FALSE;}
 
+extern char _binary_small_keyboard_png_start;
+extern char _binary_small_keyboard_png_end;
+extern char _binary_keyboard_png_start;
+extern char _binary_keyboard_png_end;
+extern char _binary_big_keyboard_png_start;
+extern char _binary_big_keyboard_png_end;
+
+class png_closure {
+public:
+	char * from;
+	char * to;
+	png_closure (char * from, char * to) {this -> from = from; this -> to = to;}
+};
+
+cairo_status_t png_reader (void * closure, unsigned char * data, unsigned int length) {
+	png_closure * png_data = (png_closure *) closure;
+	if (png_data -> from >= png_data -> to) return CAIRO_STATUS_READ_ERROR;
+	while (length-- > 0 && png_data -> from < png_data -> to) {
+		* data++ = * png_data -> from++;
+	}
+	return CAIRO_STATUS_SUCCESS;
+}
+
 class keyboard_action : public PrologNativeCode {
 public:
 	PrologRoot * root;
@@ -64,21 +87,24 @@ public:
 		this -> command = command; COLLECTOR_REFERENCE_INC (command);
 		viewport = 0;
 		keyboard_width = 200; keyboard_height = 100;
+		png_closure small_keyboard_png_closure (& _binary_small_keyboard_png_start, & _binary_small_keyboard_png_end);
+		png_closure keyboard_png_closure (& _binary_keyboard_png_start, & _binary_keyboard_png_end);
+		png_closure big_keyboard_png_closure (& _binary_big_keyboard_png_start, & _binary_big_keyboard_png_end);
 		switch (size) {
 		case 1:
-			surface = cairo_image_surface_create_from_png ("small_keyboard.png");
+			surface = cairo_image_surface_create_from_png_stream (png_reader, & small_keyboard_png_closure);
 			kb . set_keyboard_layout_y (66, 44);
 			kb . set_keyboard_layout_x (11, 1, 2, 3, 4, 5);
 			kb . set_ambitus (17, 54);
 			break;
 		case 3:
-			surface = cairo_image_surface_create_from_png ("big_keyboard.png");
+			surface = cairo_image_surface_create_from_png_stream (png_reader, & big_keyboard_png_closure);
 			kb . set_keyboard_layout_y (132, 88);
 			kb . set_keyboard_layout_x (22, 2, 4, 6, 8, 10);
 			kb . set_ambitus (17, 54);
 			break;
 		default:
-			surface = cairo_image_surface_create_from_png ("keyboard.png");
+			surface = cairo_image_surface_create_from_png_stream (png_reader, & keyboard_png_closure);
 			kb . set_keyboard_layout_y (99, 66);
 			kb . set_keyboard_layout_x (16, 2, 3, 4, 5, 6);
 			kb . set_ambitus (17, 54);

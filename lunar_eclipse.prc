@@ -4,16 +4,24 @@
 import studio
 import lunar
 
-program lunar_eclipse [base op1 op2 radar tg map manual lf gate eagle reactor]
+program lunar_eclipse [base op1 op2 radar tg map manual lf gate eagle reactor FindModuleAndPort]
 
 [[eagle]
 	[Dock moonbase base]
 	[Dock operator base operator 1]
 	[oscilloscope radar]
 	[Lander *op base operator 1]
-	[Dock [base] "mono" [operator 1]]
+	[Dock [base mono] [operator 1]]
 	[radar *op]
 ]
+
+[[FindModuleAndPort *moonbase *path *module *port]
+	[APPEND *selector [*port] *path]
+	[show [*selector *port *path]]
+	[show [Lander *module *moonbase : *selector]]
+	[Lander *module *moonbase : *selector] /
+]
+[[FindModuleAndPort *moonbase *path *module 0] [Lander *module *moonbase : *path]]
 
 end := [[core reactor 330 22050 1024] [eagle] [command]] .
 end := [

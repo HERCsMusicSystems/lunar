@@ -127,5 +127,22 @@ public:
 	lunar_lfo (orbiter_core * core);
 };
 
+class lunar_adsr : public orbiter {
+private:
+	double attack;
+	double decay;
+	double sustain;
+	double release;
+	double trigger;
+	double busy;
+public:
+	lunar_adsr (orbiter_core * core);
+};
+
+class lunar_eg : public orbiter {
+public:
+	lunar_eg (orbiter_core * core);
+};
+
 #endif
 

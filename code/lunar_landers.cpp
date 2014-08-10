@@ -204,3 +204,7 @@ lunar_lfo :: lunar_lfo (orbiter_core * core) : orbiter (core) {
 	initialise (); activate ();
 }
 
+lunar_adsr :: lunar_adsr (orbiter_core * core) : orbiter (core) {attack = decay = sustain = release = trigger = busy = 0.0; initialise (); activate ();}
+
+lunar_eg :: lunar_eg (orbiter_core * core) : orbiter (core) {initialise (); activate ();}
+

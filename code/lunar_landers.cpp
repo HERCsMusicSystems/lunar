@@ -230,8 +230,36 @@ double * lunar_adsr :: inputAddress (int ind) {
 int lunar_adsr :: numberOfOutputs (void) {return 2;}
 char * lunar_adsr :: outputName (int ind) {if (ind == 1) return "BUSY"; return orbiter :: outputName (ind);}
 double * lunar_adsr :: outputAddress (int ind) {if (ind == 1) return & busy; return orbiter :: outputAddress (ind);}
-void lunar_adsr :: move (void) {}
-lunar_adsr :: lunar_adsr (orbiter_core * core) : orbiter (core) {attack = decay = sustain = release = trigger = busy = 0.0; initialise (); activate ();}
+void lunar_adsr :: move (void) {
+	if (trigger == 0.0) {
+		case (stage) {
+		case 0: signal = -16383; busy = 0.0; return; break;
+		}
+	} else {
+		case (stage) {
+		case 0:
+			time = 0; signal = -16383; busy = 1.0;
+			if (attack == 0.0) {
+				if (decay == 0.0) {signal = sustain; stage = 3; return;}
+				signal = 0.0;
+				stage = 2;
+				time += core -> WaitingTime (decay);
+				return;
+			}
+			stage = 1;
+			time += core -> WaitingTime (decay);
+			return;
+		case 1:
+			if (time < 1.0) {signal = -16383;}
+		}
+	}
+}
+lunar_adsr :: lunar_adsr (orbiter_core * core) : orbiter (core) {
+	attack = decay = sustain = release = trigger = busy = 0.0;
+	signal = -16383.0; time = busy = 0.0;
+	stage = 0;
+	initialise (); activate ();
+}
 
 lunar_eg :: lunar_eg (orbiter_core * core) : orbiter (core) {initialise (); activate ();}
 

@@ -16,31 +16,10 @@ objects = \
 	prolog_lunar.o lunar_core.o lunar_prolog_oscilloscope.o lunar_prolog_keyboard.o lunar_prolog_operator.o lunar_operator.o\
 	keyboard_calculator.o lunar_prolog_moonbase.o lunar_moonbase.o lunar_prolog_landers.o lunar_landers.o\
 	multiplatform_audio.o\
-	prolog_resources.o prcgtk.o
+	prcgtk.o
 
-prc_objects = \
-	$(pc)studio.prc\
-	$(pc)conductor.prc\
-	$(pc)midi.prc\
-	$(pc)http.prc\
-	$(pc)store.prc\
-	$(pc)f1.prc\
-	$(pc)help.prc\
-	$(pc)record.prc\
-	$(pc)neural.prc\
-	$(pc)keyboard.prc\
-	$(pc)sql.prc\
-	$(pc)test.prc\
-	$(pc)xml.prc\
-	$(pc)distribution.prc\
-	$(pc)control.prc\
-	../code/lunar.prc
-
-prolog_resources.cpp: $(prc_objects) $(pi)resource_maker.exe
-	$(pi)resource_maker.exe prolog_resources.cpp $(prc_objects)
-
-prolog_resources.o: prolog_resources.cpp
-	g++ prolog_resources.cpp -c -o prolog_resources.o
+prc_resources = $(pi)studio_prc.o $(pi)conductor_prc.o $(pi)midi_prc.o $(pi)http_prc.o $(pi)store_prc.o $(pi)f1_prc.o $(pi)help_prc.o $(pi)record_prc.o\
+	$(pi)neural_prc.o $(pi)keyboard_prc.o $(pi)sql_prc.o $(pi)test_prc.o $(pi)xml_prc.o $(pi)distribution_prc.o $(pi)control_prc.o lunar_prc.o
 
 multiplatform_audio.o: ../code/multiplatform_audio.cpp ../code/multiplatform_audio.h
 	g++ -Wno-write-strings -I. -I$(pc) ../code/multiplatform_audio.cpp -c -o multiplatform_audio.o
@@ -81,26 +60,36 @@ prolog_lunar.o: ../code/prolog_lunar.h ../code/prolog_lunar.cpp ../code/lunar.h 
 
 small_keyboard.o: ../graphics/small_keyboard.png
 	objcopy --input binary --output elf64-x86-64 --binary-architecture i386\
-		--redefine-sym _binary____graphics_small_keyboard_png_start=_binary_small_keyboard_png_start\
-		--redefine-sym _binary____graphics_small_keyboard_png_end=_binary_small_keyboard_png_end\
+		--redefine-sym _binary____graphics_small_keyboard_png_start=resource_small_keyboard_start\
+		--redefine-sym _binary____graphics_small_keyboard_png_end=resource_small_keyboard_end\
+		--redefine-sym _binary____graphics_small_keyboard_png_size=resource_small_keyboard_size\
 		../graphics/small_keyboard.png small_keyboard.o
 keyboard.o: ../graphics/keyboard.png
 	objcopy --input binary --output elf64-x86-64 --binary-architecture i386\
-		--redefine-sym _binary____graphics_keyboard_png_start=_binary_keyboard_png_start\
-		--redefine-sym _binary____graphics_keyboard_png_end=_binary_keyboard_png_end\
+		--redefine-sym _binary____graphics_keyboard_png_start=resource_keyboard_start\
+		--redefine-sym _binary____graphics_keyboard_png_end=resource_keyboard_end\
+		--redefine-sym _binary____graphics_keyboard_png_size=resource_keyboard_size\
 		../graphics/keyboard.png keyboard.o
 big_keyboard.o: ../graphics/big_keyboard.png
 	objcopy --input binary --output elf64-x86-64 --binary-architecture i386\
-		--redefine-sym _binary____graphics_big_keyboard_png_start=_binary_big_keyboard_png_start\
-		--redefine-sym _binary____graphics_big_keyboard_png_end=_binary_big_keyboard_png_end\
+		--redefine-sym _binary____graphics_big_keyboard_png_start=resource_big_keyboard_start\
+		--redefine-sym _binary____graphics_big_keyboard_png_end=resource_big_keyboard_end\
+		--redefine-sym _binary____graphics_big_keyboard_png_size=resource_big_keyboard_size\
 		../graphics/big_keyboard.png big_keyboard.o
+
+lunar_prc.o: ../code/lunar.prc
+	objcopy --input binary --output elf64-x86-64 --binary-architecture i386\
+		--redefine-sym _binary____code_lunar_prc_start=resource_lunar\
+		../code/lunar.prc lunar_prc.o
+
 prcgtk.o: ../code/prcgtk.cpp ../code/prolog_lunar.h\
 	$(pc)prolog.h $(pc)prolog_conductor.h $(pc)prolog_midi.h $(pc)prolog_neural.h $(pc)prolog_xml.h\
 	$(pc)prolog_http.h $(pc)prolog_distribution.h $(pc)prolog_control.h
 	g++ -Wno-write-strings -I. -I$(pc) ../code/prcgtk.cpp -c -o prcgtk.o `pkg-config --cflags gtk+-2.0`
 
-~/bin/lunar: $(lunar_objects) $(objects) small_keyboard.o keyboard.o big_keyboard.o
-	g++ $(lunar_objects) $(objects) small_keyboard.o keyboard.o big_keyboard.o -o ~/bin/lunar -lpthread -ldl -lreadline -lasound `pkg-config --libs gtk+-2.0`
+~/bin/lunar: $(lunar_objects) $(objects) small_keyboard.o keyboard.o big_keyboard.o $(prc_resources)
+	g++ $(lunar_objects) $(objects) $(prc_resources) small_keyboard.o keyboard.o big_keyboard.o \
+	-o ~/bin/lunar -lpthread -ldl -lreadline -lasound `pkg-config --libs gtk+-2.0`
 
 lunar: ~/bin/lunar
 

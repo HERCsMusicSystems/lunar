@@ -26,12 +26,12 @@
 
 static gboolean RemoveViewportIdleCode (GtkWidget * viewport) {gtk_widget_destroy (viewport); return FALSE;}
 
-extern char _binary_small_keyboard_png_start;
-extern char _binary_small_keyboard_png_end;
-extern char _binary_keyboard_png_start;
-extern char _binary_keyboard_png_end;
-extern char _binary_big_keyboard_png_start;
-extern char _binary_big_keyboard_png_end;
+extern char resource_small_keyboard_start;
+extern char resource_small_keyboard_end;
+extern char resource_keyboard_start;
+extern char resource_keyboard_end;
+extern char resource_big_keyboard_start;
+extern char resource_big_keyboard_end;
 
 class png_closure {
 public:
@@ -87,9 +87,9 @@ public:
 		this -> command = command; COLLECTOR_REFERENCE_INC (command);
 		viewport = 0;
 		keyboard_width = 200; keyboard_height = 100;
-		png_closure small_keyboard_png_closure (& _binary_small_keyboard_png_start, & _binary_small_keyboard_png_end);
-		png_closure keyboard_png_closure (& _binary_keyboard_png_start, & _binary_keyboard_png_end);
-		png_closure big_keyboard_png_closure (& _binary_big_keyboard_png_start, & _binary_big_keyboard_png_end);
+		png_closure small_keyboard_png_closure (& resource_small_keyboard_start, & resource_small_keyboard_end);
+		png_closure keyboard_png_closure (& resource_keyboard_start, & resource_keyboard_end);
+		png_closure big_keyboard_png_closure (& resource_big_keyboard_start, & resource_big_keyboard_end);
 		switch (size) {
 		case 1:
 			surface = cairo_image_surface_create_from_png_stream (png_reader, & small_keyboard_png_closure);

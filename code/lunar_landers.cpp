@@ -204,6 +204,33 @@ lunar_lfo :: lunar_lfo (orbiter_core * core) : orbiter (core) {
 	initialise (); activate ();
 }
 
+int lunar_adsr :: numberOfInputs (void) {return 5;}
+char * lunar_adsr :: inputName (int ind) {
+	switch (ind) {
+	case 0: return "TRIGGER"; break;
+	case 1: return "ATTACK"; break;
+	case 2: return "DECAY"; break;
+	case 3: return "SUSTAIN"; break;
+	case 4: return "RELEASE"; break;
+	default: break;
+	}
+	return orbiter :: inputName (ind);
+}
+double * lunar_adsr :: inputAddress (int ind) {
+	switch (ind) {
+	case 0: return & trigger; break;
+	case 1: return & attack; break;
+	case 2: return & decay; break;
+	case 3: return & sustain; break;
+	case 4: return & release; break;
+	default: break;
+	}
+	return orbiter :: inputAddress (ind);
+}
+int lunar_adsr :: numberOfOutputs (void) {return 2;}
+char * lunar_adsr :: outputName (int ind) {if (ind == 1) return "BUSY"; return orbiter :: outputName (ind);}
+double * lunar_adsr :: outputAddress (int ind) {if (ind == 1) return & busy; return orbiter :: outputAddress (ind);}
+void lunar_adsr :: move (void) {}
 lunar_adsr :: lunar_adsr (orbiter_core * core) : orbiter (core) {attack = decay = sustain = release = trigger = busy = 0.0; initialise (); activate ();}
 
 lunar_eg :: lunar_eg (orbiter_core * core) : orbiter (core) {initialise (); activate ();}

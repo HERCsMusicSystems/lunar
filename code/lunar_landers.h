@@ -135,7 +135,16 @@ private:
 	double release;
 	double trigger;
 	double busy;
+	double time;
+	int stage;
 public:
+	virtual int numberOfInputs (void);
+	virtual char * inputName (int ind);
+	virtual double * inputAddress (int ind);
+	virtual int numberOfOutputs (void);
+	virtual char * outputName (int ind);
+	virtual double * outputAddress (int ind);
+	virtual void move (void);
 	lunar_adsr (orbiter_core * core);
 };
 

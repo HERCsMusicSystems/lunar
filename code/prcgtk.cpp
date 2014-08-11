@@ -80,7 +80,7 @@ public:
 class resource_loader_class : public PrologResourceLoader {
 public:
 	char * load (char * name) {
-		HRSRC resource = NULL;
+		HRSRC resource = 0;
 		if (strcmp (name, "studio.prc") == 0) resource = FindResource (NULL, MAKEINTRESOURCE (STUDIO_PRC), RT_RCDATA);
 		if (strcmp (name, "conductor.prc") == 0) resource = FindResource (NULL, MAKEINTRESOURCE (CONDUCTOR_PRC), RT_RCDATA);
 		if (strcmp (name, "midi.prc") == 0) resource = FindResource (NULL, MAKEINTRESOURCE (MIDI_PRC), RT_RCDATA);
@@ -98,9 +98,9 @@ public:
 		if (strcmp (name, "control.prc") == 0) resource = FindResource (NULL, MAKEINTRESOURCE (CONTROL_PRC), RT_RCDATA);
 		if (strcmp (name, "irrklang.prc") == 0) resource = FindResource (NULL, MAKEINTRESOURCE (IRRKLANG_PRC), RT_RCDATA);
 		if (strcmp (name, "lunar.prc") == 0) resource = FindResource (NULL, MAKEINTRESOURCE (LUNAR_PRC), RT_RCDATA);
-		if (! resource) return NULL;
-		HGLOBAL loader = LoadResource (NULL, resource);
-		if (! loader) return NULL;
+		if (! resource) return 0;
+		HGLOBAL loader = LoadResource (0, resource);
+		if (! loader) return 0;
 		return (char *) LockResource (loader);
 	}
 } resource_loader;

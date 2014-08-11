@@ -26,18 +26,29 @@
 
 static gboolean RemoveViewportIdleCode (GtkWidget * viewport) {gtk_widget_destroy (viewport); return FALSE;}
 
+#ifdef WIN32
+#include "lunar_resource.h"
+char * GetResource (int ind) {
+	HRSRC resource = FindResource (NULL, MAKEINTRESOURCE (ind), RT_RCDATA);
+	if (! resource) return 0;
+	HGLOBAL loader = LoadResource (0, resource);
+	if (! loader) return 0;
+	return (char *) LockResource (loader);
+}
+#else
 extern char resource_small_keyboard_start;
 extern char resource_small_keyboard_end;
 extern char resource_keyboard_start;
 extern char resource_keyboard_end;
 extern char resource_big_keyboard_start;
 extern char resource_big_keyboard_end;
+#endif
 
 class png_closure {
 public:
 	char * from;
 	char * to;
-	png_closure (char * from, char * to) {this -> from = from; this -> to = to;}
+	png_closure (char * from, char * to) {this -> from = from; this -> to = from == 0 ? from : to;}
 };
 
 cairo_status_t png_reader (void * closure, unsigned char * data, unsigned int length) {
@@ -87,9 +98,18 @@ public:
 		this -> command = command; COLLECTOR_REFERENCE_INC (command);
 		viewport = 0;
 		keyboard_width = 200; keyboard_height = 100;
+#ifdef WIN32
+		char * resource = GetResource (SMALL_KEYBOARD_PNG);
+		png_closure small_keyboard_png_closure (resource, resource + SMALL_KEYBOARD_SIZE);
+		resource = GetResource (KEYBOARD_PNG);
+		png_closure keyboard_png_closure (resource, resource + KEYBOARD_SIZE);
+		resource = GetResource (BIG_KEYBOARD_PNG);
+		png_closure big_keyboard_png_closure (resource, resource + BIG_KEYBOARD_SIZE);
+#else
 		png_closure small_keyboard_png_closure (& resource_small_keyboard_start, & resource_small_keyboard_end);
 		png_closure keyboard_png_closure (& resource_keyboard_start, & resource_keyboard_end);
 		png_closure big_keyboard_png_closure (& resource_big_keyboard_start, & resource_big_keyboard_end);
+#endif
 		switch (size) {
 		case 1:
 			surface = cairo_image_surface_create_from_png_stream (png_reader, & small_keyboard_png_closure);

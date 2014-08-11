@@ -68,7 +68,7 @@ bool PrologNativeOrbiter :: code (PrologElement * parameters, PrologResolution *
 	}
 	if (atom != 0) {
 		PrologNativeCode * machine = atom -> getAtom () -> getMachine ();
-		if (! machine -> isTypeOf (PrologNativeOrbiter :: name ())) return false;
+		if (machine == 0 || ! machine -> isTypeOf (PrologNativeOrbiter :: name ())) return false;
 		source_port = 0;
 		if (value != 0) {
 			if (value -> isInteger ()) source_port = value -> getInteger ();

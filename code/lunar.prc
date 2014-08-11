@@ -56,7 +56,6 @@ program lunar #machine := "prolog.lunar"
 	[*moonbase *parameters *modules : *]
 	[operator *operator]
 	[addcl [[*modules *operator : *selector]]]
-	[parameter_block *freq]
 	[AddParameterBlock *parameters freq *operator *selector 0]
 	[AddParameterBlock *parameters amp *operator *selector 0]
 	[AddParameterBlock *parameters ratio *operator *selector 1]
@@ -64,17 +63,17 @@ program lunar #machine := "prolog.lunar"
 ]
 
 [[Dock [*moonbase : *destination_selector] *source_selector] /
-	[FindModuleAndPort *moonbase *destination_selector *destination *destination_path]
+	[FindModuleAndPort *moonbase *destination_selector *destination *destination_port]
 	[FindModuleAndPort *moonbase *source_selector *source *source_port]
 	[*destination *destination_port *source *source_port]
 ]
 
+[[FindModuleAndPort *moonbase *path *module 0] [Lander *module *moonbase : *path] /]
 [[FindModuleAndPort *moonbase *path *module *port]
 	[APPEND *selector [*i_port] *path]
 	[Lander *module *moonbase : *selector] /
 	[FindModuleAndPort *i_port *port]
 ]
-[[FindModuleAndPort *moonbase *path *module 0] [Lander *module *moonbase : *path] /]
 [[FindModuleAndPort *i_port *port] [is_atom *i_port] / [text_term *port *i_port]]
 [[FindModuleAndPort *port *port]]
 

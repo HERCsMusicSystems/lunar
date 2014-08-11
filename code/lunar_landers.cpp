@@ -232,13 +232,23 @@ char * lunar_adsr :: outputName (int ind) {if (ind == 1) return "BUSY"; return o
 double * lunar_adsr :: outputAddress (int ind) {if (ind == 1) return & busy; return orbiter :: outputAddress (ind);}
 void lunar_adsr :: move (void) {
 	if (trigger == 0.0) {
-		case (stage) {
-		case 0: signal = -16383; busy = 0.0; return; break;
+		if (stage == 0) return;
+		if (stage == 4) {
+			if (time < 1.0) {signal = time * -16383.0; time += core -> WaitingTime (release); return;}
+			time = 0.0; signal = -16383.0; stage = 0; busy = 0.0; return;
 		}
+		if (time < 1.0) {
+			if (stage == 1) signal = time * 16383.0 - 16383.0;
+			if (stage == 2) signal = time * -16383.0;
+		}
+		time = signal / -16383.0;
+		time += core -> WaitingTime (release);
+		stage = 4;
+		return;
 	} else {
-		case (stage) {
+		switch (stage) {
 		case 0:
-			time = 0; signal = -16383; busy = 1.0;
+			time = 0.0; signal = -16383; busy = 1.0;
 			if (attack == 0.0) {
 				if (decay == 0.0) {signal = sustain; stage = 3; return;}
 				signal = 0.0;
@@ -247,10 +257,34 @@ void lunar_adsr :: move (void) {
 				return;
 			}
 			stage = 1;
-			time += core -> WaitingTime (decay);
+			time += core -> WaitingTime (attack);
 			return;
 		case 1:
-			if (time < 1.0) {signal = -16383;}
+			if (time < 1.0) {signal = time * 16383.0 - 16383.0; time += core -> WaitingTime (attack); return;}
+			time = 0.0;
+			if (decay == 0.0) {signal = sustain; stage = 3; return;}
+			signal = 0.0;
+			stage = 2;
+			time += core -> WaitingTime (decay);
+			return;
+			break;
+		case 2:
+			if (time < 1.0) signal = time * -16383.0;
+			if (signal <= sustain) {time = 0.0; signal = sustain; stage = 3; return;}
+			time += core -> WaitingTime (decay);
+			return;
+			break;
+		case 4:
+			if (attack == 0.0) {
+				if (decay == 0.0) {time = 0.0; signal = sustain; stage = 3; return;}
+				signal = 0.0; stage = 2; time += core -> WaitingTime (decay);
+				return;
+			}
+			time = 1 + signal / 16383.0; stage = 1;
+			time += core -> WaitingTime (attack);
+			return;
+			break;
+		default: return; break;
 		}
 	}
 }

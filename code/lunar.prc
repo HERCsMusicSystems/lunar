@@ -9,7 +9,7 @@ program lunar #machine := "prolog.lunar"
 				small_keyboard keyboard big_keyboard oscilloscope
 				dock undock
 				core moonbase operator parameter_block key_map impulse trigger mixer gateway lfo adsr eg
-				freq amp ratio sync mono left right
+				signal freq amp ratio sync mono left right attack decay sustain release busy
 				keyon keyoff
 				Lunar Lander Dock Activate Deactivate
 				AddParameterBlock FindModuleAndPort
@@ -60,6 +60,16 @@ program lunar #machine := "prolog.lunar"
 	[AddParameterBlock *parameters amp *operator *selector 0]
 	[AddParameterBlock *parameters ratio *operator *selector 1]
 	[AddParameterBlock *parameters sync *operator *selector 0]
+]
+
+[[Dock adsr *moonbase : *selector]
+	[*moonbase *parameters *modules : *]
+	[adsr *adsr]
+	[addcl [[*modules *adsr : *selector]]]
+	[AddParameterBlock *parameters attack *adsr *selector 0]
+	[AddParameterBlock *parameters decay *adsr *selector 0]
+	[AddParameterBlock *parameters sustain *adsr *selector 0]
+	[AddParameterBlock *parameters release *adsr *selector 0]
 ]
 
 [[Dock [*moonbase : *destination_selector] *source_selector] /

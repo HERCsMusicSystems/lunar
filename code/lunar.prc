@@ -10,6 +10,7 @@ program lunar #machine := "prolog.lunar"
 				dock undock
 				core moonbase operator parameter_block key_map impulse trigger mixer gateway lfo adsr eg
 				signal freq amp ratio sync mono left right attack decay sustain release busy
+				mono left right mic mic_left mic_right
 				keyon keyoff
 				Lunar Lander Dock Activate Deactivate
 				AddParameterBlock FindModuleAndPort

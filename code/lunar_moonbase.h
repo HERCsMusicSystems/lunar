@@ -37,6 +37,12 @@ private:
 	double mono_output;
 	double left_output;
 	double right_output;
+	double mic_mono_input;
+	double mic_left_input;
+	double mic_right_input;
+	double mic_mono_output;
+	double mic_left_output;
+	double mic_right_output;
 public:
 	virtual int numberOfInputs (void);
 	virtual char * inputName (int ind);

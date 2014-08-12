@@ -8,7 +8,7 @@ program lunar #machine := "prolog.lunar"
 			[
 				small_keyboard keyboard big_keyboard oscilloscope
 				dock undock
-				core moonbase operator parameter_block key_map impulse trigger mixer gateway lfo adsr eg
+				core moonbase operator parameter_block key_map impulse trigger mixer stereo_mixer gateway lfo adsr eg
 				signal freq amp ratio sync mono left right attack decay sustain release busy
 				mono left right mic mic_left mic_right
 				keyon keyoff
@@ -51,6 +51,12 @@ program lunar #machine := "prolog.lunar"
 	[moonbase *moonbase]
 	[addcl [[*base *parameters *modules]]]
 	[addcl [[*modules *moonbase]]]
+]
+
+[[Dock mixer *moonbase : *selector]
+	[*moonbase *parameters *modules : *]
+	[mixer *mixer]
+	[addcl [[*modules *mixer : *selector]]]
 ]
 
 [[Dock operator *moonbase : *selector]

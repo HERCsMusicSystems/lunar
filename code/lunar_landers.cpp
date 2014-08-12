@@ -50,7 +50,7 @@ int lunar_mixer :: numberOfInputs (void) {return 1;}
 char * lunar_mixer :: inputName (int ind) {if (ind == 0) return "ENTER"; else return orbiter :: inputName (ind);}
 double * lunar_mixer :: inputAddress (int ind) {return ind == 0 ? & enter : orbiter :: inputAddress (ind);}
 void lunar_mixer :: move (void) {signal = enter;}
-lunar_mixer :: lunar_mixer (orbiter_core * core) : orbiter (core) {enter = 0.0;}
+lunar_mixer :: lunar_mixer (orbiter_core * core) : orbiter (core) {enter = 0.0; initialise (); activate ();}
 
 int lunar_gateway :: numberOfInputs (void) {return 2;}
 char * lunar_gateway :: inputName (int ind) {if (ind == 0) return "ENTER"; if (ind == 1) return "GATEWAY"; return orbiter :: inputName (ind);}

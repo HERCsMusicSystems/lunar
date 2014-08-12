@@ -30,27 +30,8 @@
 #include "lunar.h"
 
 class moonbase : public orbiter {
-private:
-	double mono_input;
-	double left_input;
-	double right_input;
-	double mono_output;
-	double left_output;
-	double right_output;
-	double mic_mono_input;
-	double mic_left_input;
-	double mic_right_input;
-	double mic_mono_output;
-	double mic_left_output;
-	double mic_right_output;
 public:
-	virtual int numberOfInputs (void);
-	virtual char * inputName (int ind);
-	virtual double * inputAddress (int ind);
 	virtual int numberOfOutputs (void);
-	virtual char * outputName (int ind);
-	virtual double * outputAddress (int ind);
-	virtual void move (void);
 	moonbase (orbiter_core * core);
 };
 

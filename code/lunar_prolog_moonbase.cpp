@@ -31,10 +31,15 @@
 static int cores = 0;
 
 extern void alpha_callback (int frames, AudioBuffers * data, void * source);
+extern void beta_callback (int frames, AudioBuffers * data, void * source);
 
 class lunar_core : public orbiter {
 public:
 	double mono, left, right;
+	double input_mono, input_left, input_right;
+	double line [16384];
+	int line_write;
+	int line_read;
 	virtual int numberOfInputs (void) {return 3;}
 	virtual char * inputName (int ind) {
 		switch (ind) {
@@ -56,9 +61,27 @@ public:
 	}
 	virtual int numberOfOutputs (int ind) {return numberOfInputs ();}
 	virtual char * outputName (int ind) {return inputName (ind);}
-	virtual double * outputAddress (int ind) {return inputAddress (ind);}
-	virtual int numberOfOutputs (void) {return 0;}
-	lunar_core (orbiter_core * core) : orbiter (core) {mono = left = right = 0.0; initialise (); activate ();}
+	virtual double * outputAddress (int ind) {
+		switch (ind) {
+		case 0: return & input_mono; break;
+		case 1: return & input_left; break;
+		case 2: return & input_right; break;
+		default: break;
+		}
+		return orbiter :: outputAddress (ind);
+	}
+	virtual void move (void) {
+		if (line_read == line_write) return;
+		input_mono = line [line_read++];
+		if (line_read >= 16384) line_read = 0;
+	}
+	lunar_core (orbiter_core * core) : orbiter (core) {
+		mono = left = right = 0.0;
+		input_mono = input_left = input_right = 0.0;
+		for (int ind = 0; ind < 16384; ind++) line [ind] = 0.0;
+		line_write = line_read = 0;
+		initialise (); activate ();
+	}
 };
 
 class core_action : public PrologNativeOrbiter {
@@ -71,8 +94,17 @@ public:
 		int outputs = audio -> getNumberOfOutputDevices ();
 		printf ("Number of outputs = %i\n", outputs);
 		for (int ind = 0; ind < outputs; ind++) printf ("	device [%s]\n", audio -> getOutputDeviceName (ind));
-		audio -> installOutputCallback (alpha_callback, this);
-		audio -> selectOutputDevice (0);
+		int inputs = audio -> getNumberOfInputDevices ();
+		printf ("Number of inputs = %i\n", inputs);
+		for (int ind = 0; ind < inputs; ind++) printf ("	device [%s]\n", audio -> getInputDeviceName (ind));
+		if (outputs > 0) {
+			audio -> installOutputCallback (alpha_callback, this);
+			audio -> selectOutputDevice (0);
+		}
+		if (inputs > 0) {
+			audio -> installInputCallback (beta_callback, this);
+			audio -> selectInputDevice (0);
+		}
 		printf ("Moonbase prolog created.\n");
 	}
 	~ core_action (void) {
@@ -86,13 +118,27 @@ public:
 void alpha_callback (int frames, AudioBuffers * data, void * source) {
 	core_action * base = (core_action *) source;
 	orbiter_core * core = base -> core;
-	double * moon = base -> module -> outputAddress (0);
+	double * moon = base -> module -> inputAddress (0);
 	pthread_mutex_lock (& core -> maintenance_mutex);
 	pthread_mutex_lock (& core -> main_mutex);
 	for (int ind = 0; ind < frames; ind++) {
 		core -> move_modules ();
 		core -> propagate_signals ();
 		data -> insertMono ((* moon) * 0.2);
+	}
+	pthread_mutex_unlock (& core -> main_mutex);
+	pthread_mutex_unlock (& core -> maintenance_mutex);
+}
+
+void beta_callback (int frames, AudioBuffers * data, void * source) {
+	core_action * base = (core_action *) source;
+	orbiter_core * core = base -> core;
+	lunar_core * moon = (lunar_core *) base -> module;
+	pthread_mutex_lock (& core -> maintenance_mutex);
+	pthread_mutex_lock (& core -> main_mutex);
+	for (int ind = 0; ind < frames; ind++) {
+		moon -> line [moon -> line_write++] = data -> getMono ();
+		if (moon -> line_write >= 16384) moon -> line_write = 0;
 	}
 	pthread_mutex_unlock (& core -> main_mutex);
 	pthread_mutex_unlock (& core -> maintenance_mutex);

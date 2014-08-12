@@ -646,7 +646,7 @@ static void audio_capture_dx_stop (void) {
 }
 static void audio_capture_dx_start (HWND hwnd, int device_index) {
 	HRESULT hr;
-	if (FAILED (hr = DirectSoundCaptureCreate8 (input_device_guid [device_index], & audio_capture_lpdsc, NULL))) MessageBox (GetActiveWindow (), "Failed to create capture interface.", "INFO", MB_OK);
+	if (FAILED (hr = DirectSoundCaptureCreate8 (input_device_guid [device_index], & audio_capture_lpdsc, NULL))) {MessageBox (GetActiveWindow (), "Failed to create capture interface.", "INFO", MB_OK); return;}
 	DSCCAPS capture_caps;
 	capture_caps . dwSize = sizeof (DSCCAPS);
 	if (FAILED (hr = audio_capture_lpdsc -> GetCaps (& capture_caps))) MessageBox (GetActiveWindow (), "Failed to get device caps.", "INFO", MB_OK);
@@ -893,7 +893,11 @@ MultiplatformAudio :: MultiplatformAudio (int channels, int sampling_freq, int l
 	audio_transmission_dx_init ();
 	audio_capture_dx_init ();
 }
-MultiplatformAudio :: ~ MultiplatformAudio (void) {audio_transmission_dx_stop ();}
+MultiplatformAudio :: ~ MultiplatformAudio (void) {
+	installInputCallback (0);
+	installOutputCallback (0);
+	audio_transmission_dx_stop ();
+}
 
 void MultiplatformAudio :: selectInputDevice (int ind) {
 	if (ind >= getNumberOfInputDevices ()) return;

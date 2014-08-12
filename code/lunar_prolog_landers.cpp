@@ -143,6 +143,9 @@ trigger_class :: trigger_class (PrologDirectory * dir, orbiter_core * core) : Pr
 orbiter * mixer_class :: create_orbiter (PrologElement * parameters) {return new lunar_mixer (core);}
 mixer_class :: mixer_class (orbiter_core * core) : PrologNativeOrbiterCreator (core) {}
 
+orbiter * stereo_mixer_class :: create_orbiter (PrologElement * parameters) {return new lunar_stereo_mixer (core);}
+stereo_mixer_class :: stereo_mixer_class (orbiter_core * core) : PrologNativeOrbiterCreator (core) {}
+
 orbiter * gateway_class :: create_orbiter (PrologElement * parameters) {return new lunar_gateway (core);}
 gateway_class :: gateway_class (orbiter_core * core) : PrologNativeOrbiterCreator (core) {}
 

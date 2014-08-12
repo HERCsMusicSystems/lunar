@@ -60,6 +60,22 @@ public:
 	lunar_mixer (orbiter_core * core);
 };
 
+class lunar_stereo_mixer : public orbiter{
+private:
+	double signal_right;
+	double enter;
+	double enter_right;
+public:
+	virtual int numberOfInputs (void);
+	virtual char * inputName (int ind);
+	virtual double * inputAddress (int ind);
+	virtual int numberOfOutputs (void);
+	virtual char * outputName (int ind);
+	virtual double * outputAddress (int ind);
+	virtual void move (void);
+	lunar_stereo_mixer (orbiter_core * core);
+};
+
 class lunar_gateway : public orbiter {
 private:
 	double enter;

@@ -52,6 +52,29 @@ double * lunar_mixer :: inputAddress (int ind) {return ind == 0 ? & enter : orbi
 void lunar_mixer :: move (void) {signal = enter;}
 lunar_mixer :: lunar_mixer (orbiter_core * core) : orbiter (core) {enter = 0.0; initialise (); activate ();}
 
+int lunar_stereo_mixer :: numberOfInputs (void) {return 2;}
+char * lunar_stereo_mixer :: inputName (int ind) {
+	switch (ind) {
+	case 0: return "LEFT"; break;
+	case 1: return "RIGHT"; break;
+	default: break;
+	}
+	return orbiter :: inputName (ind);
+}
+double * lunar_stereo_mixer :: inputAddress (int ind) {
+	switch (ind) {
+	case 0: return & enter; break;
+	case 1: return & enter_right; break;
+	default: break;
+	}
+	return orbiter :: inputAddress (ind);
+}
+int lunar_stereo_mixer :: numberOfOutputs (void) {return numberOfInputs ();}
+char * lunar_stereo_mixer :: outputName (int ind) {return inputName (ind);}
+double * lunar_stereo_mixer :: outputAddress (int ind) {if (ind == 1) return & signal_right; return orbiter :: outputAddress (ind);}
+void lunar_stereo_mixer :: move (void) {signal = enter; signal_right = enter_right;}
+lunar_stereo_mixer :: lunar_stereo_mixer (orbiter_core * core) : orbiter (core) {signal_right = enter = enter_right = 0.0; initialise (); activate ();}
+
 int lunar_gateway :: numberOfInputs (void) {return 2;}
 char * lunar_gateway :: inputName (int ind) {if (ind == 0) return "ENTER"; if (ind == 1) return "GATEWAY"; return orbiter :: inputName (ind);}
 double * lunar_gateway :: inputAddress (int ind) {if (ind == 0) return & enter; if (ind == 1) return & gateway; return orbiter :: inputAddress (ind);}

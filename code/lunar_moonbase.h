@@ -28,10 +28,18 @@
 #define _LUNAR_MOONBASE_
 
 #include "lunar.h"
+#include "lunar_landers.h"
 
 class moonbase : public orbiter {
+private:
+	lunar_map * map;
 public:
 	virtual int numberOfOutputs (void);
+	virtual bool release (void);
+	void set_map (lunar_map * map);
+	void keyon (int key);
+	void keyon (int key, int velocity);
+	void keyoff (void);
 	moonbase (orbiter_core * core);
 };
 

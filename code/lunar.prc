@@ -46,7 +46,7 @@ program lunar #machine := "prolog.lunar"
 	[*module *name *pb]
 ]
 
-[[Dock moonbase *base]
+[[Dock moonbase *base *moonbase]
 	[create_atom *modules]
 	[create_atom *parameters]
 	[moonbase *moonbase]

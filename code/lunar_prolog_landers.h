@@ -102,9 +102,12 @@ public:
 };
 
 class moonbase_class : public PrologNativeOrbiterCreator {
+private:
+	PrologDirectory * dir;
 public:
 	virtual orbiter * create_orbiter (PrologElement * parameters);
-	moonbase_class (orbiter_core * core);
+	virtual PrologNativeOrbiter * create_native_orbiter (PrologAtom * atom, orbiter * module);
+	moonbase_class (PrologDirectory * dir, orbiter_core * core);
 };
 
 #endif

@@ -4,12 +4,14 @@
 import studio
 import lunar
 
-program lunar_eclipse [base op1 op2 radar tg map manual lf gate eagle reactor t]
+program lunar_eclipse [base op1 op2 radar tg map manual lf gate eagle reactor t moon mapper]
 
 [[t *v] [Lander *adsr base adsr] [*adsr *v]]
 
 [[eagle]
-	[Dock moonbase base]
+	[Dock moonbase base moon]
+	[key_map mapper]
+	[moon mapper]
 	[Dock mixer base signal]
 	[Dock mixer base mic]
 	[Dock operator base operator 1]

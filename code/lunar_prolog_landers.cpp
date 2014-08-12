@@ -158,6 +158,49 @@ adsr_class :: adsr_class (orbiter_core * core) : PrologNativeOrbiterCreator (cor
 orbiter * eg_class :: create_orbiter (PrologElement * parameters) {return new lunar_eg (core);}
 eg_class :: eg_class (orbiter_core * core) : PrologNativeOrbiterCreator (core) {}
 
+class native_moonbase : public PrologNativeOrbiter {
+private:
+	PrologAtom * keyon, * keyoff;
+public:
+	virtual bool code (PrologElement * parameters, PrologResolution * resolution) {
+		PrologElement * atom = 0;
+		PrologElement * key = 0;
+		PrologElement * velocity = 0;
+		PrologElement * pp = parameters;
+		while (pp -> isPair ()) {
+			PrologElement * el = pp -> getLeft ();
+			if (el -> isAtom ()) atom = el;
+			if (el -> isEarth ()) atom = el;
+			if (el -> isInteger ()) if (key == 0) key = el; else velocity = el;
+			pp = pp -> getRight ();
+		}
+		moonbase * trigger = (moonbase *) module;
+		if (atom != 0) {
+			if (atom -> isEarth ()) {trigger -> set_map (0); return true;}
+			if (atom -> isAtom ()) {
+				PrologAtom * a = atom -> getAtom ();
+				if (a == keyon) {
+					if (key == 0) return false;
+					if (velocity == 0) trigger -> keyon (key -> getInteger ());
+					else trigger -> keyon (key -> getInteger (), velocity -> getInteger ());
+					return true;
+				}
+				if (a == keyoff) {trigger -> keyoff (); return true;}
+				PrologNativeCode * machine = a -> getMachine ();
+				if (machine == 0) return false;
+				if (machine -> isTypeOf (key_map_native_orbiter :: name ())) {trigger -> set_map ((lunar_map *) ((key_map_native_orbiter *) machine) -> module); return true;}
+			}
+		}
+		return PrologNativeOrbiter :: code (parameters, resolution);
+	}
+	native_moonbase (PrologDirectory * dir, PrologAtom * atom, orbiter_core * core, orbiter * module) : PrologNativeOrbiter (atom, core, module) {
+		keyon = keyoff = 0;
+		if (dir == 0) return;
+		keyon = dir -> searchAtom ("keyon");
+		keyoff = dir -> searchAtom ("keyoff");
+	}
+};
 orbiter * moonbase_class :: create_orbiter (PrologElement * parmaeters) {return new moonbase (core);}
-moonbase_class :: moonbase_class (orbiter_core * core) : PrologNativeOrbiterCreator (core) {}
+PrologNativeOrbiter * moonbase_class :: create_native_orbiter (PrologAtom * atom, orbiter * module) {return new native_moonbase (dir, atom, core, module);}
+moonbase_class :: moonbase_class (PrologDirectory * dir, orbiter_core * core) : PrologNativeOrbiterCreator (core) {this -> dir = dir;}
 

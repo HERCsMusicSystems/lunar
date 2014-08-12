@@ -28,4 +28,28 @@
 #include <stdio.h>
 
 int moonbase :: numberOfOutputs (void) {return 0;}
-moonbase :: moonbase (orbiter_core * core) : orbiter (core) {initialise ();}
+void moonbase :: set_map (lunar_map * map) {
+	if (this -> map != 0) this -> map -> release ();
+	this -> map = map;
+	if (map != 0) map -> hold ();
+}
+void moonbase :: keyon (int key) {
+	if (key < 0) key = 0;
+	if (key > 127) key = 127;
+	double this_key = map == 0 ? (double) (key - 64) * 128.0 : map -> map [key];
+	printf ("=> keyon (%f)\n", this_key);
+}
+void moonbase :: keyon (int key, int velocity) {
+	if (velocity < 1) {keyoff (); return;}
+	double this_velocity = (double) velocity * 128.0;
+	printf ("=> velocity (%f)\n", this_velocity);
+	keyon (key);
+}
+void moonbase :: keyoff (void) {printf ("=> keyoff ()\n");}
+bool moonbase :: release (void) {
+	lunar_map * to_delete = map;
+	bool ret = orbiter :: release ();
+	if (ret && to_delete != 0) to_delete -> release ();
+	return ret;
+}
+moonbase :: moonbase (orbiter_core * core) : orbiter (core) {map = 0; initialise ();}

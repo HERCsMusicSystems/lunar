@@ -4,7 +4,10 @@
 import studio
 import lunar
 
-program lunar_eclipse [base op1 op2 radar tg map manual lf gate eagle reactor t moon mapper]
+program lunar_eclipse [
+							base op1 op2 radar tg map manual lf gate eagle reactor t moon mapper veloc
+							swift trig
+						]
 
 [[t *v] [Lander *adsr base adsr] [*adsr *v]]
 
@@ -34,7 +37,22 @@ program lunar_eclipse [base op1 op2 radar tg map manual lf gate eagle reactor t 
 	[Lunar 9728 base adsr release]
 ]
 
-end := [[core reactor 330 22050 1024] [eagle] [command]] .
+[[swift]
+	[key_map mapper] [mapper 64 12]
+	[velocity_map veloc] [veloc 100 12808]
+	[trigger trig]
+	[trig mapper veloc]
+	[trig keyon 60 100]
+	[trig keyon 64 101]
+	[trig keyon 65 100]
+	[trig keyon 67 100]
+]
+
+end := [
+		;[core reactor 330 22050 1024]
+		[swift]
+		[command]
+		] .
 end := [
 			[auto_atoms]
 			;[keyboard manual tg]

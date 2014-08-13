@@ -87,9 +87,9 @@ public:
 	key_map_native_orbiter (PrologAtom * atom, orbiter_core * core, orbiter * module) : PrologNativeKeyOrbiter (atom, core, module) {}
 };
 
-orbiter * key_map_class :: create_orbiter (PrologElement * parameters) {return new lunar_map (core);}
+orbiter * key_map_class :: create_orbiter (PrologElement * parameters) {return new lunar_map (core, initial);}
 PrologNativeOrbiter * key_map_class :: create_native_orbiter (PrologAtom * atom, orbiter * module) {return new key_map_native_orbiter (atom, core, module);}
-key_map_class :: key_map_class (orbiter_core * core) : PrologNativeOrbiterCreator (core) {}
+key_map_class :: key_map_class (orbiter_core * core, int initial) : PrologNativeOrbiterCreator (core) {this -> initial = initial;}
 
 orbiter * impulse_class :: create_orbiter (PrologElement * parameters) {return new lunar_impulse (core);}
 impulse_class :: impulse_class (orbiter_core * core) : PrologNativeOrbiterCreator (core) {}
@@ -99,32 +99,47 @@ private:
 	PrologAtom * keyon, * keyoff;
 public:
 	virtual bool code (PrologElement * parameters, PrologResolution * resolution) {
-		PrologElement * atom = 0;
+		PrologElement * key_atom = 0;
+		PrologElement * velocity_atom = 0;
 		PrologElement * key = 0;
 		PrologElement * velocity = 0;
 		PrologElement * pp = parameters;
 		while (pp -> isPair ()) {
 			PrologElement * el = pp -> getLeft ();
-			if (el -> isAtom ()) atom = el;
-			if (el -> isEarth ()) atom = el;
+			if (el -> isAtom ()) if (key_atom == 0) key_atom = el; else velocity_atom = el;
+			if (el -> isEarth ()) if (key_atom == 0) key_atom = el; else velocity_atom = el;
 			if (el -> isInteger ()) if (key == 0) key = el; else velocity = el;
 			pp = pp -> getRight ();
 		}
 		lunar_trigger * trigger = (lunar_trigger *) module;
-		if (atom != 0) {
-			if (atom -> isEarth ()) {trigger -> set_map (0); return true;}
-			if (atom -> isAtom ()) {
-				PrologAtom * a = atom -> getAtom ();
+		if (velocity_atom != 0) {
+			if (velocity_atom -> isEarth ()) trigger -> set_velocity_map (0);
+			if (velocity_atom -> isAtom ()) {
+				PrologAtom * a = velocity_atom -> getAtom ();
+				PrologNativeCode * machine = a -> getMachine ();
+				if (machine == 0) return false;
+				if (! machine -> isTypeOf (key_map_native_orbiter :: name ())) return false;
+				trigger -> set_velocity_map ((lunar_map *) ((key_map_native_orbiter *) machine) -> module);
+			}
+		}
+		if (key_atom != 0) {
+			if (key_atom -> isEarth ()) {trigger -> set_key_map (0); return true;}
+			if (key_atom -> isAtom ()) {
+				PrologAtom * a = key_atom -> getAtom ();
 				if (a == keyon) {
 					if (key == 0) return false;
 					if (velocity == 0) trigger -> keyon (key -> getInteger ());
 					else trigger -> keyon (key -> getInteger (), velocity -> getInteger ());
 					return true;
 				}
-				if (a == keyoff) {trigger -> keyoff (); return true;}
+				if (a == keyoff) {
+					if (key == 0) trigger -> keyoff ();
+					else trigger -> keyoff (key -> getInteger ());
+					return true;
+				}
 				PrologNativeCode * machine = a -> getMachine ();
 				if (machine == 0) return false;
-				if (machine -> isTypeOf (key_map_native_orbiter :: name ())) {trigger -> set_map ((lunar_map *) ((key_map_native_orbiter *) machine) -> module); return true;}
+				if (machine -> isTypeOf (key_map_native_orbiter :: name ())) {trigger -> set_key_map ((lunar_map *) ((key_map_native_orbiter *) machine) -> module); return true;}
 			}
 		}
 		return PrologNativeOrbiter :: code (parameters, resolution);
@@ -136,7 +151,7 @@ public:
 		keyoff = dir -> searchAtom ("keyoff");
 	}
 };
-orbiter * trigger_class :: create_orbiter (PrologElement * parameters) {return new lunar_trigger (core);}
+orbiter * trigger_class :: create_orbiter (PrologElement * parameters) {return new lunar_trigger (core, 0);}
 PrologNativeOrbiter * trigger_class :: create_native_orbiter (PrologAtom * atom, orbiter * module) {return new trigger_native_orbiter (dir, atom, core, module);}
 trigger_class :: trigger_class (PrologDirectory * dir, orbiter_core * core) : PrologNativeOrbiterCreator (core) {this -> dir = dir;}
 

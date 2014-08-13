@@ -84,12 +84,14 @@ void lunar_gateway :: move (void) {
 lunar_gateway :: lunar_gateway (orbiter_core * core) : orbiter (core) {enter = 0.0; gateway = 1.0; initialise (); activate ();}
 
 int lunar_map :: numberOfOutputs (void) {return 0;}
-lunar_map :: lunar_map (orbiter_core * core) : orbiter (core) {
-	for (int ind = 0; ind < 128; ind++) map [ind] = (double) (ind - 64) * 128.0;
+lunar_map :: lunar_map (orbiter_core * core, int initial) : orbiter (core) {
+	for (int ind = 0; ind < 128; ind++) map [ind] = (double) (initial++) * 128.0;
 	initialise ();
 }
 
-int lunar_trigger :: numberOfInputs (void) {return 0;}
+int lunar_trigger :: numberOfInputs (void) {return 1;}
+char * lunar_trigger :: inputName (int ind) {if (ind == 0) return "BUSY"; return orbiter :: inputName (ind);}
+double * lunar_trigger :: inputAddress (int ind) {if (ind == 0) return & busy; return orbiter :: inputAddress (ind);}
 int lunar_trigger :: numberOfOutputs (void) {return 3;}
 char * lunar_trigger :: outputName (int ind) {
 	switch (ind) {
@@ -109,30 +111,71 @@ double * lunar_trigger :: outputAddress (int ind) {
 	}
 	return orbiter :: outputAddress (ind);
 }
-void lunar_trigger :: set_map (lunar_map * map) {
-	if (this -> map != 0) this -> map -> release ();
-	this -> map = map;
+void lunar_trigger :: set_key_map (lunar_map * map) {
+	if (this -> key_map != 0) this -> key_map -> release ();
+	this -> key_map = map;
 	if (map != 0) map -> hold ();
+}
+void lunar_trigger :: set_velocity_map (lunar_map * map) {
+	if (this -> velocity_map != 0) this -> velocity_map -> release ();
+	this -> velocity_map = map;
+	if (map != 0) map -> hold();
+}
+void lunar_trigger :: add_stack (int key) {
+	if (keystack_pointer < 16) {keystack [keystack_pointer++] = key; return;}
+	for (int ind = 0; ind < 14; ind++) keystack [ind] = keystack [ind + 1];
+	keystack [15] = key;
+	keystack_pointer = 16;
+}
+void lunar_trigger :: drop_stack (int key) {
+	bool continue_playing = keystack_pointer > 0 && keystack [keystack_pointer - 1] != key;
+	for (int ind = 0; ind < keystack_pointer; ind++) {
+		if (keystack [ind] == key) {
+			for (int sub = ind; sub < keystack_pointer - 1; sub++) keystack [sub] = keystack [sub + 1];
+			keystack_pointer--;
+		}
+	}
+	if (continue_playing) return;
+	if (keystack_pointer > 0) keyon (keystack [--keystack_pointer]);
 }
 void lunar_trigger :: keyon (int key) {
 	if (key < 0) key = 0;
 	if (key > 127) key = 127;
-	this -> key = map == 0 ? (double) (key - 64) * 128.0 : map -> map [key];
+	this -> key = key_map == 0 ? (double) (key - 64) * 128.0 : key_map -> map [key];
 	trigger = 1.0;
+	add_stack (key);
 }
 void lunar_trigger :: keyon (int key, int velocity) {
 	if (velocity < 1) {keyoff (); return;}
-	this -> velocity = (double) velocity * 128.0;
+	if (velocity < 0) velocity = 0;
+	if (velocity > 127) velocity = 127;
+	this -> velocity = velocity_map == 0 ? (double) velocity * 128.0 : velocity_map -> map [velocity];
 	keyon (key);
 }
-void lunar_trigger :: keyoff (void) {trigger = 0.0;}
+void lunar_trigger :: keyoff (int key) {drop_stack (key); if (keystack_pointer == 0) trigger = 0.0;}
+void lunar_trigger :: keyoff (void) {keystack_pointer = 0; trigger = 0.0;}
 bool lunar_trigger :: release (void) {
-	lunar_map * to_delete = map;
+	lunar_map * to_delete_key_map = key_map;
+	lunar_map * to_delete_velocity_map = velocity_map;
+	lunar_trigger * to_delete_next = next;
 	bool ret = orbiter :: release ();
-	if (ret && to_delete != 0) to_delete -> release ();
+	if (ret) {
+		if (to_delete_key_map != 0) to_delete_key_map -> release ();
+		if (to_delete_velocity_map != 0) to_delete_velocity_map -> release ();
+		if (to_delete_next != 0) to_delete_next -> release ();
+	}
 	return ret;
 }
-lunar_trigger :: lunar_trigger (orbiter_core * core) : orbiter (core) {key = trigger = 0.0; velocity = 12800.0; map = 0; initialise ();}
+lunar_trigger :: lunar_trigger (orbiter_core * core, lunar_trigger * next) : orbiter (core) {
+	this -> next = next;
+	if (next != 0) next -> hold ();
+	key = trigger = busy = 0.0;
+	velocity = 12800.0;
+	key_map = 0;
+	velocity_map = 0;
+	for (int ind = 0; ind < 16; ind++) keystack [ind] = 0; keystack_pointer = 0;
+	initialise ();
+}
 
 int lunar_impulse :: numberOfInputs (void) {return 1;}
 char * lunar_impulse :: inputName (int ind) {if (ind == 0) return "ENTER"; else return orbiter :: inputName (ind);}

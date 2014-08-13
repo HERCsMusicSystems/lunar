@@ -92,24 +92,35 @@ class lunar_map : public orbiter {
 public:
 	double map [128];
 	virtual int numberOfOutputs (void);
-	lunar_map (orbiter_core * core);
+	lunar_map (orbiter_core * core, int initial = -64);
 };
 
 class lunar_trigger : public orbiter {
 private:
-	lunar_map * map;
+	lunar_map * key_map;
+	lunar_map * velocity_map;
 	double key, velocity, trigger;
+	int keystack [16];
+	int keystack_pointer;
+	void add_stack (int key);
+	void drop_stack (int key);
 public:
+	double busy;
+	lunar_trigger * next;
 	virtual int numberOfInputs (void);
+	virtual char * inputName (int ind);
+	virtual double * inputAddress (int ind);
 	virtual int numberOfOutputs (void);
 	virtual char * outputName (int ind);
 	virtual double * outputAddress (int ind);
-	void set_map (lunar_map * map);
+	void set_key_map (lunar_map * map);
+	void set_velocity_map (lunar_map * map);
 	void keyon (int key);
 	void keyon (int key, int velocity);
+	void keyoff (int key);
 	void keyoff (void);
 	virtual bool release (void);
-	lunar_trigger (orbiter_core * core);
+	lunar_trigger (orbiter_core * core, lunar_trigger * next);
 };
 
 class lunar_impulse : public orbiter {

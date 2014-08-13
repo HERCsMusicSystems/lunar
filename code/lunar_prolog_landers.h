@@ -44,10 +44,12 @@ public:
 };
 
 class key_map_class : public PrologNativeOrbiterCreator {
+private:
+	int initial;
 public:
 	virtual orbiter * create_orbiter (PrologElement * parameters);
 	virtual PrologNativeOrbiter * create_native_orbiter (PrologAtom * atom, orbiter * module);
-	key_map_class (orbiter_core * core);
+	key_map_class (orbiter_core * core, int initial = -64);
 };
 
 class impulse_class : public PrologNativeOrbiterCreator {

@@ -73,8 +73,9 @@ program lunar_eclipse [
 
 end := [
 		[core reactor 330 22050 1024]
-		[alien]
+		;[alien]
 		;[swift]
+		[eagle]
 		[command]
 		] .
 end := [

@@ -40,6 +40,12 @@ program lunar #machine := "prolog.lunar"
 #machine operator := "operator"
 
 [[AddParameterBlock *parameters *parameter *module *selector *initial]
+	[APPEND *selector [*parameter] *selectors]
+	[*parameters *pb : *selectors] /
+	[text_term *name *parameter]
+	[*module *name *pb]
+]
+[[AddParameterBlock *parameters *parameter *module *selector *initial]
 	[parameter_block *pb]
 	[*pb *initial]
 	[APPEND *selector [*parameter] *selectors]
@@ -59,6 +65,12 @@ program lunar #machine := "prolog.lunar"
 [[Dock mixer *moonbase : *selector]
 	[*moonbase *parameters *modules : *]
 	[mixer *mixer]
+	[addcl [[*modules *mixer : *selector]]]
+]
+
+[[Dock stereo_mixer *moonbase : *selector]
+	[*moonbase *parameters *modules : *]
+	[stereo_mixer *mixer]
 	[addcl [[*modules *mixer : *selector]]]
 ]
 
@@ -101,8 +113,22 @@ program lunar #machine := "prolog.lunar"
 
 [[Lunar *v *moonbase : *selector] [*moonbase *parameters : *] [*parameters *base : *selector] [*base 0 *v]]
 
-[[Activate *core *moonbase] [Lander *base *moonbase] [*core *base] [*core 1 *base 1] [*core 2 *base 2]]
-[[Deactivate *core *moonbase] [Lander *base *moonbase] [*core *base []] [*core 1 *base 1 []] [*core 2 *base 2 []]]
+[[Activate *core : *moonbase]
+	[Lander *base : *moonbase]
+	[*base : *io]
+	[SELECT
+		[[eq *io [* ["LEFT" "RIGHT"]]] [*core "LEFT" *base "LEFT"] [*core "RIGHT" *base "RIGHT"]]
+		[[eq *io [* ["SIGNAL"]]] [*core *base]]
+	]
+]
+[[Deactivate *core : *moonbase]
+	[Lander *base : *moonbase]
+	[*base : *io]
+	[SELECT
+		[[eq *io [* ["LEFT" "RIGHT"]]] [*core "LEFT" *base "LEFT" []] [*core "RIGHT" *base "RIGHT" []]]
+		[[eq *io [* ["SIGNAL"]]] [*core *base []]]
+	]
+]
 
 private [AddParameterBlock FindModuleAndPort]
 

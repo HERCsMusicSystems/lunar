@@ -99,7 +99,9 @@ class lunar_trigger : public orbiter {
 private:
 	lunar_map * key_map;
 	lunar_map * velocity_map;
-	double key, velocity, trigger;
+	double velocity, trigger;
+	double origin, delta, target, porta_time, time;
+	bool active;
 	int keystack [16];
 	int keystack_pointer;
 	void add_stack (int key);
@@ -120,7 +122,8 @@ public:
 	void keyoff (int key);
 	void keyoff (void);
 	virtual bool release (void);
-	lunar_trigger (orbiter_core * core, lunar_trigger * next);
+	virtual void move (void);
+	lunar_trigger (orbiter_core * core, bool active, lunar_trigger * next);
 };
 
 class lunar_impulse : public orbiter {

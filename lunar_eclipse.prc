@@ -51,7 +51,7 @@ program lunar_eclipse [
 ]
 
 [[alien]
-	[trigger trig]
+	[porta_trigger trig]
 	[operator generator]
 	[adsr envelope]
 	[oscilloscope radar]

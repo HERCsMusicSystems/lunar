@@ -89,9 +89,23 @@ lunar_map :: lunar_map (orbiter_core * core, int initial) : orbiter (core) {
 	initialise ();
 }
 
-int lunar_trigger :: numberOfInputs (void) {return 1;}
-char * lunar_trigger :: inputName (int ind) {if (ind == 0) return "BUSY"; return orbiter :: inputName (ind);}
-double * lunar_trigger :: inputAddress (int ind) {if (ind == 0) return & busy; return orbiter :: inputAddress (ind);}
+int lunar_trigger :: numberOfInputs (void) {return 2;}
+char * lunar_trigger :: inputName (int ind) {
+	switch (ind) {
+	case 0: return "BUSY"; break;
+	case 1: return "TIME"; break;
+	default: break;
+	}
+	return orbiter :: inputName (ind);
+}
+double * lunar_trigger :: inputAddress (int ind) {
+	switch (ind) {
+	case 0: return & busy; break;
+	case 1: return & porta_time; break;
+	default: break;
+	}
+	return orbiter :: inputAddress (ind);
+}
 int lunar_trigger :: numberOfOutputs (void) {return 3;}
 char * lunar_trigger :: outputName (int ind) {
 	switch (ind) {
@@ -104,7 +118,7 @@ char * lunar_trigger :: outputName (int ind) {
 }
 double * lunar_trigger :: outputAddress (int ind) {
 	switch (ind) {
-	case 0: return & key; break;
+	case 0: return & signal; break;
 	case 1: return & velocity; break;
 	case 2: return & trigger; break;
 	default: break;
@@ -141,7 +155,9 @@ void lunar_trigger :: drop_stack (int key) {
 void lunar_trigger :: keyon (int key) {
 	if (key < 0) key = 0;
 	if (key > 127) key = 127;
-	this -> key = key_map == 0 ? (double) (key - 64) * 128.0 : key_map -> map [key];
+	target = key_map == 0 ? (double) (key - 64) * 128.0 : key_map -> map [key];
+	if (! active || porta_time == 0.0) this -> signal = target;
+	else {origin = this -> signal; delta = target - origin; time = 0.0;}
 	trigger = 1.0;
 	add_stack (key);
 }
@@ -166,15 +182,26 @@ bool lunar_trigger :: release (void) {
 	}
 	return ret;
 }
-lunar_trigger :: lunar_trigger (orbiter_core * core, lunar_trigger * next) : orbiter (core) {
+void lunar_trigger :: move (void) {
+	if (signal == target) return;
+	if (time >= 1.0) {signal = target; return;}
+	signal = origin + delta * time;
+	time += core -> WaitingTime (porta_time);
+}
+lunar_trigger :: lunar_trigger (orbiter_core * core, bool active, lunar_trigger * next) : orbiter (core) {
 	this -> next = next;
 	if (next != 0) next -> hold ();
-	key = trigger = busy = 0.0;
+	signal = trigger = busy = 0.0;
+	origin = delta = target = 0.0;
+	porta_time = 0.0;
+	time = 2.0;
 	velocity = 12800.0;
 	key_map = 0;
 	velocity_map = 0;
 	for (int ind = 0; ind < 16; ind++) keystack [ind] = 0; keystack_pointer = 0;
+	this -> active = active;
 	initialise ();
+	if (active) activate ();
 }
 
 int lunar_impulse :: numberOfInputs (void) {return 1;}

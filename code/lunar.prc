@@ -74,6 +74,19 @@ program lunar #machine := "prolog.lunar"
 	[addcl [[*modules *mixer : *selector]]]
 ]
 
+[[Dock trigger *moonbase : *selector]
+	[*moonbase *parameters *modules : *]
+	[trigger *trigger]
+	[addcl [[*modules *trigger : *selector]]]
+]
+
+[[Dock porta_trigger *moonbase : *selector]
+	[*moonbase *parameters *modules : *]
+	[porta_trigger *trigger]
+	[addcl [[*modules *trigger : *selector]]]
+	[AddParameterBlock *parameters time *trigger *selector 0]
+]
+
 [[Dock operator *moonbase : *selector]
 	[*moonbase *parameters *modules : *]
 	[operator *operator]

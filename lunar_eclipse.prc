@@ -4,77 +4,33 @@
 import studio
 import lunar
 
-program lunar_eclipse [
-							base op1 op2 radar tg map manual lf gate eagle reactor t moon mapper veloc
-							swift trig trigg alien generator envelope kb
-						]
-
-[[t *v] [Lander *adsr base adsr] [*adsr *v]]
-
-[[trigg : *x] [show *x] [trig : *x]]
+program lunar_eclipse [reactor base radar eagle kb]
 
 [[eagle]
-	[Dock moonbase base moon]
-	[key_map mapper]
-	[moon mapper]
-	[Dock mixer base signal]
-	[Dock mixer base mic]
+	[Dock moonbase base *]
+	[Dock mixer base mixer]
 	[Dock operator base operator 1]
-	[Dock adsr base adsr]
-	[Dock [base signal] [operator 1]]
-	[Dock [base operator 1 amp] [adsr]]
-	[Dock [base signal] [mic]]
+	[Dock adsr base adsr 1]
+	[Dock porta_trigger base trigger]
+
+	[Dock [base operator 1] [trigger]]
+	[Dock [base adsr 1] [trigger trigger]]
+	[Dock [base operator 1 amp] [adsr 1]]
+	[Dock [base mixer] [operator 1]]
+
 
 	[oscilloscope radar]
+	[Lander *trig base trigger]
+	[keyboard kb *trig]
+	[Lander *mix base mixer]
+	[radar *mix]
 
-	[Lander *base_signal base signal]
-	[radar *base_signal]
+	[Activate reactor base mixer]
 
-	[Lander *base_mic base mic]
-	[*base_mic reactor]
-
-	[Lunar 9728 base adsr attack]
-	[Lunar 9728 base adsr decay]
-	[Lunar -4096 base adsr sustain]
-	[Lunar 9728 base adsr release]
-]
-
-[[swift]
-	[key_map mapper] [mapper 64 12]
-	[velocity_map veloc] [veloc 100 12808]
-	[trigger trig]
-	[trig mapper veloc]
-	[trig keyon 60 100]
-	[trig keyon 64 101]
-	[trig keyon 65 100]
-	[trig keyon 67 100]
-]
-
-[[alien]
-	[porta_trigger trig]
-	[operator generator]
-	[adsr envelope]
-	[oscilloscope radar]
-
-	[small_keyboard kb trigg]
-	[envelope "trigger" trig "trigger"]
-	[generator trig]
-	[generator "amp" envelope]
-	[radar generator]
-	[reactor generator]
-
-	[envelope "attack" 8192]
-	[envelope "release" 8192]
-	[envelope "decay" 8192]
-
-	[envelope "attack" 0]
-	[envelope "sustain" -16383]
 ]
 
 end := [
 		[core reactor 330 22050 1024]
-		;[alien]
-		;[swift]
 		[eagle]
 		[command]
 		] .

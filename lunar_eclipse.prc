@@ -6,10 +6,12 @@ import lunar
 
 program lunar_eclipse [
 							base op1 op2 radar tg map manual lf gate eagle reactor t moon mapper veloc
-							swift trig
+							swift trig trigg alien generator envelope kb
 						]
 
 [[t *v] [Lander *adsr base adsr] [*adsr *v]]
+
+[[trigg : *x] [show *x] [trig : *x]]
 
 [[eagle]
 	[Dock moonbase base moon]
@@ -48,9 +50,31 @@ program lunar_eclipse [
 	[trig keyon 67 100]
 ]
 
+[[alien]
+	[trigger trig]
+	[operator generator]
+	[adsr envelope]
+	[oscilloscope radar]
+
+	[small_keyboard kb trigg]
+	[envelope "trigger" trig "trigger"]
+	[generator trig]
+	[generator "amp" envelope]
+	[radar generator]
+	[reactor generator]
+
+	[envelope "attack" 8192]
+	[envelope "release" 8192]
+	[envelope "decay" 8192]
+
+	[envelope "attack" 0]
+	[envelope "sustain" -16383]
+]
+
 end := [
-		;[core reactor 330 22050 1024]
-		[swift]
+		[core reactor 330 22050 1024]
+		[alien]
+		;[swift]
 		[command]
 		] .
 end := [

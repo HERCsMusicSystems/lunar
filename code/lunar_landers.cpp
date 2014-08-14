@@ -342,7 +342,8 @@ void lunar_adsr :: move (void) {
 			break;
 		case 4:
 			if (attack == 0.0) {
-				if (decay == 0.0) {time = 0.0; signal = sustain; stage = 3; return;}
+				time = 0.0;
+				if (decay == 0.0) {signal = sustain; stage = 3; return;}
 				signal = 0.0; stage = 2; time += core -> WaitingTime (decay);
 				return;
 			}

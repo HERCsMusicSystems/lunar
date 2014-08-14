@@ -145,7 +145,7 @@ private:
 	double delta;
 	double time;
 	double speed, wave, pulse, phase, sync;
-	double positive;
+	double positive, negative;
 public:
 	virtual int numberOfInputs (void);
 	virtual char * inputName (int ind);

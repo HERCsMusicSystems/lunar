@@ -233,9 +233,23 @@ double * lunar_lfo :: inputAddress (int ind) {
 	}
 	return orbiter :: inputAddress (ind);
 }
-int lunar_lfo :: numberOfOutputs (void) {return 2;}
-char * lunar_lfo :: outputName (int ind) {if (ind == 1) return "POSITIVE"; else return orbiter :: outputName (ind);}
-double * lunar_lfo :: outputAddress (int ind) {return ind == 1 ? & positive : orbiter :: outputAddress (ind);}
+int lunar_lfo :: numberOfOutputs (void) {return 3;}
+char * lunar_lfo :: outputName (int ind) {
+	switch (ind) {
+	case 1: return "NEGATIVE"; break;
+	case 2: return "POSITIVE"; break;
+	default: break;
+	}
+	return orbiter :: outputName (ind);
+}
+double * lunar_lfo :: outputAddress (int ind) {
+	switch (ind) {
+	case 1: return & negative; break;
+	case 2: return & positive; break;
+	default: break;
+	}
+	return orbiter :: outputAddress (ind);
+}
 void lunar_lfo :: move (void) {
 	double t = 0.5 + pulse * 0.00006103515625;
 	switch ((int) wave) {
@@ -245,6 +259,7 @@ void lunar_lfo :: move (void) {
 		else if (time < t) signal = core -> SineApproximated (time * 0.5 / t - 0.25);
 		else signal = core -> SineApproximated ((time - t) * 0.5 / (1.0 - t) + 0.25);
 		positive = 0.5 + signal * 0.5;
+		negative = positive - 1.0;
 		break;
 	case 1: // triangle
 		if (t <= 0) positive = 1.0 - time;
@@ -252,10 +267,11 @@ void lunar_lfo :: move (void) {
 		else if (time < t) positive = time / t;
 		else positive = (1.0 - time) / (1.0 - t);
 		signal = positive * 2.0 - 1.0;
+		negative = positive - 1.0;
 		break;
 	case 2: // square
-		if (time < t) signal = positive = 1.0;
-		else {signal = -1.0; positive = 0.0;}
+		if (time < t) {signal = positive = 1.0; negative = 0.0;}
+		else {signal = -1.0; positive = 0.0; negative = -1.0;}
 		break;
 	case 3: // random
 		if (time < t) {if (! stage_one) {
@@ -274,6 +290,7 @@ void lunar_lfo :: move (void) {
 		else if (time < t) positive = origin + delta * time / t;
 		else positive = origin + delta * (time - t) / (1.0 - t);
 		signal = positive * 2.0 - 1.0;
+		negative = positive - 1.0;
 		break;
 	case 4: // S/H
 		if (time < t) {if (! stage_one) {
@@ -285,6 +302,7 @@ void lunar_lfo :: move (void) {
 			positive = 0.00006103515625 * (double) core -> noise14b;
 			stage_one = false;
 		}}
+		negative = positive - 1.0;
 		break;
 	}
 	time += core -> ControlTimeDelta (speed);
@@ -293,7 +311,7 @@ void lunar_lfo :: move (void) {
 lunar_lfo :: lunar_lfo (orbiter_core * core) : orbiter (core) {
 	stage_one = true;
 	origin = target = delta = 0.0;
-	time = speed = wave = pulse = phase = sync = positive = 0.0;
+	time = speed = wave = pulse = phase = sync = positive = negative = 0.0;
 	initialise (); activate ();
 }
 

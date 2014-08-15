@@ -18,10 +18,14 @@ program lunar_eclipse [reactor base radar eagle kb]
 	[Dock [base operator 1 amp] [adsr 1]]
 	[Dock [base mixer] [operator 1]]
 
+	[Lunar 9000 base trigger time]
+	[Lunar 7000 base adsr 1 attack]
+	[Lunar 9000 base adsr 1 release]
+
 
 	[oscilloscope radar]
 	[Lander *trig base trigger]
-	[keyboard kb *trig]
+	[small_keyboard kb *trig]
 	[Lander *mix base mixer]
 	[radar *mix]
 

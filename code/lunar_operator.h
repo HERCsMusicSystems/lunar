@@ -32,7 +32,6 @@
 class lunar_operator : public orbiter {
 private:
 	double time;
-	double omega;
 	double freq;
 	double ratio;
 	double shift;
@@ -46,6 +45,23 @@ public:
 	virtual double * inputAddress (int ind);
 	virtual void move (void);
 	lunar_operator (orbiter_core * core);
+};
+
+class lunar_square_operator : public orbiter {
+private:
+	double time;
+	double freq;
+	double ratio;
+	double sync;
+	double trigger;
+	double amp;
+	double slope;
+public:
+	virtual int numberOfInputs (void);
+	virtual char * inputName (int ind);
+	virtual double * inputAddress (int ind);
+	virtual void move (void);
+	lunar_square_operator (orbiter_core * core);
 };
 
 #endif

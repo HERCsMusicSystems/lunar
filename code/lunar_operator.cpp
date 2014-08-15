@@ -25,8 +25,6 @@
 /////////////////////////////////////////////////////////////////////
 
 #include "lunar_operator.h"
-#define _USE_MATH_DEFINES
-#include <math.h>
 
 int lunar_operator :: numberOfInputs (void) {return 6;}
 char * lunar_operator :: inputName (int ind) {
@@ -55,15 +53,67 @@ double * lunar_operator :: inputAddress (int ind) {
 }
 
 void lunar_operator :: move (void) {
-	if (slope != trigger) if (sync != 0.0 && trigger > 0.0) time = 0.0; trigger = sync;
+	if (slope != trigger) if (sync != 0.0 && trigger > 0.0) time = 0.0; slope = trigger;
 	this -> signal = core -> Amplitude (amp) * core -> Sine (time + shift);
 	time += core -> TimeDelta (freq) * ratio;
-	if (time >= 1.0) time -= 1.0;
+	while (time >= 1.0) time -= 1.0;
 }
 
 lunar_operator :: lunar_operator (orbiter_core * core) : orbiter (core) {
 	freq = amp = shift = sync = trigger = slope = 0.0;
 	ratio = 1.0;
-	time = 0.0; omega = 2.0 * M_PI;
+	time = 0.0;
+	initialise (); activate ();
+}
+
+int lunar_square_operator :: numberOfInputs (void) {return 5;}
+char * lunar_square_operator :: inputName (int ind) {
+	switch (ind) {
+	case 0: return "FREQ"; break;
+	case 1: return "AMP"; break;
+	case 2: return "RATIO"; break;
+	case 3: return "SYNC"; break;
+	case 4: return "TRIGGER"; break;
+	default: break;
+	}
+	return orbiter :: inputName (ind);
+}
+double * lunar_square_operator :: inputAddress (int ind) {
+	switch (ind) {
+	case 0: return & freq; break;
+	case 1: return & amp; break;
+	case 2: return & ratio; break;
+	case 3: return & sync; break;
+	case 4: return & trigger; break;
+	default: break;
+	}
+	return 0;
+}
+
+void lunar_square_operator :: move (void) {
+	if (slope != trigger) if (sync != 0.0 && trigger > 0.0) time = 0.0; slope = trigger;
+	double delta = core -> TimeDelta (freq) * ratio;
+	double delta2 = delta + delta;
+	double threshold = 0.5 - delta2;
+	if (time <= threshold) signal = core -> Amplitude (amp);
+	else if (time < 0.5) {
+		double amplitude = core -> Amplitude (amp);
+		signal = core -> Sine (0.25 + (time - threshold) / (delta2 + delta2));
+		signal *= amplitude;
+	} else {
+		threshold = 1.0 - delta2;
+		if (time <= threshold) signal = - core -> Amplitude (amp);
+		else signal = - core -> Amplitude (amp) * core -> Sine (0.25 + (time - threshold) / (delta2 + delta2));
+	}
+	//if (time >= 0.5) signal = core -> Amplitude (amp);
+	//else signal = - core -> Amplitude (amp);
+	time += delta;
+	while (time >= 1.0) time -= 1.0;
+}
+
+lunar_square_operator :: lunar_square_operator (orbiter_core * core) : orbiter (core) {
+	freq = amp = sync = trigger = slope = 0.0;
+	ratio = 1.0;
+	time = 0.0;
 	initialise (); activate ();
 }

@@ -29,3 +29,6 @@
 
 orbiter * operator_class :: create_orbiter (PrologElement * parameters) {return new lunar_operator (core);}
 operator_class :: operator_class (orbiter_core * core) : PrologNativeOrbiterCreator (core) {}
+
+orbiter * square_operator_class :: create_orbiter (PrologElement * parameters) {return new lunar_square_operator (core);}
+square_operator_class :: square_operator_class (orbiter_core * core) : PrologNativeOrbiterCreator (core) {}

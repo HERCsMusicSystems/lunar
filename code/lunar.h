@@ -50,6 +50,7 @@ public:
 	double * amplitude;
 	double sine_wave [16385];
 	double waiting_times [16384];
+	double min_blep [16384];
 	int noise14b;
 	pthread_mutex_t main_mutex;
 	pthread_mutex_t maintenance_mutex;
@@ -60,6 +61,7 @@ public:
 	double Sine (double angle); // 0 .... 1.0 per cycle
 	double SineApproximated (double angle);
 	double WaitingTime (double time);
+	double MinBlep (int ind);
 	void recalculate (void);
 	void move_modules (void);
 	void propagate_signals (void);

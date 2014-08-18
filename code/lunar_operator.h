@@ -56,6 +56,8 @@ private:
 	double trigger;
 	double amp;
 	double slope;
+	int blep_index;
+	bool stage;
 public:
 	virtual int numberOfInputs (void);
 	virtual char * inputName (int ind);

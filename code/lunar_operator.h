@@ -48,7 +48,7 @@ public:
 };
 
 class lunar_square_operator : public orbiter {
-private:
+protected:
 	double time;
 	double freq;
 	double ratio;
@@ -64,6 +64,12 @@ public:
 	virtual double * inputAddress (int ind);
 	virtual void move (void);
 	lunar_square_operator (orbiter_core * core);
+};
+
+class lunar_aliased_square_operator : public lunar_square_operator {
+public:
+	virtual void move (void);
+	lunar_aliased_square_operator (orbiter_core * core);
 };
 
 #endif

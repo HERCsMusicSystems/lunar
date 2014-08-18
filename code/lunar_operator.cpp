@@ -110,3 +110,14 @@ lunar_square_operator :: lunar_square_operator (orbiter_core * core) : orbiter (
 	stage = true;
 	initialise (); activate ();
 }
+
+void lunar_aliased_square_operator :: move (void) {
+	if (slope != trigger) if (sync != 0.0 && trigger > 0.0) time = 0.0; slope = trigger;
+	if (time < 0.5) signal = core -> Amplitude (amp);
+	else signal = - core -> Amplitude (amp);
+	time += core -> TimeDelta (freq) * ratio;
+	while (time >= 1.0) time -= 1.0;
+}
+
+lunar_aliased_square_operator :: lunar_aliased_square_operator (orbiter_core * core) : lunar_square_operator (core) {}
+

@@ -93,16 +93,13 @@ double * lunar_square_operator :: inputAddress (int ind) {
 void lunar_square_operator :: move (void) {
 	if (slope != trigger) if (sync != 0.0 && trigger > 0.0) time = 0.0; slope = trigger;
 	double delta = core -> TimeDelta (freq) * ratio;
-	if (stage) {
-		signal = core -> MinBlep (blep_index) - core -> MinBlep (9216) * 0.5;
-	} else {
-		signal = core -> MinBlep (9216) * 0.5 - core -> MinBlep (blep_index);
-	}
+	if (stage) signal = core -> MinBlep (blep_index) - 1.0;
+	else signal = 1.0 - core -> MinBlep (blep_index);
 	time += delta;
 	blep_index += 512;
-	if (stage && time > 0.5) {stage = false; blep_index = (int) ((time - 0.5) * 1024.0 / delta);}
-	while (time >= 1.0) {stage = true; time -= 1.0; blep_index = (int) (time * 1024.0 / delta);}
-	signal *= 0.8 * core -> Amplitude (amp);
+	if (stage && time > 0.5) {stage = false; blep_index = (int) ((time - 0.5) * 512.0 / delta);}
+	while (time >= 1.0) {stage = true; time -= 1.0; blep_index = (int) (time * 512.0 / delta);}
+	signal *= core -> Amplitude (amp);
 }
 
 lunar_square_operator :: lunar_square_operator (orbiter_core * core) : orbiter (core) {

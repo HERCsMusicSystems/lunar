@@ -50,9 +50,8 @@ orbiter_core :: orbiter_core (void) {
 		double angle = (double) (ind - 512) * M_PI / 512.0;
 		double sinc = angle == 0.0 ? 1.0 : sin (angle) / angle;
 		blep += sinc / 512.0;
-		min_blep [ind] = blep;
+		min_blep [ind] = 2.0 * blep / 1.08949;
 	}
-	for (int ind = 0; ind < 9216; ind += 64) printf ("blep [%4i %f]\n", ind, MinBlep (ind));
 	recalculate ();
 }
 

@@ -46,13 +46,13 @@ orbiter_core :: orbiter_core (void) {
 	for (int ind = 0; ind > -16384; ind--) * (amplitude + ind) = pow (2.0, (double) ind / 1536.0); * amplitudes = 0.0;
 	for (int ind = 0; ind <= 16384; ind++) sine_wave [ind] = sin ((double) ind * M_PI * 2.0 / 16384.0);
 	double blep = 0.0;
-	int index = 0;
-	for (int ind = -1024; ind < 8192; ind++) {
-		double angle = (double) ind * M_PI / 1024.0;
+	for (int ind = 0; ind < 16384; ind++) {
+		double angle = (double) (ind - 512) * M_PI / 512.0;
 		double sinc = angle == 0.0 ? 1.0 : sin (angle) / angle;
-		blep += sinc / 1024.0;
-		min_blep [index++] = blep;
+		blep += sinc / 512.0;
+		min_blep [ind] = blep;
 	}
+	for (int ind = 0; ind < 9216; ind += 64) printf ("blep [%4i %f]\n", ind, MinBlep (ind));
 	recalculate ();
 }
 
@@ -134,7 +134,7 @@ double orbiter_core :: WaitingTime (double time) {
 
 double orbiter_core :: MinBlep (int index) {
 	if (index < 0) return 0.0;
-	if (index >= 9216) return min_blep [9215];
+	if (index >= 16384) return min_blep [16383];
 	return min_blep [index];
 }
 

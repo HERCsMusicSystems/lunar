@@ -100,8 +100,8 @@ void lunar_square_operator :: move (void) {
 	}
 	time += delta;
 	blep_index += 512;
-	if (stage && time > 0.5) {stage = false; blep_index = (int) ((time - 0.5) * 512.0 / delta);}
-	while (time >= 1.0) {stage = true; time -= 1.0; blep_index = (int) (time * 512.0 / delta);}
+	if (stage && time > 0.5) {stage = false; blep_index = (int) ((time - 0.5) * 1024.0 / delta);}
+	while (time >= 1.0) {stage = true; time -= 1.0; blep_index = (int) (time * 1024.0 / delta);}
 	signal *= 0.8 * core -> Amplitude (amp);
 }
 

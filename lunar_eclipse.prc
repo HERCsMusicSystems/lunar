@@ -4,19 +4,23 @@
 import studio
 import lunar
 
-program lunar_eclipse [reactor base radar eagle kb]
+program lunar_eclipse [reactor base radar eagle kb blep]
 
 [[eagle]
-	[Dock moonbase base *]
-	[Dock mixer base mixer]
-	[Dock operator base operator 1]
-	[Dock adsr base adsr 1]
-	[Dock porta_trigger base trigger]
+	[Moonbase base *]
+	[mixer *mixer]              [Insert *mixer base mixer]
+	[saw_operator *operator] [Insert *operator base operator 1]
+	[adsr *adsr]                [Insert *adsr base adsr 1]
+	[porta_trigger *trigger]    [Insert *trigger base trigger]
 
-	[Dock [base operator 1] [trigger]]
-	[Dock [base adsr 1] [trigger trigger]]
-	[Dock [base operator 1 amp] [adsr 1]]
-	[Dock [base mixer] [operator 1]]
+	[*operator *trigger]
+	[*adsr "trigger" *trigger "trigger"]
+	[*operator "amp" *adsr]
+	[*mixer *operator]
+	;[Dock [base operator 1] [trigger]]
+	;[Dock [base adsr 1] [trigger trigger]]
+	;[Dock [base operator 1 amp] [adsr 1]]
+	;[Dock [base mixer] [operator 1]]
 
 	[Lunar 9000 base trigger time]
 	[Lunar 7000 base adsr 1 attack]

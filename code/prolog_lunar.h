@@ -92,6 +92,12 @@ public:
 	square_operator_class (orbiter_core * core);
 };
 
+class saw_operator_class : public PrologNativeOrbiterCreator {
+public:
+	virtual orbiter * create_orbiter (PrologElement * parameters);
+	saw_operator_class (orbiter_core * core);
+};
+
 class PrologLunarServiceClass : public PrologServiceClass {
 public:
 	PrologRoot * root;

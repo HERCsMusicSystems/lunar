@@ -167,7 +167,7 @@ int main (int args, char * * argv) {
 	gtk_init (& args, & argv);
 	pthread_t thread; pthread_create (& thread, 0, studio_runner, args > 1 ? argv [1] : 0); pthread_detach (thread);
 	gtk_main ();
-	#ifdef WIND32
+	#ifdef WIN32
 	getchar ();
 	#endif
 }

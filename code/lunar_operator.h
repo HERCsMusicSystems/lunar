@@ -29,25 +29,7 @@
 
 #include "lunar.h"
 
-class lunar_operator : public orbiter {
-private:
-	double time;
-	double freq;
-	double ratio;
-	double shift;
-	double sync;
-	double trigger;
-	double amp;
-	double slope;
-public:
-	virtual int numberOfInputs (void);
-	virtual char * inputName (int ind);
-	virtual double * inputAddress (int ind);
-	virtual void move (void);
-	lunar_operator (orbiter_core * core);
-};
-
-class lunar_square_operator : public orbiter {
+class lunar_oscillator : public orbiter {
 protected:
 	double time;
 	double freq;
@@ -56,17 +38,48 @@ protected:
 	double trigger;
 	double amp;
 	double slope;
-	int blep_index;
-	bool stage;
+	virtual int numberOfInputs (void);
+	virtual char * inputName (int ind);
+	virtual double * inputAddress (int ind);
+	lunar_oscillator (orbiter_core * core);
+};
+
+#define RETRIGGER_OSCILLATOR if (slope != trigger) if (sync != 0.0 && trigger > 0.0) time = 0.0; slope = trigger;
+
+class lunar_operator : public lunar_oscillator {
+private:
+	double shift;
 public:
 	virtual int numberOfInputs (void);
 	virtual char * inputName (int ind);
 	virtual double * inputAddress (int ind);
 	virtual void move (void);
+	lunar_operator (orbiter_core * core);
+};
+
+class lunar_aliased_saw_operator : public lunar_oscillator {
+public:
+	virtual void move (void);
+	lunar_aliased_saw_operator (orbiter_core * core);
+};
+
+class lunar_saw_operator : public lunar_oscillator {
+protected:
+	int blep_index;
+public:
+	virtual void move (void);
+	lunar_saw_operator (orbiter_core * core);
+};
+
+class lunar_square_operator : public lunar_saw_operator {
+private:
+	bool stage;
+public:
+	virtual void move (void);
 	lunar_square_operator (orbiter_core * core);
 };
 
-class lunar_aliased_square_operator : public lunar_square_operator {
+class lunar_aliased_square_operator : public lunar_oscillator {
 public:
 	virtual void move (void);
 	lunar_aliased_square_operator (orbiter_core * core);

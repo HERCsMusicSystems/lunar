@@ -26,48 +26,12 @@
 
 #include "lunar_operator.h"
 
-int lunar_operator :: numberOfInputs (void) {return 6;}
-char * lunar_operator :: inputName (int ind) {
-	switch (ind) {
-	case 0: return "FREQ"; break;
-	case 1: return "AMP"; break;
-	case 2: return "RATIO"; break;
-	case 3: return "SHIFT"; break;
-	case 4: return "SYNC"; break;
-	case 5: return "TRIGGER"; break;
-	default: break;
-	}
-	return orbiter :: inputName (ind);
-}
-double * lunar_operator :: inputAddress (int ind) {
-	switch (ind) {
-	case 0: return & freq; break;
-	case 1: return & amp; break;
-	case 2: return & ratio; break;
-	case 3: return & shift; break;
-	case 4: return & sync; break;
-	case 5: return & trigger; break;
-	default: break;
-	}
-	return 0;
-}
+//////////////////////
+// LUNAR OSCILLATOR //
+//////////////////////
 
-void lunar_operator :: move (void) {
-	if (slope != trigger) if (sync != 0.0 && trigger > 0.0) time = 0.0; slope = trigger;
-	this -> signal = core -> Amplitude (amp) * core -> Sine (time + shift);
-	time += core -> TimeDelta (freq) * ratio;
-	while (time >= 1.0) time -= 1.0;
-}
-
-lunar_operator :: lunar_operator (orbiter_core * core) : orbiter (core) {
-	freq = amp = shift = sync = trigger = slope = 0.0;
-	ratio = 1.0;
-	time = 0.0;
-	initialise (); activate ();
-}
-
-int lunar_square_operator :: numberOfInputs (void) {return 5;}
-char * lunar_square_operator :: inputName (int ind) {
+int lunar_oscillator :: numberOfInputs (void) {return 5;}
+char * lunar_oscillator :: inputName (int ind) {
 	switch (ind) {
 	case 0: return "FREQ"; break;
 	case 1: return "AMP"; break;
@@ -78,7 +42,7 @@ char * lunar_square_operator :: inputName (int ind) {
 	}
 	return orbiter :: inputName (ind);
 }
-double * lunar_square_operator :: inputAddress (int ind) {
+double * lunar_oscillator :: inputAddress (int ind) {
 	switch (ind) {
 	case 0: return & freq; break;
 	case 1: return & amp; break;
@@ -89,35 +53,69 @@ double * lunar_square_operator :: inputAddress (int ind) {
 	}
 	return 0;
 }
-
-void lunar_square_operator :: move (void) {
-	if (slope != trigger) if (sync != 0.0 && trigger > 0.0) time = 0.0; slope = trigger;
-	double delta = core -> TimeDelta (freq) * ratio;
-	if (stage) signal = core -> MinBlep (blep_index) - 1.0;
-	else signal = 1.0 - core -> MinBlep (blep_index);
-	time += delta;
-	blep_index += 512;
-	if (stage && time > 0.5) {stage = false; blep_index = (int) ((time - 0.5) * 512.0 / delta);}
-	while (time >= 1.0) {stage = true; time -= 1.0; blep_index = (int) (time * 512.0 / delta);}
-	signal *= core -> Amplitude (amp);
-}
-
-lunar_square_operator :: lunar_square_operator (orbiter_core * core) : orbiter (core) {
-	freq = amp = sync = trigger = slope = 0.0;
+lunar_oscillator :: lunar_oscillator (orbiter_core * core) : orbiter (core) {
+	freq = amp = sync = trigger = slope = time = 0.0;
 	ratio = 1.0;
-	time = 0.0;
-	blep_index = 0;
-	stage = true;
 	initialise (); activate ();
 }
 
+///////////////////////
+// LUNAR OPERATOR FM //
+///////////////////////
+
+int lunar_operator :: numberOfInputs (void) {return 6;}
+char * lunar_operator :: inputName (int ind) {if (ind == 5) return "SHIFT"; return lunar_oscillator :: inputName (ind);}
+double * lunar_operator :: inputAddress (int ind) {if (ind == 5) return & shift; return lunar_oscillator :: inputAddress (ind);}
+void lunar_operator :: move (void) {
+	RETRIGGER_OSCILLATOR;
+	this -> signal = core -> Amplitude (amp) * core -> Sine (time + shift);
+	time += core -> TimeDelta (freq) * ratio;
+	while (time >= 1.0) time -= 1.0;
+}
+lunar_operator :: lunar_operator (orbiter_core * core) : lunar_oscillator (core) {shift = 0.0;}
+
+///////////////
+// LUNAR SAW //
+///////////////
+
+void lunar_aliased_saw_operator :: move (void) {
+	RETRIGGER_OSCILLATOR;
+	signal = 1.0 - 2.0 * time;
+	signal *= core -> Amplitude (amp);
+	time += core -> TimeDelta (freq) * ratio;
+	while (time >= 1.0) time -= 1.0;
+}
+lunar_aliased_saw_operator :: lunar_aliased_saw_operator (orbiter_core * core) : lunar_oscillator (core) {}
+void lunar_saw_operator :: move (void) {
+	RETRIGGER_OSCILLATOR;
+	double delta = core -> TimeDelta (freq) * ratio;
+	signal = core -> MinBlep (blep_index) - 1.0 - 2.0 * time;
+	time += delta;
+	while (time >= 1.0) {time -= 1.0; blep_index = (int) (time * 512.0 / (delta > 0.0 ? delta : 1.0));}
+}
+lunar_saw_operator :: lunar_saw_operator (orbiter_core * core) : lunar_oscillator (core) {blep_index = 0;}
+
+//////////////////
+// LUNAR SQUARE //
+//////////////////
+
 void lunar_aliased_square_operator :: move (void) {
-	if (slope != trigger) if (sync != 0.0 && trigger > 0.0) time = 0.0; slope = trigger;
+	RETRIGGER_OSCILLATOR;
 	if (time < 0.5) signal = core -> Amplitude (amp);
 	else signal = - core -> Amplitude (amp);
 	time += core -> TimeDelta (freq) * ratio;
 	while (time >= 1.0) time -= 1.0;
 }
-
-lunar_aliased_square_operator :: lunar_aliased_square_operator (orbiter_core * core) : lunar_square_operator (core) {}
-
+lunar_aliased_square_operator :: lunar_aliased_square_operator (orbiter_core * core) : lunar_oscillator (core) {}
+void lunar_square_operator :: move (void) {
+	RETRIGGER_OSCILLATOR;
+	double delta = core -> TimeDelta (freq) * ratio;
+	if (stage) signal = core -> MinBlep (blep_index) - 1.0;
+	else signal = 1.0 - core -> MinBlep (blep_index);
+	time += delta;
+	blep_index += 512;
+	if (stage && time > 0.5) {stage = false; blep_index = (int) ((time - 0.5) * 512.0 / (delta > 0.0 ? delta : 1.0));}
+	while (time >= 1.0) {stage = true; time -= 1.0; blep_index = (int) (time * 512.0 / (delta > 0.0 ? delta : 1.0));}
+	signal *= core -> Amplitude (amp);
+}
+lunar_square_operator :: lunar_square_operator (orbiter_core * core) : lunar_saw_operator (core) {stage = true;}

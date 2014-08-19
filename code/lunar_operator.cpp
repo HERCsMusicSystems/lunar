@@ -90,7 +90,9 @@ void lunar_saw_operator :: move (void) {
 	RETRIGGER_OSCILLATOR;
 	double delta = core -> TimeDelta (freq) * ratio;
 	signal = core -> MinBlep (blep_index) - 1.0 - 2.0 * time;
+	signal *= core -> Amplitude (amp);
 	time += delta;
+	blep_index += 512;
 	while (time >= 1.0) {time -= 1.0; blep_index = (int) (time * 512.0 / (delta > 0.0 ? delta : 1.0));}
 }
 lunar_saw_operator :: lunar_saw_operator (orbiter_core * core) : lunar_oscillator (core) {blep_index = 0;}

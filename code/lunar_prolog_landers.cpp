@@ -178,7 +178,7 @@ eg_class :: eg_class (orbiter_core * core) : PrologNativeOrbiterCreator (core) {
 
 class native_moonbase : public PrologNativeOrbiter {
 private:
-	PrologAtom * keyon, * keyoff;
+	PrologAtom * keyon, * keyoff, * mono, * poly;
 public:
 	virtual bool code (PrologElement * parameters, PrologResolution * resolution) {
 		PrologElement * atom = 0;
@@ -204,6 +204,8 @@ public:
 					return true;
 				}
 				if (a == keyoff) {trigger -> keyoff (); return true;}
+				if (a == mono) {trigger -> mono (); return true;}
+				if (a == poly) {trigger -> poly (); return true;}
 				PrologNativeCode * machine = a -> getMachine ();
 				if (machine == 0) return false;
 				if (machine -> isTypeOf (key_map_native_orbiter :: name ())) {trigger -> set_map ((lunar_map *) ((key_map_native_orbiter *) machine) -> module); return true;}
@@ -213,10 +215,12 @@ public:
 		return PrologNativeOrbiter :: code (parameters, resolution);
 	}
 	native_moonbase (PrologDirectory * dir, PrologAtom * atom, orbiter_core * core, orbiter * module) : PrologNativeOrbiter (atom, core, module) {
-		keyon = keyoff = 0;
+		keyon = keyoff = mono = poly = 0;
 		if (dir == 0) return;
 		keyon = dir -> searchAtom ("keyon");
 		keyoff = dir -> searchAtom ("keyoff");
+		mono = dir -> searchAtom ("mono");
+		poly = dir -> searchAtom ("poly");
 	}
 };
 orbiter * moonbase_class :: create_orbiter (PrologElement * parameters) {return new moonbase (core);}

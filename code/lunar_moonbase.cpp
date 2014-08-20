@@ -33,23 +33,76 @@ void moonbase :: set_map (lunar_map * map) {
 	this -> map = map;
 	if (map != 0) map -> hold ();
 }
-void moonbase :: keyon (int key) {
-	if (key < 0) key = 0;
-	if (key > 127) key = 127;
-	double this_key = map == 0 ? (double) (key - 64) * 128.0 : map -> map [key];
-	printf ("=> keyon (%f)\n", this_key);
+void moonbase :: insert_trigger (lunar_trigger * trigger) {
+	if (trigger == 0) return;
+	trigger -> next = triggers;
+	choice = triggers = trigger;
+	trigger -> hold ();
 }
-void moonbase :: keyon (int key, int velocity) {
-	if (velocity < 1) {keyoff (); return;}
-	double this_velocity = (double) velocity * 128.0;
-	printf ("=> velocity (%f)\n", this_velocity);
-	keyon (key);
-}
-void moonbase :: keyoff (void) {printf ("=> keyoff ()\n");}
-bool moonbase :: release (void) {
-	lunar_map * to_delete = map;
-	bool ret = orbiter :: release ();
-	if (ret && to_delete != 0) to_delete -> release ();
+lunar_trigger * moonbase :: select (void) {
+	if (mono_mode) return triggers;
+	if (choice == 0) return 0;
+	lunar_trigger * ret = choice;
+	do {
+		if (ret -> busy <= 0.0) {choice = ret -> next; if (choice == 0) choice = triggers; return ret;}
+		ret = ret -> next; if (ret == 0) ret = triggers;
+	} while (ret != choice);
+	do {
+		if (ret -> key < 0) {choice = ret -> next; if (choice == 0) choice = triggers; return ret;}
+		ret = ret -> next; if (ret == 0) ret = triggers;
+	} while (ret != choice);
+	choice = choice -> next; if (choice == 0) choice = triggers;
 	return ret;
 }
-moonbase :: moonbase (orbiter_core * core) : orbiter (core) {map = 0; initialise ();}
+lunar_trigger * moonbase :: select (int key) {
+	if (mono_mode) return triggers;
+	if (choice == 0) return 0;
+	lunar_trigger * ret = choice;
+	do {
+		if (ret -> key == key) return ret;
+		ret = ret -> next; if (ret == 0) ret = triggers;
+	} while (ret != choice);
+	return 0;
+}
+void moonbase :: keyon (int key) {
+	pthread_mutex_lock (& critical);
+	lunar_trigger * trigger = select ();
+	if (trigger != 0) trigger -> keyon (key);
+	pthread_mutex_unlock (& critical);
+}
+void moonbase :: keyon (int key, int velocity) {
+	pthread_mutex_lock (& critical);
+	lunar_trigger * trigger = select ();
+	if (trigger != 0) trigger -> keyon (key, velocity);
+	pthread_mutex_unlock (& critical);
+}
+void moonbase :: keyoff (void) {
+	pthread_mutex_lock (& critical);
+	lunar_trigger * trigger = triggers;
+	while (trigger != 0) {trigger -> keyoff (); trigger = trigger -> next;}
+	choice = triggers;
+	pthread_mutex_unlock (& critical);
+}
+void moonbase :: keyoff (int key, int velocity) {
+	pthread_mutex_lock (& critical);
+	lunar_trigger * trigger = select (key);
+	if (trigger != 0) trigger -> keyoff ();
+	pthread_mutex_unlock (& critical);
+}
+void moonbase :: mono (void) {mono_mode = true;}
+void moonbase :: poly (void) {mono_mode = false;}
+bool moonbase :: release (void) {
+	lunar_map * map_to_delete = map;
+	lunar_trigger * triggers_to_delete = triggers;
+	bool ret = orbiter :: release ();
+	if (ret && map_to_delete != 0) map_to_delete -> release ();
+	if (ret && triggers_to_delete != 0) triggers_to_delete -> release ();
+	return ret;
+}
+moonbase :: moonbase (orbiter_core * core) : orbiter (core) {
+	pthread_mutex_init (& critical, 0);
+	map = 0; choice = triggers = 0; mono_mode = false;
+	initialise ();
+}
+
+moonbase :: ~ moonbase (void) {pthread_mutex_destroy (& critical);}

@@ -152,24 +152,42 @@ void lunar_trigger :: drop_stack (int key) {
 	if (continue_playing) return;
 	if (keystack_pointer > 0) keyon (keystack [--keystack_pointer]);
 }
-void lunar_trigger :: keyon (int key) {
+void lunar_trigger :: sub_keyon (int key) {
 	if (key < 0) key = 0;
 	if (key > 127) key = 127;
 	target = key_map == 0 ? (double) (key - 64) * 128.0 : key_map -> map [key];
+	this -> key = key;
 	if (! active || porta_time == 0.0) this -> signal = target;
 	else {origin = this -> signal; delta = target - origin; time = 0.0;}
 	trigger = 1.0;
 	add_stack (key);
 }
-void lunar_trigger :: keyon (int key, int velocity) {
-	if (velocity < 1) {keyoff (); return;}
-	if (velocity < 0) velocity = 0;
-	if (velocity > 127) velocity = 127;
-	this -> velocity = velocity_map == 0 ? (double) velocity * 128.0 : velocity_map -> map [velocity];
-	keyon (key);
+void lunar_trigger :: keyon (int key) {
+	pthread_mutex_lock (& critical);
+	sub_keyon (key);
+	pthread_mutex_unlock (& critical);
 }
-void lunar_trigger :: keyoff (int key) {drop_stack (key); if (keystack_pointer == 0) trigger = 0.0;}
-void lunar_trigger :: keyoff (void) {keystack_pointer = 0; trigger = 0.0;}
+void lunar_trigger :: keyon (int key, int velocity) {
+	pthread_mutex_lock (& critical);
+	if (velocity < 1) {keyoff (); return;}
+	if (trigger < 1.0) {
+		if (velocity < 0) velocity = 0;
+		if (velocity > 127) velocity = 127;
+		this -> velocity = velocity_map == 0 ? (double) velocity * 128.0 : velocity_map -> map [velocity];
+	}
+	sub_keyon (key);
+	pthread_mutex_unlock (& critical);
+}
+void lunar_trigger :: keyoff (int key) {
+	pthread_mutex_lock (& critical);
+	this -> key = -1; drop_stack (key); if (keystack_pointer == 0) trigger = 0.0;
+	pthread_mutex_unlock (& critical);
+}
+void lunar_trigger :: keyoff (void) {
+	pthread_mutex_lock (& critical);
+	this -> key = -1; keystack_pointer = 0; trigger = 0.0;
+	pthread_mutex_unlock (& critical);
+}
 bool lunar_trigger :: release (void) {
 	lunar_map * to_delete_key_map = key_map;
 	lunar_map * to_delete_velocity_map = velocity_map;
@@ -191,6 +209,7 @@ void lunar_trigger :: move (void) {
 lunar_trigger :: lunar_trigger (orbiter_core * core, bool active, lunar_trigger * next) : orbiter (core) {
 	this -> next = next;
 	if (next != 0) next -> hold ();
+	key = -1;
 	signal = trigger = busy = 0.0;
 	origin = delta = target = 0.0;
 	porta_time = 0.0;
@@ -200,9 +219,11 @@ lunar_trigger :: lunar_trigger (orbiter_core * core, bool active, lunar_trigger 
 	velocity_map = 0;
 	for (int ind = 0; ind < 16; ind++) keystack [ind] = 0; keystack_pointer = 0;
 	this -> active = active;
+	pthread_mutex_init (& critical, 0);
 	initialise ();
 	if (active) activate ();
 }
+lunar_trigger :: ~ lunar_trigger (void) {pthread_mutex_destroy (& critical);}
 
 int lunar_impulse :: numberOfInputs (void) {return 1;}
 char * lunar_impulse :: inputName (int ind) {if (ind == 0) return "ENTER"; else return orbiter :: inputName (ind);}

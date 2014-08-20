@@ -106,8 +106,11 @@ private:
 	int keystack_pointer;
 	void add_stack (int key);
 	void drop_stack (int key);
+	void sub_keyon (int key);
+	pthread_mutex_t critical;
 public:
 	double busy;
+	int key;
 	lunar_trigger * next;
 	virtual int numberOfInputs (void);
 	virtual char * inputName (int ind);
@@ -124,6 +127,7 @@ public:
 	virtual bool release (void);
 	virtual void move (void);
 	lunar_trigger (orbiter_core * core, bool active, lunar_trigger * next);
+	~ lunar_trigger (void);
 };
 
 class lunar_impulse : public orbiter {

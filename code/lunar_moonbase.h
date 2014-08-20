@@ -33,14 +33,25 @@
 class moonbase : public orbiter {
 private:
 	lunar_map * map;
+	lunar_trigger * triggers;
+	lunar_trigger * choice;
+	lunar_trigger * select (void);
+	lunar_trigger * select (int key);
+	bool mono_mode;
+	pthread_mutex_t critical;
 public:
 	virtual int numberOfOutputs (void);
 	virtual bool release (void);
 	void set_map (lunar_map * map);
+	void insert_trigger (lunar_trigger * trigger);
 	void keyon (int key);
 	void keyon (int key, int velocity);
 	void keyoff (void);
+	void keyoff (int key, int velocity = 0);
+	void mono (void);
+	void poly (void);
 	moonbase (orbiter_core * core);
+	~ moonbase (void);
 };
 
 #endif

@@ -4,7 +4,7 @@
 import studio
 import lunar
 
-program lunar_eclipse [reactor base radar eagle kb blep]
+program lunar_eclipse [reactor base radar eagle kb blep distro tr1 tr2 tr3]
 
 [[eagle]
 	[Moonbase base *]
@@ -35,6 +35,16 @@ program lunar_eclipse [reactor base radar eagle kb blep]
 
 	[Activate reactor base mixer]
 
+]
+
+[[distro]
+	[Moonbase base kb]
+	[trigger tr1]
+	[trigger tr2]
+	[trigger tr3]
+	[kb tr1]
+	[kb tr2]
+	[kb tr3]
 ]
 
 end := [

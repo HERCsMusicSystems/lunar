@@ -94,10 +94,13 @@ key_map_class :: key_map_class (orbiter_core * core, int initial) : PrologNative
 orbiter * impulse_class :: create_orbiter (PrologElement * parameters) {return new lunar_impulse (core);}
 impulse_class :: impulse_class (orbiter_core * core) : PrologNativeOrbiterCreator (core) {}
 
+static char * trigger_orbiter_action_code = "Lunar Trigger Action";
 class trigger_native_orbiter : public PrologNativeOrbiter {
 private:
 	PrologAtom * keyon, * keyoff;
 public:
+	static char * name (void) {return trigger_orbiter_action_code;}
+	virtual bool isTypeOf (char * code_name) {return trigger_orbiter_action_code == code_name ? true : PrologNativeOrbiter :: isTypeOf (code_name);}
 	virtual bool code (PrologElement * parameters, PrologResolution * resolution) {
 		PrologElement * key_atom = 0;
 		PrologElement * velocity_atom = 0;
@@ -204,6 +207,7 @@ public:
 				PrologNativeCode * machine = a -> getMachine ();
 				if (machine == 0) return false;
 				if (machine -> isTypeOf (key_map_native_orbiter :: name ())) {trigger -> set_map ((lunar_map *) ((key_map_native_orbiter *) machine) -> module); return true;}
+				if (machine -> isTypeOf (trigger_native_orbiter :: name ())) {trigger -> insert_trigger ((lunar_trigger *) ((trigger_native_orbiter *) machine) -> module); return true;}
 			}
 		}
 		return PrologNativeOrbiter :: code (parameters, resolution);
@@ -215,7 +219,7 @@ public:
 		keyoff = dir -> searchAtom ("keyoff");
 	}
 };
-orbiter * moonbase_class :: create_orbiter (PrologElement * parmaeters) {return new moonbase (core);}
+orbiter * moonbase_class :: create_orbiter (PrologElement * parameters) {return new moonbase (core);}
 PrologNativeOrbiter * moonbase_class :: create_native_orbiter (PrologAtom * atom, orbiter * module) {return new native_moonbase (dir, atom, core, module);}
 moonbase_class :: moonbase_class (PrologDirectory * dir, orbiter_core * core) : PrologNativeOrbiterCreator (core) {this -> dir = dir;}
 

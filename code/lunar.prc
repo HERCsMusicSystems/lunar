@@ -15,7 +15,7 @@ program lunar #machine := "prolog.lunar"
 				keyon keyoff
 				Lunar Lander Activate Deactivate
 				AddParameterBlock
-				Moonbase Insert InsertIO
+				Moonbase Insert InsertIO Store Restore
 			]
 
 #machine small_keyboard := "small_keyboard"
@@ -112,6 +112,19 @@ program lunar #machine := "prolog.lunar"
 [[Lander *base *moonbase : *selector] [*moonbase * *modules : *] [*modules *base : *selector]]
 
 [[Lunar *v *moonbase : *selector] [*moonbase *parameters : *] [*parameters *base : *selector] [*base 0 *v]]
+
+[[Store *moonbase *file_name]
+	[*moonbase *parameters *modules : *]
+	[file_writer *tc *file_name]
+	[TRY
+		[*parameters *orbiter : *selector]
+		[*orbiter *x]
+		[show *selector " => " *x]
+		[*tc [*selector] " => " [*x] "\n"]
+		fail
+	]
+	[*tc]
+]
 
 [[Activate *core : *moonbase]
 	[Lander *base : *moonbase]

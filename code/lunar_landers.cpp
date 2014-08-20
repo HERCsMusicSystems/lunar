@@ -430,3 +430,37 @@ lunar_adsr :: lunar_adsr (orbiter_core * core) : orbiter (core) {
 
 lunar_eg :: lunar_eg (orbiter_core * core) : orbiter (core) {initialise (); activate ();}
 
+int lunar_sensitivity :: numberOfInputs (void) {return 4;}
+char * lunar_sensitivity :: inputName (int ind) {
+	switch (ind) {
+	case 0: return "ENTER"; break;
+	case 1: return "BREAKPOINT"; break;
+	case 2: return "LEFT"; break;
+	case 3: return "RIGHT"; break;
+	default: break;
+	}
+	return orbiter :: inputName (ind);
+}
+double * lunar_sensitivity :: inputAddress (int ind) {
+	switch (ind) {
+	case 0: return & enter; break;
+	case 1: return & bp; break;
+	case 2: return & lc; break;
+	case 3: return & rc; break;
+	default: break;
+	}
+	return orbiter :: inputAddress (ind);
+}
+void lunar_sensitivity :: move (void) {
+	if (original_enter == enter && original_bp == bp && original_lc == lc && original_rc == rc) return;
+	original_enter = enter; original_bp = bp; original_lc = lc; original_rc = rc;
+	if (enter >= bp) {signal = (enter - bp) * rc / 128.0; return;}
+	signal = (bp - enter) * lc / 128.0;
+}
+lunar_sensitivity :: lunar_sensitivity (orbiter_core * core) : orbiter (core) {
+	original_enter = enter = 0.0;
+	original_bp = bp = 0.0;
+	original_lc = lc = -128.0;
+	original_rc = rc = 128.0;
+	initialise (); activate ();
+}

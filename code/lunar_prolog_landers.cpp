@@ -176,6 +176,9 @@ adsr_class :: adsr_class (orbiter_core * core) : PrologNativeOrbiterCreator (cor
 orbiter * eg_class :: create_orbiter (PrologElement * parameters) {return new lunar_eg (core);}
 eg_class :: eg_class (orbiter_core * core) : PrologNativeOrbiterCreator (core) {}
 
+orbiter * sensitivity_class :: create_orbiter (PrologElement * parameters) {return new lunar_sensitivity (core);}
+sensitivity_class :: sensitivity_class (orbiter_core * core) : PrologNativeOrbiterCreator (core) {}
+
 class native_moonbase : public PrologNativeOrbiter {
 private:
 	PrologAtom * keyon, * keyoff, * mono, * poly;

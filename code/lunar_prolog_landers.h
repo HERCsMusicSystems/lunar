@@ -104,6 +104,12 @@ public:
 	eg_class (orbiter_core * core);
 };
 
+class sensitivity_class : public PrologNativeOrbiterCreator {
+public:
+	virtual orbiter * create_orbiter (PrologElement * parameters);
+	sensitivity_class (orbiter_core * core);
+};
+
 class moonbase_class : public PrologNativeOrbiterCreator {
 private:
 	PrologDirectory * dir;

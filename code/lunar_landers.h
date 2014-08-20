@@ -187,5 +187,18 @@ public:
 	lunar_eg (orbiter_core * core);
 };
 
+class lunar_sensitivity : public orbiter {
+private:
+	double enter;
+	double bp, lc, rc;
+	double original_enter, original_bp, original_lc, original_rc;
+public:
+	virtual int numberOfInputs (void);
+	virtual char * inputName (int ind);
+	virtual double * inputAddress (int ind);
+	virtual void move (void);
+	lunar_sensitivity (orbiter_core * core);
+};
+
 #endif
 

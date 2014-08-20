@@ -168,8 +168,8 @@ void lunar_trigger :: keyon (int key) {
 	pthread_mutex_unlock (& critical);
 }
 void lunar_trigger :: keyon (int key, int velocity) {
+	if (velocity < 1) {keyoff (key); return;}
 	pthread_mutex_lock (& critical);
-	if (velocity < 1) {keyoff (); return;}
 	if (trigger < 1.0) {
 		if (velocity < 0) velocity = 0;
 		if (velocity > 127) velocity = 127;

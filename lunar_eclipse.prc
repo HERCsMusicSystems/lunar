@@ -9,7 +9,7 @@ program lunar_eclipse [reactor base radar eagle kb blep distro tr1 tr2 tr3]
 [[eagle]
 	[Moonbase base *]
 	[mixer *mixer]              [Insert *mixer base mixer]
-	[saw_operator *operator] [Insert *operator base operator 1]
+	[saw_operator *operator]    [Insert *operator base operator 1]
 	[adsr *adsr]                [Insert *adsr base adsr 1]
 	[porta_trigger *trigger]    [Insert *trigger base trigger]
 
@@ -22,10 +22,8 @@ program lunar_eclipse [reactor base radar eagle kb blep distro tr1 tr2 tr3]
 	[Lunar 7000 base adsr 1 attack]
 	[Lunar 9000 base adsr 1 release]
 
-
 	[oscilloscope radar]
-	[Lander *trig base trigger]
-	[small_keyboard kb *trig]
+	[small_keyboard kb *trigger]
 	[Lander *mix base mixer]
 	[radar *mix]
 

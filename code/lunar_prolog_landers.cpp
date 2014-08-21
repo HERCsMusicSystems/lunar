@@ -27,6 +27,7 @@
 #include "lunar_prolog_landers.h"
 #include "lunar_landers.h"
 #include "lunar_moonbase.h"
+#include "lunar_wave.h"
 
 orbiter * parameter_block_class :: create_orbiter (PrologElement * parameters) {
 	if (parameters -> isEarth ()) return new lunar_inactive_parameter_block (core);
@@ -105,8 +106,7 @@ orbiter * wave_class :: create_orbiter (PrologElement * parameters) {
 	if (! parameters -> isPair ()) return 0;
 	parameters = parameters -> getLeft ();
 	if (! parameters -> isText ()) return 0;
-	printf ("opening wave [%s]\n", parameters -> getText ());
-	return new lunar_map (core, 0);
+	return create_lunar_wave (core, parameters -> getText ());
 }
 PrologNativeOrbiter * wave_class :: create_native_orbiter (PrologAtom * atom, orbiter * module) {return new wave_native_orbiter (atom, core, module);}
 wave_class :: wave_class (orbiter_core * core) : PrologNativeOrbiterCreator (core) {}

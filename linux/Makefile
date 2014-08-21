@@ -14,7 +14,7 @@ objects = \
 	$(pi)prolog_xml.o $(pi)tinyxml.o $(pi)prolog_neural.o $(pi)prolog_distribution.o $(pi)encoder.o\
 	$(pi)prolog_midi.o $(pi)prolog_conductor.o $(pi)prolog_http.o $(pi)prolog_control.o $(pi)joystick_linux.o\
 	prolog_lunar.o lunar_core.o lunar_prolog_oscilloscope.o lunar_prolog_keyboard.o lunar_prolog_operator.o lunar_operator.o\
-	keyboard_calculator.o lunar_prolog_moonbase.o lunar_moonbase.o lunar_prolog_landers.o lunar_landers.o\
+	keyboard_calculator.o lunar_prolog_moonbase.o lunar_moonbase.o lunar_prolog_landers.o lunar_landers.o lunar_wave.o\
 	multiplatform_audio.o\
 	prcgtk.o
 
@@ -45,11 +45,15 @@ lunar_operator.o: ../code/lunar_operator.cpp ../code/lunar_operator.h ../code/lu
 lunar_landers.o: ../code/lunar_landers.cpp ../code/lunar_landers.h ../code/lunar.h
 	g++ -Wno-write-strings ../code/lunar_landers.cpp -c -o lunar_landers.o
 
+lunar_wave.o: ../code/lunar_wave.cpp ../code/lunar_wave.h ../code/lunar.h
+	g++ -Wno-write-strings ../code/lunar_wave.cpp -c -o lunar_wave.o
+
 lunar_prolog_moonbase.o: ../code/lunar_prolog_moonbase.cpp ../code/lunar_moonbase.h ../code/prolog_lunar.h ../code/multiplatform_audio.h\
 	$(pc)prolog.h ../code/lunar.h
 	g++ -Wno-write-strings -I. -I$(pc) ../code/lunar_prolog_moonbase.cpp -c -o lunar_prolog_moonbase.o
 
-lunar_prolog_landers.o: ../code/lunar_prolog_landers.cpp ../code/lunar_prolog_landers.h ../code/prolog_lunar.h $(pc)prolog.h ../code/lunar.h ../code/lunar_landers.h
+lunar_prolog_landers.o: ../code/lunar_prolog_landers.cpp ../code/lunar_prolog_landers.h\
+			 ../code/prolog_lunar.h $(pc)prolog.h ../code/lunar.h ../code/lunar_landers.h ../code/lunar_wave.h
 	g++ -Wno-write-strings -I. -I$(pc) ../code/lunar_prolog_landers.cpp -c -o lunar_prolog_landers.o
 
 lunar_prolog_keyboard.o: ../code/lunar_prolog_keyboard.cpp ../code/lunar.h ../code/prolog_lunar.h $(pc)prolog.h ../code/keyboard_calculator.h

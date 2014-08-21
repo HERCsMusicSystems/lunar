@@ -25,3 +25,12 @@
 ///////////////////////////////////////////////////////////////
 
 #include "lunar_wave.h"
+
+int lunar_wave :: numberOfOutputs (void) {return 0;}
+lunar_wave :: lunar_wave (orbiter_core * core) : orbiter (core) {}
+
+lunar_wave * create_lunar_wave (orbiter_core * core, char * file_name) {
+	if (file_name == 0) return 0;
+	return new lunar_wave (core);
+}
+

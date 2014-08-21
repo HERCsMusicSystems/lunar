@@ -27,5 +27,15 @@
 #ifndef _LUNAR_WAVE_
 #define _LUNAR_WAVE_
 
+#include "lunar.h"
+
+class lunar_wave : public orbiter {
+public:
+	virtual int numberOfOutputs (void);
+	lunar_wave (orbiter_core * core);
+};
+
+extern lunar_wave * create_lunar_wave (orbiter_core * core, char * file_name);
+
 
 #endif

@@ -188,6 +188,7 @@ PrologNativeCode * PrologLunarServiceClass :: getNativeCode (char * name) {
 	if (strcmp (name, "saw_operator") == 0) return new saw_operator_class (& core);
 	if (strcmp (name, "parameter_block") == 0) return new parameter_block_class (& core);
 	if (strcmp (name, "key_map") == 0) return new key_map_class (& core);
+	if (strcmp (name, "wave") == 0) return new wave_class (& core);
 	if (strcmp (name, "velocity_map") == 0) return new key_map_class (& core, 0);
 	if (strcmp (name, "impulse") == 0) return new impulse_class (& core);
 	if (strcmp (name, "trigger") == 0) return new trigger_class (directory, false, & core);

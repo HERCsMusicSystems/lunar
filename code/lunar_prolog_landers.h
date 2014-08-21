@@ -52,6 +52,20 @@ public:
 	key_map_class (orbiter_core * core, int initial = -64);
 };
 
+class PrologNativeWaveOrbiter : public PrologNativeOrbiter {
+public:
+	static char * name (void);
+	virtual bool isTypeOf (char * code_name);
+	PrologNativeWaveOrbiter (PrologAtom * atom, orbiter_core * core, orbiter * module);
+};
+
+class wave_class : public PrologNativeOrbiterCreator {
+public:
+	virtual orbiter * create_orbiter (PrologElement * parameters);
+	virtual PrologNativeOrbiter * create_native_orbiter (PrologAtom * atom, orbiter * module);
+	wave_class (orbiter_core * core);
+};
+
 class impulse_class : public PrologNativeOrbiterCreator {
 public:
 	virtual orbiter * create_orbiter (PrologElement * parameters);

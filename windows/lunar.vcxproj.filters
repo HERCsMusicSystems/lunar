@@ -141,6 +141,9 @@
     <ClCompile Include="..\code\lunar_landers.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\code\lunar_wave.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\..\prolog\windows\studio.rc">

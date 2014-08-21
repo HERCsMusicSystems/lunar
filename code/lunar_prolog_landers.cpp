@@ -91,6 +91,20 @@ orbiter * key_map_class :: create_orbiter (PrologElement * parameters) {return n
 PrologNativeOrbiter * key_map_class :: create_native_orbiter (PrologAtom * atom, orbiter * module) {return new key_map_native_orbiter (atom, core, module);}
 key_map_class :: key_map_class (orbiter_core * core, int initial) : PrologNativeOrbiterCreator (core) {this -> initial = initial;}
 
+static char * wave_orbiter_action_code = "Lunar Wave Action";
+char * PrologNativeWaveOrbiter :: name (void) {return wave_orbiter_action_code;}
+bool PrologNativeWaveOrbiter :: isTypeOf (char * code_name) {return wave_orbiter_action_code == code_name ? true : PrologNativeOrbiter :: isTypeOf (code_name);}
+PrologNativeWaveOrbiter :: PrologNativeWaveOrbiter (PrologAtom * atom, orbiter_core * core, orbiter * module) : PrologNativeOrbiter (atom, core, module) {}
+
+class wave_native_orbiter : public PrologNativeWaveOrbiter {
+public:
+	wave_native_orbiter (PrologAtom * atom, orbiter_core * core, orbiter * module) : PrologNativeWaveOrbiter (atom, core, module) {}
+};
+
+orbiter * wave_class :: create_orbiter (PrologElement * parameters) {return 0;}
+PrologNativeOrbiter * wave_class :: create_native_orbiter (PrologAtom * atom, orbiter * module) {return new wave_native_orbiter (atom, core, module);}
+wave_class :: wave_class (orbiter_core * core) : PrologNativeOrbiterCreator (core) {}
+
 orbiter * impulse_class :: create_orbiter (PrologElement * parameters) {return new lunar_impulse (core);}
 impulse_class :: impulse_class (orbiter_core * core) : PrologNativeOrbiterCreator (core) {}
 

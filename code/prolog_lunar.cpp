@@ -120,8 +120,10 @@ bool PrologNativeOrbiterCreator :: code (PrologElement * parameters, PrologResol
 	if (atom -> isVar ()) atom -> setAtom (new PrologAtom ());
 	if (! atom -> isAtom ()) return false;
 	if (atom -> getAtom () -> getMachine () != 0) return false;
-	PrologNativeOrbiter * machine = create_native_orbiter (atom -> getAtom (), create_orbiter (parameters));
-	if (machine == 0) return false;
+	orbiter * module = create_orbiter (parameters);
+	if (module == 0) return false;
+	PrologNativeOrbiter * machine = create_native_orbiter (atom -> getAtom (), module);
+	if (machine == 0) {module -> release (); return false;}
 	if (atom -> getAtom () -> setMachine (machine)) {code_created (machine); return true;}
 	delete machine;
 	return false;

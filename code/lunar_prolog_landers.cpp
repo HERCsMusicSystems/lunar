@@ -101,7 +101,13 @@ public:
 	wave_native_orbiter (PrologAtom * atom, orbiter_core * core, orbiter * module) : PrologNativeWaveOrbiter (atom, core, module) {}
 };
 
-orbiter * wave_class :: create_orbiter (PrologElement * parameters) {return 0;}
+orbiter * wave_class :: create_orbiter (PrologElement * parameters) {
+	if (! parameters -> isPair ()) return 0;
+	parameters = parameters -> getLeft ();
+	if (! parameters -> isText ()) return 0;
+	printf ("opening wave [%s]\n", parameters -> getText ());
+	return new lunar_map (core, 0);
+}
 PrologNativeOrbiter * wave_class :: create_native_orbiter (PrologAtom * atom, orbiter * module) {return new wave_native_orbiter (atom, core, module);}
 wave_class :: wave_class (orbiter_core * core) : PrologNativeOrbiterCreator (core) {}
 

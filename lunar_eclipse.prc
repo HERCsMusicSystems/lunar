@@ -22,9 +22,9 @@ program lunar_eclipse [reactor base radar eagle kb blep distro tr1 tr2 tr3]
 	[Lunar 7000 base adsr 1 attack]
 	[Lunar 9000 base adsr 1 release]
 
-	;[oscilloscope radar]
-	;[small_keyboard kb *trig]
-	;[radar *mixer]
+	[oscilloscope radar]
+	[small_keyboard kb *trigger]
+	[radar *mixer]
 
 	[Activate reactor base mixer]
 

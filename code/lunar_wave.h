@@ -20,9 +20,9 @@
 // THE SOFTWARE.                                                                 //
 ///////////////////////////////////////////////////////////////////////////////////
 
-///////////////////////////////////////////////////////////////
-// This file was created on Friday, 18th July at 8:45:09 AM. //
-///////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////
+// This file was created on Thursday, 21st August at 14:11:10 PM. //
+////////////////////////////////////////////////////////////////////
 
 #ifndef _LUNAR_WAVE_
 #define _LUNAR_WAVE_
@@ -31,8 +31,13 @@
 
 class lunar_wave : public orbiter {
 public:
+	int sampling_freq;
+	int channels;
+	int wave_size;
+	double * * data;
 	virtual int numberOfOutputs (void);
-	lunar_wave (orbiter_core * core);
+	lunar_wave (orbiter_core * core, int sampling_freq, int channels, int wave_size);
+	~ lunar_wave (void);
 };
 
 extern lunar_wave * create_lunar_wave (orbiter_core * core, char * file_name);

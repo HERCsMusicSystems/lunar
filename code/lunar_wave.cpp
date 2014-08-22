@@ -31,7 +31,7 @@
 typedef double * double_pointer;
 int lunar_wave :: numberOfOutputs (void) {return 0;}
 lunar_wave :: lunar_wave (orbiter_core * core, int sampling_freq, int channels, int wave_size) : orbiter (core) {
-	this -> sampling_freq = sampling_freq;
+	this -> sampling_freq = (double) sampling_freq;
 	this -> channels = channels;
 	this -> wave_size = wave_size;
 	data = new double_pointer [channels];

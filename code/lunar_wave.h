@@ -31,7 +31,7 @@
 
 class lunar_wave : public orbiter {
 public:
-	int sampling_freq;
+	double sampling_freq;
 	int channels;
 	int wave_size;
 	double * * data;

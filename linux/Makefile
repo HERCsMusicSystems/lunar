@@ -39,7 +39,7 @@ lunar_moonbase.o: ../code/lunar_moonbase.cpp ../code/lunar_moonbase.h ../code/lu
 lunar_prolog_operator.o: ../code/lunar_prolog_operator.cpp ../code/prolog_lunar.h ../code/lunar_operator.h ../code/lunar.h $(pc)prolog.h
 	g++ -Wno-write-strings -I. -I$(pc) ../code/lunar_prolog_operator.cpp -c -o lunar_prolog_operator.o
 
-lunar_operator.o: ../code/lunar_operator.cpp ../code/lunar_operator.h ../code/lunar.h
+lunar_operator.o: ../code/lunar_operator.cpp ../code/lunar_operator.h ../code/lunar.h ../code/lunar_wave.h
 	g++ -Wno-write-strings ../code/lunar_operator.cpp -c -o lunar_operator.o
 
 lunar_landers.o: ../code/lunar_landers.cpp ../code/lunar_landers.h ../code/lunar.h

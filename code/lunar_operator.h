@@ -28,6 +28,7 @@
 #define _LUNAR_OPERATOR_
 
 #include "lunar.h"
+#include "lunar_wave.h"
 
 class lunar_oscillator : public orbiter {
 protected:
@@ -83,6 +84,17 @@ class lunar_aliased_square_operator : public lunar_oscillator {
 public:
 	virtual void move (void);
 	lunar_aliased_square_operator (orbiter_core * core);
+};
+
+class lunar_sampler_operator : public lunar_oscillator {
+private:
+	int capacity;
+	lunar_wave * * waves;
+public:
+	virtual void move (void);
+	virtual bool release (void);
+	void install_wave (lunar_wave * wave, int index);
+	lunar_sampler_operator (orbiter_core * core, int capacity);
 };
 
 #endif

@@ -47,3 +47,16 @@ orbiter * saw_operator_class :: create_orbiter (PrologElement * parameters) {
 	return new lunar_saw_operator (core);
 }
 saw_operator_class :: saw_operator_class (orbiter_core * core) : PrologNativeOrbiterCreator (core) {}
+
+orbiter * sampler_operator_class :: create_orbiter (PrologElement * parameters) {
+	int capacity = 128;
+	while (parameters -> isPair ()) {
+		PrologElement * el = parameters -> getLeft ();
+		if (el -> isInteger ()) capacity = el -> getInteger ();
+		parameters = parameters -> getRight ();
+	}
+	if (capacity <= 0) return 0;
+	return new lunar_sampler_operator (core, capacity);
+}
+sampler_operator_class :: sampler_operator_class (orbiter_core * core) : PrologNativeOrbiterCreator (core) {}
+

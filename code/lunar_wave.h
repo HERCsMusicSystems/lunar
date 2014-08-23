@@ -29,18 +29,26 @@
 
 #include "lunar.h"
 
-class lunar_wave : public orbiter {
+class wave_data {
 public:
 	double sampling_freq;
 	int channels;
 	int wave_size;
 	double * * data;
+	wave_data (int sampling_freq, int channels, int wave_size);
+	~ wave_data (void);
+};
+
+class lunar_wave : public orbiter {
+public:
+	int capacity;
+	wave_data * * waves;
 	virtual int numberOfOutputs (void);
-	lunar_wave (orbiter_core * core, int sampling_freq, int channels, int wave_size);
+	lunar_wave (orbiter_core * core, int capacity);
 	~ lunar_wave (void);
 };
 
-extern lunar_wave * create_lunar_wave (orbiter_core * core, char * file_name);
+extern wave_data * create_lunar_wave_data (char * file_name);
 
 
 #endif

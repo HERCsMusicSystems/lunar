@@ -46,9 +46,8 @@ end := [
 		;[distro]
 		;[command]
 		;[wave wv "../truck_horn_stereo.wav.bin"]
-		[wave wv "../../dock/algos/cs/sfx/starship.wav"]
+		[wave wv "../../dock/algos/cs/sfx/starship.wav" "../../dock/algos/cs/sfx/submarine.wav" "../../dock/algos/cs/sfx/jetplane.wav"]
 		[sampler_operator smpl wv]
-		[show "I am here!"]
 		] .
 end := [
 			[auto_atoms]

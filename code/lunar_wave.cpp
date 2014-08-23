@@ -29,17 +29,33 @@
 #include <string.h>
 
 typedef double * double_pointer;
-int lunar_wave :: numberOfOutputs (void) {return 0;}
-lunar_wave :: lunar_wave (orbiter_core * core, int sampling_freq, int channels, int wave_size) : orbiter (core) {
+wave_data :: wave_data (int sampling_freq, int channels, int wave_size) {
 	this -> sampling_freq = (double) sampling_freq;
 	this -> channels = channels;
 	this -> wave_size = wave_size;
 	data = new double_pointer [channels];
 	for (int ind = 0; ind < channels; ind++) data [ind] = new double [wave_size + 16];
 }
-lunar_wave :: ~ lunar_wave (void) {
-	if (data != 0) {for (int ind = 0; ind < channels; ind++) {delete [] data [ind]; data [ind] = 0;}};
+wave_data :: ~ wave_data (void) {
+	if (data != 0) {for (int ind = 0; ind < channels; ind++) {delete [] data [ind]; data [ind] = 0;}}
 	delete [] data; data = 0;
+}
+
+typedef wave_data * wave_data_pointer;
+int lunar_wave :: numberOfOutputs (void) {return 0;}
+lunar_wave :: lunar_wave (orbiter_core * core, int capacity) : orbiter (core) {
+	if (capacity < 0) capacity = 0;
+	this -> capacity = capacity;
+	if (capacity < 1) waves = 0;
+	else {
+		waves = new wave_data_pointer [capacity];
+		for (int ind = 0; ind < capacity; ind++) waves [ind] = 0;
+	}
+}
+lunar_wave :: ~ lunar_wave (void) {
+	if (waves == 0) return;
+	for (int ind = 0; ind < capacity; ind++) {if (waves [ind] != 0) delete waves [ind]; waves [ind] = 0;}
+	delete [] waves; waves = 0;
 }
 
 static bool read_id (FILE * fr, char * id) {
@@ -70,7 +86,7 @@ static bool read4 (FILE * fr, long int * ind) {
 }
 
 #define fail {fclose (fr); return 0;}
-lunar_wave * create_lunar_wave (orbiter_core * core, char * file_name) {
+wave_data * create_lunar_wave_data (char * file_name) {
 	if (file_name == 0) return 0;
 	FILE * fr = fopen (file_name, "rb");
 	if (! fr) return 0;
@@ -82,19 +98,19 @@ lunar_wave * create_lunar_wave (orbiter_core * core, char * file_name) {
 	if (riff_size < 4) fail;
 	if (! read_id (fr, command)) fail; riff_size -= 4; if (riff_size < 4) fail;
 	if (strcmp (command, "WAVE") != 0) fail;
-	printf ("wave [%s %i]\n", command, riff_size);
+	printf ("wave [%s %li]\n", command, riff_size);
 	short int format_tag = 0;
 	short int channels = 0;
 	long int samples_per_second = 0;
 	long int bytes_per_second = 0;
 	short int block_align = 0;
 	short int bits_per_sample = 0;
-	lunar_wave * wave = 0;
+	wave_data * wave = 0;
 	while (riff_size > 0) {
 		if (! read_id (fr, command)) fail; riff_size -= 4; if (riff_size < 4) fail;
 		long int chunk_size;
 		if (! read4 (fr, & chunk_size)) fail; riff_size -= 4; if (riff_size < 4) fail;
-		printf ("chunk [%s %i] at [%i]\n", command, chunk_size, riff_size);
+		printf ("chunk [%s %li] at [%li]\n", command, chunk_size, riff_size);
 		if (chunk_size < 0 || chunk_size > riff_size) fail;
 		riff_size -= chunk_size;
 		if (strcmp (command, "fmt ") == 0) {
@@ -105,11 +121,11 @@ lunar_wave * create_lunar_wave (orbiter_core * core, char * file_name) {
 			if (! read4 (fr, & bytes_per_second)) fail;
 			if (! read2 (fr, & block_align)) fail;
 			if (! read2 (fr, & bits_per_sample)) fail;
-			printf ("format [%i %i %i %i %i %i]\n", format_tag, channels, samples_per_second, bytes_per_second, block_align, bits_per_sample);
+			printf ("format [%i %i %li %li %i %i]\n", format_tag, channels, samples_per_second, bytes_per_second, block_align, bits_per_sample);
 		} else if (strcmp (command, "data") == 0) {
 			if (channels < 1 || block_align < 1 || chunk_size < block_align) fail;
 			int wave_size = chunk_size / block_align;
-			wave = new lunar_wave (core, samples_per_second, channels, wave_size);
+			wave = new wave_data (samples_per_second, channels, wave_size);
 			int index = 0;
 			while (chunk_size > 0) {
 				for (int channel = 0; channel < channels; channel++) {

@@ -103,10 +103,20 @@ public:
 };
 
 orbiter * wave_class :: create_orbiter (PrologElement * parameters) {
-	if (! parameters -> isPair ()) return 0;
-	parameters = parameters -> getLeft ();
-	if (! parameters -> isText ()) return 0;
-	return create_lunar_wave (core, parameters -> getText ());
+	int capacity = 0;
+	PrologElement * counter = parameters;
+	while (counter -> isPair ()) {
+		if (counter -> getLeft () -> isText ()) capacity++;
+		counter = counter -> getRight ();
+	}
+	lunar_wave * wave = new lunar_wave (core, capacity);
+	capacity = 0;
+	while (parameters -> isPair ()) {
+		PrologElement * el = parameters -> getLeft ();
+		if (el -> isText ()) wave -> waves [capacity++] = create_lunar_wave_data (el -> getText ());
+		parameters = parameters -> getRight ();
+	}
+	return wave;
 }
 PrologNativeOrbiter * wave_class :: create_native_orbiter (PrologAtom * atom, orbiter * module) {return new wave_native_orbiter (atom, core, module);}
 wave_class :: wave_class (orbiter_core * core) : PrologNativeOrbiterCreator (core) {}

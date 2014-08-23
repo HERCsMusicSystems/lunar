@@ -4,7 +4,7 @@
 import studio
 import lunar
 
-program lunar_eclipse [reactor base radar eagle kb blep distro tr1 tr2 tr3 wv]
+program lunar_eclipse [reactor base radar eagle kb blep distro tr1 tr2 tr3 wv smpl]
 
 [[eagle]
 	[Moonbase base *]
@@ -47,6 +47,8 @@ end := [
 		;[command]
 		;[wave wv "../truck_horn_stereo.wav.bin"]
 		[wave wv "../../dock/algos/cs/sfx/starship.wav"]
+		[sampler_operator smpl wv]
+		[show "I am here!"]
 		] .
 end := [
 			[auto_atoms]

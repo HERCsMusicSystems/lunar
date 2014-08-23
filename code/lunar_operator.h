@@ -88,13 +88,12 @@ public:
 
 class lunar_sampler_operator : public lunar_oscillator {
 private:
-	int capacity;
-	lunar_wave * * waves;
+	lunar_wave * wave;
 public:
 	virtual void move (void);
 	virtual bool release (void);
-	void install_wave (lunar_wave * wave, int index);
-	lunar_sampler_operator (orbiter_core * core, int capacity);
+	void install_wave (lunar_wave * wave);
+	lunar_sampler_operator (orbiter_core * core);
 };
 
 #endif

@@ -126,31 +126,18 @@ lunar_square_operator :: lunar_square_operator (orbiter_core * core) : lunar_saw
 // LUNAR SAMPLER //
 ///////////////////
 
-void lunar_sampler_operator :: install_wave (lunar_wave * wave, int index) {
-	if (index < 0) return;
-	if (index >= capacity) return;
-	if (waves [index] != 0) waves [index] -> release ();
-	if (waves != 0) wave -> hold ();
-	waves [index] = wave;
+void lunar_sampler_operator :: install_wave (lunar_wave * wave) {
+	if (this -> wave != 0) this -> wave -> release ();
+	wave -> hold ();
+	this -> wave = wave;
 }
 bool lunar_sampler_operator :: release (void) {
-	int wp_capacity = capacity;
-	lunar_wave * * wp = waves;
+	lunar_wave * wp = wave;
 	bool ret = orbiter :: release ();
-	if (ret && wp != 0 && wp_capacity > 0) {
-		for (int ind = 0; ind < wp_capacity; ind++) {if (wp [ind] != 0) delete wp [ind];} delete [] wp;
-	}
+	if (wp != 0) wp -> release ();
 	return ret;
 }
 void lunar_sampler_operator :: move (void) {
 }
-typedef lunar_wave * lunar_wave_pointer;
-lunar_sampler_operator :: lunar_sampler_operator (orbiter_core * core, int capacity) : lunar_oscillator (core) {
-	if (capacity < 1) capacity = 1;
-	if (capacity > 16384) capacity = 16384;
-	this -> capacity = capacity;
-	if (capacity < 1) {waves = 0; return;}
-	waves = new lunar_wave_pointer [capacity];
-	for (int ind = 0; ind < capacity; ind++) waves [ind] = 0;
-}
+lunar_sampler_operator :: lunar_sampler_operator (orbiter_core * core) : lunar_oscillator (core) {wave = 0;}
 

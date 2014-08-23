@@ -26,6 +26,7 @@
 
 #include "prolog_lunar.h"
 #include "lunar_operator.h"
+#include "lunar_prolog_landers.h"
 
 orbiter * operator_class :: create_orbiter (PrologElement * parameters) {return new lunar_operator (core);}
 operator_class :: operator_class (orbiter_core * core) : PrologNativeOrbiterCreator (core) {}
@@ -49,14 +50,19 @@ orbiter * saw_operator_class :: create_orbiter (PrologElement * parameters) {
 saw_operator_class :: saw_operator_class (orbiter_core * core) : PrologNativeOrbiterCreator (core) {}
 
 orbiter * sampler_operator_class :: create_orbiter (PrologElement * parameters) {
-	int capacity = 128;
+	PrologElement * wave = 0;
 	while (parameters -> isPair ()) {
 		PrologElement * el = parameters -> getLeft ();
-		if (el -> isInteger ()) capacity = el -> getInteger ();
+		if (el -> isAtom ()) wave = el;
 		parameters = parameters -> getRight ();
 	}
-	if (capacity <= 0) return 0;
-	return new lunar_sampler_operator (core, capacity);
+	if (wave == 0) return 0;
+	PrologNativeCode * machine = wave -> getAtom () -> getMachine ();
+	if (machine == 0) return 0;
+	if (! machine -> isTypeOf (PrologNativeWaveOrbiter :: name ())) return 0;
+	lunar_sampler_operator * sampler = new lunar_sampler_operator (core);
+	sampler -> install_wave ((lunar_wave *) ((PrologNativeWaveOrbiter *) machine) -> module);
+	return sampler;
 }
 sampler_operator_class :: sampler_operator_class (orbiter_core * core) : PrologNativeOrbiterCreator (core) {}
 

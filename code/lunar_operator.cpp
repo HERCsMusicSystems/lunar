@@ -126,6 +126,29 @@ lunar_square_operator :: lunar_square_operator (orbiter_core * core) : lunar_saw
 // LUNAR SAMPLER //
 ///////////////////
 
+int lunar_sampler_operator :: numberOfInputs (void) {return 5;}
+char * lunar_sampler_operator :: inputName (int ind) {
+	switch (ind) {
+	case 0: return "FREQ"; break;
+	case 1: return "AMP"; break;
+	case 2: return "RATIO"; break;
+	case 3: return "INDEX"; break;
+	case 4: return "TRIGGER"; break;
+	default: break;
+	}
+	return orbiter :: inputName (ind);
+}
+double * lunar_sampler_operator :: inputAddress (int ind) {
+	switch (ind) {
+	case 0: return & freq; break;
+	case 1: return & amp; break;
+	case 2: return & ratio; break;
+	case 3: return & index; break;
+	case 4: return & trigger; break;
+	default: break;
+	}
+	return orbiter :: inputAddress (ind);
+}
 void lunar_sampler_operator :: install_wave (lunar_wave * wave) {
 	if (this -> wave != 0) this -> wave -> release ();
 	wave -> hold ();
@@ -138,6 +161,14 @@ bool lunar_sampler_operator :: release (void) {
 	return ret;
 }
 void lunar_sampler_operator :: move (void) {
+	if (wave == 0) {signal = 0.0; return;}
+	int ind = (int) index;
+	if (ind < 0 || ind >= wave -> capacity) return;
 }
-lunar_sampler_operator :: lunar_sampler_operator (orbiter_core * core) : lunar_oscillator (core) {wave = 0;}
+lunar_sampler_operator :: lunar_sampler_operator (orbiter_core * core) : orbiter (core) {
+	time = freq = amp = index = trigger = slope = 0.0;
+	ratio = 1.0;
+	wave = 0;
+	initialise (); activate ();
+}
 

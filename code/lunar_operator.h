@@ -86,10 +86,20 @@ public:
 	lunar_aliased_square_operator (orbiter_core * core);
 };
 
-class lunar_sampler_operator : public lunar_oscillator {
+class lunar_sampler_operator : public orbiter {
 private:
+	double time;
+	double freq;
+	double ratio;
+	double amp;
+	double index;
+	double trigger;
+	double slope;
 	lunar_wave * wave;
 public:
+	virtual int numberOfInputs (void);
+	virtual char * inputName (int ind);
+	virtual double * inputAddress (int ind);
 	virtual void move (void);
 	virtual bool release (void);
 	void install_wave (lunar_wave * wave);

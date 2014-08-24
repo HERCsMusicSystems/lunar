@@ -95,11 +95,15 @@ private:
 	double index;
 	double trigger;
 	double slope;
+	double signal_right;
 	lunar_wave * wave;
 public:
 	virtual int numberOfInputs (void);
 	virtual char * inputName (int ind);
 	virtual double * inputAddress (int ind);
+	virtual int numberOfOutputs (void);
+	virtual char * outputName (int ind);
+	virtual double * outputAddress (int ind);
 	virtual void move (void);
 	virtual bool release (void);
 	void install_wave (lunar_wave * wave);

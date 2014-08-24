@@ -149,6 +149,9 @@ double * lunar_sampler_operator :: inputAddress (int ind) {
 	}
 	return orbiter :: inputAddress (ind);
 }
+int lunar_sampler_operator :: numberOfOutputs (void) {return 2;}
+char * lunar_sampler_operator :: outputName (int ind) {if (ind == 1) return "RIGHT"; return orbiter :: outputName (ind);}
+double * lunar_sampler_operator :: outputAddress (int ind) {if (ind == 1) return & signal_right; return orbiter :: outputAddress (ind);}
 void lunar_sampler_operator :: install_wave (lunar_wave * wave) {
 	if (this -> wave != 0) this -> wave -> release ();
 	wave -> hold ();
@@ -157,17 +160,26 @@ void lunar_sampler_operator :: install_wave (lunar_wave * wave) {
 bool lunar_sampler_operator :: release (void) {
 	lunar_wave * wp = wave;
 	bool ret = orbiter :: release ();
-	if (wp != 0) wp -> release ();
+	if (ret && wp != 0) wp -> release ();
 	return ret;
 }
 void lunar_sampler_operator :: move (void) {
-	if (wave == 0) {signal = 0.0; return;}
+	if (slope != trigger) if (trigger != 0) time = 0.0; slope = trigger;
+	if (wave == 0) {signal = signal_right = 0.0; return;}
 	int ind = (int) index;
-	if (ind < 0 || ind >= wave -> capacity) return;
+	if (ind < 0 || ind >= wave -> capacity) {signal = signal_right = 0.0; return;}
+	wave_data * data = wave -> waves [ind];
+	int it = (int) time;
+	if (it < 0 || it >= data -> wave_size) {signal = signal_right = 0.0; return;}
+	int channels = data -> channels;
+	if (channels < 1) {signal = signal_right = 0.0; return;}
+	if (channels > 0) signal = data -> data [0] [it] * core -> Amplitude (amp);
+	signal_right = channels > 1 ? data -> data [1] [it] * core -> Amplitude (amp) : signal;
+	time += core -> TimeDelta (freq) * ratio * data -> sampling_freq;
 }
 lunar_sampler_operator :: lunar_sampler_operator (orbiter_core * core) : orbiter (core) {
 	time = freq = amp = index = trigger = slope = 0.0;
-	ratio = 1.0;
+	ratio = 1.0; signal_right = signal;
 	wave = 0;
 	initialise (); activate ();
 }

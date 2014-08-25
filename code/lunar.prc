@@ -9,7 +9,7 @@ program lunar #machine := "prolog.lunar"
 				small_keyboard keyboard big_keyboard oscilloscope
 				dock undock
 				core moonbase operator parameter_block key_map velocity_map impulse trigger porta_trigger mixer stereo_mixer gateway lfo adsr eg
-				square_operator saw_operator sampler_operator sensitivity
+				square_operator saw_operator noise_operator sampler_operator sensitivity
 				signal freq amp ratio sync attack decay sustain release busy time speed wave pulse phase poly
 				mono left right mic mic_left mic_right breakpoint
 				keyon keyoff
@@ -44,6 +44,7 @@ program lunar #machine := "prolog.lunar"
 #machine operator := "operator"
 #machine square_operator := "square_operator"
 #machine saw_operator := "saw_operator"
+#machine noise_operator := "noise_operator"
 #machine sampler_operator := "sampler_operator"
 
 [[Moonbase *base *distributor]

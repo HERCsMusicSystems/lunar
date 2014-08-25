@@ -86,6 +86,17 @@ public:
 	lunar_aliased_square_operator (orbiter_core * core);
 };
 
+class noise_operator : public orbiter {
+private:
+	double amp;
+public:
+	virtual int numberOfInputs (void);
+	virtual char * inputName (int ind);
+	virtual double * inputAddress (int ind);
+	virtual void move (void);
+	noise_operator (orbiter_core * core);
+};
+
 class lunar_sampler_operator : public orbiter {
 private:
 	double time;

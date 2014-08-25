@@ -51,6 +51,7 @@ end := [
 		;[eagle]
 		;[distro]
 		[sampler]
+		[noise_operator *noise] [oscilloscope radar] [radar *noise]
 		[command]
 		] .
 end := [

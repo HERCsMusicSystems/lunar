@@ -180,6 +180,7 @@ void lunar_sampler_operator :: move (void) {
 	int ind = (int) index;
 	if (ind < 0 || ind >= wave -> capacity) {signal = signal_right = 0.0; time = -1.0; return;}
 	wave_data * data = wave -> waves [ind];
+	if (data == 0) {signal = signal_right = 0.0; time = -1.0; return;}
 	if ((int) time >= data -> wave_size) {signal = signal_right = 0.0; time = -1.0; return;}
 	int channels = data -> channels;
 	if (channels < 1) {signal = signal_right = 0.0; time = -1.0; return;}

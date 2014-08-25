@@ -44,6 +44,8 @@ public:
 	double gate_delay;
 	double time_deltas [32768];
 	double * time_delta;
+	double sampler_time_deltas [32768];
+	double * sampler_time_delta;
 	double control_time_deltas [16384];
 	double * control_time_delta;
 	double amplitudes [16384];
@@ -56,6 +58,7 @@ public:
 	pthread_mutex_t maintenance_mutex;
 	orbiter * root;
 	double TimeDelta (double ind);
+	double SamplerTimeDelta (double ind);
 	double ControlTimeDelta (double ind);
 	double Amplitude (double ind);
 	double Sine (double angle); // 0 .... 1.0 per cycle

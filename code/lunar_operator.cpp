@@ -165,20 +165,22 @@ bool lunar_sampler_operator :: release (void) {
 }
 void lunar_sampler_operator :: move (void) {
 	if (slope != trigger) if (trigger != 0) time = 0.0; slope = trigger;
-	if (wave == 0) {signal = signal_right = 0.0; return;}
+	if (time < 0.0) return;
+	if (wave == 0) {signal = signal_right = 0.0; time = -1.0; return;}
 	int ind = (int) index;
-	if (ind < 0 || ind >= wave -> capacity) {signal = signal_right = 0.0; return;}
+	if (ind < 0 || ind >= wave -> capacity) {signal = signal_right = 0.0; time = -1.0; return;}
 	wave_data * data = wave -> waves [ind];
-	int it = (int) time;
-	if (it < 0 || it >= data -> wave_size) {signal = signal_right = 0.0; return;}
+	if ((int) time >= data -> wave_size) {signal = signal_right = 0.0; time = -1.0; return;}
 	int channels = data -> channels;
-	if (channels < 1) {signal = signal_right = 0.0; return;}
-	if (channels > 0) signal = data -> data [0] [it] * core -> Amplitude (amp);
-	signal_right = channels > 1 ? data -> data [1] [it] * core -> Amplitude (amp) : signal;
-	time += core -> TimeDelta (freq) * ratio * data -> sampling_freq;
+	if (channels < 1) {signal = signal_right = 0.0; time = -1.0; return;}
+	if (channels > 0) signal = data -> get_data (0, time) * core -> Amplitude (amp);
+	signal_right = channels > 1 ? data -> get_data (1, time) * core -> Amplitude (amp) : signal;
+	time += core -> SamplerTimeDelta (freq) * ratio * data -> sampling_freq;
+	while (time > data -> loop_point && trigger != 0.0) time -= data -> loop_size;
 }
 lunar_sampler_operator :: lunar_sampler_operator (orbiter_core * core) : orbiter (core) {
-	time = freq = amp = index = trigger = slope = 0.0;
+	time = -1.0;
+	freq = amp = index = trigger = slope = 0.0;
 	ratio = 1.0; signal_right = signal;
 	wave = 0;
 	initialise (); activate ();

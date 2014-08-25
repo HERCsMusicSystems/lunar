@@ -32,9 +32,13 @@
 class wave_data {
 public:
 	double sampling_freq;
+	double loop_point;
+	double loop_size;
+	double midi_note;
 	int channels;
 	int wave_size;
 	double * * data;
+	double get_data (int channel, double time);
 	wave_data (int sampling_freq, int channels, int wave_size);
 	~ wave_data (void);
 };

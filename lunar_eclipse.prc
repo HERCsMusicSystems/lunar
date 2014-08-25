@@ -41,7 +41,7 @@ program lunar_eclipse [reactor base radar eagle kb blep distro tr1 tr2 tr3 wv sm
 ]
 
 [[sampler]
-	[wave wv "../../dock/algos/cs/sfx/starship.wav" "../../dock/algos/cs/sfx/submarine.wav" "../../dock/algos/cs/sfx/jetplane.wav"]
+	[wave wv "../truck_horn.wav.bin" "../../dock/algos/cs/sfx/starship.wav" "../../dock/algos/cs/sfx/submarine.wav" "../../dock/algos/cs/sfx/jetplane.wav"]
 	[sampler_operator smpl wv]
 	[reactor smpl]
 ]

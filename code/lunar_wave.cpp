@@ -29,8 +29,17 @@
 #include <string.h>
 
 typedef double * double_pointer;
+double wave_data :: get_data (int channel, double time) {
+	int ind = (int) time;
+	time -= (double) ind;
+	double * dp = data [channel] + ind;
+	return * dp * (1.0 - time) + * (dp + 1) * time;
+}
 wave_data :: wave_data (int sampling_freq, int channels, int wave_size) {
 	this -> sampling_freq = (double) sampling_freq;
+	this -> loop_point = (double) wave_size + this -> sampling_freq;
+	this -> midi_note = 64.0;
+	this -> loop_size = 0.0;
 	this -> channels = channels;
 	this -> wave_size = wave_size;
 	data = new double_pointer [channels];
@@ -127,6 +136,7 @@ wave_data * create_lunar_wave_data (char * file_name) {
 			int wave_size = chunk_size / block_align;
 			wave = new wave_data (samples_per_second, channels, wave_size);
 			int index = 0;
+			double sample;
 			while (chunk_size > 0) {
 				for (int channel = 0; channel < channels; channel++) {
 					short short_sample;
@@ -134,12 +144,12 @@ wave_data * create_lunar_wave_data (char * file_name) {
 					switch (bits_per_sample) {
 					case 8:
 						if (! read1 (fr, & char_sample)) fail;
-						wave -> data [channel] [index] = ((double) char_sample - 128.0) / 128.0;
+						wave -> data [channel] [index] = sample = ((double) char_sample - 128.0) / 128.0;
 						chunk_size--;
 						break;
 					case 16:
 						if (! read2 (fr, & short_sample)) fail;
-						wave -> data [channel] [index] = (double) short_sample / 32768.0;
+						wave -> data [channel] [index] = sample = (double) short_sample / 32768.0;
 						chunk_size -= 2;
 						break;
 					default: fail; break;
@@ -147,9 +157,33 @@ wave_data * create_lunar_wave_data (char * file_name) {
 				}
 				index++;
 			}
+			for (int channel = 0; channel < channels; channel++) wave -> data [channel] [index] = sample;
 			index++;
 		} else if (strcmp (command, "smpl") == 0) {
-			while (chunk_size-- > 0) fgetc (fr);
+			if (chunk_size < 60) fail;
+			long int manufacturer; if (! read4 (fr, & manufacturer)) fail;
+			long int product; if (! read4 (fr, & product)) fail;
+			long int sample_period; if (! read4 (fr, & sample_period)) fail;
+			long int unity_note; if (! read4 (fr, & unity_note)) fail;
+			wave -> midi_note = (double) unity_note;
+			long int pitch_fraction; if (! read4 (fr, & pitch_fraction)) fail;
+			long int format; if (! read4 (fr, & format)) fail;
+			long int offset; if (! read4 (fr, & offset)) fail;
+			long int sample_loops; if (! read4 (fr, & sample_loops)) fail;
+			long int sampler_data; if (! read4 (fr, & sampler_data)) fail;
+			chunk_size -= 36;
+			printf ("........... got sampler [%li %li]\n", unity_note, sample_loops);
+			while (chunk_size-- > 0) {
+				long int dw_identifier; if (! read4 (fr, & dw_identifier)) fail;
+				long int dw_type; if (! read4 (fr, & dw_type)) fail;
+				long int dw_start; if (! read4 (fr, & dw_start)) fail;
+				long int dw_end; if (! read4 (fr, & dw_end)) fail;
+				long int dw_fraction; if (! read4 (fr, & dw_fraction)) fail;
+				long int dw_play_count; if (! read4 (fr, & dw_play_count)) fail;
+				chunk_size -= 24;
+				printf ("................... got loop [%li %li %li]\n", dw_type, dw_start, dw_end);
+				if (dw_type == 0) {wave -> loop_point = (double) dw_end; wave -> loop_size = (double) (dw_end - dw_start);}
+			}
 		} else {while (chunk_size-- > 0) fgetc (fr);}
 	}
 	fclose (fr);

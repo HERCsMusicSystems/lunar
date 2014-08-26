@@ -69,3 +69,5 @@ orbiter * sampler_operator_class :: create_orbiter (PrologElement * parameters) 
 }
 sampler_operator_class :: sampler_operator_class (orbiter_core * core) : PrologNativeOrbiterCreator (core) {}
 
+orbiter * filter_class :: create_orbiter (PrologElement * parameters) {return new lunar_filter (core);}
+filter_class :: filter_class (orbiter_core * core) : PrologNativeOrbiterCreator (core) {}

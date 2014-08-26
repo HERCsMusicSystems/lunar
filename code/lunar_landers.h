@@ -200,5 +200,23 @@ public:
 	lunar_sensitivity (orbiter_core * core);
 };
 
+class lunar_filter : public orbiter {
+private:
+	double high_pass_signal;
+	double band_pass_signal;
+	double band_reject_signal;
+	double freq;
+	double resonance;
+public:
+	virtual int numberOfInputs (void);
+	virtual char * inputName (int ind);
+	virtual double * inputAddress (int ind);
+	virtual int numberOfOutputs (void);
+	virtual char * outputName (int ind);
+	virtual double * outputAddress (int ind);
+	virtual void move (void);
+	lunar_filter (orbiter_core * core);
+};
+
 #endif
 

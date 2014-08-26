@@ -106,8 +106,14 @@ public:
 
 class sampler_operator_class : public PrologNativeOrbiterCreator {
 public:
-	virtual orbiter * create_orbiter (PrologElement * parameter);
+	virtual orbiter * create_orbiter (PrologElement * parameters);
 	sampler_operator_class (orbiter_core * core);
+};
+
+class filter_class : public PrologNativeOrbiterCreator {
+public:
+	virtual orbiter * create_orbiter (PrologElement * parameters);
+	filter_class (orbiter_core * core);
 };
 
 class PrologLunarServiceClass : public PrologServiceClass {

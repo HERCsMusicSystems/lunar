@@ -465,19 +465,21 @@ lunar_sensitivity :: lunar_sensitivity (orbiter_core * core) : orbiter (core) {
 	initialise (); activate ();
 }
 
-int lunar_filter :: numberOfInputs (void) {return 2;}
+int lunar_filter :: numberOfInputs (void) {return 3;}
 char * lunar_filter :: inputName (int ind) {
 	switch (ind) {
-	case 0: return "FREQ"; break;
-	case 1: return "RESONANCE"; break;
+	case 0: return "ENTER"; break;
+	case 1: return "FREQ"; break;
+	case 2: return "RESONANCE"; break;
 	default: break;
 	}
 	return orbiter :: inputName (ind);
 }
 double * lunar_filter :: inputAddress (int ind) {
 	switch (ind) {
-	case 0: return & freq; break;
-	case 1: return & resonance; break;
+	case 0: return & enter; break;
+	case 1: return & freq; break;
+	case 2: return & resonance; break;
 	default: break;
 	}
 	return orbiter :: inputAddress (ind);
@@ -503,10 +505,12 @@ double * lunar_filter :: outputAddress (int ind) {
 	return orbiter :: outputAddress (ind);
 }
 void lunar_filter :: move (void) {
+	signal = enter * 0.625;
 }
 lunar_filter :: lunar_filter (orbiter_core * core) : orbiter (core) {
 	high_pass_signal = band_pass_signal = band_reject_signal = 0.0;
 	freq = 0.0;
 	resonance = 0.0;
+	enter = 0.0;
 	initialise (); activate ();
 }

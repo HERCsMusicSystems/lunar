@@ -205,6 +205,7 @@ private:
 	double high_pass_signal;
 	double band_pass_signal;
 	double band_reject_signal;
+	double enter;
 	double freq;
 	double resonance;
 public:

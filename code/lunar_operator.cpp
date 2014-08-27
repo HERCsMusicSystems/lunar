@@ -129,7 +129,7 @@ lunar_square_operator :: lunar_square_operator (orbiter_core * core) : lunar_saw
 int noise_operator :: numberOfInputs (void) {return 1;}
 char * noise_operator :: inputName (int ind) {if (ind == 0) return "AMP"; return orbiter :: inputName (ind);}
 double * noise_operator :: inputAddress (int ind) {if (ind == 0) return & amp; return orbiter :: inputAddress (ind);}
-void noise_operator :: move (void) {signal = core -> Amplitude (amp) * 0.0001220703125 * (double) core -> noise14b - 1.0;}
+void noise_operator :: move (void) {signal = core -> Amplitude (amp) * (0.0001220703125 * (double) core -> noise14b - 1.0);}
 noise_operator :: noise_operator (orbiter_core * core) : orbiter (core) {amp = 0.0; initialise (); activate ();}
 
 ///////////////////

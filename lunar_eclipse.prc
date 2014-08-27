@@ -4,7 +4,7 @@
 import studio
 import lunar
 
-program lunar_eclipse [reactor base radar eagle kb blep distro tr1 tr2 tr3 wv smpl sampler filtering]
+program lunar_eclipse [reactor base radar eagle kb blep distro tr1 tr2 tr3 wv smpl sampler filtering noise fir]
 
 [[eagle]
 	[Moonbase base *]
@@ -44,7 +44,7 @@ program lunar_eclipse [reactor base radar eagle kb blep distro tr1 tr2 tr3 wv sm
 	[wave wv "../truck_horn.wav.bin" "../../dock/algos/cs/sfx/starship.wav" "../../dock/algos/cs/sfx/submarine.wav" "../../dock/algos/cs/sfx/jetplane.wav"]
 	[sampler_operator smpl wv]
 	[reactor smpl]
-	[noise_operator *noise] [oscilloscope radar] [radar *noise]
+	[noise_operator noise] [oscilloscope radar] [radar noise]
 ]
 
 [[filtering]

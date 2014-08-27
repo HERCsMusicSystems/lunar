@@ -53,18 +53,21 @@ public:
 	double sine_wave [16385];
 	double waiting_times [16384];
 	double min_blep [16384];
+	double filter_freqs [16384];
+	double * filter_freq;
 	int noise14b;
 	pthread_mutex_t main_mutex;
 	pthread_mutex_t maintenance_mutex;
 	orbiter * root;
-	double TimeDelta (double ind);
-	double SamplerTimeDelta (double ind);
-	double ControlTimeDelta (double ind);
-	double Amplitude (double ind);
+	double TimeDelta (double index);
+	double FilterFreq (double index);
+	double SamplerTimeDelta (double index);
+	double ControlTimeDelta (double index);
+	double Amplitude (double index);
 	double Sine (double angle); // 0 .... 1.0 per cycle
 	double SineApproximated (double angle);
 	double WaitingTime (double time);
-	double MinBlep (int ind);
+	double MinBlep (int index);
 	void recalculate (void);
 	void move_modules (void);
 	void propagate_signals (void);

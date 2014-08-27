@@ -44,6 +44,7 @@ orbiter_core :: orbiter_core (void) {
 	sampler_time_delta = sampler_time_deltas + 16384;
 	control_time_delta = control_time_deltas + 8192;
 	amplitude = amplitudes + 16383;
+	filter_freq = filter_freqs + 8192;
 	for (int ind = 0; ind > -16384; ind--) * (amplitude + ind) = pow (2.0, (double) ind / 1536.0); * amplitudes = 0.0;
 	for (int ind = 0; ind <= 16384; ind++) sine_wave [ind] = sin ((double) ind * M_PI * 2.0 / 16384.0);
 	double blep = 0.0;
@@ -71,6 +72,8 @@ void orbiter_core :: recalculate (void) {
 	for (int ind = 0; ind < 32768; ind++) sampler_time_deltas [ind] = delay * pow (2.0, ((double) (ind - 16384) / 1536.0));
 	for (int ind = 0; ind < 16384; ind++) control_time_deltas [ind] = delay * pow (2.0, ((double) (ind - 8192) / 768.0));
 	for (int ind = 0; ind < 16384; ind++) waiting_times [ind] = delay * pow (2.0, ((double) (ind - 8192) / -768.0));
+	for (int ind = 0; ind < 16384; ind++) filter_freqs [ind] = 2.0 * sin (M_PI * centre_frequency * pow (2.0, (double) (ind - 8192) / 1536.0) / sampling_frequency);
+	for (int ind = -8192; ind < 8192; ind += 512) printf ("F [%i %f]\n", ind, FilterFreq (ind));
 	pthread_mutex_unlock (& main_mutex);
 }
 
@@ -94,6 +97,13 @@ double orbiter_core :: TimeDelta (double index) {
 	if (ind > 16383) return * (time_delta + 16383);
 	if (ind < -16384) return * time_deltas;
 	return * (time_delta + ind);
+}
+
+double orbiter_core :: FilterFreq (double index) {
+	int ind = (int) index;
+	if (ind > 8191) return * (filter_freq + 8191);
+	if (ind < -8192) return * filter_freq;
+	return * (filter_freq + ind);
 }
 
 double orbiter_core :: SamplerTimeDelta (double index) {

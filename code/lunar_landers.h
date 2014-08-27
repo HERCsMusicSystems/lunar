@@ -208,7 +208,6 @@ private:
 	double enter;
 	double freq;
 	double resonance;
-	double feed;
 public:
 	virtual int numberOfInputs (void);
 	virtual char * inputName (int ind);

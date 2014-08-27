@@ -49,9 +49,9 @@ program lunar_eclipse [reactor base radar eagle kb blep distro tr1 tr2 tr3 wv sm
 
 [[filtering]
 	[square_operator *op]
-	[filter *fr]
+	[filter fir]
 	[oscilloscope radar]
-	[*fr *op] [radar *fr]
+	[fir *op] [radar fir]
 ]
 
 end := [

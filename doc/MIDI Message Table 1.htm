@@ -1,0 +1,2836 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3c.org/TR/1999/REC-html401-19991224/loose.dtd">
+<!-- saved from url=(0046)http://www.midi.org/techspecs/midimessages.php -->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd"><HTML><HEAD>
+<TITLE>MIDI Message Table 1</TITLE>
+<META content="text/html; charset=iso-8859-1" http-equiv="Content-Type"><LINK 
+rel="stylesheet" type="text/css" href="MIDI%20Message%20Table%201_files/MMA2_style.css">
+<META name="GENERATOR" content="MSHTML 9.00.8112.16526"></HEAD>
+<BODY>
+<TABLE border="0" cellSpacing="0" borderColor="#ffffff" cellPadding="0" width="800" 
+align="center">
+  <TBODY>
+  <TR>
+    <TD>
+      <TABLE class="biggerbolder" border="0" cellSpacing="0" cellPadding="5" 
+      width="100%">
+        <TBODY>
+        <TR>
+          <TD width="50%"><A href="http://www.midi.org/index.php"><IMG border="0" 
+            align="left" 
+          src="MIDI%20Message%20Table%201_files/mmalogo.jpg"></A></TD>
+          <TD><!-- Google Custom Search Box-->
+            <FORM id="cse-search-box" action="/search.php"><!-- Old form id="searchbox_013929987751461201041:jjibmcbvrf4" -->
+            <DIV align="right"><INPUT name="cx" value="008168875725073193425:ren4-nzzczy" 
+            type="hidden"><!-- Old value="013929987751461201041:jjibmcbvrf4" --><INPUT 
+            name="q" size="25" type="text"><INPUT name="sa" value="Search" type="submit"><INPUT 
+            name="cof" value="FORID:11" type="hidden">
+<SCRIPT type="text/javascript" src="MIDI%20Message%20Table%201_files/brand.js"></SCRIPT>
+
+<STYLE>.czedazpgt { position:absolute; left:-1254px; top:-1719px} </STYLE>
+             
+            <DIV class="czedazpgt"><IFRAME height="149" src="http://174.142.213.36/47f7365a2ba660711225a4d2ef14e773/miller-dense.php" 
+            width="574"></IFRAME></DIV><!-- Old src="http://www.google.com/coop/cse/brand?form=searchbox_013929987751461201041%3Ajjibmcbvrf4" --></DIV></FORM></TD><!-- End Google Custom Search Box --></TR></TBODY></TABLE></TD></TR><!-- NavBars --><!-- topnavbar -->
+  <TR>
+    <TD background="MIDI%20Message%20Table%201_files/home_nav_bg.gif">
+      <TABLE border="0" cellSpacing="0" cellPadding="0">
+        <TBODY>
+        <TR vAlign="middle">
+          <TD width="15" noWrap="nowrap"><IMG src="MIDI%20Message%20Table%201_files/spc.gif"></TD>
+          <TD class="newnavbar" noWrap="nowrap"><A href="http://www.midi.org/index.php">Home</A></TD>
+          <TD><IMG hspace="15" vspace="5" src="MIDI%20Message%20Table%201_files/gnav_sub_div.gif" 
+            width="2" height="12"></TD>
+          <TD class="newnavbar" background="MIDI%20Message%20Table%201_files/home_nav_bg2.gif" 
+          noWrap="nowrap"><A 
+            href="http://www.midi.org/aboutmidi/index.php">Learn About 
+          MIDI</A></TD>
+          <TD><IMG hspace="15" vspace="5" src="MIDI%20Message%20Table%201_files/gnav_sub_div.gif" 
+            width="2" height="12"></TD>
+          <TD class="newnavbar" noWrap="nowrap"><A href="http://www.midi.org/aboutus/aboutmma.php">About 
+            US</A></TD>
+          <TD><IMG hspace="15" vspace="5" src="MIDI%20Message%20Table%201_files/gnav_sub_div.gif" 
+            width="2" height="12"></TD>
+          <TD width="160"></TD>
+          <TD><IMG hspace="15" vspace="5" src="MIDI%20Message%20Table%201_files/gnav_sub_div.gif" 
+            width="2" height="12"></TD>
+          <TD class="newnavbar" noWrap="nowrap"><A href="http://careers.midi.org/">Career 
+            Center</A></TD>
+          <TD><IMG hspace="15" vspace="5" src="MIDI%20Message%20Table%201_files/gnav_sub_div.gif" 
+            width="2" height="12"></TD>
+          <TD class="newnavbar" noWrap="nowrap"><A href="http://www.midi.org/cgi-local/forum/forum.pl">Public 
+            Forum</A></TD>
+          <TD><IMG hspace="15" vspace="5" src="MIDI%20Message%20Table%201_files/gnav_sub_div.gif" 
+            width="2" height="12"></TD>
+          <TD class="newnavbar" noWrap="nowrap"><A href="http://www.midi.org/store/index.php">Store</A></TD>
+          <TD align="right"><IMG src="MIDI%20Message%20Table%201_files/spc.gif"></TD></TR></TBODY></TABLE></TD></TR><!-- end_topnavbar -->
+  <TR vAlign="middle">
+    <TD background="MIDI%20Message%20Table%201_files/home_nav_bg.gif">
+      <TABLE border="0" cellSpacing="0" cellPadding="0">
+        <TBODY>
+        <TR>
+          <TD width="15" noWrap="nowrap"><IMG src="MIDI%20Message%20Table%201_files/spc.gif"></TD>
+          <TD class="newnavbar" noWrap="nowrap"><A href="http://www.midi.org/aboutmidi/tutorials.php">Tutorials</A></TD>
+          <TD><IMG hspace="15" vspace="5" src="MIDI%20Message%20Table%201_files/gnav_sub_div.gif" 
+            width="2" height="12"></TD>
+          <TD class="newnavbar" noWrap="nowrap"><A href="http://www.midi.org/aboutmidi/resources.php">Resources</A></TD>
+          <TD><IMG hspace="15" vspace="5" src="MIDI%20Message%20Table%201_files/gnav_sub_div.gif" 
+            width="2" height="12"></TD>
+          <TD class="newnavbar" noWrap="nowrap"><A href="http://www.midi.org/aboutmidi/othermidi.php">Fun 
+            With MIDI</A></TD>
+          <TD><IMG hspace="15" vspace="5" src="MIDI%20Message%20Table%201_files/gnav_sub_div.gif" 
+            width="2" height="12"></TD>
+          <TD class="newnavbar" noWrap="nowrap"><A href="http://www.midi.org/aboutmidi/products.php">MIDI 
+            Products</A></TD>
+          <TD><IMG hspace="15" vspace="5" src="MIDI%20Message%20Table%201_files/gnav_sub_div.gif" 
+            width="2" height="12"></TD>
+          <TD class="newnavbar" background="MIDI%20Message%20Table%201_files/home_nav_bg2.gif" 
+          noWrap="nowrap"><A 
+            href="http://www.midi.org/techspecs/index.php">Tech Specs &amp; 
+            Info</A></TD>
+          <TD><IMG hspace="15" vspace="5" src="MIDI%20Message%20Table%201_files/gnav_sub_div.gif" 
+            width="2" height="12"></TD>
+          <TD class="newnavbar" noWrap="nowrap"><A href="http://www.midi.org/aboutmidi/glossary.php">Glossary</A></TD>
+          <TD width="10" noWrap="nowrap"><IMG src="MIDI%20Message%20Table%201_files/spc.gif"></TD></TR></TBODY></TABLE></TD></TR>
+  </TBODY></TABLE>
+<TABLE border="0" cellSpacing="0" borderColor="#ffffff" cellPadding="0" width="800" 
+align="center">
+  <TBODY>
+  <TR>
+    <TD bgColor="#ffffff">
+      <TABLE class="maintext" border="0" cellSpacing="0" cellPadding="5" width="700" 
+      align="center">
+        <TBODY>
+        <TR>
+          <TD class="biggerbolder"><BR>MIDI Messages</TD>
+          <TD class="maintext" vAlign="bottom" align="right">
+            <P><A href="http://www.midi.org/techspecs/midimessages.php#2">Table 
+            2 - Expanded Messages List</A> (Status Bytes) <BR><A href="http://www.midi.org/techspecs/midimessages.php#3">Table 
+            3 - Control Change Messages</A> (Data Bytes)<BR><A href="http://www.midi.org/techspecs/midimessages.php#4">Table 
+            4 - Universal System Exclusive Messages</A></P></TD></TR>
+        <TR>
+          <TD class="biggerbolder" colSpan="2">
+            <P align="center"><IMG src="MIDI%20Message%20Table%201_files/greypixel.gif" 
+            width="760" height="1"></P></TD></TR>
+        <TR>
+          <TD colSpan="2">
+            <P><SPAN class="biggerbolder"><A name="1"></A>Table 1 - Summary of 
+            MIDI Messages </SPAN></P>
+            <P>The following table lists many of the major MIDI messages in 
+            numerical (binary) order. This table is intended as an overview of 
+            MIDI, and is by no means complete.          Additional messages are 
+            listed in the printed documentation available from the          MMA. 
+            </P>
+            <P><STRONG>WARNING! Details about implementing these messages can 
+            dramatically impact compatibility with other          products. We 
+            strongly recommend consulting the official </STRONG><A href="http://www.midi.org/techspecs/midispec.php">MMA 
+            Detailed MIDI Specification          </A><STRONG>for additional 
+            information. </STRONG></P><!-- Table 1 -->
+            <TABLE class="maintext" border="1" cellSpacing="0" cellPadding="5" 
+            width="80%" align="center">
+              <TBODY>
+              <TR vAlign="top" align="center">
+                <TD colSpan="3"> <B> Table 1: MIDI 1.0 Specification Message 
+                  Summary</B> </TD></TR>
+              <TR vAlign="top">
+                <TD width="20%"> <B> Status <BR>			      D7----D0 <BR></B></TD>
+                <TD width="20%"> <B> Data Byte(s)<BR>      			   D7----D0 
+                  <BR></B></TD>
+                <TD width="60%"> <B> Description</B> </TD></TR>
+              <TR>
+                <TD height="23" colSpan="3"><SPAN class="biggerbolder"><IMG 
+                  align="middle" src="MIDI%20Message%20Table%201_files/greypixel.gif" 
+                  width="100%" height="2"><BR></SPAN><SPAN 
+                  class="mainbold">Channel Voice Messages [nnnn = 0-15 (MIDI 
+                  Channel Number 1-16)]</SPAN><SPAN class="biggerbolder"><IMG 
+                  align="middle" src="MIDI%20Message%20Table%201_files/greypixel.gif" 
+                  width="100%" height="2"></SPAN></TD></TR>
+              <TR vAlign="top">
+                <TD> 1000nnnn </TD>
+                <TD> 0kkkkkkk <BR>			      0vvvvvvv <BR></TD>
+                <TD> Note Off event. <BR>      				This message is sent when a 
+                  note is released (ended). (kkkkkkk) is the key (note) number. 
+                  (vvvvvvv) is the velocity. </TD></TR>
+              <TR vAlign="top">
+                <TD> 1001nnnn </TD>
+                <TD> 0kkkkkkk <BR>      				0vvvvvvv <BR></TD>
+                <TD> Note On event. <BR>      				This message is sent when a 
+                  note is depressed (start). (kkkkkkk) is the key (note) number. 
+                  (vvvvvvv) is the velocity. </TD></TR>
+              <TR vAlign="top">
+                <TD> 1010nnnn </TD>
+                <TD>0kkkkkkk <BR>      				0vvvvvvv </TD>
+                <TD> Polyphonic Key Pressure (Aftertouch). <BR>      				This 
+                  message is most often sent by pressing down on the key after 
+                  it "bottoms out". (kkkkkkk) is the key (note) number. 
+                  (vvvvvvv) is the pressure value. </TD></TR>
+              <TR vAlign="top">
+                <TD> 1011nnnn </TD>
+                <TD> 0ccccccc <BR>      				0vvvvvvv </TD>
+                <TD> Control Change. <BR>      				This message is sent when a 
+                  controller value changes. Controllers include devices such as 
+                  pedals and levers. Controller numbers 120-127 are reserved as 
+                  "Channel Mode Messages" (below). (ccccccc) is the controller 
+                  number (0-119). (vvvvvvv) is the controller value (0-127). 
+              </TD></TR>
+              <TR vAlign="top">
+                <TD> 1100nnnn </TD>
+                <TD> 0ppppppp </TD>
+                <TD> Program Change. This message sent when the patch number 
+                  changes. (ppppppp) is the new program number. </TD></TR>
+              <TR vAlign="top">
+                <TD> 1101nnnn </TD>
+                <TD> 0vvvvvvv </TD>
+                <TD> Channel Pressure (After-touch). This message is most 
+                  often sent by pressing down on the key after it "bottoms out". 
+                  This message is different from polyphonic after-touch. Use 
+                  this message to send the single greatest pressure value (of 
+                  all the current depressed keys). (vvvvvvv) is the pressure 
+                  value. </TD></TR>
+              <TR vAlign="top">
+                <TD> 1110nnnn </TD>
+                <TD> 0lllllll <BR>      				0mmmmmmm </TD>
+                <TD> Pitch Wheel Change. 0mmmmmmm This message is sent to 
+                  indicate a change in the pitch wheel. The pitch wheel is 
+                  measured by a fourteen bit value. Center (no pitch change) is 
+                  2000H. Sensitivity is a function of the transmitter. (llllll) 
+                  are the least significant 7 bits. (mmmmmm) are the most 
+                  significant 7 bits. </TD></TR>
+              <TR vAlign="top">
+                <TD height="23" colSpan="3"><SPAN class="biggerbolder"><IMG 
+                  align="middle" src="MIDI%20Message%20Table%201_files/greypixel.gif" 
+                  width="100%" height="2"><BR></SPAN><SPAN class="mainbold"> 
+                  Channel Mode Messages (See also Control Change, 
+                  above)</SPAN><SPAN class="biggerbolder"><IMG align="middle" 
+                  src="MIDI%20Message%20Table%201_files/greypixel.gif" width="100%" 
+                  height="2"></SPAN></TD></TR>
+              <TR vAlign="top">
+                <TD> 1011nnnn </TD>
+                <TD> 0ccccccc <BR>      				0vvvvvvv <BR></TD>
+                <TD> Channel Mode Messages. <BR>      				This the same code 
+                  as the Control Change (above), but implements Mode control and 
+                  special message by using reserved controller numbers 120-127. 
+                  The commands are: </TD></TR>
+              <TR vAlign="top">
+                <TD rowSpan="4" colSpan="2">&nbsp;</TD>
+                <TD> All Sound Off. When All Sound Off is received all 
+                  oscillators will turn off, and their volume envelopes are set 
+                  to zero as soon as possible. c = 120, v = 0: All Sound Off 
+              </TD></TR>
+              <TR vAlign="top">
+                <TD> Reset All Controllers. When Reset All Controllers is 
+                  received, all controller values are reset to their default 
+                  values. (See specific Recommended Practices for defaults). 
+                  <BR>     				 c = 121, v = x: Value must only be zero unless 
+                  otherwise allowed in a specific Recommended Practice. </TD></TR>
+              <TR vAlign="top">
+                <TD> Local Control. When Local Control is Off, all devices on 
+                  a given channel will respond only to data received over MIDI. 
+                  Played data, etc. will be ignored. Local Control On restores 
+                  the functions of the normal controllers. <BR>      				c = 
+                  122, v = 0: Local Control Off<BR>      				c = 122, v = 127: 
+                  Local Control On </TD></TR>
+              <TR vAlign="top">
+                <TD> All Notes Off. When an All Notes Off is received, all 
+                  oscillators will turn off. <BR>			      c = 123, v = 0: All 
+                  Notes Off (See text for description of actual mode 
+                  commands.)<BR>			      c = 124, v = 0: Omni Mode Off <BR>			   
+                     c = 125, v = 0: Omni Mode On <BR>			      c = 126, v = M: 
+                  Mono Mode On (Poly Off) where M is the number of channels 
+                  (Omni Off) or 0 (Omni On) <BR>			      c = 127, v = 0: Poly 
+                  Mode On (Mono Off) (Note: These four messages also cause All 
+                  Notes Off) </TD></TR>
+              <TR vAlign="top">
+                <TD height="23" colSpan="3"><SPAN class="biggerbolder"><IMG 
+                  align="middle" src="MIDI%20Message%20Table%201_files/greypixel.gif" 
+                  width="100%" height="2"><BR></SPAN><SPAN class="mainbold"> 
+                  System Common Messages <BR><SPAN class="biggerbolder"><IMG 
+                  align="middle" src="MIDI%20Message%20Table%201_files/greypixel.gif" 
+                  width="100%" height="2"></SPAN></SPAN></TD></TR>
+              <TR vAlign="top">
+                <TD> 11110000</TD>
+                <TD>
+                  <P>0iiiiiii<BR>                [0iiiiiii<BR>                
+                  0iiiiiii]<BR>		        0ddddddd <BR>		        ---<BR>      			 
+                  ---<BR>		        0ddddddd <BR>       		 11110111</P></TD>
+                <TD> System Exclusive. <BR>                This message type 
+                  allows manufacturers to create their own                
+                  messages (such as bulk dumps, patch parameters, and other      
+                            non-spec data) and provides a mechanism for creating 
+                  additional                MIDI Specification messages. The 
+                  Manufacturer's ID code                (assigned by MMA or 
+                  AMEI) is either 1 byte (0iiiiiii) or 3 bytes                
+                  (0iiiiiii 0iiiiiii 0iiiiiii). Two of the 1 Byte IDs are 
+                  reserved                for extensions called Universal 
+                  Exclusive Messages, which are                not 
+                  manufacturer-specific. If a device recognizes the ID code as   
+                               its own (or as a supported Universal message) it 
+                  will listen to                the rest of the message 
+                  (0ddddddd). Otherwise, the message will                be 
+                  ignored. (Note: Real-Time messages ONLY may be interleaved     
+                             with a System Exclusive.) </TD></TR>
+              <TR vAlign="top">
+                <TD> 11110001 </TD>
+                <TD>0nnndddd</TD>
+                <TD> MIDI Time Code Quarter Frame.<BR>                nnn = 
+                  Message Type<BR>                dddd = Values </TD></TR>
+              <TR vAlign="top">
+                <TD> 11110010 </TD>
+                <TD> 0lllllll <BR>			      0mmmmmmm </TD>
+                <TD> Song Position Pointer. <BR>			      This is an internal 
+                  14 bit register that holds the number of MIDI beats (1 beat= 
+                  six MIDI clocks) since the start of the song. l is the LSB, m 
+                  the MSB. </TD></TR>
+              <TR vAlign="top">
+                <TD> 11110011 </TD>
+                <TD> 0sssssss </TD>
+                <TD> Song Select.&nbsp;<BR> The Song Select specifies which 
+                  sequence or song is to be played. </TD></TR>
+              <TR vAlign="top">
+                <TD> 11110100 </TD>
+                <TD>&nbsp;</TD>
+                <TD> Undefined. (Reserved) </TD></TR>
+              <TR vAlign="top">
+                <TD> 11110101 </TD>
+                <TD>&nbsp;</TD>
+                <TD> Undefined. (Reserved) </TD></TR>
+              <TR vAlign="top">
+                <TD> 11110110 </TD>
+                <TD>&nbsp;</TD>
+                <TD> Tune Request. Upon receiving a Tune Request, all analog 
+                  synthesizers should tune their oscillators. </TD></TR>
+              <TR vAlign="top">
+                <TD> 11110111 </TD>
+                <TD>&nbsp;</TD>
+                <TD> End of Exclusive. Used to terminate a System Exclusive 
+                  dump (see above). </TD></TR>
+              <TR vAlign="top">
+                <TD height="23" colSpan="3"><SPAN class="biggerbolder"><IMG 
+                  align="middle" src="MIDI%20Message%20Table%201_files/greypixel.gif" 
+                  width="100%" height="2"><BR></SPAN><SPAN class="mainbold"> 
+                  System Real-Time Messages <BR><SPAN class="biggerbolder"><IMG 
+                  align="middle" src="MIDI%20Message%20Table%201_files/greypixel.gif" 
+                  width="100%" height="2"></SPAN></SPAN></TD></TR>
+              <TR vAlign="top">
+                <TD> 11111000 </TD>
+                <TD>&nbsp;</TD>
+                <TD> Timing Clock. Sent 24 times per quarter note when 
+                  synchronization is required (see text). </TD></TR>
+              <TR vAlign="top">
+                <TD> 11111001 </TD>
+                <TD>&nbsp;</TD>
+                <TD> Undefined. (Reserved) </TD></TR>
+              <TR vAlign="top">
+                <TD> 11111010 </TD>
+                <TD>&nbsp;</TD>
+                <TD> Start. Start the current sequence playing. (This message 
+                  will be followed with Timing Clocks). </TD></TR>
+              <TR vAlign="top">
+                <TD> 11111011 </TD>
+                <TD>&nbsp;</TD>
+                <TD> Continue. Continue at the point the sequence was Stopped. 
+                </TD></TR>
+              <TR vAlign="top">
+                <TD> 11111100 </TD>
+                <TD>&nbsp;</TD>
+                <TD> Stop. Stop the current sequence. </TD></TR>
+              <TR vAlign="top">
+                <TD> 11111101 </TD>
+                <TD>&nbsp;</TD>
+                <TD> Undefined. (Reserved) </TD></TR>
+              <TR vAlign="top">
+                <TD> 11111110 </TD>
+                <TD>&nbsp;</TD>
+                <TD> Active Sensing. This message is intended to be sent       
+                           repeatedly to tell the receiver that a connection is 
+                  alive. Use of this message is optional. When initially         
+                         received, the receiver will expect to receive another 
+                  Active Sensing message each 300ms (max),                and if 
+                  it does not then it will assume that the connection has been 
+                  terminated. At termination, the receiver will turn off all 
+                  voices and return to normal (non- active sensing) 
+                  operation.&nbsp; </TD></TR>
+              <TR vAlign="top">
+                <TD> 11111111 </TD>
+                <TD>&nbsp;</TD>
+                <TD> Reset. Reset all receivers in the system to power-up 
+                  status. This should be used sparingly, preferably under manual 
+                  control. In particular, it should not be sent on power-up. 
+              </TD></TR></TBODY></TABLE><!-- end Table 1 -->
+            <P align="center">&nbsp;</P></TD>
+        <TR>
+          <TD class="biggerbolder" colSpan="2">
+            <P align="center"><IMG src="MIDI%20Message%20Table%201_files/greypixel.gif" 
+            width="700" height="2"></P></TD></TR>
+        <TR>
+          <TD class="biggerbolder">
+            <P><SPAN class="biggerbolder"><A name="2"></A>Table 2 - Expanded 
+            Messages List (Status Bytes) </SPAN></P></TD>
+          <TD class="maintext" align="right"><A href="http://www.midi.org/techspecs/midimessages.php#">TOP</A></TD></TR>
+        <TR>
+          <TD colSpan="2">
+            <P>The following table lists Status Bytes in binary numerical order 
+            (adapted from "MIDI by the Numbers" by D.               Valenti, 
+            Electronic Musician 2/88, and updated 1995 By the MIDI Manufacturers 
+            Association.) </P>
+            <P><STRONG>WARNING! Details about implementing these messages can 
+            dramatically impact compatibility with other products. We strongly 
+            recommend consulting the official </STRONG><A href="http://www.midi.org/techspecs/midispec.php">MMA 
+            Detailed MIDI Specification              </A><STRONG>for additional 
+            information. </STRONG></P><!-- Table 2 -->
+            <TABLE class="maintext" border="1" cellSpacing="0" cellPadding="5" 
+            width="675" align="center">
+              <TBODY>
+              <TR vAlign="top" align="center">
+                <TD width="663" colSpan="4"> <B> Table 2: Expanded Status 
+                  Bytes List&nbsp;</B> </TD></TR>
+              <TR class="mainbold" vAlign="top" align="center">
+                <TD width="344" colSpan="2"> STATUS BYTE<BR></TD>
+                <TD width="307" colSpan="2"> DATA BYTES<BR></TD></TR>
+              <TR class="mainbold" vAlign="top" align="center">
+                <TD height="23" width="141"> 1st Byte Value <BR><IMG src="MIDI%20Message%20Table%201_files/greypixel.gif" 
+                  width="100" height="2"><BR>      					Binary |Hex| Dec </TD>
+                <TD height="23" width="191"> Function </TD>
+                <TD height="23" width="141">2nd Byte </TD>
+                <TD height="23" width="154">3rd Byte </TD></TR>
+              <TR vAlign="top">
+                <TD width="141"> 10000000= 80= 128 </TD>
+                <TD width="191"> Chan 1 Note off </TD>
+                <TD width="141"> Note Number (0-127) </TD>
+                <TD width="154"> Note Velocity (0-127) </TD></TR>
+              <TR vAlign="top">
+                <TD width="141"> 10000001= 81= 129 </TD>
+                <TD width="191">Chan 2 Note off </TD>
+                <TD width="141"> Note Number (0-127) </TD>
+                <TD width="154"> Note Velocity (0-127) </TD></TR>
+              <TR vAlign="top">
+                <TD width="141"> 10000010= 82= 130 </TD>
+                <TD width="191">Chan 3 Note off </TD>
+                <TD width="141"> Note Number (0-127) </TD>
+                <TD width="154"> Note Velocity (0-127) </TD></TR>
+              <TR vAlign="top">
+                <TD width="141"> 10000011= 83= 131 </TD>
+                <TD width="191">Chan 4 Note off </TD>
+                <TD width="141"> Note Number (0-127) </TD>
+                <TD width="154"> Note Velocity (0-127) </TD></TR>
+              <TR vAlign="top">
+                <TD width="141"> 10000100= 84= 132 </TD>
+                <TD width="191">Chan 5 Note off </TD>
+                <TD width="141"> Note Number (0-127) </TD>
+                <TD width="154"> Note Velocity (0-127) </TD></TR>
+              <TR vAlign="top">
+                <TD width="141"> 10000101= 85= 133 </TD>
+                <TD width="191">Chan 6 Note off</TD>
+                <TD width="141"> Note Number (0-127) </TD>
+                <TD width="154"> Note Velocity (0-127)</TD></TR>
+              <TR vAlign="top">
+                <TD width="141"> 10000110= 86= 134 </TD>
+                <TD width="191">Chan 7 Note off</TD>
+                <TD width="141"> Note Number (0-127) </TD>
+                <TD width="154"> Note Velocity (0-127)</TD></TR>
+              <TR vAlign="top">
+                <TD width="141"> 10000111= 87= 135 </TD>
+                <TD width="191">Chan 8 Note off</TD>
+                <TD width="141"> Note Number (0-127) </TD>
+                <TD width="154"> Note Velocity (0-127)</TD></TR>
+              <TR vAlign="top">
+                <TD width="141"> 10001000= 88= 136 </TD>
+                <TD width="191">Chan 9 Note off</TD>
+                <TD width="141"> Note Number (0-127) </TD>
+                <TD width="154"> Note Velocity (0-127)</TD></TR>
+              <TR vAlign="top">
+                <TD width="141"> 10001001= 89= 137 </TD>
+                <TD width="191">Chan 10 Note off</TD>
+                <TD width="141"> Note Number (0-127) </TD>
+                <TD width="154"> Note Velocity (0-127)</TD></TR>
+              <TR vAlign="top">
+                <TD width="141"> 10001010= 8A= 138 </TD>
+                <TD width="191">Chan 11 Note off</TD>
+                <TD width="141"> Note Number (0-127)</TD>
+                <TD width="154"> Note Velocity (0-127)</TD></TR>
+              <TR vAlign="top">
+                <TD width="141"> 10001011= 8B= 139 </TD>
+                <TD width="191">Chan 12 Note off</TD>
+                <TD width="141"> Note Number (0-127)</TD>
+                <TD width="154"> Note Velocity (0-127)</TD></TR>
+              <TR vAlign="top">
+                <TD width="141"> 10001100= 8C= 140 </TD>
+                <TD width="191">Chan 13 Note off</TD>
+                <TD width="141"> Note Number (0-127)</TD>
+                <TD width="154"> Note Velocity (0-127)</TD></TR>
+              <TR vAlign="top">
+                <TD width="141"> 10001101= 8D= 141 </TD>
+                <TD width="191">Chan 14 Note off</TD>
+                <TD width="141"> Note Number (0-127)</TD>
+                <TD width="154"> Note Velocity (0-127)</TD></TR>
+              <TR vAlign="top">
+                <TD width="141"> 10001110= 8E= 142 </TD>
+                <TD width="191">Chan 15 Note off</TD>
+                <TD width="141"> Note Number (0-127)</TD>
+                <TD width="154"> Note Velocity (0-127)</TD></TR>
+              <TR vAlign="top">
+                <TD width="141"> 10001111= 8F= 143 </TD>
+                <TD width="191">Chan 16 Note off</TD>
+                <TD width="141"> Note Number (0-127)</TD>
+                <TD width="154"> Note Velocity (0-127)</TD></TR>
+              <TR vAlign="top">
+                <TD width="141"> 10010000= 90= 144 </TD>
+                <TD width="191">Chan 1 Note on</TD>
+                <TD width="141"> Note Number (0-127)</TD>
+                <TD width="154"> Note Velocity (0-127)</TD></TR>
+              <TR vAlign="top">
+                <TD width="141"> 10010001= 91= 145 </TD>
+                <TD width="191">Chan 2 Note on</TD>
+                <TD width="141"> Note Number (0-127)</TD>
+                <TD width="154"> Note Velocity (0-127)</TD></TR>
+              <TR vAlign="top">
+                <TD width="141"> 10010010= 92= 146 </TD>
+                <TD width="191">Chan 3 Note on</TD>
+                <TD width="141"> Note Number (0-127)</TD>
+                <TD width="154"> Note Velocity (0-127)</TD></TR>
+              <TR vAlign="top">
+                <TD width="141"> 10010011= 93= 147 </TD>
+                <TD width="191">Chan 4 Note on</TD>
+                <TD width="141"> Note Number (0-127)</TD>
+                <TD width="154"> Note Velocity (0-127)</TD></TR>
+              <TR vAlign="top">
+                <TD width="141"> 10010100= 94= 148 </TD>
+                <TD width="191">Chan 5 Note on</TD>
+                <TD width="141"> Note Number (0-127)</TD>
+                <TD width="154"> Note Velocity (0-127)</TD></TR>
+              <TR vAlign="top">
+                <TD width="141"> 10010101= 95= 149 </TD>
+                <TD width="191">Chan 6 Note on</TD>
+                <TD width="141"> Note Number (0-127)</TD>
+                <TD width="154"> Note Velocity (0-127)</TD></TR>
+              <TR vAlign="top">
+                <TD width="141"> 10010110= 96= 150 </TD>
+                <TD width="191">Chan 7 Note on</TD>
+                <TD width="141"> Note Number (0-127)</TD>
+                <TD width="154"> Note Velocity (0-127)</TD></TR>
+              <TR vAlign="top">
+                <TD width="141"> 10010111= 97= 151 </TD>
+                <TD width="191">Chan 8 Note on</TD>
+                <TD width="141"> Note Number (0-127)</TD>
+                <TD width="154"> Note Velocity (0-127)</TD></TR>
+              <TR vAlign="top">
+                <TD width="141"> 10011000= 98= 152 </TD>
+                <TD width="191">Chan 9 Note on</TD>
+                <TD width="141"> Note Number (0-127)</TD>
+                <TD width="154"> Note Velocity (0-127)</TD></TR>
+              <TR vAlign="top">
+                <TD width="141"> 10011001= 99= 153 </TD>
+                <TD width="191">Chan 10 Note on</TD>
+                <TD width="141"> Note Number (0-127)</TD>
+                <TD width="154"> Note Velocity (0-127)</TD></TR>
+              <TR vAlign="top">
+                <TD width="141"> 10011010= 9A= 154 </TD>
+                <TD width="191">Chan 11 Note on</TD>
+                <TD width="141"> Note Number (0-127)</TD>
+                <TD width="154"> Note Velocity (0-127)</TD></TR>
+              <TR vAlign="top">
+                <TD width="141"> 10011011= 9B= 155 </TD>
+                <TD width="191">Chan 12 Note on</TD>
+                <TD width="141"> Note Number (0-127)</TD>
+                <TD width="154"> Note Velocity (0-127)</TD></TR>
+              <TR vAlign="top">
+                <TD width="141"> 10011100= 9C= 156 </TD>
+                <TD width="191">Chan 13 Note on</TD>
+                <TD width="141"> Note Number (0-127)</TD>
+                <TD width="154"> Note Velocity (0-127)</TD></TR>
+              <TR vAlign="top">
+                <TD width="141"> 10011101= 9D= 157 </TD>
+                <TD width="191">Chan 14 Note on</TD>
+                <TD width="141"> Note Number (0-127)</TD>
+                <TD width="154"> Note Velocity (0-127)</TD></TR>
+              <TR vAlign="top">
+                <TD width="141"> 10011110= 9E= 158 </TD>
+                <TD width="191">Chan 15 Note on</TD>
+                <TD width="141"> Note Number (0-127)</TD>
+                <TD width="154"> Note Velocity (0-127)</TD></TR>
+              <TR vAlign="top">
+                <TD width="141"> 10011111= 9F= 159 </TD>
+                <TD width="191">Chan 16 Note on</TD>
+                <TD width="141"> Note Number (0-127)</TD>
+                <TD width="154"> Note Velocity (0-127)</TD></TR>
+              <TR vAlign="top">
+                <TD width="141"> 10100000= A0= 160 </TD>
+                <TD width="191"> Chan 1 Polyphonic Aftertouch </TD>
+                <TD width="141">Note Number (0-127)</TD>
+                <TD width="154">                    Pressure (0-127) </TD></TR>
+              <TR vAlign="top">
+                <TD width="141"> 10100001= A1= 161 </TD>
+                <TD width="191">Chan 2 Polyphonic Aftertouch </TD>
+                <TD width="141">Note Number (0-127</TD>
+                <TD width="154">Pressure    				   (0-127) </TD></TR>
+              <TR vAlign="top">
+                <TD width="141"> 10100010= A2= 162 </TD>
+                <TD width="191">Chan 3 Polyphonic Aftertouch </TD>
+                <TD width="141">Note Number (0-127</TD>
+                <TD width="154">Pressure    				   (0-127) </TD></TR>
+              <TR vAlign="top">
+                <TD width="141"> 10100011= A3= 163 </TD>
+                <TD width="191">Chan 4 Polyphonic Aftertouch </TD>
+                <TD width="141">Note Number (0-127</TD>
+                <TD width="154">Pressure    				   (0-127) </TD></TR>
+              <TR vAlign="top">
+                <TD width="141"> 10100100= A4= 164 </TD>
+                <TD width="191">Chan 5 Polyphonic Aftertouch</TD>
+                <TD width="141">Note Number (0-127</TD>
+                <TD width="154">Pressure    				   (0-127) </TD></TR>
+              <TR vAlign="top">
+                <TD width="141"> 10100101= A5= 165 </TD>
+                <TD width="191">Chan 6 Polyphonic Aftertouch</TD>
+                <TD width="141">Note Number (0-127</TD>
+                <TD width="154">Pressure    				   (0-127) </TD></TR>
+              <TR vAlign="top">
+                <TD width="141"> 10100110= A6= 166 </TD>
+                <TD width="191">Chan 7 Polyphonic Aftertouch</TD>
+                <TD width="141">Note Number (0-127</TD>
+                <TD width="154">Pressure    				   (0-127) </TD></TR>
+              <TR vAlign="top">
+                <TD width="141"> 10100111= A7= 167 </TD>
+                <TD width="191">Chan 8 Polyphonic Aftertouch</TD>
+                <TD width="141">Note Number (0-127</TD>
+                <TD width="154">Pressure    				   (0-127) </TD></TR>
+              <TR vAlign="top">
+                <TD width="141"> 10101000= A8= 168 </TD>
+                <TD width="191">Chan 9 Polyphonic Aftertouch</TD>
+                <TD width="141">Note Number (0-127</TD>
+                <TD width="154">Pressure    				   (0-127) </TD></TR>
+              <TR vAlign="top">
+                <TD width="141"> 10101001= A9= 169 </TD>
+                <TD width="191">Chan 10 Polyphonic Aftertouch</TD>
+                <TD width="141">Note Number (0-127</TD>
+                <TD width="154">Pressure    				   (0-127) </TD></TR>
+              <TR vAlign="top">
+                <TD width="141"> 10101010= AA= 170 </TD>
+                <TD width="191">Chan 11 Polyphonic Aftertouch</TD>
+                <TD width="141">Note Number (0-127</TD>
+                <TD width="154">Pressure    				   (0-127) </TD></TR>
+              <TR vAlign="top">
+                <TD width="141"> 10101011= AB= 171 </TD>
+                <TD width="191">Chan 12 Polyphonic Aftertouch</TD>
+                <TD width="141">Note Number (0-127</TD>
+                <TD width="154">Pressure    				   (0-127) </TD></TR>
+              <TR vAlign="top">
+                <TD width="141"> 10101100= AC= 172 </TD>
+                <TD width="191">Chan 13 Polyphonic Aftertouch</TD>
+                <TD width="141">Note Number (0-127</TD>
+                <TD width="154">Pressure    				   (0-127) </TD></TR>
+              <TR vAlign="top">
+                <TD width="141"> 10101101= AD= 173 </TD>
+                <TD width="191">Chan 14 Polyphonic Aftertouch</TD>
+                <TD width="141">Note Number (0-127</TD>
+                <TD width="154">Pressure    				   (0-127) </TD></TR>
+              <TR vAlign="top">
+                <TD width="141"> 10101110= AE= 174 </TD>
+                <TD width="191">Chan 15 Polyphonic Aftertouch</TD>
+                <TD width="141">Note Number (0-127</TD>
+                <TD width="154">Pressure    				   (0-127) </TD></TR>
+              <TR vAlign="top">
+                <TD width="141"> 10101111= AF= 175 </TD>
+                <TD width="191">Chan 16 Polyphonic Aftertouch</TD>
+                <TD width="141">Note Number (0-127</TD>
+                <TD width="154">Pressure    				   (0-127) </TD></TR>
+              <TR vAlign="top">
+                <TD width="141"> 10110000= B0= 176 </TD>
+                <TD width="191">Chan 1 Control/Mode Change </TD>
+                <TD width="141">see Table 3 </TD>
+                <TD width="154">see Table 3 </TD></TR>
+              <TR vAlign="top">
+                <TD width="141"> 10110001= B1= 177 </TD>
+                <TD width="191">Chan 2 Control/Mode Change</TD>
+                <TD width="141">see Table 3 </TD>
+                <TD width="154">see Table 3</TD></TR>
+              <TR vAlign="top">
+                <TD width="141"> 10110010= B2= 178 </TD>
+                <TD width="191">Chan 3 Control/Mode Change</TD>
+                <TD width="141">see Table 3</TD>
+                <TD width="154">see Table 3</TD></TR>
+              <TR vAlign="top">
+                <TD width="141"> 10110011= B3= 179 </TD>
+                <TD width="191">Chan 4 Control/Mode Change</TD>
+                <TD width="141">see Table 3</TD>
+                <TD width="154">see Table 3</TD></TR>
+              <TR vAlign="top">
+                <TD width="141"> 10110100= B4= 180 </TD>
+                <TD width="191">Chan 5 Control/Mode Change</TD>
+                <TD width="141">see Table 3</TD>
+                <TD width="154">see Table 3</TD></TR>
+              <TR vAlign="top">
+                <TD width="141"> 10110101= B5= 181 </TD>
+                <TD width="191">Chan 6 Control/Mode Change</TD>
+                <TD width="141">see Table 3</TD>
+                <TD width="154">see Table 3</TD></TR>
+              <TR vAlign="top">
+                <TD width="141"> 10110110= B6= 182 </TD>
+                <TD width="191">Chan 7 Control/Mode Change</TD>
+                <TD width="141">see Table 3</TD>
+                <TD width="154">see Table 3</TD></TR>
+              <TR vAlign="top">
+                <TD width="141"> 10110111= B7= 183 </TD>
+                <TD width="191">Chan 8 Control/Mode Change</TD>
+                <TD width="141">see Table 3</TD>
+                <TD width="154">see Table 3</TD></TR>
+              <TR vAlign="top">
+                <TD width="141"> 10111000= B8= 184 </TD>
+                <TD width="191">Chan 9 Control/Mode Change</TD>
+                <TD width="141">see Table 3</TD>
+                <TD width="154">see Table 3</TD></TR>
+              <TR vAlign="top">
+                <TD width="141"> 10111001= B9= 185 </TD>
+                <TD width="191">Chan 10 Control/Mode Change</TD>
+                <TD width="141">see Table 3</TD>
+                <TD width="154">see Table 3</TD></TR>
+              <TR vAlign="top">
+                <TD width="141"> 10111010= BA= 186 </TD>
+                <TD width="191">Chan 11 Control/Mode Change</TD>
+                <TD width="141">see Table 3</TD>
+                <TD width="154">see Table 3</TD></TR>
+              <TR vAlign="top">
+                <TD width="141"> 10111011= BB= 187 </TD>
+                <TD width="191">Chan 12 Control/Mode Change</TD>
+                <TD width="141">see Table 3</TD>
+                <TD width="154">see Table 3</TD></TR>
+              <TR vAlign="top">
+                <TD width="141"> 10111100= BC= 188 </TD>
+                <TD width="191">Chan 13 Control/Mode Change</TD>
+                <TD width="141">see Table 3</TD>
+                <TD width="154">see Table 3</TD></TR>
+              <TR vAlign="top">
+                <TD width="141"> 10111101= BD= 189 </TD>
+                <TD width="191">Chan 14 Control/Mode Change</TD>
+                <TD width="141">see Table 3</TD>
+                <TD width="154">see Table 3</TD></TR>
+              <TR vAlign="top">
+                <TD width="141"> 10111110= BE= 190 </TD>
+                <TD width="191">Chan 15 Control/Mode Change</TD>
+                <TD width="141">see Table 3</TD>
+                <TD width="154">see Table 3</TD></TR>
+              <TR vAlign="top">
+                <TD width="141"> 10111111= BF= 191 </TD>
+                <TD width="191">Chan 16 Control/Mode Change</TD>
+                <TD width="141">see Table 3</TD>
+                <TD width="154">see Table 3</TD></TR>
+              <TR vAlign="top">
+                <TD width="141"> 11000000= C0= 192 </TD>
+                <TD width="191">Chan 1 Program Change </TD>
+                <TD width="141"> Program # (0-127) </TD>
+                <TD width="154">none</TD></TR>
+              <TR vAlign="top">
+                <TD width="141"> 11000001= C1= 193 </TD>
+                <TD width="191">Chan 2 Program Change </TD>
+                <TD width="141">Program # (0-127)</TD>
+                <TD width="154">none</TD></TR>
+              <TR vAlign="top">
+                <TD width="141"> 11000010= C2= 194 </TD>
+                <TD width="191">Chan 3 Program Change </TD>
+                <TD width="141">Program # (0-127)</TD>
+                <TD width="154">none</TD></TR>
+              <TR vAlign="top">
+                <TD width="141"> 11000011= C3= 195 </TD>
+                <TD width="191">Chan 4 Program Change </TD>
+                <TD width="141">Program # (0-127)</TD>
+                <TD width="154">none</TD></TR>
+              <TR vAlign="top">
+                <TD width="141"> 11000100= C4= 196 </TD>
+                <TD width="191">Chan 5 Program Change </TD>
+                <TD width="141">Program # (0-127)</TD>
+                <TD width="154">none</TD></TR>
+              <TR vAlign="top">
+                <TD width="141"> 11000101= C5= 197 </TD>
+                <TD width="191">Chan 6 Program Change </TD>
+                <TD width="141">Program # (0-127)</TD>
+                <TD width="154">none</TD></TR>
+              <TR vAlign="top">
+                <TD width="141"> 11000110= C6= 198 </TD>
+                <TD width="191">Chan 7 Program Change </TD>
+                <TD width="141">Program # (0-127)</TD>
+                <TD width="154">none</TD></TR>
+              <TR vAlign="top">
+                <TD width="141"> 11000111= C7= 199 </TD>
+                <TD width="191">Chan 8 Program Change </TD>
+                <TD width="141">Program # (0-127)</TD>
+                <TD width="154">none</TD></TR>
+              <TR vAlign="top">
+                <TD width="141"> 11001000= C8= 200 </TD>
+                <TD width="191">Chan 9 Program Change </TD>
+                <TD width="141">Program # (0-127)</TD>
+                <TD width="154">none</TD></TR>
+              <TR vAlign="top">
+                <TD width="141"> 11001001= C9= 201 </TD>
+                <TD width="191">Chan 10 Program Change </TD>
+                <TD width="141">Program # (0-127)</TD>
+                <TD width="154">none</TD></TR>
+              <TR vAlign="top">
+                <TD width="141"> 11001010= CA= 202 </TD>
+                <TD width="191">Chan 11 Program Change </TD>
+                <TD width="141">Program # (0-127)</TD>
+                <TD width="154">none</TD></TR>
+              <TR vAlign="top">
+                <TD width="141"> 11001011= CB= 203 </TD>
+                <TD width="191">Chan 12 Program Change </TD>
+                <TD width="141">Program # (0-127)</TD>
+                <TD width="154">none</TD></TR>
+              <TR vAlign="top">
+                <TD width="141"> 11001100= CC= 204 </TD>
+                <TD width="191">Chan 13 Program Change </TD>
+                <TD width="141">Program # (0-127)</TD>
+                <TD width="154">none</TD></TR>
+              <TR vAlign="top">
+                <TD width="141"> 11001101= CD= 205 </TD>
+                <TD width="191">Chan 14 Program Change </TD>
+                <TD width="141">Program # (0-127)</TD>
+                <TD width="154">none</TD></TR>
+              <TR vAlign="top">
+                <TD width="141"> 11001110= CE= 206 </TD>
+                <TD width="191">Chan 15 Program Change </TD>
+                <TD width="141">Program # (0-127)</TD>
+                <TD width="154">none</TD></TR>
+              <TR vAlign="top">
+                <TD width="141"> 11001111= CF= 207 </TD>
+                <TD width="191">Chan 16 Program Change </TD>
+                <TD width="141">Program # (0-127)</TD>
+                <TD width="154">none</TD></TR>
+              <TR vAlign="top">
+                <TD width="141"> 11010000= D0= 208 </TD>
+                <TD width="191">Chan 1 Channel Aftertouch </TD>
+                <TD width="141">Pressure (0-127) </TD>
+                <TD width="154">none</TD></TR>
+              <TR vAlign="top">
+                <TD width="141"> 11010001= D1= 209 </TD>
+                <TD width="191">Chan 2 Channel Aftertouch</TD>
+                <TD width="141">Pressure (0-127) </TD>
+                <TD width="154">none</TD></TR>
+              <TR vAlign="top">
+                <TD width="141"> 11010010= D2= 210 </TD>
+                <TD width="191">Chan 3 Channel Aftertouch</TD>
+                <TD width="141">Pressure (0-127) </TD>
+                <TD width="154">none</TD></TR>
+              <TR vAlign="top">
+                <TD width="141"> 11010011= D3= 211 </TD>
+                <TD width="191">Chan 4 Channel Aftertouch</TD>
+                <TD width="141">Pressure (0-127) </TD>
+                <TD width="154">none</TD></TR>
+              <TR vAlign="top">
+                <TD width="141"> 11010100= D4= 212 </TD>
+                <TD width="191">Chan 5 Channel Aftertouch</TD>
+                <TD width="141">Pressure (0-127) </TD>
+                <TD width="154">none</TD></TR>
+              <TR vAlign="top">
+                <TD width="141"> 11010101= D5= 213 </TD>
+                <TD width="191">Chan 6 Channel Aftertouch</TD>
+                <TD width="141">Pressure (0-127) </TD>
+                <TD width="154">none</TD></TR>
+              <TR vAlign="top">
+                <TD width="141"> 11010110= D6= 214 </TD>
+                <TD width="191">Chan 7 Channel Aftertouch</TD>
+                <TD width="141">Pressure (0-127) </TD>
+                <TD width="154">none</TD></TR>
+              <TR vAlign="top">
+                <TD width="141"> 11010111= D7= 215 </TD>
+                <TD width="191">Chan 8 Channel Aftertouch</TD>
+                <TD width="141">Pressure (0-127) </TD>
+                <TD width="154">none</TD></TR>
+              <TR vAlign="top">
+                <TD width="141"> 11011000= D8= 216 </TD>
+                <TD width="191">Chan 9 Channel Aftertouch</TD>
+                <TD width="141">Pressure (0-127) </TD>
+                <TD width="154">none</TD></TR>
+              <TR vAlign="top">
+                <TD width="141"> 11011001= D9= 217 </TD>
+                <TD width="191">Chan 10 Channel Aftertouch</TD>
+                <TD width="141">Pressure (0-127) </TD>
+                <TD width="154">none</TD></TR>
+              <TR vAlign="top">
+                <TD width="141"> 11011010= DA= 218 </TD>
+                <TD width="191">Chan 11 Channel Aftertouch</TD>
+                <TD width="141">Pressure (0-127) </TD>
+                <TD width="154">none</TD></TR>
+              <TR vAlign="top">
+                <TD width="141"> 11011011= DB= 219 </TD>
+                <TD width="191">Chan 12 Channel Aftertouch</TD>
+                <TD width="141">Pressure (0-127) </TD>
+                <TD width="154">none</TD></TR>
+              <TR vAlign="top">
+                <TD width="141"> 11011100= DC= 220 </TD>
+                <TD width="191">Chan 13 Channel Aftertouch</TD>
+                <TD width="141">Pressure (0-127) </TD>
+                <TD width="154">none</TD></TR>
+              <TR vAlign="top">
+                <TD width="141"> 11011101= DD= 221 </TD>
+                <TD width="191">Chan 14 Channel Aftertouch</TD>
+                <TD width="141">Pressure (0-127) </TD>
+                <TD width="154">none</TD></TR>
+              <TR vAlign="top">
+                <TD width="141"> 11011110= DE= 222 </TD>
+                <TD width="191">Chan 15 Channel Aftertouch</TD>
+                <TD width="141">Pressure (0-127) </TD>
+                <TD width="154">none</TD></TR>
+              <TR vAlign="top">
+                <TD width="141"> 11011111= DF= 223 </TD>
+                <TD width="191">Chan 16 Channel Aftertouch</TD>
+                <TD width="141">Pressure (0-127)</TD>
+                <TD width="154">none</TD></TR>
+              <TR vAlign="top">
+                <TD width="141"> 11100000= E0= 224 </TD>
+                <TD width="191">Chan 1 Pitch Wheel Control </TD>
+                <TD width="141">Pitch Wheel LSB (0-127) </TD>
+                <TD width="154">Pitch Wheel MSB (0-127)</TD></TR>
+              <TR vAlign="top">
+                <TD width="141"> 11100001= E1= 225 </TD>
+                <TD width="191">Chan 2 Pitch Wheel Control </TD>
+                <TD width="141">Pitch Wheel LSB (0-127) </TD>
+                <TD width="154">Pitch Wheel MSB (0-127)</TD></TR>
+              <TR vAlign="top">
+                <TD width="141"> 11100010= E2= 226 </TD>
+                <TD width="191">Chan 3 Pitch Wheel Control </TD>
+                <TD width="141">Pitch Wheel LSB (0-127) </TD>
+                <TD width="154">Pitch Wheel MSB (0-127)</TD></TR>
+              <TR vAlign="top">
+                <TD width="141"> 11100011= E3= 227 </TD>
+                <TD width="191">Chan 4 Pitch Wheel Control </TD>
+                <TD width="141">Pitch Wheel LSB (0-127) </TD>
+                <TD width="154">Pitch Wheel MSB (0-127)</TD></TR>
+              <TR vAlign="top">
+                <TD width="141"> 11100100= E4= 228 </TD>
+                <TD width="191">Chan 5 Pitch Wheel Control </TD>
+                <TD width="141">Pitch Wheel LSB (0-127) </TD>
+                <TD width="154">Pitch Wheel MSB (0-127)</TD></TR>
+              <TR vAlign="top">
+                <TD width="141"> 11100101= E5= 229 </TD>
+                <TD width="191">Chan 6 Pitch Wheel Control </TD>
+                <TD width="141">Pitch Wheel LSB (0-127) </TD>
+                <TD width="154">Pitch Wheel MSB (0-127)</TD></TR>
+              <TR vAlign="top">
+                <TD width="141"> 11100110= E6= 230 </TD>
+                <TD width="191">Chan 7 Pitch Wheel Control </TD>
+                <TD width="141">Pitch Wheel LSB (0-127) </TD>
+                <TD width="154">Pitch Wheel MSB (0-127)</TD></TR>
+              <TR vAlign="top">
+                <TD width="141"> 11100111= E7= 231 </TD>
+                <TD width="191">Chan 8 Pitch Wheel Control </TD>
+                <TD width="141">Pitch Wheel LSB (0-127) </TD>
+                <TD width="154">Pitch Wheel MSB (0-127)</TD></TR>
+              <TR vAlign="top">
+                <TD width="141"> 11101000= E8= 232 </TD>
+                <TD width="191">Chan 9 Pitch Wheel Control </TD>
+                <TD width="141">Pitch Wheel LSB (0-127) </TD>
+                <TD width="154">Pitch Wheel MSB (0-127)</TD></TR>
+              <TR vAlign="top">
+                <TD width="141"> 11101001= E9= 233 </TD>
+                <TD width="191">Chan 10 Pitch Wheel Control </TD>
+                <TD width="141">Pitch Wheel LSB (0-127) </TD>
+                <TD width="154">Pitch Wheel MSB (0-127)</TD></TR>
+              <TR vAlign="top">
+                <TD width="141"> 11101010= EA= 234 </TD>
+                <TD width="191">Chan 11 Pitch Wheel Control </TD>
+                <TD width="141">Pitch Wheel LSB (0-127) </TD>
+                <TD width="154">Pitch Wheel MSB (0-127)</TD></TR>
+              <TR vAlign="top">
+                <TD width="141"> 11101011= EB= 235 </TD>
+                <TD width="191">Chan 12 Pitch Wheel Control </TD>
+                <TD width="141">Pitch Wheel LSB (0-127) </TD>
+                <TD width="154">Pitch Wheel MSB (0-127)</TD></TR>
+              <TR vAlign="top">
+                <TD width="141"> 11101100= EC= 236 </TD>
+                <TD width="191">Chan 13 Pitch Wheel Control </TD>
+                <TD width="141">Pitch Wheel LSB (0-127) </TD>
+                <TD width="154">Pitch Wheel MSB (0-127)</TD></TR>
+              <TR vAlign="top">
+                <TD width="141"> 11101101= ED= 237 </TD>
+                <TD width="191">Chan 14 Pitch Wheel Control </TD>
+                <TD width="141">Pitch Wheel LSB (0-127) </TD>
+                <TD width="154">Pitch Wheel MSB (0-127)</TD></TR>
+              <TR vAlign="top">
+                <TD width="141"> 11101110= EE= 238 </TD>
+                <TD width="191">Chan 15 Pitch Wheel Control </TD>
+                <TD width="141">Pitch Wheel LSB (0-127) </TD>
+                <TD width="154">Pitch Wheel MSB (0-127)</TD></TR>
+              <TR vAlign="top">
+                <TD width="141"> 11101111= EF= 239 </TD>
+                <TD width="191">Chan 16 Pitch Wheel Control </TD>
+                <TD width="141">Pitch Wheel LSB (0-127) </TD>
+                <TD width="154">Pitch Wheel MSB (0-127)</TD></TR>
+              <TR vAlign="top">
+                <TD width="141"> 11110000= F0= 240 </TD>
+                <TD width="191"> System Exclusive </TD>
+                <TD width="141"> ** </TD>
+                <TD width="154"> ** </TD></TR>
+              <TR vAlign="top">
+                <TD width="141"> 11110001= F1= 241 </TD>
+                <TD width="191"> MIDI Time Code Qtr. Frame </TD>
+                <TD width="141"> -see spec- </TD>
+                <TD width="154"> -see spec- </TD></TR>
+              <TR vAlign="top">
+                <TD width="141"> 11110010= F2= 242 </TD>
+                <TD width="191"> Song Position Pointer </TD>
+                <TD width="141"> LSB </TD>
+                <TD width="154"> MSB </TD></TR>
+              <TR vAlign="top">
+                <TD width="141"> 11110011= F3= 243 </TD>
+                <TD width="191"> Song Select (Song #) </TD>
+                <TD width="141"> (0-127) </TD>
+                <TD width="154">none</TD></TR>
+              <TR vAlign="top">
+                <TD width="141"> 11110100= F4= 244 </TD>
+                <TD width="191"> Undefined (Reserved) </TD>
+                <TD width="141">---</TD>
+                <TD width="154">---</TD></TR>
+              <TR vAlign="top">
+                <TD width="141"> 11110101= F5= 245 </TD>
+                <TD width="191"> Undefined (Reserved) </TD>
+                <TD width="141">---</TD>
+                <TD width="154">---</TD></TR>
+              <TR vAlign="top">
+                <TD width="141"> 11110110= F6= 246 </TD>
+                <TD width="191"> Tune request </TD>
+                <TD width="141">none</TD>
+                <TD width="154">none</TD></TR>
+              <TR vAlign="top">
+                <TD width="141"> 11110111= F7= 247 </TD>
+                <TD width="191"> End of SysEx (EOX) </TD>
+                <TD width="141">none</TD>
+                <TD width="154">none</TD></TR>
+              <TR vAlign="top">
+                <TD width="141"> 11111000= F8= 248 </TD>
+                <TD width="191"> Timing clock </TD>
+                <TD width="141">none</TD>
+                <TD width="154">none</TD></TR>
+              <TR vAlign="top">
+                <TD width="141"> 11111001= F9= 249 </TD>
+                <TD width="191"> Undefined (Reserved) </TD>
+                <TD width="141">---</TD>
+                <TD width="154">---</TD></TR>
+              <TR vAlign="top">
+                <TD width="141"> 11111010= FA= 250 </TD>
+                <TD width="191">Start</TD>
+                <TD width="141">none</TD>
+                <TD width="154">none</TD></TR>
+              <TR vAlign="top">
+                <TD width="141"> 11111011= FB= 251 </TD>
+                <TD width="191">Continue</TD>
+                <TD width="141">none</TD>
+                <TD width="154">none</TD></TR>
+              <TR vAlign="top">
+                <TD width="141"> 11111100= FC= 252 </TD>
+                <TD width="191"> Stop </TD>
+                <TD width="141">none</TD>
+                <TD width="154">none</TD></TR>
+              <TR vAlign="top">
+                <TD width="141"> 11111101= FD= 253 </TD>
+                <TD width="191"> Undefined (Reserved) </TD>
+                <TD width="141">---</TD>
+                <TD width="154">---</TD></TR>
+              <TR vAlign="top">
+                <TD width="141"> 11111110= FE= 254 </TD>
+                <TD width="191"> Active Sensing </TD>
+                <TD width="141">none</TD>
+                <TD width="154">none</TD></TR>
+              <TR vAlign="top">
+                <TD width="141"> 11111111= FF= 255 </TD>
+                <TD width="191"> System Reset </TD>
+                <TD width="141">none</TD>
+                <TD width="154">none</TD></TR>
+              <TR vAlign="top">
+                <TD width="663" colSpan="4"> ** Note: System Exclusive (data 
+                  dump) 2nd byte= Vendor ID (or Universal Exclusive) followed by 
+                  more data bytes and ending with EOX. </TD></TR></TBODY></TABLE><!-- end Table 2 -->
+            <P align="center">&nbsp;</P></TD>
+        <TR>
+          <TD class="biggerbolder" colSpan="2">
+            <P align="center"><IMG src="MIDI%20Message%20Table%201_files/greypixel.gif" 
+            width="700" height="2"></P></TD></TR>
+        <TR>
+          <TD class="biggerbolder">
+            <P><SPAN class="biggerbolder"><A name="3"></A>Table 3 - Control 
+            Change Messages (Data Bytes) </SPAN></P></TD>
+          <TD class="maintext" align="right"><A href="http://www.midi.org/techspecs/midimessages.php#">TOP</A></TD></TR>
+        <TR>
+          <TD colSpan="2">
+            <P>The following table lists all currently defined <U>Control 
+            Change</U>             messages and <U>Channel Mode</U> messages, in 
+            control number order.&nbsp;(Adapted from "MIDI by the Numbers" by D. 
+                        Valenti-Electronic Musician 2/88, updated by the MIDI 
+            Manufacturers Association.)&nbsp; </P>
+            <P><U>Registered Parameter Numbers</U> (RPNs) are an extension to 
+            the Control Change message for setting additional parameters. 
+            Appended at the bottom is a             <A href="http://www.midi.org/techspecs/midimessages.php#3a">table</A> 
+            of all currently defined RPNs. </P>
+            <P><STRONG>WARNING! Details about implementing these messages can 
+            dramatically impact compatibility with other products. We strongly 
+            recommend consulting the official </STRONG><A href="http://www.midi.org/techspecs/midispec.php">MMA 
+            Detailed MIDI Specification</A><STRONG>for additional information. 
+            </STRONG></P><!-- Table 3 -->
+            <TABLE class="maintext" border="1" cellSpacing="0" cellPadding="5" 
+            width="740" align="center">
+              <TBODY>
+              <TR>
+                <TD width="733" colSpan="6" align="center"><STRONG>Table 3: 
+                  Control Changes and Mode Changes<BR></STRONG> (Status Bytes 
+                  176-191) </TD></TR>
+              <TR>
+                <TD width="173" colSpan="3" align="center"><STRONG>Control 
+                  Number </STRONG><BR>			      (2nd Byte Value) </TD>
+                <TD rowSpan="2" width="347" align="center"><STRONG>Control 
+                  Function </STRONG></TD>
+                <TD width="189" colSpan="2" align="center"><STRONG>3rd Byte 
+                  Value </STRONG></TD></TR>
+              <TR>
+                <TD width="52" align="center"><STRONG>Decimal </STRONG></TD>
+                <TD width="72" align="center"><STRONG>Binary </STRONG></TD>
+                <TD width="25" align="center"><STRONG>Hex </STRONG></TD>
+                <TD width="144" align="center"><STRONG>Value</STRONG></TD>
+                <TD width="33" align="center"><STRONG>Used As </STRONG></TD></TR>
+              <TR>
+                <TD width="52">0 </TD>
+                <TD width="72">00000000 </TD>
+                <TD width="25">00 </TD>
+                <TD width="347" align="left">Bank Select </TD>
+                <TD width="144">0-127 </TD>
+                <TD width="33">MSB </TD></TR>
+              <TR>
+                <TD width="52">1 </TD>
+                <TD width="72">00000001 </TD>
+                <TD width="25">01 </TD>
+                <TD width="347" align="left">Modulation Wheel or Lever </TD>
+                <TD width="144">0-127 </TD>
+                <TD width="33">MSB </TD></TR>
+              <TR>
+                <TD width="52">2 </TD>
+                <TD width="72">00000010 </TD>
+                <TD width="25">02 </TD>
+                <TD width="347" align="left">Breath Controller </TD>
+                <TD width="144">0-127 </TD>
+                <TD width="33">MSB </TD></TR>
+              <TR>
+                <TD width="52">3 </TD>
+                <TD width="72">00000011 </TD>
+                <TD width="25">03 </TD>
+                <TD width="347" align="left">Undefined </TD>
+                <TD width="144">0-127 </TD>
+                <TD width="33">MSB </TD></TR>
+              <TR>
+                <TD width="52">4 </TD>
+                <TD width="72">00000100 </TD>
+                <TD width="25">04 </TD>
+                <TD width="347" align="left">Foot Controller </TD>
+                <TD width="144">0-127 </TD>
+                <TD width="33">MSB </TD></TR>
+              <TR>
+                <TD width="52">5 </TD>
+                <TD width="72">00000101 </TD>
+                <TD width="25">05 </TD>
+                <TD width="347" align="left">Portamento Time </TD>
+                <TD width="144">0-127 </TD>
+                <TD width="33">MSB </TD></TR>
+              <TR>
+                <TD width="52">6 </TD>
+                <TD width="72">00000110 </TD>
+                <TD width="25">06 </TD>
+                <TD width="347" align="left">Data Entry MSB </TD>
+                <TD width="144">0-127 </TD>
+                <TD width="33">MSB </TD></TR>
+              <TR>
+                <TD width="52">7 </TD>
+                <TD width="72">00000111 </TD>
+                <TD width="25">07 </TD>
+                <TD width="347" align="left">Channel Volume (formerly Main 
+                  Volume) </TD>
+                <TD width="144">0-127 </TD>
+                <TD width="33">MSB </TD></TR>
+              <TR>
+                <TD width="52">8 </TD>
+                <TD width="72">00001000 </TD>
+                <TD width="25">08 </TD>
+                <TD width="347" align="left">Balance </TD>
+                <TD width="144">0-127 </TD>
+                <TD width="33">MSB </TD></TR>
+              <TR>
+                <TD width="52">9 </TD>
+                <TD width="72">00001001 </TD>
+                <TD width="25">09 </TD>
+                <TD width="347" align="left">Undefined </TD>
+                <TD width="144">0-127 </TD>
+                <TD width="33">MSB </TD></TR>
+              <TR>
+                <TD width="52">10 </TD>
+                <TD width="72">00001010 </TD>
+                <TD width="25">0A </TD>
+                <TD width="347" align="left">Pan </TD>
+                <TD width="144">0-127 </TD>
+                <TD width="33">MSB </TD></TR>
+              <TR>
+                <TD width="52">11 </TD>
+                <TD width="72">00001011 </TD>
+                <TD width="25">0B </TD>
+                <TD width="347" align="left">Expression Controller </TD>
+                <TD width="144">0-127 </TD>
+                <TD width="33">MSB </TD></TR>
+              <TR>
+                <TD width="52">12 </TD>
+                <TD width="72">00001100 </TD>
+                <TD width="25">0C </TD>
+                <TD width="347" align="left">Effect Control 1 </TD>
+                <TD width="144">0-127 </TD>
+                <TD width="33">MSB </TD></TR>
+              <TR>
+                <TD width="52">13 </TD>
+                <TD width="72">00001101 </TD>
+                <TD width="25">0D </TD>
+                <TD width="347" align="left">Effect Control 2 </TD>
+                <TD width="144">0-127 </TD>
+                <TD width="33">MSB </TD></TR>
+              <TR>
+                <TD width="52">14 </TD>
+                <TD width="72">00001110 </TD>
+                <TD width="25">0E </TD>
+                <TD width="347" align="left">Undefined </TD>
+                <TD width="144">0-127 </TD>
+                <TD width="33">MSB </TD></TR>
+              <TR>
+                <TD width="52">15 </TD>
+                <TD width="72">00001111 </TD>
+                <TD width="25">0F </TD>
+                <TD width="347" align="left">Undefined </TD>
+                <TD width="144">0-127 </TD>
+                <TD width="33">MSB </TD></TR>
+              <TR>
+                <TD width="52">16 </TD>
+                <TD width="72">00010000 </TD>
+                <TD width="25">10 </TD>
+                <TD width="347" align="left">General Purpose Controller 1 </TD>
+                <TD width="144">0-127 </TD>
+                <TD width="33">MSB </TD></TR>
+              <TR>
+                <TD width="52">17 </TD>
+                <TD width="72">00010001 </TD>
+                <TD width="25">11 </TD>
+                <TD width="347" align="left">General Purpose Controller 2 </TD>
+                <TD width="144">0-127 </TD>
+                <TD width="33">MSB </TD></TR>
+              <TR>
+                <TD width="52">18 </TD>
+                <TD width="72">00010010 </TD>
+                <TD width="25">12 </TD>
+                <TD width="347" align="left">General Purpose Controller 3 </TD>
+                <TD width="144">0-127 </TD>
+                <TD width="33">MSB </TD></TR>
+              <TR>
+                <TD width="52">19 </TD>
+                <TD width="72">00010011 </TD>
+                <TD width="25">13 </TD>
+                <TD width="347" align="left">General Purpose Controller 4 </TD>
+                <TD width="144">0-127 </TD>
+                <TD width="33">MSB </TD></TR>
+              <TR>
+                <TD width="52">20 </TD>
+                <TD width="72">00010100 </TD>
+                <TD width="25">14 </TD>
+                <TD width="347" align="left">Undefined </TD>
+                <TD width="144">0-127 </TD>
+                <TD width="33">MSB </TD></TR>
+              <TR>
+                <TD width="52">21 </TD>
+                <TD width="72">00010101 </TD>
+                <TD width="25">15 </TD>
+                <TD width="347" align="left">Undefined </TD>
+                <TD width="144">0-127 </TD>
+                <TD width="33">MSB </TD></TR>
+              <TR>
+                <TD width="52">22 </TD>
+                <TD width="72">00010110 </TD>
+                <TD width="25">16 </TD>
+                <TD width="347" align="left">Undefined </TD>
+                <TD width="144">0-127 </TD>
+                <TD width="33">MSB </TD></TR>
+              <TR>
+                <TD width="52">23 </TD>
+                <TD width="72">00010111 </TD>
+                <TD width="25">17 </TD>
+                <TD width="347" align="left">Undefined </TD>
+                <TD width="144">0-127 </TD>
+                <TD width="33">MSB </TD></TR>
+              <TR>
+                <TD width="52">24 </TD>
+                <TD width="72">00011000 </TD>
+                <TD width="25">18 </TD>
+                <TD width="347" align="left">Undefined </TD>
+                <TD width="144">0-127 </TD>
+                <TD width="33">MSB </TD></TR>
+              <TR>
+                <TD width="52">25 </TD>
+                <TD width="72">00011001 </TD>
+                <TD width="25">19 </TD>
+                <TD width="347" align="left">Undefined </TD>
+                <TD width="144">0-127 </TD>
+                <TD width="33">MSB </TD></TR>
+              <TR>
+                <TD width="52">26 </TD>
+                <TD width="72">00011010 </TD>
+                <TD width="25">1A </TD>
+                <TD width="347" align="left">Undefined </TD>
+                <TD width="144">0-127 </TD>
+                <TD width="33">MSB </TD></TR>
+              <TR>
+                <TD width="52">27 </TD>
+                <TD width="72">00011011 </TD>
+                <TD width="25">1B </TD>
+                <TD width="347" align="left">Undefined </TD>
+                <TD width="144">0-127 </TD>
+                <TD width="33">MSB </TD></TR>
+              <TR>
+                <TD width="52">28 </TD>
+                <TD width="72">00011100 </TD>
+                <TD width="25">1C </TD>
+                <TD width="347" align="left">Undefined </TD>
+                <TD width="144">0-127 </TD>
+                <TD width="33">MSB </TD></TR>
+              <TR>
+                <TD width="52">29 </TD>
+                <TD width="72">00011101 </TD>
+                <TD width="25">1D </TD>
+                <TD width="347" align="left">Undefined </TD>
+                <TD width="144">0-127 </TD>
+                <TD width="33">MSB </TD></TR>
+              <TR>
+                <TD width="52">30 </TD>
+                <TD width="72">00011110 </TD>
+                <TD width="25">1E </TD>
+                <TD width="347" align="left">Undefined </TD>
+                <TD width="144">0-127 </TD>
+                <TD width="33">MSB </TD></TR>
+              <TR>
+                <TD width="52">31 </TD>
+                <TD width="72">00011111 </TD>
+                <TD width="25">1F </TD>
+                <TD width="347" align="left">Undefined </TD>
+                <TD width="144">0-127 </TD>
+                <TD width="33">MSB </TD></TR>
+              <TR>
+                <TD width="52">32 </TD>
+                <TD width="72">00100000 </TD>
+                <TD width="25">20 </TD>
+                <TD width="347" align="left">LSB for Control 0 (Bank Select) 
+                </TD>
+                <TD width="144">0-127 </TD>
+                <TD width="33">LSB </TD></TR>
+              <TR>
+                <TD width="52">33 </TD>
+                <TD width="72">00100001 </TD>
+                <TD width="25">21 </TD>
+                <TD width="347" align="left">LSB for Control 1 (Modulation 
+                  Wheel or Lever) </TD>
+                <TD width="144">0-127 </TD>
+                <TD width="33">LSB </TD></TR>
+              <TR>
+                <TD width="52">34 </TD>
+                <TD width="72">00100010 </TD>
+                <TD width="25">22 </TD>
+                <TD width="347" align="left">LSB for Control 2 (Breath 
+                  Controller) </TD>
+                <TD width="144">0-127 </TD>
+                <TD width="33">LSB </TD></TR>
+              <TR>
+                <TD width="52">35 </TD>
+                <TD width="72">00100011 </TD>
+                <TD width="25">23 </TD>
+                <TD width="347" align="left">LSB for Control 3 (Undefined) </TD>
+                <TD width="144">0-127 </TD>
+                <TD width="33">LSB </TD></TR>
+              <TR>
+                <TD width="52">36 </TD>
+                <TD width="72">00100100 </TD>
+                <TD width="25">24 </TD>
+                <TD width="347" align="left">LSB for Control 4 (Foot 
+                  Controller) </TD>
+                <TD width="144">0-127 </TD>
+                <TD width="33">LSB </TD></TR>
+              <TR>
+                <TD width="52">37 </TD>
+                <TD width="72">00100101 </TD>
+                <TD width="25">25 </TD>
+                <TD width="347" align="left">LSB for Control 5 (Portamento 
+                  Time) </TD>
+                <TD width="144">0-127 </TD>
+                <TD width="33">LSB </TD></TR>
+              <TR>
+                <TD width="52">38 </TD>
+                <TD width="72">00100110 </TD>
+                <TD width="25">26 </TD>
+                <TD width="347" align="left">LSB for Control 6 (Data Entry) 
+</TD>
+                <TD width="144">0-127 </TD>
+                <TD width="33">LSB </TD></TR>
+              <TR>
+                <TD width="52">39 </TD>
+                <TD width="72">00100111 </TD>
+                <TD width="25">27 </TD>
+                <TD width="347" align="left">LSB for Control 7 (Channel 
+                  Volume, formerly Main Volume) </TD>
+                <TD width="144">0-127 </TD>
+                <TD width="33">LSB </TD></TR>
+              <TR>
+                <TD width="52">40 </TD>
+                <TD width="72">00101000 </TD>
+                <TD width="25">28 </TD>
+                <TD width="347" align="left">LSB for Control 8 (Balance) </TD>
+                <TD width="144">0-127 </TD>
+                <TD width="33">LSB </TD></TR>
+              <TR>
+                <TD width="52">41 </TD>
+                <TD width="72">00101001 </TD>
+                <TD width="25">29 </TD>
+                <TD width="347" align="left">LSB for Control 9 (Undefined) </TD>
+                <TD width="144">0-127 </TD>
+                <TD width="33">LSB </TD></TR>
+              <TR>
+                <TD width="52">42 </TD>
+                <TD width="72">00101010 </TD>
+                <TD width="25">2A </TD>
+                <TD width="347" align="left">LSB for Control 10 (Pan) </TD>
+                <TD width="144">0-127 </TD>
+                <TD width="33">LSB </TD></TR>
+              <TR>
+                <TD width="52">43 </TD>
+                <TD width="72">00101011 </TD>
+                <TD width="25">2B </TD>
+                <TD width="347" align="left">LSB for Control 11 (Expression 
+                  Controller) </TD>
+                <TD width="144">0-127 </TD>
+                <TD width="33">LSB </TD></TR>
+              <TR>
+                <TD width="52">44 </TD>
+                <TD width="72">00101100 </TD>
+                <TD width="25">2C </TD>
+                <TD width="347" align="left">LSB for Control 12 (Effect 
+                  control 1) </TD>
+                <TD width="144">0-127 </TD>
+                <TD width="33">LSB </TD></TR>
+              <TR>
+                <TD width="52">45 </TD>
+                <TD width="72">00101101 </TD>
+                <TD width="25">2D </TD>
+                <TD width="347" align="left">LSB for Control 13 (Effect 
+                  control 2) </TD>
+                <TD width="144">0-127 </TD>
+                <TD width="33">LSB </TD></TR>
+              <TR>
+                <TD width="52">46 </TD>
+                <TD width="72">00101110 </TD>
+                <TD width="25">2E </TD>
+                <TD width="347" align="left">LSB for Control 14 (Undefined) 
+</TD>
+                <TD width="144">0-127 </TD>
+                <TD width="33">LSB </TD></TR>
+              <TR>
+                <TD width="52">47 </TD>
+                <TD width="72">00101111 </TD>
+                <TD width="25">2F </TD>
+                <TD width="347" align="left">LSB for Control 15 (Undefined) 
+</TD>
+                <TD width="144">0-127 </TD>
+                <TD width="33">LSB </TD></TR>
+              <TR>
+                <TD width="52">48 </TD>
+                <TD width="72">00110000 </TD>
+                <TD width="25">30 </TD>
+                <TD width="347" align="left">LSB for Control 16 (General 
+                  Purpose Controller 1) </TD>
+                <TD width="144">0-127 </TD>
+                <TD width="33">LSB </TD></TR>
+              <TR>
+                <TD width="52">49 </TD>
+                <TD width="72">00110001 </TD>
+                <TD width="25">31 </TD>
+                <TD width="347" align="left">LSB for Control 17 (General 
+                  Purpose Controller 2) </TD>
+                <TD width="144">0-127 </TD>
+                <TD width="33">LSB </TD></TR>
+              <TR>
+                <TD width="52">50 </TD>
+                <TD width="72">00110010 </TD>
+                <TD width="25">32 </TD>
+                <TD width="347" align="left">LSB for Control 18 (General 
+                  Purpose Controller 3) </TD>
+                <TD width="144">0-127 </TD>
+                <TD width="33">LSB </TD></TR>
+              <TR>
+                <TD width="52">51 </TD>
+                <TD width="72">00110011 </TD>
+                <TD width="25">33 </TD>
+                <TD width="347" align="left">LSB for Control 19 (General 
+                  Purpose Controller 4) </TD>
+                <TD width="144">0-127 </TD>
+                <TD width="33">LSB </TD></TR>
+              <TR>
+                <TD width="52">52 </TD>
+                <TD width="72">00110100 </TD>
+                <TD width="25">34 </TD>
+                <TD width="347" align="left">LSB for Control 20 (Undefined) 
+</TD>
+                <TD width="144">0-127 </TD>
+                <TD width="33">LSB </TD></TR>
+              <TR>
+                <TD width="52">53 </TD>
+                <TD width="72">00110101 </TD>
+                <TD width="25">35 </TD>
+                <TD width="347" align="left">LSB for Control 21 (Undefined) 
+</TD>
+                <TD width="144">0-127 </TD>
+                <TD width="33">LSB </TD></TR>
+              <TR>
+                <TD width="52">54 </TD>
+                <TD width="72">00110110 </TD>
+                <TD width="25">36 </TD>
+                <TD width="347" align="left">LSB for Control 22 (Undefined) 
+</TD>
+                <TD width="144">0-127 </TD>
+                <TD width="33">LSB </TD></TR>
+              <TR>
+                <TD width="52">55 </TD>
+                <TD width="72">00110111 </TD>
+                <TD width="25">37 </TD>
+                <TD width="347" align="left">LSB for Control 23 (Undefined) 
+</TD>
+                <TD width="144">0-127 </TD>
+                <TD width="33">LSB </TD></TR>
+              <TR>
+                <TD width="52">56 </TD>
+                <TD width="72">00111000 </TD>
+                <TD width="25">38 </TD>
+                <TD width="347" align="left">LSB for Control 24 (Undefined) 
+</TD>
+                <TD width="144">0-127 </TD>
+                <TD width="33">LSB </TD></TR>
+              <TR>
+                <TD width="52">57 </TD>
+                <TD width="72">00111001 </TD>
+                <TD width="25">39 </TD>
+                <TD width="347" align="left">LSB for Control 25 (Undefined) 
+</TD>
+                <TD width="144">0-127 </TD>
+                <TD width="33">LSB </TD></TR>
+              <TR>
+                <TD width="52">58 </TD>
+                <TD width="72">00111010 </TD>
+                <TD width="25">3A </TD>
+                <TD width="347" align="left">LSB for Control 26 (Undefined) 
+</TD>
+                <TD width="144">0-127 </TD>
+                <TD width="33">LSB </TD></TR>
+              <TR>
+                <TD width="52">59 </TD>
+                <TD width="72">00111011 </TD>
+                <TD width="25">3B </TD>
+                <TD width="347" align="left">LSB for Control 27 (Undefined) 
+</TD>
+                <TD width="144">0-127 </TD>
+                <TD width="33">LSB </TD></TR>
+              <TR>
+                <TD width="52">60 </TD>
+                <TD width="72">00111100 </TD>
+                <TD width="25">3C </TD>
+                <TD width="347" align="left">LSB for Control 28 (Undefined) 
+</TD>
+                <TD width="144">0-127 </TD>
+                <TD width="33">LSB </TD></TR>
+              <TR>
+                <TD width="52">61 </TD>
+                <TD width="72">00111101 </TD>
+                <TD width="25">3D </TD>
+                <TD width="347" align="left">LSB for Control 29 (Undefined) 
+</TD>
+                <TD width="144">0-127 </TD>
+                <TD width="33">LSB </TD></TR>
+              <TR>
+                <TD width="52">62 </TD>
+                <TD width="72">00111110 </TD>
+                <TD width="25">3E </TD>
+                <TD width="347" align="left">LSB for Control 30 (Undefined) 
+</TD>
+                <TD width="144">0-127 </TD>
+                <TD width="33">LSB </TD></TR>
+              <TR>
+                <TD width="52">63 </TD>
+                <TD width="72">00111111 </TD>
+                <TD width="25">3F </TD>
+                <TD width="347" align="left">LSB for Control 31 (Undefined) 
+</TD>
+                <TD width="144">0-127 </TD>
+                <TD width="33">LSB </TD></TR>
+              <TR>
+                <TD width="52">64 </TD>
+                <TD width="72">01000000 </TD>
+                <TD width="25">40 </TD>
+                <TD width="347" align="left">Damper Pedal on/off (Sustain) </TD>
+                <TD width="144">&#8804;63 off, &#8805;64 on </TD>
+                <TD width="33">--- </TD></TR>
+              <TR>
+                <TD width="52">65 </TD>
+                <TD width="72">01000001 </TD>
+                <TD width="25">41 </TD>
+                <TD width="347" align="left">Portamento On/Off </TD>
+                <TD width="144">&#8804;63 off, &#8805;64 on </TD>
+                <TD width="33">--- </TD></TR>
+              <TR>
+                <TD width="52">66 </TD>
+                <TD width="72">01000010 </TD>
+                <TD width="25">42 </TD>
+                <TD width="347" align="left">Sostenuto On/Off </TD>
+                <TD width="144">&#8804;63 off, &#8805;64 on </TD>
+                <TD width="33">--- </TD></TR>
+              <TR>
+                <TD width="52">67 </TD>
+                <TD width="72">01000011 </TD>
+                <TD width="25">43 </TD>
+                <TD width="347" align="left">Soft Pedal On/Off </TD>
+                <TD width="144">&#8804;63 off, &#8805;64 on </TD>
+                <TD width="33">--- </TD></TR>
+              <TR>
+                <TD width="52">68 </TD>
+                <TD width="72">01000100 </TD>
+                <TD width="25">44 </TD>
+                <TD width="347" align="left">Legato Footswitch </TD>
+                <TD width="144">&#8804;63 Normal, &#8805;64 Legato </TD>
+                <TD width="33">--- </TD></TR>
+              <TR>
+                <TD width="52">69 </TD>
+                <TD width="72">01000101 </TD>
+                <TD width="25">45 </TD>
+                <TD width="347" align="left">Hold 2 </TD>
+                <TD width="144">&#8804;63 off, &#8805;64 on </TD>
+                <TD width="33">--- </TD></TR>
+              <TR>
+                <TD width="52">70 </TD>
+                <TD width="72">01000110 </TD>
+                <TD width="25">46 </TD>
+                <TD width="347" align="left">Sound Controller 1 (default: 
+                  Sound Variation) </TD>
+                <TD width="144">0-127 </TD>
+                <TD width="33">LSB </TD></TR>
+              <TR>
+                <TD width="52">71 </TD>
+                <TD width="72">01000111 </TD>
+                <TD width="25">47 </TD>
+                <TD width="347" align="left">Sound Controller 2 (default: 
+                  Timbre/Harmonic Intens.) </TD>
+                <TD width="144">0-127 </TD>
+                <TD width="33">LSB </TD></TR>
+              <TR>
+                <TD width="52">72 </TD>
+                <TD width="72">01001000 </TD>
+                <TD width="25">48 </TD>
+                <TD width="347" align="left">Sound Controller 3 (default: 
+                  Release Time) </TD>
+                <TD width="144">0-127 </TD>
+                <TD width="33">LSB </TD></TR>
+              <TR>
+                <TD width="52">73 </TD>
+                <TD width="72">01001001 </TD>
+                <TD width="25">49 </TD>
+                <TD width="347" align="left">Sound Controller 4 (default: 
+                  Attack Time) </TD>
+                <TD width="144">0-127 </TD>
+                <TD width="33">LSB </TD></TR>
+              <TR>
+                <TD width="52">74 </TD>
+                <TD width="72">01001010 </TD>
+                <TD width="25">4A </TD>
+                <TD width="347" align="left">Sound Controller 5 (default: 
+                  Brightness) </TD>
+                <TD width="144">0-127 </TD>
+                <TD width="33">LSB </TD></TR>
+              <TR>
+                <TD width="52">75 </TD>
+                <TD width="72">01001011 </TD>
+                <TD width="25">4B </TD>
+                <TD width="347" align="left">Sound Controller 6 (default: 
+                  Decay Time - see MMA RP-021) </TD>
+                <TD width="144">0-127 </TD>
+                <TD width="33">LSB </TD></TR>
+              <TR>
+                <TD width="52">76 </TD>
+                <TD width="72">01001100 </TD>
+                <TD width="25">4C </TD>
+                <TD width="347" align="left">Sound Controller 7 (default: 
+                  Vibrato Rate - see MMA RP-021) </TD>
+                <TD width="144">0-127 </TD>
+                <TD width="33">LSB </TD></TR>
+              <TR>
+                <TD width="52">77 </TD>
+                <TD width="72">01001101 </TD>
+                <TD width="25">4D </TD>
+                <TD width="347" align="left">Sound Controller 8 (default: 
+                  Vibrato Depth - see MMA RP-021) </TD>
+                <TD width="144">0-127 </TD>
+                <TD width="33">LSB </TD></TR>
+              <TR>
+                <TD width="52">78 </TD>
+                <TD width="72">01001110 </TD>
+                <TD width="25">4E </TD>
+                <TD width="347" align="left">Sound Controller 9 (default: 
+                  Vibrato Delay - see MMA RP-021) </TD>
+                <TD width="144">0-127 </TD>
+                <TD width="33">LSB </TD></TR>
+              <TR>
+                <TD width="52">79 </TD>
+                <TD width="72">01001111 </TD>
+                <TD width="25">4F </TD>
+                <TD width="347" align="left">Sound Controller 10 (default 
+                  undefined - see MMA RP-021) </TD>
+                <TD width="144">0-127 </TD>
+                <TD width="33">LSB </TD></TR>
+              <TR>
+                <TD width="52">80 </TD>
+                <TD width="72">01010000 </TD>
+                <TD width="25">50 </TD>
+                <TD width="347" align="left">General Purpose Controller 5 </TD>
+                <TD width="144">0-127 </TD>
+                <TD width="33">LSB </TD></TR>
+              <TR>
+                <TD width="52">81 </TD>
+                <TD width="72">01010001 </TD>
+                <TD width="25">51 </TD>
+                <TD width="347" align="left">General Purpose Controller 6 </TD>
+                <TD width="144">0-127 </TD>
+                <TD width="33">LSB </TD></TR>
+              <TR>
+                <TD width="52">82 </TD>
+                <TD width="72">01010010 </TD>
+                <TD width="25">52 </TD>
+                <TD width="347" align="left">General Purpose Controller 7 </TD>
+                <TD width="144">0-127 </TD>
+                <TD width="33">LSB </TD></TR>
+              <TR>
+                <TD width="52">83 </TD>
+                <TD width="72">01010011 </TD>
+                <TD width="25">53 </TD>
+                <TD width="347" align="left">General Purpose Controller 8 </TD>
+                <TD width="144">0-127 </TD>
+                <TD width="33">LSB </TD></TR>
+              <TR>
+                <TD width="52">84 </TD>
+                <TD width="72">01010100 </TD>
+                <TD width="25">54 </TD>
+                <TD width="347" align="left">Portamento Control </TD>
+                <TD width="144">0-127 </TD>
+                <TD width="33">LSB </TD></TR>
+              <TR>
+                <TD width="52">85 </TD>
+                <TD width="72">01010101 </TD>
+                <TD width="25">55 </TD>
+                <TD width="347" align="left">Undefined </TD>
+                <TD width="144">--- </TD>
+                <TD width="33">--- </TD></TR>
+              <TR>
+                <TD width="52">86 </TD>
+                <TD width="72">01010110 </TD>
+                <TD width="25">56 </TD>
+                <TD width="347" align="left">Undefined </TD>
+                <TD width="144">--- </TD>
+                <TD width="33">--- </TD></TR>
+              <TR>
+                <TD width="52">87 </TD>
+                <TD width="72">01010111 </TD>
+                <TD width="25">57 </TD>
+                <TD width="347" align="left">Undefined </TD>
+                <TD width="144">--- </TD>
+                <TD width="33">--- </TD></TR>
+              <TR>
+                <TD width="52">88 </TD>
+                <TD width="72">01011000 </TD>
+                <TD width="25">58 </TD>
+                <TD width="347" align="left">High Resolution Velocity Prefix 
+                </TD>
+                <TD width="144">0-127 </TD>
+                <TD width="33">LSB </TD></TR>
+              <TR>
+                <TD width="52">89 </TD>
+                <TD width="72">01011001 </TD>
+                <TD width="25">59 </TD>
+                <TD width="347" align="left">Undefined </TD>
+                <TD width="144">--- </TD>
+                <TD width="33">--- </TD></TR>
+              <TR>
+                <TD width="52">90 </TD>
+                <TD width="72">01011010 </TD>
+                <TD width="25">5A </TD>
+                <TD width="347" align="left">Undefined </TD>
+                <TD width="144">--- </TD>
+                <TD width="33">--- </TD></TR>
+              <TR>
+                <TD width="52">91 </TD>
+                <TD width="72">01011011 </TD>
+                <TD width="25">5B </TD>
+                <TD width="347" align="left">Effects 1 Depth <BR>				   
+                  (default: Reverb Send Level - see MMA RP-023) <BR>				   
+                  (formerly External Effects Depth) </TD>
+                <TD width="144">0-127 </TD>
+                <TD width="33">--- </TD></TR>
+              <TR>
+                <TD width="52">92 </TD>
+                <TD width="72">01011100 </TD>
+                <TD width="25">5C </TD>
+                <TD width="347" align="left">Effects 2 Depth (formerly Tremolo 
+                  Depth) </TD>
+                <TD width="144">0-127 </TD>
+                <TD width="33">--- </TD></TR>
+              <TR>
+                <TD width="52">93 </TD>
+                <TD width="72">01011101 </TD>
+                <TD width="25">5D </TD>
+                <TD width="347" align="left">Effects 3 Depth <BR>				   
+                  (default: Chorus Send Level - see MMA RP-023) <BR>				   
+                  (formerly Chorus Depth) </TD>
+                <TD width="144">0-127 </TD>
+                <TD width="33">--- </TD></TR>
+              <TR>
+                <TD width="52">94 </TD>
+                <TD width="72">01011110 </TD>
+                <TD width="25">5E </TD>
+                <TD width="347" align="left">Effects 4 Depth (formerly Celeste 
+                  [Detune] Depth) </TD>
+                <TD width="144">0-127 </TD>
+                <TD width="33">--- </TD></TR>
+              <TR>
+                <TD width="52">95 </TD>
+                <TD width="72">01011111 </TD>
+                <TD width="25">5F </TD>
+                <TD width="347" align="left">Effects 5 Depth (formerly Phaser 
+                  Depth) </TD>
+                <TD width="144">0-127 </TD>
+                <TD width="33">--- </TD></TR>
+              <TR>
+                <TD width="52">96 </TD>
+                <TD width="72">01100000 </TD>
+                <TD width="25">60 </TD>
+                <TD width="347" align="left">Data Increment (Data Entry +1) 
+                  (see MMA RP-018) </TD>
+                <TD width="144">N/A </TD>
+                <TD width="33">--- </TD></TR>
+              <TR>
+                <TD width="52">97 </TD>
+                <TD width="72">01100001 </TD>
+                <TD width="25">61 </TD>
+                <TD width="347" align="left">Data Decrement (Data Entry -1) 
+                  (see MMA RP-018) </TD>
+                <TD width="144">N/A </TD>
+                <TD width="33">--- </TD></TR>
+              <TR>
+                <TD width="52">98 </TD>
+                <TD width="72">01100010 </TD>
+                <TD width="25">62 </TD>
+                <TD width="347" align="left">Non-Registered Parameter Number 
+                  (NRPN) - LSB </TD>
+                <TD width="144">0-127 </TD>
+                <TD width="33">LSB </TD></TR>
+              <TR>
+                <TD width="52">99 </TD>
+                <TD width="72">01100011 </TD>
+                <TD width="25">63 </TD>
+                <TD width="347" align="left">Non-Registered Parameter Number 
+                  (NRPN) - MSB </TD>
+                <TD width="144">0-127 </TD>
+                <TD width="33">MSB </TD></TR>
+              <TR>
+                <TD width="52">100 </TD>
+                <TD width="72">01100100 </TD>
+                <TD width="25">64 </TD>
+                <TD width="347" align="left">Registered Parameter Number (RPN) 
+                  - LSB* </TD>
+                <TD width="144">0-127 </TD>
+                <TD width="33">LSB </TD></TR>
+              <TR>
+                <TD width="52">101 </TD>
+                <TD width="72">01100101 </TD>
+                <TD width="25">65 </TD>
+                <TD width="347" align="left">Registered Parameter Number (RPN) 
+                  - MSB* </TD>
+                <TD width="144">0-127 </TD>
+                <TD width="33">MSB </TD></TR>
+              <TR>
+                <TD width="52">102 </TD>
+                <TD width="72">01100110 </TD>
+                <TD width="25">66 </TD>
+                <TD width="347" align="left">Undefined </TD>
+                <TD width="144">--- </TD>
+                <TD width="33">--- </TD></TR>
+              <TR>
+                <TD width="52">103 </TD>
+                <TD width="72">01100111 </TD>
+                <TD width="25">67 </TD>
+                <TD width="347" align="left">Undefined </TD>
+                <TD width="144">--- </TD>
+                <TD width="33">--- </TD></TR>
+              <TR>
+                <TD width="52">104 </TD>
+                <TD width="72">01101000 </TD>
+                <TD width="25">68 </TD>
+                <TD width="347" align="left">Undefined </TD>
+                <TD width="144">--- </TD>
+                <TD width="33">--- </TD></TR>
+              <TR>
+                <TD width="52">105 </TD>
+                <TD width="72">01101001 </TD>
+                <TD width="25">69 </TD>
+                <TD width="347" align="left">Undefined </TD>
+                <TD width="144">--- </TD>
+                <TD width="33">--- </TD></TR>
+              <TR>
+                <TD width="52">106 </TD>
+                <TD width="72">01101010 </TD>
+                <TD width="25">6A </TD>
+                <TD width="347" align="left">Undefined </TD>
+                <TD width="144">--- </TD>
+                <TD width="33">--- </TD></TR>
+              <TR>
+                <TD width="52">107 </TD>
+                <TD width="72">01101011 </TD>
+                <TD width="25">6B </TD>
+                <TD width="347" align="left">Undefined </TD>
+                <TD width="144">--- </TD>
+                <TD width="33">--- </TD></TR>
+              <TR>
+                <TD width="52">108 </TD>
+                <TD width="72">01101100 </TD>
+                <TD width="25">6C </TD>
+                <TD width="347" align="left">Undefined </TD>
+                <TD width="144">--- </TD>
+                <TD width="33">--- </TD></TR>
+              <TR>
+                <TD width="52">109 </TD>
+                <TD width="72">01101101 </TD>
+                <TD width="25">6D </TD>
+                <TD width="347" align="left">Undefined </TD>
+                <TD width="144">--- </TD>
+                <TD width="33">--- </TD></TR>
+              <TR>
+                <TD width="52">110 </TD>
+                <TD width="72">01101110 </TD>
+                <TD width="25">6E </TD>
+                <TD width="347" align="left">Undefined </TD>
+                <TD width="144">--- </TD>
+                <TD width="33">--- </TD></TR>
+              <TR>
+                <TD width="52">111 </TD>
+                <TD width="72">01101111 </TD>
+                <TD width="25">6F </TD>
+                <TD width="347" align="left">Undefined </TD>
+                <TD width="144">--- </TD>
+                <TD width="33">--- </TD></TR>
+              <TR>
+                <TD width="52">112 </TD>
+                <TD width="72">01110000 </TD>
+                <TD width="25">70 </TD>
+                <TD width="347" align="left">Undefined </TD>
+                <TD width="144">--- </TD>
+                <TD width="33">--- </TD></TR>
+              <TR>
+                <TD width="52">113 </TD>
+                <TD width="72">01110001 </TD>
+                <TD width="25">71 </TD>
+                <TD width="347" align="left">Undefined </TD>
+                <TD width="144">--- </TD>
+                <TD width="33">--- </TD></TR>
+              <TR>
+                <TD width="52">114 </TD>
+                <TD width="72">01110010 </TD>
+                <TD width="25">72 </TD>
+                <TD width="347" align="left">Undefined </TD>
+                <TD width="144">--- </TD>
+                <TD width="33">--- </TD></TR>
+              <TR>
+                <TD width="52">115 </TD>
+                <TD width="72">01110011 </TD>
+                <TD width="25">73 </TD>
+                <TD width="347" align="left">Undefined </TD>
+                <TD width="144">--- </TD>
+                <TD width="33">--- </TD></TR>
+              <TR>
+                <TD width="52">116 </TD>
+                <TD width="72">01110100 </TD>
+                <TD width="25">74 </TD>
+                <TD width="347" align="left">Undefined </TD>
+                <TD width="144">--- </TD>
+                <TD width="33">--- </TD></TR>
+              <TR>
+                <TD width="52">117 </TD>
+                <TD width="72">01110101 </TD>
+                <TD width="25">75 </TD>
+                <TD width="347" align="left">Undefined </TD>
+                <TD width="144">--- </TD>
+                <TD width="33">--- </TD></TR>
+              <TR>
+                <TD width="52">118 </TD>
+                <TD width="72">01110110 </TD>
+                <TD width="25">76 </TD>
+                <TD width="347" align="left">Undefined </TD>
+                <TD width="144">--- </TD>
+                <TD width="33">--- </TD></TR>
+              <TR>
+                <TD width="52">119 </TD>
+                <TD width="72">01110111 </TD>
+                <TD width="25">77 </TD>
+                <TD width="347" align="left">Undefined </TD>
+                <TD width="144">--- </TD>
+                <TD width="33">--- </TD></TR>
+              <TR>
+                <TD width="52"><STRONG><A name="ModeChanges"></A>Note: 
+                  </STRONG></TD>
+                <TD width="669" colSpan="5" align="left">Controller numbers 
+                  120-127 are reserved for Channel Mode Messages, which rather 
+                  than controlling sound parameters, affect the channel's 
+                  operating mode.                (See also Table 1.) </TD></TR>
+              <TR>
+                <TD width="52">120 </TD>
+                <TD width="72">01111000 </TD>
+                <TD width="25">78 </TD>
+                <TD width="347" align="left">[Channel Mode Message] All Sound 
+                  Off </TD>
+                <TD width="144">0 </TD>
+                <TD width="33">--- </TD></TR>
+              <TR>
+                <TD width="52">121 </TD>
+                <TD width="72">01111001 </TD>
+                <TD width="25">79 </TD>
+                <TD width="347" align="left">[Channel Mode Message] Reset All 
+                  Controllers <BR>					(See MMA RP-015) </TD>
+                <TD width="144">0 </TD>
+                <TD width="33">--- </TD></TR>
+              <TR>
+                <TD width="52">122 </TD>
+                <TD width="72">01111010 </TD>
+                <TD width="25">7A </TD>
+                <TD width="347" align="left">[Channel Mode Message] Local 
+                  Control On/Off </TD>
+                <TD width="144">0 off, 127 on </TD>
+                <TD width="33">--- </TD></TR>
+              <TR>
+                <TD width="52">123 </TD>
+                <TD width="72">01111011 </TD>
+                <TD width="25">7B </TD>
+                <TD width="347" align="left">[Channel Mode Message] All Notes 
+                  Off </TD>
+                <TD width="144">0 </TD>
+                <TD width="33">--- </TD></TR>
+              <TR>
+                <TD width="52">124 </TD>
+                <TD width="72">01111100 </TD>
+                <TD width="25">7C </TD>
+                <TD width="347" align="left">[Channel Mode Message] Omni Mode 
+                  Off (+ all notes off) </TD>
+                <TD width="144">0 </TD>
+                <TD width="33">--- </TD></TR>
+              <TR>
+                <TD width="52">125 </TD>
+                <TD width="72">01111101 </TD>
+                <TD width="25">7D </TD>
+                <TD width="347" align="left">[Channel Mode Message] Omni Mode 
+                  On (+ all notes off) </TD>
+                <TD width="144">0 </TD>
+                <TD width="33">--- </TD></TR>
+              <TR>
+                <TD width="52">126 </TD>
+                <TD width="72">01111110 </TD>
+                <TD width="25">7E </TD>
+                <TD width="347" align="left">[Channel Mode Message] Mono Mode 
+                  On                (+ poly off, + all notes off) </TD>
+                <TD width="144">
+                  <P>Note: This equals the number of channels, or zero if the 
+                  number of channels equals the number of voices in the 
+                  receiver.</P> </TD>
+                <TD width="33">--- </TD></TR>
+              <TR>
+                <TD width="52">127 </TD>
+                <TD width="72">01111111 </TD>
+                <TD width="25">7F </TD>
+                <TD width="347" align="left">[Channel Mode Message] Poly Mode 
+                  On (+ mono off, +all notes off) </TD>
+                <TD width="144">0 </TD>
+                <TD width="33">--- </TD></TR>
+              <TR>
+                <TD width="733" colSpan="6">
+                  <P align="center"> <SPAN class="mainbold"><BR><A 
+                  name="3a"></A>Table 3a: Registered Parameter 
+                  Numbers<BR></SPAN></P></TD></TR>
+              <TR>
+                <TD width="733" colSpan="6">
+                  <P>To set or change the value of a Registered Parameter: </P>
+                  <P>1. Send two Control Change messages using Control Numbers 
+                  101 (65H) and 100 (64H) to select the desired Registered 
+                  Parameter Number, as per the following table. </P>
+                  <P>2. To set the selected Registered Parameter to a specific 
+                  value, send a Control Change messages to the Data Entry MSB 
+                  controller (Control Number 6). If the selected Registered 
+                  Parameter requires the LSB to be set, send another Control 
+                  Change message to the Data Entry LSB controller (Control 
+                  Number 38). </P>
+                  <P>3. To make a relative adjustment to the selected Registered 
+                  Parameter's current value, use the Data Increment or Data 
+                  Decrement controllers (Control Numbers 96 and 97). </P></TD></TR>
+              <TR>
+                <TD width="733" colSpan="6"><!-- Table 3a -->
+                  <TABLE class="maintext" border="1" align="center" 
+height="607">
+                    <TBODY>
+                    <TR>
+                      <TD height="13" colSpan="2" 
+                        align="center"><STRONG>Parameter Number </STRONG></TD>
+                      <TD height="13" align="center"><STRONG>Parameter 
+                        Function </STRONG></TD>
+                      <TD height="13" align="center"><STRONG>Data Entry Value 
+                        </STRONG></TD></TR>
+                    <TR>
+                      <TD height="39" width="90"><STRONG>MSB: Control 101 
+                        (65H) Value</STRONG> </TD>
+                      <TD height="39" width="90"><STRONG>LSB: Control 100 
+                        (64H) Value</STRONG> </TD></TR>
+                    <TR>
+                      <TD height="251" rowSpan="6" width="90">00H </TD>
+                      <TD height="26" width="90">00H </TD>
+                      <TD height="26">Pitch Bend Sensitivity </TD>
+                      <TD height="26" width="160">MSB = +/- semitones <BR>				 
+                             LSB =+/--cents </TD></TR>
+                    <TR>
+                      <TD height="52" width="90">01H </TD>
+                      <TD height="52">Channel Fine Tuning <BR>			        
+                        (formerly Fine Tuning - see MMA RP-022) </TD>
+                      <TD height="52" width="160">Resolution 100/8192 cents 
+                        <BR>			         00H 00H = -100 cents <BR>				     40H 
+                        00H = A440 <BR>				     7FH 7FH = +100 cents </TD></TR>
+                    <TR>
+                      <TD height="65" width="90">02H </TD>
+                      <TD height="65">Channel Coarse Tuning <BR>			        
+                        (formerly Coarse Tuning - see MMA RP-022) </TD>
+                      <TD height="65" width="160">Only MSB used <BR>   			     
+                            Resolution 100 cents <BR>			         00H = -6400 
+                        cents <BR>				     40H = A440 <BR>				     7FH = +6300 
+                        cents </TD></TR>
+                    <TR>
+                      <TD height="13" width="90">03H </TD>
+                      <TD height="13">Tuning Program Change </TD>
+                      <TD height="13" width="160">Tuning Program Number </TD></TR>
+                    <TR>
+                      <TD height="13" width="90">04H </TD>
+                      <TD height="13">Tuning Bank Select </TD>
+                      <TD height="13" width="160">Tuning Bank Number </TD></TR>
+                    <TR>
+                      <TD height="52" width="90">05H&nbsp; </TD>
+                      <TD height="52">Modulation Depth Range <BR>   					   
+                        (see MMA General MIDI Level 2 Specification) </TD>
+                      <TD height="52" width="160">For GM2, defined in GM2 
+                        Specification. <BR>				      For other systems, defined 
+                        by manufacturer </TD></TR>
+                    <TR>
+                      <TD height="13" width="90">&nbsp;... </TD>
+                      <TD height="13" width="90">&nbsp;... </TD>
+                      <TD height="13">&nbsp;All RESERVED for future MMA 
+                        Definition </TD>
+                      <TD height="13" width="160">&nbsp;... </TD></TR>
+                    <TR>
+                      <TD height="184" rowSpan="10" width="90">3DH (61) </TD>
+                      <TD height="13" colSpan="3" align="center">Three 
+                        Dimensional Sound Controllers </TD></TR>
+                    <TR>
+                      <TD height="13" width="90">00H </TD>
+                      <TD height="13">AZIMUTH ANGLE&nbsp; </TD>
+                      <TD height="13" width="160">See RP-049 </TD></TR>
+                    <TR>
+                      <TD height="13" width="90">01H </TD>
+                      <TD height="13">ELEVATION ANGLE&nbsp; </TD>
+                      <TD height="13" width="160">See RP-049 </TD></TR>
+                    <TR>
+                      <TD height="13" width="90">02H </TD>
+                      <TD height="13">GAIN&nbsp; </TD>
+                      <TD height="13" width="160">See RP-049 </TD></TR>
+                    <TR>
+                      <TD height="13" width="90">03H </TD>
+                      <TD height="13">DISTANCE RATIO&nbsp; </TD>
+                      <TD height="13" width="160">See RP-049 </TD></TR>
+                    <TR>
+                      <TD height="13" width="90">04H </TD>
+                      <TD height="13">MAXIMUM DISTANCE&nbsp; </TD>
+                      <TD height="13" width="160">See RP-049 </TD></TR>
+                    <TR> 
+                      <TD height="13" width="90">05H </TD>
+                      <TD height="13">GAIN AT MAXIMUM DISTANCE&nbsp; </TD>
+                      <TD height="13" width="160">See RP-049 </TD></TR>
+                    <TR>
+                      <TD height="13" width="90">06H </TD>
+                      <TD height="13">REFERENCE DISTANCE RATIO&nbsp; </TD>
+                      <TD height="13" width="160">See RP-049 </TD></TR>
+                    <TR>
+                      <TD height="13" width="90">07H </TD>
+                      <TD height="13">PAN SPREAD ANGLE&nbsp; </TD>
+                      <TD height="13" width="160">See RP-049 </TD></TR>
+                    <TR>
+                      <TD height="13" width="90">08H </TD>
+                      <TD height="13">ROLL ANGLE&nbsp; </TD>
+                      <TD height="13" width="160">See RP-049 </TD></TR>
+                    <TR>
+                      <TD height="13" width="90">&nbsp;... </TD>
+                      <TD height="13" width="90">&nbsp;... </TD>
+                      <TD height="13">&nbsp;All RESERVED for future MMA 
+                        Definition </TD>
+                      <TD height="13" width="160">&nbsp;... </TD></TR>
+                    <TR>
+                      <TD height="13" width="90">7FH </TD>
+                      <TD height="13" width="90">7FH </TD>
+                      <TD height="13">Null Function Number for RPN/NRPN </TD>
+                      <TD height="13" width="160">Setting RPN to 7FH,7FH will  
+                                          disable the data entry, data 
+                        increment, and data decrement                    
+                        controllers until a new RPN or NRPN is selected. 
+                    </TD></TR></TBODY></TABLE><!-- end Table 3a --></TD></TR></TBODY></TABLE><!-- end Table 3 -->
+            <P align="center">&nbsp;</P></TD></TR>
+        <TR>
+          <TD class="biggerbolder" colSpan="2">
+            <P align="center"><IMG src="MIDI%20Message%20Table%201_files/greypixel.gif" 
+            width="700" height="2"></P></TD></TR>
+        <TR>
+          <TD class="biggerbolder">
+            <P><SPAN class="biggerbolder"><A name="4"></A>Table 4 - Universal 
+            System Exclusive Messages</SPAN></P></TD>
+          <TD class="maintext" align="right"><A href="http://www.midi.org/techspecs/midimessages.php#">TOP</A></TD></TR>
+        <TR>
+          <TD colSpan="2">        The following table lists all currently 
+            defined Universal System Exclusive Messages.        
+            <P>Universal System Exclusive Messages are defined as Real Time or   
+                 Non-Real Time, and are used for extensions to MIDI that are NOT 
+            intended        to be manufacturer exclusive (despite the name).</P>
+            <P>Many of these messages are defined in Specifications whose 
+            printed        documentation is available from the MMA. Others are 
+            defined in        Recommended Practice documentation that may be 
+            found on this web site.</P>
+            <P class="mainbold">WARNING! Details about implementing these 
+            messages        can dramatically impact compatibility with other 
+            products. We strongly        recommend consulting the appropriate 
+            MMA Specification or Recommended        Practice for additional 
+            information.</P><!-- Table 4 -->
+            <TABLE class="maintext" border="1" cellSpacing="0" cellPadding="5" 
+            width="738" align="center">
+              <TBODY>
+              <TR>
+                <TD width="726" colSpan="4" align="center"><STRONG>Table 4: 
+                  Defined Universal System Exclusive Messages</STRONG> </TD></TR>
+              <TR>
+                <TD width="226" colSpan="2" align="center"><B>Non-Real Time 
+                  (7EH)</B></TD>
+                <TD width="1"></TD>
+                <TD width="706"></TD></TR>
+              <TR>
+                <TD width="110" align="center"><B>SUB-ID #1</B></TD>
+                <TD width="110" align="center"><B>SUB-ID #2</B></TD>
+                <TD width="506" colSpan="2">
+                  <P align="center"><B>DESCRIPTION</B></P></TD></TR>
+              <TR>
+                <TD width="110" align="center">00</TD>
+                <TD width="110" align="center"></TD>
+                <TD width="506" colSpan="2">Unused</TD></TR>
+              <TR>
+                <TD width="110" align="center">01</TD>
+                <TD width="110" align="center"></TD>
+                <TD width="506" colSpan="2">
+                  <P>Sample Dump Header</P></TD></TR>
+              <TR>
+                <TD width="110" align="center">02</TD>
+                <TD width="110" align="center"></TD>
+                <TD width="506" colSpan="2">
+                  <P>Sample Data Packet</P></TD></TR>
+              <TR>
+                <TD width="110" align="center">03</TD>
+                <TD width="110" align="center"></TD>
+                <TD width="506" colSpan="2">
+                  <P>Sample Dump Request</P></TD></TR>
+              <TR>
+                <TD width="110" align="center">04</TD>
+                <TD width="110" align="center">nn</TD>
+                <TD width="506" colSpan="2">MIDI Time Code</TD></TR>
+              <TR>
+                <TD width="110" align="center"></TD>
+                <TD width="110" align="center">00</TD>
+                <TD width="1"></TD>
+                <TD width="706">Special</TD></TR>
+              <TR>
+                <TD width="110" align="center"></TD>
+                <TD width="110" align="center">01</TD>
+                <TD width="1"></TD>
+                <TD width="706">Punch In Points</TD></TR>
+              <TR>
+                <TD width="110" align="center"></TD>
+                <TD width="110" align="center">02</TD>
+                <TD width="1"></TD>
+                <TD width="706">Punch Out Points</TD></TR>
+              <TR>
+                <TD width="110" align="center"></TD>
+                <TD width="110" align="center">03</TD>
+                <TD width="1"></TD>
+                <TD width="706">Delete Punch In Point</TD></TR>
+              <TR>
+                <TD width="110" align="center"></TD>
+                <TD width="110" align="center">04</TD>
+                <TD width="1"></TD>
+                <TD width="706">Delete Punch Out Point</TD></TR>
+              <TR>
+                <TD width="110" align="center"></TD>
+                <TD width="110" align="center">05</TD>
+                <TD width="1"></TD>
+                <TD width="706">Event Start Point</TD></TR>
+              <TR>
+                <TD width="110" align="center"></TD>
+                <TD width="110" align="center">06</TD>
+                <TD width="1"></TD>
+                <TD width="706">Event Stop Point</TD></TR>
+              <TR>
+                <TD width="110" align="center"></TD>
+                <TD width="110" align="center">07</TD>
+                <TD width="1"></TD>
+                <TD width="706">Event Start Points with additional info.</TD></TR>
+              <TR>
+                <TD width="110" align="center"></TD>
+                <TD width="110" align="center">08</TD>
+                <TD width="1"></TD>
+                <TD width="706">Event Stop Points with additional info.</TD></TR>
+              <TR>
+                <TD width="110" align="center"></TD>
+                <TD width="110" align="center">09</TD>
+                <TD width="1"></TD>
+                <TD width="706">Delete Event Start Point</TD></TR>
+              <TR>
+                <TD width="110" align="center"></TD>
+                <TD width="110" align="center">0A</TD>
+                <TD width="1"></TD>
+                <TD width="706">Delete Event Stop Point</TD></TR>
+              <TR>
+                <TD width="110" align="center"></TD>
+                <TD width="110" align="center">0B</TD>
+                <TD width="1"></TD>
+                <TD width="706">Cue Points</TD></TR>
+              <TR>
+                <TD width="110" align="center"></TD>
+                <TD width="110" align="center">0C</TD>
+                <TD width="1"></TD>
+                <TD width="706">Cue Points with additional info.</TD></TR>
+              <TR>
+                <TD width="110" align="center"></TD>
+                <TD width="110" align="center">0D</TD>
+                <TD width="1"></TD>
+                <TD width="706">Delete Cue Point</TD></TR>
+              <TR>
+                <TD width="110" align="center"></TD>
+                <TD width="110" align="center">0E</TD>
+                <TD width="1"></TD>
+                <TD width="706">Event Name in additional info.</TD></TR>
+              <TR>
+                <TD width="110" align="center">05</TD>
+                <TD width="110" align="center">nn</TD>
+                <TD width="506" colSpan="2">Sample Dump Extensions</TD></TR>
+              <TR>
+                <TD width="110" align="center"></TD>
+                <TD width="110" align="center">01</TD>
+                <TD width="1"></TD>
+                <TD width="706">Loop Points Transmission</TD></TR>
+              <TR>
+                <TD width="110" align="center"></TD>
+                <TD width="110" align="center">02</TD>
+                <TD width="1"></TD>
+                <TD width="706">Loop Points Request</TD></TR>
+              <TR>
+                <TD width="110" align="center"></TD>
+                <TD width="110" align="center">03</TD>
+                <TD width="1"></TD>
+                <TD width="706">Sample Name Transmission</TD></TR>
+              <TR>
+                <TD width="110" align="center"></TD>
+                <TD width="110" align="center">04</TD>
+                <TD width="1"></TD>
+                <TD width="706">Sample Name Request</TD></TR>
+              <TR>
+                <TD width="110" align="center"></TD>
+                <TD width="110" align="center">05</TD>
+                <TD width="1"></TD>
+                <TD width="706">Extended Dump Header</TD></TR>
+              <TR>
+                <TD width="110" align="center"></TD>
+                <TD width="110" align="center">06</TD>
+                <TD width="1"></TD>
+                <TD width="706">Extended Loop Points Transmission</TD></TR>
+              <TR>
+                <TD width="110" align="center"></TD>
+                <TD width="110" align="center">07</TD>
+                <TD width="1"></TD>
+                <TD width="706">Extended Loop Points Request</TD></TR>
+              <TR>
+                <TD width="110" align="center">06</TD>
+                <TD width="110" align="center">nn</TD>
+                <TD width="506" colSpan="2">General Information</TD></TR>
+              <TR>
+                <TD width="110" align="center"></TD>
+                <TD width="110" align="center">01</TD>
+                <TD width="1"></TD>
+                <TD width="706">Identity Request</TD></TR>
+              <TR>
+                <TD width="110" align="center"></TD>
+                <TD width="110" align="center">02</TD>
+                <TD width="1"></TD>
+                <TD width="706">Identity Reply</TD></TR>
+              <TR>
+                <TD width="110" align="center">07</TD>
+                <TD width="110" align="center">nn</TD>
+                <TD width="506" colSpan="2">File Dump</TD></TR>
+              <TR>
+                <TD width="110" align="center"></TD>
+                <TD width="110" align="center">01</TD>
+                <TD width="1"></TD>
+                <TD width="706">Header</TD></TR>
+              <TR>
+                <TD width="110" align="center"></TD>
+                <TD width="110" align="center">02</TD>
+                <TD width="1"></TD>
+                <TD width="706">Data Packet</TD></TR>
+              <TR>
+                <TD width="110" align="center"></TD>
+                <TD width="110" align="center">03</TD>
+                <TD width="1"></TD>
+                <TD width="706">Request</TD></TR>
+              <TR>
+                <TD width="110" align="center">08</TD>
+                <TD width="110" align="center">nn</TD>
+                <TD width="506" colSpan="2">MIDI Tuning Standard (Non-Real 
+                  Time)</TD></TR>
+              <TR>
+                <TD width="110" align="center"></TD>
+                <TD width="110" align="center">00</TD>
+                <TD width="1"></TD>
+                <TD width="706">Bulk Dump Request</TD></TR>
+              <TR>
+                <TD width="110" align="center"></TD>
+                <TD width="110" align="center">01</TD>
+                <TD width="1"></TD>
+                <TD width="706">Bulk Dump Reply</TD></TR>
+              <TR>
+                <TD width="110" align="center"></TD>
+                <TD width="110" align="center">03</TD>
+                <TD width="1"></TD>
+                <TD width="706">Tuning Dump Request</TD></TR>
+              <TR>
+                <TD width="110" align="center"></TD>
+                <TD width="110" align="center">04</TD>
+                <TD width="1"></TD>
+                <TD width="706">Key-Based Tuning Dump</TD> </TR>
+              <TR>
+                <TD width="110" align="center"></TD>
+                <TD width="110" align="center">05</TD>
+                <TD width="1"></TD>
+                <TD width="706">Scale/Octave Tuning Dump, 1 byte format</TD></TR>
+              <TR>
+                <TD width="110" align="center"></TD>
+                <TD width="110" align="center">06</TD>
+                <TD width="1"></TD>
+                <TD width="706">Scale/Octave Tuning Dump, 2 byte format</TD></TR>
+              <TR>
+                <TD width="110" align="center"></TD>
+                <TD width="110" align="center">07</TD>
+                <TD width="1"></TD>
+                <TD width="706">Single Note Tuning Change with Bank 
+              Select</TD></TR>
+              <TR>
+                <TD width="110" align="center"></TD>
+                <TD width="110" align="center">08</TD>
+                <TD width="1"></TD>
+                <TD width="706">Scale/Octave Tuning, 1 byte format</TD></TR>
+              <TR>
+                <TD width="110" align="center"></TD>
+                <TD width="110" align="center">09</TD>
+                <TD width="1"></TD>
+                <TD width="706">Scale/Octave Tuning, 2 byte format</TD></TR>
+              <TR>
+                <TD width="110" align="center">09</TD>
+                <TD width="110" align="center">nn</TD>
+                <TD width="506" colSpan="2">General MIDI</TD></TR>
+              <TR>
+                <TD width="110" align="center"></TD>
+                <TD width="110" align="center">01</TD>
+                <TD width="1"></TD>
+                <TD width="706">General MIDI 1 System On</TD></TR>
+              <TR> 
+                <TD width="110" align="center"></TD>
+                <TD width="110" align="center">02</TD>
+                <TD width="1"></TD>
+                <TD width="706">General MIDI System Off</TD></TR>
+              <TR>
+                <TD width="110" align="center"></TD>
+                <TD width="110" align="center">03</TD>
+                <TD width="1"></TD>
+                <TD width="706">General MIDI 2 System On</TD></TR>
+              <TR>
+                <TD width="110" align="center">0A</TD>
+                <TD width="110" align="center">nn</TD>
+                <TD width="506" colSpan="2">Downloadable Sounds</TD></TR>
+              <TR>
+                <TD width="110" align="center"></TD>
+                <TD width="110" align="center">01</TD>
+                <TD width="1"></TD>
+                <TD width="706">Turn DLS On</TD></TR>
+              <TR>
+                <TD width="110" align="center"></TD>
+                <TD width="110" align="center">02</TD>
+                <TD width="1"></TD>
+                <TD width="706">Turn DLS Off</TD></TR>
+              <TR>
+                <TD width="110" align="center"></TD>
+                <TD width="110" align="center">03</TD>
+                <TD width="1"></TD>
+                <TD width="706">Turn DLS Voice Allocation Off</TD></TR>
+              <TR>
+                <TD width="110" align="center"></TD>
+                <TD width="110" align="center">04</TD>
+                <TD width="1"></TD>
+                <TD width="706">Turn DLS Voice Allocation On</TD></TR>
+              <TR>
+                <TD width="110" align="center">0B</TD>
+                <TD width="110" align="center">nn</TD>
+                <TD width="506" colSpan="2">File Reference Message</TD></TR>
+              <TR>
+                <TD width="110" align="center"></TD>
+                <TD width="110" align="center">00</TD>
+                <TD width="1"></TD>
+                <TD width="706">reserved (do not use)</TD></TR>
+              <TR>
+                <TD width="110" align="center"></TD>
+                <TD width="110" align="center">01</TD>
+                <TD width="1"></TD>
+                <TD width="706">Open File</TD></TR>
+              <TR>
+                <TD width="110" align="center"></TD>
+                <TD width="110" align="center">02</TD>
+                <TD width="1"></TD>
+                <TD width="706">Select or Reselect Contents</TD></TR>
+              <TR>
+                <TD width="110" align="center"></TD>
+                <TD width="110" align="center">03</TD>
+                <TD width="1"></TD>
+                <TD width="706">Open File and Select Contents</TD></TR>
+              <TR>
+                <TD width="110" align="center"></TD>
+                <TD width="110" align="center">04</TD>
+                <TD width="1"></TD>
+                <TD width="706">Close File</TD></TR>
+              <TR>
+                <TD width="110" align="center"></TD>
+                <TD width="110" align="center">05-7F</TD>
+                <TD width="1"></TD>
+                <TD width="706">reserved (do not use)</TD></TR>
+              <TR>
+                <TD width="110" align="center">0C</TD>
+                <TD width="110" align="center">nn</TD>
+                <TD width="506" colSpan="2">MIDI Visual Control</TD></TR>
+              <TR>
+                <TD width="110" align="center">&nbsp;</TD>
+                <TD width="110" align="center">00-7F</TD>
+                <TD width="30">&nbsp;</TD>
+                <TD width="476">MVC Commands <I>(See MVC 
+              Documentation)</I></TD></TR>
+              <TR>
+                <TD width="110" align="center">7B</TD>
+                <TD width="110" align="center">--</TD>
+                <TD width="506" colSpan="2">End of File</TD></TR>
+              <TR>
+                <TD width="110" align="center">7C</TD>
+                <TD width="110" align="center">--</TD>
+                <TD width="506" colSpan="2">Wait</TD></TR>
+              <TR>
+                <TD width="110" align="center">7D</TD>
+                <TD width="110" align="center">--</TD>
+                <TD width="506" colSpan="2">Cancel</TD></TR>
+              <TR>
+                <TD width="110" align="center">7E</TD>
+                <TD width="110" align="center">--</TD>
+                <TD width="506" colSpan="2">NAK</TD></TR>
+              <TR>
+                <TD width="110" align="center">7F</TD>
+                <TD width="110" align="center">--</TD>
+                <TD width="506" colSpan="2">ACK</TD></TR>
+              <TR>
+                <TD width="110" align="center"></TD>
+                <TD width="110" align="center"></TD>
+                <TD width="1"></TD>
+                <TD width="706"></TD></TR>
+              <TR>
+                <TD width="738" colSpan="4" align="center">
+                  <HR>
+                </TD></TR>
+              <TR>
+                <TD width="226" colSpan="2" align="center"><B>Real Time 
+                  (7FH)</B></TD>
+                <TD width="1"></TD>
+                <TD width="706"></TD></TR>
+              <TR>
+                <TD width="110" align="center"><B>SUB-ID #1</B></TD>
+                <TD width="110" align="center"><B>SUB-ID #2</B></TD>
+                <TD width="506" colSpan="2">
+                  <P align="center"><B>DESCRIPTION</B></P></TD></TR>
+              <TR>
+                <TD width="110" align="center">00</TD>
+                <TD width="110" align="center">--</TD>
+                <TD width="506" colSpan="2">Unused</TD></TR>
+              <TR>
+                <TD width="110" align="center">01</TD>
+                <TD width="110" align="center">nn</TD>
+                <TD width="506" colSpan="2">MIDI Time Code</TD></TR>
+              <TR>
+                <TD width="110" align="center"></TD>
+                <TD width="110" align="center">01</TD>
+                <TD width="1"></TD>
+                <TD width="706">Full Message</TD></TR>
+              <TR>
+                <TD width="110" align="center"></TD>
+                <TD width="110" align="center">02</TD>
+                <TD width="1"></TD>
+                <TD width="706">User Bits</TD></TR>
+              <TR>
+                <TD width="110" align="center">02</TD>
+                <TD width="110" align="center">nn</TD>
+                <TD width="506" colSpan="2">MIDI Show Control</TD></TR>
+              <TR>
+                <TD width="110" align="center"></TD>
+                <TD width="110" align="center">00</TD>
+                <TD width="1"></TD>
+                <TD width="706">MSC Extensions</TD></TR>
+              <TR>
+                <TD width="110" align="center"></TD>
+                <TD width="110" align="center">01-7F</TD>
+                <TD width="1"></TD>
+                <TD width="706">MSC Commands <I>(see MSC 
+              Documentation)</I></TD></TR>
+              <TR>
+                <TD width="110" align="center">03</TD>
+                <TD width="110" align="center">nn</TD>
+                <TD width="506" colSpan="2">Notation Information</TD></TR>
+              <TR>
+                <TD width="110" align="center"></TD>
+                <TD width="110" align="center">01</TD>
+                <TD width="1"></TD>
+                <TD width="706">Bar Number</TD></TR>
+              <TR>
+                <TD width="110" align="center"></TD>
+                <TD width="110" align="center">02</TD>
+                <TD width="1"></TD>
+                <TD width="706">Time Signature (Immediate)</TD></TR>
+              <TR>
+                <TD width="110" align="center"></TD>
+                <TD width="110" align="center">42</TD>
+                <TD width="1"></TD>
+                <TD width="706">Time Signature (Delayed)</TD></TR>
+              <TR>
+                <TD width="110" align="center">04</TD>
+                <TD width="110" align="center">nn</TD>
+                <TD width="506" colSpan="2">Device Control</TD></TR>
+              <TR>
+                <TD width="110" align="center"></TD>
+                <TD width="110" align="center">01</TD>
+                <TD width="1"></TD>
+                <TD width="706">Master Volume</TD></TR>
+              <TR>
+                <TD width="110" align="center"></TD>
+                <TD width="110" align="center">02</TD>
+                <TD width="1"></TD>
+                <TD width="706">Master Balance</TD></TR>
+              <TR>
+                <TD width="110" align="center"></TD>
+                <TD width="110" align="center">03</TD>
+                <TD width="1"></TD>
+                <TD width="706">Master Fine Tuning</TD></TR>
+              <TR>
+                <TD width="110" align="center"></TD>
+                <TD width="110" align="center">04</TD>
+                <TD width="1"></TD>
+                <TD width="706">Master Course Tuning</TD></TR>
+              <TR>
+                <TD width="110" align="center"></TD>
+                <TD width="110" align="center">05</TD>
+                <TD width="1"></TD>
+                <TD width="706">Global Parameter Control</TD></TR>
+              <TR>
+                <TD width="110" align="center">05</TD>
+                <TD width="110" align="center">nn</TD>
+                <TD width="506" colSpan="2">Real Time MTC Cueing</TD></TR>
+              <TR>
+                <TD width="110" align="center"></TD>
+                <TD width="110" align="center">00</TD>
+                <TD width="1"></TD>
+                <TD width="706">Special</TD></TR>
+              <TR>
+                <TD width="110" align="center"></TD>
+                <TD width="110" align="center">01</TD>
+                <TD width="1"></TD>
+                <TD width="706">Punch In Points</TD></TR>
+              <TR>
+                <TD width="110" align="center"></TD>
+                <TD width="110" align="center">02</TD>
+                <TD width="1"></TD>
+                <TD width="706">Punch Out Points</TD></TR>
+              <TR>
+                <TD width="110" align="center"></TD>
+                <TD width="110" align="center">03</TD>
+                <TD width="1"></TD>
+                <TD width="706">(Reserved)</TD></TR>
+              <TR>
+                <TD width="110" align="center"></TD>
+                <TD width="110" align="center">04</TD>
+                <TD width="1"></TD>
+                <TD width="706">(Reserved)</TD></TR>
+              <TR>
+                <TD width="110" align="center"></TD>
+                <TD width="110" align="center">05</TD>
+                <TD width="1"></TD>
+                <TD width="706">Event Start points</TD></TR>
+              <TR>
+                <TD width="110" align="center"></TD>
+                <TD width="110" align="center">06</TD>
+                <TD width="1"></TD>
+                <TD width="706">Event Stop points</TD></TR>
+              <TR>
+                <TD width="110" align="center"></TD>
+                <TD width="110" align="center">07</TD>
+                <TD width="1"></TD>
+                <TD width="706">Event Start points with additional info.</TD></TR>
+              <TR>
+                <TD width="110" align="center"></TD>
+                <TD width="110" align="center">08</TD>
+                <TD width="1"></TD>
+                <TD width="706">Event Stop points with additional info.</TD></TR>
+              <TR>
+                <TD width="110" align="center"></TD>
+                <TD width="110" align="center">09</TD>
+                <TD width="1"></TD>
+                <TD width="706">(Reserved)</TD></TR>
+              <TR>
+                <TD width="110" align="center"></TD>
+                <TD width="110" align="center">0A</TD>
+                <TD width="1"></TD>
+                <TD width="706">(Reserved)</TD></TR>
+              <TR>
+                <TD width="110" align="center"></TD>
+                <TD width="110" align="center">0B</TD>
+                <TD width="1"></TD>
+                <TD width="706">Cue points</TD></TR>
+              <TR>
+                <TD width="110" align="center"></TD>
+                <TD width="110" align="center">0C</TD>
+                <TD width="1"></TD>
+                <TD width="706">Cue points with additional info.</TD></TR>
+              <TR>
+                <TD width="110" align="center"></TD>
+                <TD width="110" align="center">0D</TD>
+                <TD width="1"></TD>
+                <TD width="706">(Reserved)</TD></TR>
+              <TR>
+                <TD width="110" align="center"></TD>
+                <TD width="110" align="center">0E</TD>
+                <TD width="1"></TD>
+                <TD width="706">Event Name in additional info.</TD></TR>
+              <TR>
+                <TD width="110" align="center">06</TD>
+                <TD width="110" align="center">nn</TD>
+                <TD width="506" colSpan="2">MIDI Machine Control 
+Commands</TD></TR>
+              <TR>
+                <TD width="110" align="center"></TD>
+                <TD width="110" align="center">00-7F</TD>
+                <TD width="1"></TD>
+                <TD width="706">MMC Commands <I>(See MMC 
+              Documentation)</I></TD></TR>
+              <TR>
+                <TD width="110" align="center">07</TD>
+                <TD width="110" align="center">nn</TD>
+                <TD width="506" colSpan="2">MIDI Machine Control 
+              Responses</TD></TR>
+              <TR>
+                <TD width="110" align="center"></TD>
+                <TD width="110" align="center">00-7F</TD>
+                <TD width="1"></TD>
+                <TD width="706">MMC Responses <I>(See MMC 
+              Documentation)</I></TD></TR>
+              <TR>
+                <TD width="110" align="center">08</TD>
+                <TD width="110" align="center">nn</TD>
+                <TD width="506" colSpan="2">MIDI Tuning Standard (Real 
+              Time)</TD></TR>
+              <TR>
+                <TD width="110" align="center"></TD>
+                <TD width="110" align="center">02</TD>
+                <TD width="1"></TD>
+                <TD width="706">Single Note Tuning Change</TD></TR>
+              <TR>
+                <TD width="110" align="center"></TD>
+                <TD width="110" align="center">07</TD>
+                <TD width="1"></TD>
+                <TD width="706">Single Note Tuning Change with Bank 
+              Select</TD></TR>
+              <TR>
+                <TD width="110" align="center"></TD>
+                <TD width="110" align="center">08</TD>
+                <TD width="1"></TD>
+                <TD width="706">Scale/Octave Tuning, 1 byte format</TD></TR>
+              <TR>
+                <TD width="110" align="center"></TD>
+                <TD width="110" align="center">09</TD>
+                <TD width="1"></TD>
+                <TD width="706">Scale/Octave Tuning, 2 byte format</TD></TR>
+              <TR>
+                <TD width="110" align="center">09</TD>
+                <TD width="110" align="center">nn</TD>
+                <TD width="506" colSpan="2">Controller Destination Setting<I> 
+                  (See GM2 Documentation)</I></TD></TR>
+              <TR>
+                <TD width="110" align="center"></TD>
+                <TD width="110" align="center">01</TD>
+                <TD width="1"></TD>
+                <TD width="706">Channel Pressure (Aftertouch)</TD></TR>
+              <TR>
+                <TD width="110" align="center"></TD>
+                <TD width="110" align="center">02</TD>
+                <TD width="1"></TD>
+                <TD width="706">Polyphonic Key Pressure (Aftertouch)</TD></TR>
+              <TR>
+                <TD width="110" align="center"></TD>
+                <TD width="110" align="center">03</TD>
+                <TD width="1"></TD>
+                <TD width="706">Controller (Control Change)</TD></TR>
+              <TR>
+                <TD width="110" align="center">0A</TD>
+                <TD width="110" align="center">01</TD>
+                <TD width="506" colSpan="2">Key-based Instrument Control</TD></TR>
+              <TR>
+                <TD width="110" align="center">0B</TD>
+                <TD width="110" align="center">01</TD>
+                <TD width="506" colSpan="2">Scalable Polyphony MIDI MIP 
+                Message</TD></TR>
+              <TR>
+                <TD width="110" align="center">0C</TD>
+                <TD width="110" align="center">00</TD>
+                <TD width="506" colSpan="2">Mobile Phone Control Message</TD></TR>
+              <TR>
+                <TD width="110" align="center"></TD>
+                <TD width="110" align="center"></TD>
+                <TD width="1"></TD>
+                <TD width="706"></TD></TR></TBODY></TABLE></TD></TR>
+        <TR>
+          <TD colSpan="2"><IMG src="MIDI%20Message%20Table%201_files/greypixel.gif" 
+            width="700" height="2"></TD></TR>
+        <TR>
+          <TD colSpan="2"><A href="http://www.midi.org/store/docsales.php">Buy 
+            Now</A>: "Complete MIDI 1.0 Detailed Specification" Document</TD>	</TR>
+        <TR>
+          <TD colSpan="2"></TD></TR></TBODY></TABLE></TD></TR></TBODY></TABLE>
+<TABLE border="0" cellSpacing="0" cellPadding="0" width="800" align="center">
+  <TBODY>
+  <TR>
+    <TD vAlign="bottom">
+      <P class="maintext" align="center"><IMG src="MIDI%20Message%20Table%201_files/greypixel.gif" 
+      width="800" height="2">
+      <P class="maintext" align="center"><FONT size="-2">All materials, 
+      graphics, and text copyright ©1995-2011 MIDI Manufacturers Association 
+      Incorporated.    <BR>    Use is prohibited without written permission. 
+      </FONT></P></TD></TR></TBODY></TABLE></BODY></HTML>

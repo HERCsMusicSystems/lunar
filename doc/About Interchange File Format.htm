@@ -1,0 +1,799 @@
+﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- saved from url=(0087)http://web.archive.org/web/20080114200405/http://www.borg.com/~jglatt/tech/aboutiff.htm -->
+<HTML><HEAD><TITLE>About Interchange File Format</TITLE>
+<META content="text/html; charset=utf-8" http-equiv=Content-Type>
+<SCRIPT type=text/javascript src=""></SCRIPT>
+<LINK rel=stylesheet type=text/css href="/static/css/banner-styles.css">
+<META name=GENERATOR content="MSHTML 9.00.8112.16561"></HEAD>
+<BODY aLink=purple bgColor=#ffffff text=#000000 vLink=purple link=blue><!-- BEGIN WAYBACK TOOLBAR INSERT -->
+<SCRIPT> if (window.archive_analytics) { window.archive_analytics.values['server_name']="wwwb-app3.us.archive.org";}; </SCRIPT>
+
+<SCRIPT type=text/javascript src=""></SCRIPT>
+
+<SCRIPT type=text/javascript src=""></SCRIPT>
+
+<SCRIPT type=text/javascript src=""></SCRIPT>
+
+<SCRIPT type=text/javascript>
+//<![CDATA[
+var firstDate = 820454400000;
+var lastDate = 1420070399999;
+var wbPrefix = "/web/";
+var wbCurrentUrl = "http:\/\/www.borg.com\/~jglatt\/tech\/aboutiff.htm";
+
+var curYear = -1;
+var curMonth = -1;
+var yearCount = 18;
+var firstYear = 1996;
+var imgWidth = 475;
+var yearImgWidth = 25;
+var monthImgWidth = 2;
+var trackerVal = "none";
+var displayDay = "14";
+var displayMonth = "Jan";
+var displayYear = "2008";
+var prettyMonths = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+
+function showTrackers(val) {
+	if(val == trackerVal) {
+		return;
+	}
+	if(val == "inline") {
+		document.getElementById("displayYearEl").style.color = "#ec008c";
+		document.getElementById("displayMonthEl").style.color = "#ec008c";
+		document.getElementById("displayDayEl").style.color = "#ec008c";		
+	} else {
+		document.getElementById("displayYearEl").innerHTML = displayYear;
+		document.getElementById("displayYearEl").style.color = "#ff0";
+		document.getElementById("displayMonthEl").innerHTML = displayMonth;
+		document.getElementById("displayMonthEl").style.color = "#ff0";
+		document.getElementById("displayDayEl").innerHTML = displayDay;
+		document.getElementById("displayDayEl").style.color = "#ff0";
+	}
+   document.getElementById("wbMouseTrackYearImg").style.display = val;
+   document.getElementById("wbMouseTrackMonthImg").style.display = val;
+   trackerVal = val;
+}
+function getElementX2(obj) {
+	var thing = jQuery(obj);
+	if((thing == undefined) 
+			|| (typeof thing == "undefined") 
+			|| (typeof thing.offset == "undefined")) {
+		return getElementX(obj);
+	}
+	return Math.round(thing.offset().left);
+}
+function trackMouseMove(event,element) {
+
+   var eventX = getEventX(event);
+   var elementX = getElementX2(element);
+   var xOff = eventX - elementX;
+	if(xOff < 0) {
+		xOff = 0;
+	} else if(xOff > imgWidth) {
+		xOff = imgWidth;
+	}
+   var monthOff = xOff % yearImgWidth;
+
+   var year = Math.floor(xOff / yearImgWidth);
+	var yearStart = year * yearImgWidth;
+   var monthOfYear = Math.floor(monthOff / monthImgWidth);
+   if(monthOfYear > 11) {
+       monthOfYear = 11;
+   }
+   // 1 extra border pixel at the left edge of the year:
+   var month = (year * 12) + monthOfYear;
+   var day = 1;
+	if(monthOff % 2 == 1) {
+		day = 15;
+	}
+	var dateString = 
+		zeroPad(year + firstYear) + 
+		zeroPad(monthOfYear+1,2) +
+		zeroPad(day,2) + "000000";
+
+	var monthString = prettyMonths[monthOfYear];
+	document.getElementById("displayYearEl").innerHTML = year + 1996;
+	document.getElementById("displayMonthEl").innerHTML = monthString;
+	// looks too jarring when it changes..
+	//document.getElementById("displayDayEl").innerHTML = zeroPad(day,2);
+
+	var url = wbPrefix + dateString + '/' +  wbCurrentUrl;
+	document.getElementById('wm-graph-anchor').href = url;
+
+   //document.getElementById("wmtbURL").value="evX("+eventX+") elX("+elementX+") xO("+xOff+") y("+year+") m("+month+") monthOff("+monthOff+") DS("+dateString+") Moy("+monthOfYear+") ms("+monthString+")";
+   if(curYear != year) {
+       var yrOff = year * yearImgWidth;
+       document.getElementById("wbMouseTrackYearImg").style.left = yrOff + "px";
+       curYear = year;
+   }
+   if(curMonth != month) {
+       var mtOff = year + (month * monthImgWidth) + 1;
+       document.getElementById("wbMouseTrackMonthImg").style.left = mtOff + "px";
+       curMonth = month;
+   }
+}
+//]]>
+</SCRIPT>
+
+<STYLE type=text/css>BODY {
+	MIN-WIDTH: 800px !important; MARGIN-TOP: 0px !important; PADDING-TOP: 0px !important
+}
+#wm-ipp A:hover {
+	TEXT-DECORATION: underline !important
+}
+</STYLE>
+
+<DIV 
+style="POSITION: relative; MIN-WIDTH: 800px; PADDING-BOTTOM: 0px; MIN-HEIGHT: 70px; PADDING-LEFT: 5px; PADDING-RIGHT: 5px; DISPLAY: none; PADDING-TOP: 0px" 
+id=wm-ipp lang=en class=__wb_banner_div>
+<DIV 
+style="BACKGROUND-IMAGE: url(/static/images/toolbar/wm_tb_bk_trns.png); BORDER-BOTTOM: #000 5px solid; POSITION: fixed; MIN-WIDTH: 780px; TEXT-ALIGN: center; BORDER-LEFT: #000 5px solid; PADDING-BOTTOM: 0px !important; MARGIN: 0px; PADDING-LEFT: 0px !important; WIDTH: 97%; PADDING-RIGHT: 0px !important; FONT-FAMILY: 'Lucida Grande','Arial',sans-serif !important; FONT-SIZE: 11px !important; BORDER-TOP: medium none; BORDER-RIGHT: #000 5px solid; PADDING-TOP: 0px !important; -moz-box-shadow: 1px 1px 3px #333; -webkit-box-shadow: 1px 1px 3px #333; box-shadow: 1px 1px 3px #333" 
+id=wm-ipp-inside class=__wb_banner_div>
+<TABLE 
+style="PADDING-BOTTOM: 0px; MARGIN: 0px; PADDING-LEFT: 0px; WIDTH: 100%; PADDING-RIGHT: 0px; BORDER-COLLAPSE: collapse; PADDING-TOP: 0px">
+  <TBODY>
+  <TR>
+    <TD 
+    style="MIN-WIDTH: 110px; PADDING-BOTTOM: 10px; PADDING-LEFT: 10px; PADDING-RIGHT: 10px; VERTICAL-ALIGN: top; PADDING-TOP: 10px"><A 
+      style="BORDER-BOTTOM: medium none; BORDER-LEFT: medium none; BACKGROUND-COLOR: transparent; BORDER-TOP: medium none; BORDER-RIGHT: medium none" 
+      title="Wayback Machine home page" href="http://web.archive.org/web/"><IMG 
+      border=0 alt="Wayback Machine" src="" width=110 height=39></A> </TD>
+    <TD 
+    style="TEXT-ALIGN: center; PADDING-BOTTOM: 0px !important; PADDING-LEFT: 0px !important; WIDTH: 100%; PADDING-RIGHT: 0px !important; VERTICAL-ALIGN: top; PADDING-TOP: 0px !important">
+      <TABLE 
+      style="PADDING-BOTTOM: 0px; MARGIN: 0px auto; PADDING-LEFT: 0px; WIDTH: 570px; PADDING-RIGHT: 0px; BORDER-COLLAPSE: collapse; PADDING-TOP: 0px">
+        <TBODY>
+        <TR>
+          <TD 
+          style="PADDING-BOTTOM: 3px; PADDING-LEFT: 0px; PADDING-RIGHT: 0px; PADDING-TOP: 3px" 
+          colSpan=2>
+            <FORM 
+            style="PADDING-BOTTOM: 0px !important; MARGIN: 0px; PADDING-LEFT: 0px !important; PADDING-RIGHT: 0px !important; PADDING-TOP: 0px !important" 
+            id=wmtb method=get name=wmtb action=/web/form-submit.jsp 
+            target=_top><INPUT 
+            style="WIDTH: 400px; FONT-FAMILY: 'Lucida Grande','Arial',sans-serif; FONT-SIZE: 11px" 
+            id=wmtbURL onfocus=javascript:this.focus();this.select(); name=url 
+            value=http://www.borg.com/~jglatt/tech/aboutiff.htm><INPUT name=type 
+            value=replay type=hidden><INPUT name=date value=20080114200405 
+            type=hidden><INPUT style="FONT-FAMILY: 'Lucida Grande','Arial',sans-serif; MARGIN-LEFT: 5px; FONT-SIZE: 11px" value=Go type=submit><SPAN 
+            style="DISPLAY: block" id=wm_tb_options></SPAN></FORM></TD>
+          <TD 
+          style="PADDING-BOTTOM: 0px !important; PADDING-LEFT: 0px !important; PADDING-RIGHT: 0px !important; VERTICAL-ALIGN: bottom; PADDING-TOP: 5px !important" 
+          rowSpan=2>
+            <TABLE 
+            style="WIDTH: 110px; BORDER-COLLAPSE: collapse; FONT-FAMILY: 'Helvetica','Lucida Grande','Arial',sans-serif; COLOR: #99a">
+              <TBODY><!-- NEXT/PREV MONTH NAV AND MONTH INDICATOR -->
+              <TR 
+style="WIDTH: 110px; HEIGHT: 16px; FONT-SIZE: 10px !important">
+                <TD 
+                style="TEXT-ALIGN: right; TEXT-TRANSFORM: uppercase; PADDING-RIGHT: 9px; WHITE-SPACE: nowrap; FONT-SIZE: 11px !important; OVERFLOW: visible; FONT-WEIGHT: bold" 
+                noWrap><A 
+                  style="BORDER-BOTTOM: medium none; BORDER-LEFT: medium none; BACKGROUND-COLOR: transparent; COLOR: #33f; BORDER-TOP: medium none; FONT-WEIGHT: bold; BORDER-RIGHT: medium none; TEXT-DECORATION: none" 
+                  title="14 Nov 2007" 
+                  href="http://web.archive.org/web/20071114172909/http://www.borg.com/~jglatt/tech/aboutiff.htm"><STRONG>NOV</STRONG></A> 
+                </TD>
+                <TD 
+                style="TEXT-ALIGN: center; TEXT-TRANSFORM: uppercase; WIDTH: 34px; BACKGROUND: #000; HEIGHT: 15px; COLOR: #ff0; FONT-SIZE: 11px !important; FONT-WEIGHT: bold; PADDING-TOP: 1px" 
+                id=displayMonthEl 
+                  title="You are here: 20:04:05 Jan 14, 2008">JAN</TD>
+                <TD 
+                style="TEXT-TRANSFORM: uppercase; PADDING-LEFT: 9px; WHITE-SPACE: nowrap; FONT-SIZE: 11px !important; OVERFLOW: visible; FONT-WEIGHT: bold" 
+                noWrap><A 
+                  style="BORDER-BOTTOM: medium none; BORDER-LEFT: medium none; BACKGROUND-COLOR: transparent; COLOR: #33f; BORDER-TOP: medium none; FONT-WEIGHT: bold; BORDER-RIGHT: medium none; TEXT-DECORATION: none" 
+                  title="16 Mar 2008" 
+                  href="http://web.archive.org/web/20080316003723/http://www.borg.com/~jglatt/tech/aboutiff.htm"><STRONG>MAR</STRONG></A> 
+                </TD></TR><!-- NEXT/PREV CAPTURE NAV AND DAY OF MONTH INDICATOR -->
+              <TR>
+                <TD 
+                style="TEXT-ALIGN: right !important; PADDING-RIGHT: 9px; WHITE-SPACE: nowrap; VERTICAL-ALIGN: middle !important; OVERFLOW: visible" 
+                noWrap><A 
+                  style="BORDER-BOTTOM: medium none; BORDER-LEFT: medium none; BACKGROUND-COLOR: transparent; BORDER-TOP: medium none; BORDER-RIGHT: medium none" 
+                  title="7:59:17 Dec 15, 2007" 
+                  href="http://web.archive.org/web/20071215075917/http://www.borg.com/~jglatt/tech/aboutiff.htm"><IMG 
+                  border=0 alt="Previous capture" src="" width=14 height=16></A> 
+                </TD>
+                <TD 
+                style="TEXT-ALIGN: center; PADDING-BOTTOM: 0px; PADDING-LEFT: 0px; WIDTH: 34px; PADDING-RIGHT: 0px; BACKGROUND: #000; HEIGHT: 24px; COLOR: #ff0; FONT-SIZE: 24px; FONT-WEIGHT: bold; PADDING-TOP: 2px" 
+                id=displayDayEl 
+                title="You are here: 20:04:05 Jan 14, 2008">14</TD>
+                <TD 
+                style="TEXT-ALIGN: left !important; PADDING-LEFT: 9px; WHITE-SPACE: nowrap; VERTICAL-ALIGN: middle !important; OVERFLOW: visible" 
+                noWrap><A 
+                  style="BORDER-BOTTOM: medium none; BORDER-LEFT: medium none; BACKGROUND-COLOR: transparent; BORDER-TOP: medium none; BORDER-RIGHT: medium none" 
+                  title="8:45:58 Feb 14, 2008" 
+                  href="http://web.archive.org/web/20080214084558/http://www.borg.com/~jglatt/tech/aboutiff.htm"><IMG 
+                  border=0 alt="Next capture" src="" width=14 height=16></A> 
+              </TD></TR><!-- NEXT/PREV YEAR NAV AND YEAR INDICATOR -->
+              <TR 
+                style="WIDTH: 110px; HEIGHT: 13px; FONT-SIZE: 9px !important"><TD 
+                style="TEXT-ALIGN: right; PADDING-RIGHT: 9px; WHITE-SPACE: nowrap; FONT-SIZE: 11px !important; OVERFLOW: visible; FONT-WEIGHT: bold" 
+                noWrap><A 
+                  style="BORDER-BOTTOM: medium none; BORDER-LEFT: medium none; BACKGROUND-COLOR: transparent; COLOR: #33f; BORDER-TOP: medium none; FONT-WEIGHT: bold; BORDER-RIGHT: medium none; TEXT-DECORATION: none" 
+                  title="13 Jan 2007" 
+                  href="http://web.archive.org/web/20070113063851/http://www.borg.com/~jglatt/tech/aboutiff.htm"><STRONG>2007</STRONG></A> 
+                </TD>
+                <TD 
+                style="TEXT-ALIGN: center; WIDTH: 34px; BACKGROUND: #000; HEIGHT: 13px; COLOR: #ff0; FONT-SIZE: 11px !important; FONT-WEIGHT: bold; PADDING-TOP: 1px" 
+                id=displayYearEl 
+                  title="You are here: 20:04:05 Jan 14, 2008">2008</TD>
+                <TD 
+                style="PADDING-LEFT: 9px; WHITE-SPACE: nowrap; FONT-SIZE: 11px !important; OVERFLOW: visible; FONT-WEIGHT: bold" 
+                noWrap><A 
+                  style="BORDER-BOTTOM: medium none; BORDER-LEFT: medium none; BACKGROUND-COLOR: transparent; COLOR: #33f; BORDER-TOP: medium none; FONT-WEIGHT: bold; BORDER-RIGHT: medium none; TEXT-DECORATION: none" 
+                  title="22 Jan 2009" 
+                  href="http://web.archive.org/web/20090122103318/http://www.borg.com/~jglatt/tech/aboutiff.htm"><STRONG>2009</STRONG></A> 
+                </TD></TR></TBODY></TABLE></TD></TR>
+        <TR>
+          <TD 
+          style="PADDING-BOTTOM: 0px !important; PADDING-LEFT: 0px !important; PADDING-RIGHT: 0px !important; VERTICAL-ALIGN: middle; PADDING-TOP: 0px !important"><A 
+            style="BORDER-BOTTOM: medium none; BORDER-LEFT: medium none; BACKGROUND-COLOR: transparent; COLOR: #33f; FONT-SIZE: 11px; BORDER-TOP: medium none; FONT-WEIGHT: bold; BORDER-RIGHT: medium none" 
+            title="See a list of every capture for this URL" 
+            href="http://web.archive.org/web/20080114200405*/http://www.borg.com/~jglatt/tech/aboutiff.htm"><STRONG>128 
+            captures</STRONG></A> 
+            <DIV 
+            style="PADDING-BOTTOM: 0px !important; MARGIN: 0px; PADDING-LEFT: 0px !important; PADDING-RIGHT: 0px !important; WHITE-SPACE: nowrap; COLOR: #666; FONT-SIZE: 9px; PADDING-TOP: 2px !important" 
+            class=__wb_banner_div title="Timespan for captures of this URL">10 
+            Oct 99 - 3 Dec 13</DIV></TD>
+          <TD 
+          style="PADDING-BOTTOM: 0px !important; PADDING-LEFT: 0px !important; PADDING-RIGHT: 0px !important; PADDING-TOP: 0px !important"><A 
+            style="POSITION: relative; WIDTH: 475px; WHITE-SPACE: nowrap; HEIGHT: 27px" 
+            id=wm-graph-anchor 
+            href="http://web.archive.org/web/20080114200405/http://www.borg.com/~jglatt/tech/">
+            <DIV 
+            style="POSITION: relative; BACKGROUND-COLOR: #fff; WIDTH: 475px; WHITE-SPACE: nowrap; HEIGHT: 27px; CURSOR: pointer; BORDER-RIGHT: #ccc 1px solid" 
+            id=wm-ipp-sparkline class=__wb_banner_div 
+            title="Explore captures for this URL"><IMG 
+            style="Z-INDEX: 9012; POSITION: absolute; TOP: 0px; LEFT: 0px" 
+            id=sparklineImgId onmouseover="showTrackers('inline');" 
+            onmousemove=trackMouseMove(event,this) 
+            onmouseout="showTrackers('none');" border=0 alt=sparklines src="" 
+            width=475 height=27></IMG> <IMG 
+            style="Z-INDEX: 9010; POSITION: absolute; DISPLAY: none" 
+            id=wbMouseTrackYearImg border=0 src="" width=25 height=27></IMG> 
+            <IMG style="Z-INDEX: 9011; POSITION: absolute; DISPLAY: none" 
+            id=wbMouseTrackMonthImg border=0 src="" width=2 height=27></IMG> 
+            </DIV></A></TD></TR></TBODY></TABLE></TD>
+    <TD 
+    style="TEXT-ALIGN: right; PADDING-BOTTOM: 5px; PADDING-LEFT: 5px; WIDTH: 65px; PADDING-RIGHT: 5px; FONT-SIZE: 11px !important; PADDING-TOP: 5px"><A 
+      style="BORDER-BOTTOM: medium none; BORDER-LEFT: medium none; PADDING-RIGHT: 18px; DISPLAY: block; FONT-FAMILY: 'Lucida Grande','Arial',sans-serif; MARGIN-BOTTOM: 23px; BACKGROUND: url(/static/images/toolbar/wm_tb_close.png) no-repeat 100% 0px; COLOR: #33f; BORDER-TOP: medium none; BORDER-RIGHT: medium none" 
+      title="Close the toolbar" 
+      onclick="document.getElementById('wm-ipp').style.display='none';" 
+      href="javascript:;">Close</A> <A 
+      style="BORDER-BOTTOM: medium none; BORDER-LEFT: medium none; PADDING-RIGHT: 18px; DISPLAY: block; FONT-FAMILY: 'Lucida Grande','Arial',sans-serif; BACKGROUND: url(/static/images/toolbar/wm_tb_help.png) no-repeat 100% 0px; COLOR: #33f; BORDER-TOP: medium none; BORDER-RIGHT: medium none" 
+      title="Get some help using the Wayback Machine" 
+      href="http://faq.web.archive.org/">Help</A> 
+</TD></TR></TBODY></TABLE></DIV></DIV>
+<SCRIPT type=text/javascript>
+ var wmDisclaimBanner = document.getElementById("wm-ipp");
+ if(wmDisclaimBanner != null) {
+   disclaimElement(wmDisclaimBanner);
+ }
+</SCRIPT>
+<!-- END WAYBACK TOOLBAR INSERT -->Electronic Arts is a company that deserves 
+credit for helping make life easier for both programmers and end users. By 
+establishing <B>Interchange Format Files</B> (ie, IFF) and releasing the 
+documentation for such, as well as C source code for reading and writing IFF 
+type of files, Electronic Arts has helped make it easier for programmers to 
+develop "backward compatible" and "extensible" file formats. IFF also helps 
+developers write programs that easily read data files created with each others' 
+IFF compliant software, even if there is no business relationship between the 
+developers. In a nutshell, IFF helps minimize problems such as new versions of a 
+particular program having trouble reading data files produced by older versions, 
+or needing a new file format everytime a new version needs to store additional 
+information. It also encourages standardized file formats that aren't tied to a 
+particular product. All of this is good for endusers because it means that their 
+valuable data isn't locked into some proprietary standard that can't be used 
+with a wide variety of hardware and software. Above all else, endusers don't 
+want their work to be held hostage by a single, corporate entity over whom the 
+enduser has no direct control, but that's exactly what happens whenever an 
+enduser saves his data using a program that produces a proprietary, unpublished 
+file format. IFF helps to break this needlessly proprietary stranglehold that 
+developers have exerted upon endusers' works. 
+<P>An IFF file is a set of data that is in a form that many, unrelated programs 
+can read. An IFF file should not have anything in it that was intended 
+specifically for just one, particular program. If a program must save some 
+"personal" (ie, proprietary) data in an IFF file, it must be saved in a manner 
+which allows another program to "skip over" this data. There are several 
+different types of IFF files. ILBM and GIFF files store picture data. SMUS files 
+store musical scores. WAVE and AIFF files store sampled sounds. Each of these 
+files must start with an ID which indicates that it is indeed an IFF file, 
+followed by an ID that indicates which type of file. So what is an ID? An ID is 
+four, printable ascii characters (ie, 8-bit bytes). If you use a file viewer 
+(capable of displaying each byte as an ascii character) to look at an IFF file, 
+you will notice that every so often you will see 4 "readable" characters in a 
+row. These 4 characters are an ID. Every IFF file must start with one of the 
+following 3 IDs. (I've enclosed each ID in single quotes).</P><PRE><B>'FORM'<BR>
+'LIST'<BR>
+'CAT '</B>
+</PRE>
+<P>If the first 4 chars (bytes) in a file are not one of these, then it is not 
+an IFF file. These IDs are referred to as <B>group ID</B>s in EA literature 
+because each is like a "master ID" after which there may follow more IDs (ie, 
+chunks) that are grouped under that master ID.</P>
+<P>Note that the last character in the 'CAT ' ID is a blank space (ie, ascii 
+32).</P>
+<P>After this group ID, there is an UNSIGNED LONG (ie, 32-bit binary value) that 
+indicates how many bytes are in the entire file. This count does not include the 
+4 byte group ID, nor this ULONG. This ULONG is useful if you wish to load the 
+rest of the file into memory to examine it. After this ULONG, there is an ID 
+that indicates which type of IFF file this is. As mentioned earlier, "ILBM", 
+"WAVE", and "AIFF" are 3 types of IFF files. There are many more, and 
+programmers are always inventing new types for lack of better things to do. Here 
+is the beginning of a typical ILBM file.</P>
+<P>
+<TABLE width="100%" NOBORDER>
+  <TBODY>
+  <TR>
+    <TD vAlign=top><B>'FORM'</B></TD>
+    <TD bgColor=#99cccc>OK. This really is an IFF file because it has one of 
+      the 3 defined group IDs.</TD></TR>
+  <TR>
+    <TD vAlign=top><B>13000</B></TD>
+    <TD bgColor=#99cccc>There are 13000 more bytes after this ULONG.</TD></TR>
+  <TR>
+    <TD vAlign=top><B>'ILBM'</B></TD>
+    <TD bgColor=#99cccc>It is an ILBM (picture) file.</TD></TR></TBODY></TABLE></P>
+<P>All IFF files start with something similiar to the above, 12 byte "header", 
+except that instead of 'FORM', the group ID can be 'LIST' or 'CAT '. Of course, 
+the ULONG size and file type ID may be different in various files, but 
+nevertheless, a 12 byte header always appears at the beginning of an IFF file. 
+For example, here's an example AIFF header:</P>
+<P>
+<TABLE width="100%" NOBORDER>
+  <TBODY>
+  <TR>
+    <TD vAlign=top><B>'FORM'</B></TD>
+    <TD bgColor=#99cccc>OK. This really is an IFF file because it has one of 
+      the 3 defined group IDs.</TD></TR>
+  <TR>
+    <TD vAlign=top><B>4000</B></TD>
+    <TD bgColor=#99cccc>There are 4000 more bytes after this ULONG.</TD></TR>
+  <TR>
+    <TD vAlign=top><B>'AIFF'</B></TD>
+    <TD bgColor=#99cccc>It is an AIFF (digital audio) 
+file.</TD></TR></TBODY></TABLE></P>
+<P>What you find after the header depends on which type it is (ie, From here on, 
+an ILBM will be different than an AIFF).</P>
+<P>One thing that all IFF files do have in common after the group ID, byte 
+count, and type ID, is that data is organized into chunks. OK, more jargon. 
+What's a chunk? A chunk consists of an ID, a ULONG that tells how many bytes of 
+data are in the chunk, and then all those data bytes. For example, here is a 
+CMAP chunk (which would be found in an ILBM file).</P>
+<P>
+<TABLE width="100%" NOBORDER>
+  <TBODY>
+  <TR>
+    <TD vAlign=top><B>'CMAP'</B></TD>
+    <TD bgColor=#99cccc>This is the 4 byte chunk ID.</TD></TR>
+  <TR>
+    <TD vAlign=top><B>6</B></TD>
+    <TD bgColor=#99cccc>This tells how many data bytes are in the chunk (ie, 
+      This is the chunkSize).</TD></TR>
+  <TR>
+    <TD vAlign=top><B>0,0,0,1,1,4</B></TD>
+    <TD bgColor=#99cccc>Here are the 6 data bytes.</TD></TR></TBODY></TABLE></P>
+<P>Notice that the chunk size doesn't include the 4 byte ID or the ULONG for the 
+chunk Size. 
+<P>So, all IFF files are made up of several chunks (ie, groups of data). Each 
+group of data starts with a convenient ID (so that a program can ascertain what 
+kind of data is in the chunk) and a ULONG size (so that a program can ascertain 
+how many bytes of data are in the chunk). There are a few other details to note. 
+A chunk cannot have an odd number of data bytes (such as 3). If necessary, an 
+extra zero byte must be written to make an even number of data bytes. The chunk 
+Size doesn't include this extra byte. So for example, if you want to write 3 
+bytes in a CMAP chunk, it would look like this:</P>
+<P>
+<TABLE width="100%" NOBORDER>
+  <TBODY>
+  <TR>
+    <TD colSpan=2><B>'CMAP'</B></TD></TR>
+  <TR>
+    <TD vAlign=top><B>3</B></TD>
+    <TD bgColor=#99cccc>Note that chunk Size is 3.</TD></TR>
+  <TR>
+    <TD vAlign=top><B>0,1,33,0</B></TD>
+    <TD bgColor=#99cccc>Note that there is an extra zero 
+byte.</TD></TR></TBODY></TABLE></P>
+<P>The reason for this extra "pad byte" for odd-sized chunks has to do with 
+Motorola's 68000 CPU requiring that LONGs be aligned to even memory addresses. 
+IFF files were first used on 68000 based computers, and padding out odd-sized 
+chunks made it easier to load and parse an IFF file on such a computer (ie, if 
+you load the entire file into a single block of RAM starting upon an even 
+address, all of the chunk IDs and Sizes will conveniently fall upon even memory 
+addresses).</P>
+<P>In the preceding example, the group ID was 'FORM'. There are 2 other group 
+IDs as well. A 'CAT ' is a collection of many different FORMs all stuck together 
+consecutively in 1 IFF file. For example, if you had an animation with 6 sound 
+effects, you might save the animation frames in an ANIM FORM, and you might save 
+the sound effects in several AIFF FORMs (one per sound effect). You could save 
+the animation and sound in 7 separate files. The ANIM file would start this 
+way:</P>
+<P>
+<TABLE width="100%" NOBORDER>
+  <TBODY>
+  <TR>
+    <TD colSpan=2><B>FORM</B></TD></TR>
+  <TR>
+    <TD vAlign=top><B>120000</B></TD>
+    <TD bgColor=#99cccc>Whatever the size happens to be (this is expressed in 
+      32 bits).</TD></TR>
+  <TR>
+    <TD colSpan=2><B>ANIM</B></TD></TR></TBODY></TABLE></P>
+<P>Each AIFF file would start this way: 
+<P>
+<TABLE width="100%" NOBORDER NOWRAP>
+  <TBODY>
+  <TR>
+    <TD colSpan=2><B>FORM</B></TD></TR>
+  <TR>
+    <TD vAlign=top><B>8000</B></TD>
+    <TD bgColor=#99cccc>whatever size.</TD></TR>
+  <TR>
+    <TD colSpan=2><B>AIFF</B></TD></TR></TBODY></TABLE></P>
+<P>If the user wanted to copy the data to another disk, he would have to copy 7 
+files. On the other hand, you could save all the data in one CAT file. 
+<P>
+<TABLE width="100%" NOBORDER>
+  <TBODY>
+  <TR>
+    <TD colSpan=2><B>CAT</B></TD></TR>
+  <TR>
+    <TD vAlign=top><B>4+120008+8008+2028+...</B></TD>
+    <TD bgColor=#99cccc>The total size of the ANIM and the 6 AIFF files.</TD></TR>
+  <TR>
+    <TD vAlign=top><B><PRE>'    '</PRE></B></TD>
+    <TD bgColor=#99cccc>Type of CAT. 4 spaces for the type ID means "a grab 
+      bag" of IFF FORMs are going to be inside of this CAT. If it just so 
+      happened that all of the enclosed FORMs were 1 type, such as ILBM, then 
+      this type ID would be 'ILBM'.</TD></TR>
+  <TR>
+    <TD>
+      <HR>
+    </TD>
+    <TD></TD></TR>
+  <TR>
+    <TD colSpan=2><B>FORM</B></TD></TR>
+  <TR>
+    <TD colSpan=2><B>120000</B></TD></TR>
+  <TR>
+    <TD colSpan=2><B>ANIM</B></TD></TR>
+  <TR>
+    <TD></TD>
+    <TD bgColor=#99cccc>...all the chunks in the ANIM file placed here. (Note: 
+      ANIMs have imbedded ILBM FORMs. The guy who devised the ANIM type of IFF 
+      file broke the rules by mistake, and nobody caught his error until it was 
+      too late).</TD></TR>
+  <TR>
+    <TD>
+      <HR>
+    </TD>
+    <TD></TD></TR>
+  <TR>
+    <TD colSpan=2><B>FORM</B></TD></TR>
+  <TR>
+    <TD colSpan=2><B>8000</B></TD></TR>
+  <TR>
+    <TD colSpan=2><B>AIFF</B></TD></TR>
+  <TR>
+    <TD></TD>
+    <TD bgColor=#99cccc>...all the chunks in the first sound effect 
+here.</TD></TR>
+  <TR>
+    <TD>
+      <HR>
+    </TD>
+    <TD></TD></TR>
+  <TR>
+    <TD colSpan=2><B>FORM</B></TD></TR>
+  <TR>
+    <TD colSpan=2><B>2020</B></TD></TR>
+  <TR>
+    <TD colSpan=2><B>AIFF</B></TD></TR>
+  <TR>
+    <TD></TD>
+    <TD bgColor=#99cccc>...all the chunks in the second sound effect 
+  here.</TD></TR>
+  <TR>
+    <TD>
+      <HR>
+    </TD>
+    <TD></TD></TR>
+  <TR>
+    <TD></TD>
+    <TD bgColor=#99cccc>...etc. for the other 4 sound 
+effects.</TD></TR></TBODY></TABLE></P>
+<P>To further complicate matters, there are LISTs. LISTs are a lot like CATs 
+except that there is an optional, additional group ID associated with LISTs. 
+That ID is a PROP. LISTs can have imbedded PROPS just like an ILBM can have an 
+imbedded CMAP chunk. A PROP header looks very much like a FORM header in that 
+you must follow it with a type ID. For example, here is an ILBM PROP with a CMAP 
+in it. 
+<P>
+<TABLE width="100%" NOBORDER>
+  <TBODY>
+  <TR>
+    <TD vAlign=top><B>PROP</B></TD>
+    <TD bgColor=#99cccc>Here's a PROP.</TD></TR>
+  <TR>
+    <TD vAlign=top><B>4+14</B></TD>
+    <TD bgColor=#99cccc>Here's how many bytes follow in the PROP.</TD></TR>
+  <TR>
+    <TD vAlign=top><B>ILBM</B></TD>
+    <TD bgColor=#99cccc>It's an ILBM PROP.</TD></TR>
+  <TR>
+    <TD vAlign=top><B>'CMAP'</B></TD>
+    <TD bgColor=#99cccc>Here's a CMAP chunk inside of this ILBM PROP.</TD></TR>
+  <TR>
+    <TD vAlign=top><B>6</B></TD>
+    <TD bgColor=#99cccc>There are 6 bytes following in this CMAP chunk.</TD></TR>
+  <TR>
+    <TD colSpan=2><B>0,0,0,1,1,4</B></TD></TR></TBODY></TABLE></P>
+<P>LISTs are meant to encompass similiar FORMs (i.e. several AIFF files stuck 
+together). Often, when you have similiar FORMs stuck together, some of the 
+chunks in the individual FORMs are the same. For example, assume that we have 2 
+AIFF sound effects. AIFF FORMs can have a NAME chunk which contains the ascii 
+string that is the name of the sound effect. Also assume that both sounds are 
+called "car crash". With a CAT, we end up having 2 identical NAME chunks in each 
+AIFF FORM like so: 
+<P>
+<TABLE width="100%" NOBORDER>
+  <TBODY>
+  <TR>
+    <TD vAlign=top><B>CAT</B></TD>
+    <TD bgColor=#99cccc>We put the 2 files into 1 CAT.</TD></TR>
+  <TR>
+    <TD colSpan=2><B>4+1008+508</B></TD></TR>
+  <TR>
+    <TD vAlign=top><B>AIFF</B></TD>
+    <TD bgColor=#99cccc>It's a CAT of several AIFF FORMs.</TD></TR>
+  <TR>
+    <TD>
+      <HR>
+    </TD>
+    <TD></TD></TR>
+  <TR>
+    <TD vAlign=top><B>FORM</B></TD>
+    <TD bgColor=#99cccc>Here's the start of the first sound effect file.</TD></TR>
+  <TR>
+    <TD colSpan=2><B>1000</B></TD></TR>
+  <TR>
+    <TD colSpan=2><B>AIFF</B></TD></TR>
+  <TR>
+    <TD></TD>
+    <TD bgColor=#99cccc>...other chunks may be inserted here.</TD></TR>
+  <TR>
+    <TD vAlign=top><B>NAME</B></TD>
+    <TD bgColor=#99cccc>Here's the name chunk for the 1st sound effect.</TD></TR>
+  <TR>
+    <TD colSpan=2><B>9</B></TD></TR>
+  <TR>
+    <TD colSpan=2><B>'car crash',0</B></TD></TR>
+  <TR>
+    <TD></TD>
+    <TD bgColor=#99cccc>...other chunks may be inserted here.</TD></TR>
+  <TR>
+    <TD>
+      <HR>
+    </TD>
+    <TD></TD></TR>
+  <TR>
+    <TD vAlign=top><B>FORM</B></TD>
+    <TD bgColor=#99cccc>Here's the start of the 2nd sound effect file.</TD></TR>
+  <TR>
+    <TD colSpan=2><B>500</B></TD></TR>
+  <TR>
+    <TD colSpan=2><B>AIFF</B></TD></TR>
+  <TR>
+    <TD></TD>
+    <TD bgColor=#99cccc>...other chunks may be inserted here.</TD></TR>
+  <TR>
+    <TD vAlign=top><B>NAME</B></TD>
+    <TD bgColor=#99cccc>Here's the name chunk for the 2nd sound effect. Look 
+      familiar?</TD></TR>
+  <TR>
+    <TD colSpan=2><B>9</B></TD></TR>
+  <TR>
+    <TD colSpan=2><B>'car crash',0</B></TD></TR>
+  <TR>
+    <TD></TD>
+    <TD bgColor=#99cccc>...other chunks may be inserted 
+here.</TD></TR></TBODY></TABLE></P>
+<P>With a LIST, we can have PROPs. A PROP is group ID that allows us to place 
+chunks that pertain to all the FORMs in the LIST. So, we can rip out the NAME 
+chunks inside both AIFF FORMs and replace it with one NAME chunk inside of a 
+PROP. 
+<P>
+<TABLE width="100%" NOBORDER>
+  <TBODY>
+  <TR>
+    <TD vAlign=top><B>LIST</B></TD>
+    <TD bgColor=#99cccc>Notice that we use a LIST instead of a CAT.</TD></TR>
+  <TR>
+    <TD colSpan=2><B>4+30+990+490+...</B></TD></TR>
+  <TR>
+    <TD colSpan=2><B>AIFF</B></TD></TR>
+  <TR>
+    <TD>
+      <HR>
+    </TD>
+    <TD></TD></TR>
+  <TR>
+    <TD vAlign=top><B>PROP</B></TD>
+    <TD bgColor=#99cccc>Here's where we put chunks intended for ALL the 
+      subsequent FORMS; inside a PROP.</TD></TR>
+  <TR>
+    <TD colSpan=2><B>22</B></TD></TR>
+  <TR>
+    <TD vAlign=top><B>AIFF</B></TD>
+    <TD bgColor=#99cccc>Type of PROP.</TD></TR>
+  <TR>
+    <TD vAlign=top><B>NAME</B></TD>
+    <TD bgColor=#99cccc>Here's the name chunk inside of the PROP.</TD></TR>
+  <TR>
+    <TD colSpan=2><B>9</B></TD></TR>
+  <TR>
+    <TD colSpan=2><B>'car crash',0</B></TD></TR>
+  <TR>
+    <TD>
+      <HR>
+    </TD>
+    <TD></TD></TR>
+  <TR>
+    <TD vAlign=top><B>FORM</B></TD>
+    <TD bgColor=#99cccc>Here's the start of the first sound effect file.</TD></TR>
+  <TR>
+    <TD vAlign=top><B>982</B></TD>
+    <TD bgColor=#99cccc>Size is 18 bytes less because no NAME chunk 
+here.</TD></TR>
+  <TR>
+    <TD colSpan=2><B>AIFF</B></TD></TR>
+  <TR>
+    <TD vAlign=top></TD>
+    <TD bgColor=#99cccc>...other chunks may be inserted here, but no NAME 
+      chunk needed.</TD></TR>
+  <TR>
+    <TD>
+      <HR>
+    </TD>
+    <TD></TD></TR>
+  <TR>
+    <TD vAlign=top><B>FORM</B></TD>
+    <TD bgColor=#99cccc>Here's the start of the 2nd sound effect file.</TD></TR>
+  <TR>
+    <TD colSpan=2><B>482</B></TD></TR>
+  <TR>
+    <TD colSpan=2><B>AIFF</B></TD></TR>
+  <TR>
+    <TD></TD>
+    <TD bgColor=#99cccc>...other chunks may be inserted here, but no NAME 
+      needed for this guy either.</TD></TR></TBODY></TABLE></P>
+<P>Notice that the PROP group ID is followed by a type ID (in this case AIFF). 
+This means that the PROP only affects any AIFF FORMs. If you were to sneak in an 
+SMUS FORM at the end, the NAME chunk would not apply to it. Also, if you 
+included a NAME chunk in one of the AIFF FORMs, it would override the PROP. For 
+example, assume that you have a LIST containing 10 AIFF FORMs. All but 1 of them 
+is named "Snare Hit". You can store a NAME chunk in a PROP AIFF for "Snare Hit". 
+Then, in the one AIFF FORM whose name is not "Snare Hit", you can include a NAME 
+chunk to override the NAME chunk in the PROP. 
+<P>It should be noted that you can take several LISTs and squash them together 
+inside of a CAT or another LIST. Personally, I have never seen a data file with 
+this level of nesting, and doubt that it would be of much use.</P>
+<P>In the above examples, psuedo code was used to represent the headers. Let's 
+look at how a hex file viewer might display the actual contents of an IFF file 
+(in hex bytes). First, an IFF header for a FORM AIFF, psuedo code.</P>
+<P>
+<TABLE width="100%" NOBORDER>
+  <TBODY>
+  <TR>
+    <TD><B>FORM</B></TD></TR>
+  <TR>
+    <TD><B>4096</B></TD></TR>
+  <TR>
+    <TD><B>AIFF</B></TD></TR></TBODY></TABLE></P>
+<P>Now here's a view of the actual data file. 
+<P>
+<TABLE width="100%" NOBORDER>
+  <TBODY>
+  <TR>
+    <TD vAlign=top><B>46 4F 52 4D</B></TD>
+    <TD bgColor=#99cccc>FORM</TD></TR>
+  <TR>
+    <TD vAlign=top><B>00 00 10 00</B></TD>
+    <TD bgColor=#99cccc>hex 00001000, or 4096 decimal</TD></TR>
+  <TR>
+    <TD vAlign=top><B>41 49 46 46</B></TD>
+    <TD bgColor=#99cccc>AIFF</TD></TR></TBODY></TABLE></P>
+<P>Note that the ULONG byte count is stored in Big Endian order (ie, the Most 
+Significant Byte is first, and the Least Significant Byte is last). This is how 
+the Motorola 680x0 stores long values in memory (ie, the opposite order of Intel 
+80x86). IFF files use Big Endian order for all 16-bit (ie, SHORT) and 32-bit 
+(ie, LONG) values. 
+<P>Microsoft decided that IFF was a good idea, but since Windows is 
+traditionally tethered to Intel CPUs, a version of IFF was needed which stored 
+LONG or SHORT values in Little Endian order. So, MS decided to create some new 
+group IDs. MS took the FORM ID and created a Little Endian version of it known 
+as RIFF. For example, the WAVE file format has a RIFF group ID. All of the SHORT 
+and LONG values in the file are stored in Little Endian order. Let's take a look 
+at an example header for a WAVE file. Assume that there are 258 bytes of data 
+after the byte count.</P>
+<P>
+<TABLE width="100%" NOBORDER>
+  <TBODY>
+  <TR>
+    <TD><B>52 49 46 46</B></TD>
+    <TD bgColor=#99cccc>RIFF</TD></TR>
+  <TR>
+    <TD><B>02 01 00 00</B></TD>
+    <TD bgColor=#99cccc>hex 00000102, or 258 decimal</TD></TR>
+  <TR>
+    <TD><B>57 41 56 45</B></TD>
+    <TD bgColor=#99cccc>WAVE</TD></TR></TBODY></TABLE></P>
+<P>Note that the ULONG byte count is stored in Little Endian order (ie, the 
+Least Significant Byte is first, and the Most Significant Byte is last). Good 
+old backwards-thinking Intel. 
+<P>Now, there's some real justification for creating a RIFF group ID, if you're 
+working with an Intel CPU. But Microsoft couldn't stop there. True to their "not 
+made here, so if we're going to accept it, we have to inflict our brutish, 
+unneeded brand upon it" mentality, Microsoft created another group ID called 
+RIFX. What's an RIFX file? It's simply a FORM with RIFX replacing the FORM ID. 
+So, if you want to turn a FORM AIFF into a RIFX AIFF, you just change the first 
+4 bytes to RIFX. Needless to say, nobody has ever used the RIFX group ID, and it 
+will undoubtably suffer a justifiably ignoble disappearance.</P>
+<P>Just like everyone else, programmers make mistakes. As mentioned before, the 
+Amiga's ANIM file format was a mistake. It puts FORM headers inside of a FORM 
+group ID. That's not supposed to happen. You can put FORM headers inside of a 
+CAT or LIST, but not another FORM. A mistake was also made with the MIDI file 
+format. The programmer who devised it didn't put a proper IFF header on the 
+file. It should be:</P>
+<P>
+<TABLE width="100%" NOBORDER>
+  <TBODY>
+  <TR>
+    <TD vAlign=top><B>FORM</B></TD>
+    <TD bgColor=#99cccc>group ID. Indicates an IFF file that contains one type 
+      of data.</TD></TR>
+  <TR>
+    <TD vAlign=top><B>3000</B></TD>
+    <TD bgColor=#99cccc>whatever size the file happens to be.</TD></TR>
+  <TR>
+    <TD vAlign=top><B>MIDI</B></TD>
+    <TD bgColor=#99cccc>type of data. What follows will be chunks as defined 
+      by the MIDI type of IFF file.</TD></TR></TBODY></TABLE></P>
+<P>But the programmer omitted the FORM group ID, and simply put the MThd chunk 
+first. So, a MIDI file starts as so: 
+<P>
+<TABLE width="100%" NOBORDER>
+  <TBODY>
+  <TR>
+    <TD vAlign=top><B>MThd</B></TD>
+    <TD bgColor=#99cccc>Chunk ID.</TD></TR>
+  <TR>
+    <TD vAlign=top><B>6</B></TD>
+    <TD bgColor=#99cccc>size of MThd chunk.</TD></TR></TBODY></TABLE></P>
+<P>Another deviation from the standard occurs with padding out odd-sized chunks 
+with an extra byte. Some programmers didn't bother doing this when devising new 
+IFF type files, and occasionally, one will come across some specification for a 
+new IFF type that allows odd-sized chunks. 
+<P>Unfortunately, these programmers released their work based upon these 
+aberrations before getting that work reviewed by other programmers who might 
+have offered good reasons why the aberrations should be corrected. It makes it 
+that much harder for software to read and write files if it has to deal with 
+aberrations of the IFF standard. There's no reason for that, particularly when a 
+strict adherence to the standard sacrifices almost nothing in the way of quality 
+and efficiency over an aberration. But try to tell that to a paranoid programmer 
+who thinks that if he shows anyone what he's doing before his product is 
+shrink-wrapped, someone will steal his soul... well, IFF does give the computer 
+industry a means for resolving needless hassles with data file formats, and it 
+has worked very successfully in a number of instances, although occasionally 
+people don't always use the standard wisely, or don't quite grasp EA's 
+altruistic notion that there is no good reason why a file format should ever be 
+proprietary or unpublished. (I urge consumers to avoid products where that is 
+the case).</P><!--
+     FILE ARCHIVED ON 20:04:05 Jan 14, 2008 AND RETRIEVED FROM THE
+     INTERNET ARCHIVE ON 2:02:51 Aug 25, 2014.
+     JAVASCRIPT APPENDED BY WAYBACK MACHINE, COPYRIGHT INTERNET ARCHIVE.
+
+     ALL OTHER CONTENT MAY ALSO BE PROTECTED BY COPYRIGHT (17 U.S.C.
+     SECTION 108(a)(3)).
+--></BODY></HTML>

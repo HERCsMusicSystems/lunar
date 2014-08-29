@@ -1,0 +1,1012 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- saved from url=(0068)http://www.hinton-instruments.co.uk/reference/midi/protocol/pg03.htm -->
+<HTML><HEAD><TITLE>HINTON INSTRUMENTS: MIDI Protocol Guide</TITLE>
+<META content=text/html;charset=ISO-8859-1 http-equiv=content-type>
+<META name=description content="Part 3: System Exclusive Structure">
+<META name=keywords 
+content="MIDI, MTC, system exclusive, sysex, controller numbers, manufacturers, id numbers">
+<META name=copyright content="Copyright (C) 2001-2010 Hinton Instruments."><LINK 
+rel=stylesheet 
+href="HINTON%20INSTRUMENTS%20MIDI%20Protocol%20Guide%203_files/hinton.css" 
+media=screen><CSSCRIPTDICT import>
+<SCRIPT type=text/javascript 
+src="HINTON%20INSTRUMENTS%20MIDI%20Protocol%20Guide%203_files/CSScriptLib.js"></SCRIPT>
+</CSSCRIPTDICT><CSACTIONDICT>
+<SCRIPT type=text/javascript><!--
+var preloadFlag = false;
+function preloadImages() {
+	if(document.images) {
+		preloadImagesCmp003AC68A24();
+		preloadFlag = true;
+	}
+}
+// --></SCRIPT>
+</CSACTIONDICT><CSIMPORT occur="24" 
+user="../../../common/inside_header/insideheader2.htm"><CSACTIONS><CSACTION 
+class="Open Popup" urlparams="14,15" val15="false" 
+val14="../../../faq/index.htm" val13="#" val12="" val11="" val10="true" 
+val9="false" val8="false" val7="false" val6="false" val5="false" val4="true" 
+val3="true" val2="600" val1="550" val0="FAQ" type="onevent" 
+name="C04CF4080"></CSACTION></CSACTIONS><CSACTIONDICT>
+<SCRIPT type=text/javascript><!--
+function preloadImagesCmp003AC68A24() {
+	if (document.images) {
+		over_hi_logo = newImage(/*URL*/'../../../images/inside_header/hi_logo_on.jpg');
+		down_hi_logo = newImage(/*URL*/'../../../images/inside_header/hi_logo_on.jpg');
+		over_news = newImage(/*URL*/'../../../images/inside_header/news_on.jpg');
+		down_news = newImage(/*URL*/'../../../images/inside_header/news_on.jpg');
+		over_contact = newImage(/*URL*/'../../../images/inside_header/contact_on.jpg');
+		down_contact = newImage(/*URL*/'../../../images/inside_header/contact_on.jpg');
+		over_links = newImage(/*URL*/'../../../images/inside_header/links_on.jpg');
+		down_links = newImage(/*URL*/'../../../images/inside_header/links_on.jpg');
+		over_faq = newImage(/*URL*/'../../../images/inside_header/faq_on.jpg');
+		down_faq = newImage(/*URL*/'../../../images/inside_header/faq_on.jpg');
+	}
+}
+CSAct[/*CMP*/ 'C04CF4080'] = new Array(MPOpenPopup,'FAQ',550,600,true,true,false,false,false,false,false,true,'','',/*URL*/ '#',/*URL*/ '../../../faq/index.htm',false);
+// --></SCRIPT>
+</CSACTIONDICT></CSIMPORT><CSIMPORT occur="40" 
+user="../../../common/leftnav/navs/refmidiprotocol.htm"><CSIMPORT occur="97" 
+user="../../../common/leftnav/bits/paprod.htm"><LINK rel=stylesheet 
+href="HINTON%20INSTRUMENTS%20MIDI%20Protocol%20Guide%203_files/hinton.css" 
+media=screen></CSIMPORT></CSIMPORT><CSIMPORT occur="98" 
+user="../../../common/footer/links.htm"><CSACTIONS><CSACTION 
+class="Open Popup Lite" urlparams="14,15" val15="false" 
+val14="../../../faq/index.htm" val13="#" val12="" val11="" val10="true" 
+val9="false" val8="false" val7="false" val6="false" val5="false" val4="true" 
+val3="true" val2="590" val1="550" val0="FAQ" type="onevent" 
+name="C04CC7E20"></CSACTION><CSACTION class="Open Popup Lite" urlparams="14,15" 
+val15="false" val14="../../../faq/index.htm#cos" val13="#" val12="" val11="" 
+val10="true" val9="false" val8="false" val7="false" val6="false" val5="false" 
+val4="true" val3="true" val2="600" val1="550" val0="FAQ" type="onevent" 
+name="C06C6FFC9"></CSACTION></CSACTIONS><CSACTIONDICT>
+<SCRIPT type=text/javascript><!--
+CSAct[/*CMP*/ 'C04CC7E20'] = new Array(MPOpenPopupLite,'FAQ',550,590,true,true,false,false,false,false,false,true,'','',/*URL*/ '#',/*URL*/ '../../../faq/index.htm',false);
+CSAct[/*CMP*/ 'C06C6FFC9'] = new Array(MPOpenPopupLite,'FAQ',550,600,true,true,false,false,false,false,false,true,'','',/*URL*/ '#',/*URL*/ '../../../faq/index.htm#cos',false);
+
+// --></SCRIPT>
+</CSACTIONDICT></CSIMPORT>
+<META name=GENERATOR content="MSHTML 9.00.8112.16526"></HEAD>
+<BODY onload=preloadImages(); 
+background=HINTON%20INSTRUMENTS%20MIDI%20Protocol%20Guide%203_files/logcycle-blue.gif 
+leftMargin=0 topMargin=0 bgColor=#2f3b63 marginwidth="0" marginheight="0"><!-- Start of StatCounter Code -->
+<SCRIPT language=javascript type=text/javascript>
+var sc_project=899010; 
+var sc_invisible=1; 
+var sc_partition=7; 
+var sc_security="5ac1b566"; 
+</SCRIPT>
+
+<SCRIPT language=javascript type=text/javascript 
+src="HINTON%20INSTRUMENTS%20MIDI%20Protocol%20Guide%203_files/counter.js"></SCRIPT>
+<NOSCRIPT></NOSCRIPT><!-- End of StatCounter Code -->
+<TABLE border=0 cellSpacing=0 cellPadding=0 width="100%">
+  <TBODY>
+  <TR>
+    <TD vAlign=top align=center><IMG border=0 alt="" 
+      src="HINTON%20INSTRUMENTS%20MIDI%20Protocol%20Guide%203_files/spacer.gif" 
+      width=100 height=23></TD></TR>
+  <TR>
+    <TD vAlign=top align=center>
+      <TABLE border=0 cellSpacing=0 cellPadding=0 width=800 bgColor=#1a2167>
+        <TBODY>
+        <TR height=72>
+          <TD class=whitebordertl bgColor=white height=72 vAlign=top width=193 
+          align=left><IMG border=0 alt="" 
+            src="HINTON%20INSTRUMENTS%20MIDI%20Protocol%20Guide%203_files/books.jpg" 
+            width=191 height=71></TD>
+          <TD class=whitebordertr bgColor=white height=72 width=607><CSOBJ 
+            occur="24" w="606" t="Component" h="71" 
+            csref="../../../common/inside_header/insideheader2.htm">
+            <TABLE border=0 cellSpacing=0 cellPadding=0 width=606 height=71>
+              <TBODY>
+              <TR>
+                <TD vAlign=top rowSpan=3 width=18 align=left><IMG alt="" 
+                  src="HINTON%20INSTRUMENTS%20MIDI%20Protocol%20Guide%203_files/rack_panel_left.gif" 
+                  width=18 height=71></TD>
+                <TD vAlign=top width=570 align=left><IMG border=0 alt="" 
+                  src="HINTON%20INSTRUMENTS%20MIDI%20Protocol%20Guide%203_files/rack_panel_top.gif" 
+                  width=570 height=3></TD>
+                <TD vAlign=top rowSpan=3 width=18 align=left><IMG alt="" 
+                  src="HINTON%20INSTRUMENTS%20MIDI%20Protocol%20Guide%203_files/rack_panel_right.gif" 
+                  width=18 height=71></TD></TR>
+              <TR height=65>
+                <TD bgColor=#1a2167 height=65 vAlign=top width=570 align=left>
+                  <TABLE border=0 cellSpacing=0 cellPadding=0 height=65>
+                    <TBODY>
+                    <TR height=22>
+                      <TD height=22 width=34><IMG border=0 alt="" 
+                        src="HINTON%20INSTRUMENTS%20MIDI%20Protocol%20Guide%203_files/spacer.gif" 
+                        width=34 height=21></TD>
+                      <TD height=22 width=40></TD>
+                      <TD height=22 width=35><IMG border=0 alt="" 
+                        src="HINTON%20INSTRUMENTS%20MIDI%20Protocol%20Guide%203_files/spacer.gif" 
+                        width=35 height=21></TD>
+                      <TD height=22 width=57></TD>
+                      <TD height=22 width=34><IMG border=0 alt="" 
+                        src="HINTON%20INSTRUMENTS%20MIDI%20Protocol%20Guide%203_files/spacer.gif" 
+                        width=34 height=21></TD>
+                      <TD vAlign=top rowSpan=3 width=170 align=left><A 
+                        onmouseup="window.status='Hinton Instruments Home';changeImages( /*CMP*/'hi_logo',/*URL*/'../../../images/inside_header/hi_logo_on.jpg');return true" 
+                        onmouseover="window.status='Hinton Instruments Home';changeImages( /*CMP*/'hi_logo',/*URL*/'../../../images/inside_header/hi_logo_on.jpg');return true" 
+                        title="Hinton Instruments Home" 
+                        onmouseout="window.status='';changeImages( /*CMP*/'hi_logo',/*URL*/'../../../images/inside_header/hi_logo_off.jpg');return true" 
+                        onmousedown="window.status='Hinton Instruments Home';changeImages( /*CMP*/'hi_logo',/*URL*/'../../../images/inside_header/hi_logo_on.jpg');return true" 
+                        href="http://www.hinton-instruments.co.uk/index.htm"><IMG 
+                        border=0 name=hi_logo alt="" 
+                        src="HINTON%20INSTRUMENTS%20MIDI%20Protocol%20Guide%203_files/hi_logo_off.jpg" 
+                        width=170 height=65></A></TD>
+                      <TD vAlign=top width=46 align=left><IMG border=0 alt="" 
+                        src="HINTON%20INSTRUMENTS%20MIDI%20Protocol%20Guide%203_files/spacer.gif" 
+                        width=46 height=21></TD>
+                      <TD vAlign=top width=36 align=left><IMG border=0 alt="" 
+                        src="HINTON%20INSTRUMENTS%20MIDI%20Protocol%20Guide%203_files/spacer.gif" 
+                        width=36 height=21></TD>
+                      <TD vAlign=top width=36 align=left><IMG border=0 alt="" 
+                        src="HINTON%20INSTRUMENTS%20MIDI%20Protocol%20Guide%203_files/spacer.gif" 
+                        width=41 height=21></TD>
+                      <TD vAlign=top width=31 align=left><IMG border=0 alt="" 
+                        src="HINTON%20INSTRUMENTS%20MIDI%20Protocol%20Guide%203_files/spacer.gif" 
+                        width=31 height=21></TD>
+                      <TD vAlign=top width=46 align=left><IMG border=0 alt="" 
+                        src="HINTON%20INSTRUMENTS%20MIDI%20Protocol%20Guide%203_files/spacer.gif" 
+                        width=46 height=21></TD></TR>
+                    <TR>
+                      <TD width=34><IMG border=0 alt="" 
+                        src="HINTON%20INSTRUMENTS%20MIDI%20Protocol%20Guide%203_files/spacer.gif" 
+                        width=34 height=18></TD>
+                      <TD width=40><A 
+                        onmouseup="window.status='News';changeImages( /*CMP*/'news',/*URL*/'../../../images/inside_header/news_on.jpg');return true" 
+                        onmouseover="window.status='News';changeImages( /*CMP*/'news',/*URL*/'../../../images/inside_header/news_on.jpg');return true" 
+                        title=News 
+                        onmouseout="window.status='';changeImages( /*CMP*/'news',/*URL*/'../../../images/inside_header/news_off.gif');return true" 
+                        onmousedown="window.status='News';changeImages( /*CMP*/'news',/*URL*/'../../../images/inside_header/news_on.jpg');return true" 
+                        href="http://www.hinton-instruments.co.uk/news"><IMG 
+                        border=0 name=news alt="" 
+                        src="HINTON%20INSTRUMENTS%20MIDI%20Protocol%20Guide%203_files/news_off.gif" 
+                        width=40 height=18></A></TD>
+                      <TD width=35><IMG border=0 alt="" 
+                        src="HINTON%20INSTRUMENTS%20MIDI%20Protocol%20Guide%203_files/spacer.gif" 
+                        width=35 height=18></TD>
+                      <TD width=57><A 
+                        onmouseup="window.status='Contact';changeImages( /*CMP*/'contact',/*URL*/'../../../images/inside_header/contact_on.jpg');return true" 
+                        onmouseover="window.status='Contact';changeImages( /*CMP*/'contact',/*URL*/'../../../images/inside_header/contact_on.jpg');return true" 
+                        title=Contact 
+                        onmouseout="window.status='';changeImages( /*CMP*/'contact',/*URL*/'../../../images/inside_header/contact_off.gif');return true" 
+                        onmousedown="window.status='Contact';changeImages( /*CMP*/'contact',/*URL*/'../../../images/inside_header/contact_on.jpg');return true" 
+                        href="http://www.hinton-instruments.co.uk/contact/index.htm"><IMG 
+                        border=0 name=contact alt="" 
+                        src="HINTON%20INSTRUMENTS%20MIDI%20Protocol%20Guide%203_files/contact_off.gif" 
+                        width=57 height=18></A></TD>
+                      <TD width=34><IMG border=0 alt="" 
+                        src="HINTON%20INSTRUMENTS%20MIDI%20Protocol%20Guide%203_files/spacer.gif" 
+                        width=34 height=18></TD>
+                      <TD width=46><IMG border=0 alt="" 
+                        src="HINTON%20INSTRUMENTS%20MIDI%20Protocol%20Guide%203_files/spacer.gif" 
+                        width=46 height=18></TD>
+                      <TD width=36><A 
+                        onmouseup="changeImages( /*CMP*/'links',/*URL*/'../../../images/inside_header/links_on.jpg');return true" 
+                        onmouseover="changeImages( /*CMP*/'links',/*URL*/'../../../images/inside_header/links_on.jpg');return true" 
+                        title=Links 
+                        onmouseout="changeImages( /*CMP*/'links',/*URL*/'../../../images/inside_header/links_off.gif');return true" 
+                        onmousedown="changeImages( /*CMP*/'links',/*URL*/'../../../images/inside_header/links_on.jpg');return true" 
+                        href="http://www.hinton-instruments.co.uk/links/index.htm"><IMG 
+                        border=0 name=links alt="" 
+                        src="HINTON%20INSTRUMENTS%20MIDI%20Protocol%20Guide%203_files/links_off.gif" 
+                        width=36 height=18></A></TD>
+                      <TD width=36><IMG border=0 alt="" 
+                        src="HINTON%20INSTRUMENTS%20MIDI%20Protocol%20Guide%203_files/spacer.gif" 
+                        width=41 height=18></TD>
+                      <TD width=31><A 
+                        onmouseup="window.status='Frequently Asked Questions';changeImages( /*CMP*/'faq',/*URL*/'../../../images/inside_header/faq_on.jpg');return true" 
+                        onmouseover="window.status='Frequently Asked Questions';changeImages( /*CMP*/'faq',/*URL*/'../../../images/inside_header/faq_on.jpg');return true" 
+                        title="Frequently Asked Questions" 
+                        onmouseout="window.status='';changeImages( /*CMP*/'faq',/*URL*/'../../../images/inside_header/faq_off.gif');return true" 
+                        onmousedown="window.status='Frequently Asked Questions';changeImages( /*CMP*/'faq',/*URL*/'../../../images/inside_header/faq_on.jpg');return true" 
+                        onclick="CSAction(new Array(/*CMP*/'C04CF4080'));return CSClickReturn();" 
+                        href="http://www.hinton-instruments.co.uk/reference/midi/protocol/pg03.htm#" 
+                        csclick="C04CF4080"><IMG border=0 name=faq 
+                        alt="Frequently Asked Questions" 
+                        src="HINTON%20INSTRUMENTS%20MIDI%20Protocol%20Guide%203_files/faq_off.gif" 
+                        width=31 height=18></A></TD>
+                      <TD width=46><IMG border=0 alt="" 
+                        src="HINTON%20INSTRUMENTS%20MIDI%20Protocol%20Guide%203_files/spacer.gif" 
+                        width=46 height=18></TD></TR>
+                    <TR>
+                      <TD width=34><IMG border=0 alt="" 
+                        src="HINTON%20INSTRUMENTS%20MIDI%20Protocol%20Guide%203_files/spacer.gif" 
+                        width=34 height=21></TD>
+                      <TD width=40></TD>
+                      <TD width=35><IMG border=0 alt="" 
+                        src="HINTON%20INSTRUMENTS%20MIDI%20Protocol%20Guide%203_files/spacer.gif" 
+                        width=35 height=21></TD>
+                      <TD width=57></TD>
+                      <TD width=34><IMG border=0 alt="" 
+                        src="HINTON%20INSTRUMENTS%20MIDI%20Protocol%20Guide%203_files/spacer.gif" 
+                        width=34 height=21></TD>
+                      <TD width=46><IMG border=0 alt="" 
+                        src="HINTON%20INSTRUMENTS%20MIDI%20Protocol%20Guide%203_files/spacer.gif" 
+                        width=46 height=21></TD>
+                      <TD width=36><IMG border=0 alt="" 
+                        src="HINTON%20INSTRUMENTS%20MIDI%20Protocol%20Guide%203_files/spacer.gif" 
+                        width=36 height=21></TD>
+                      <TD width=36><IMG border=0 alt="" 
+                        src="HINTON%20INSTRUMENTS%20MIDI%20Protocol%20Guide%203_files/spacer.gif" 
+                        width=41 height=21></TD>
+                      <TD width=31><IMG border=0 alt="" 
+                        src="HINTON%20INSTRUMENTS%20MIDI%20Protocol%20Guide%203_files/spacer.gif" 
+                        width=31 height=21></TD>
+                      <TD width=46><IMG border=0 alt="" 
+                        src="HINTON%20INSTRUMENTS%20MIDI%20Protocol%20Guide%203_files/spacer.gif" 
+                        width=46 height=21></TD></TR></TBODY></TABLE></TD></TR>
+              <TR>
+                <TD vAlign=top width=570 align=left><IMG border=0 alt="" 
+                  src="HINTON%20INSTRUMENTS%20MIDI%20Protocol%20Guide%203_files/rack_panel_bottom.gif" 
+                  width=570 height=3></TD></TR></TBODY></TABLE></CSOBJ></TD></TR>
+        <TR>
+          <TD class=whiteborder bgColor=#1a2167 vAlign=top width=193 
+            align=left><CSOBJ occur="40" w="192" t="Component" h="879" 
+            csref="../../../common/leftnav/navs/refmidiprotocol.htm">
+            <TABLE border=0 cellSpacing=0 cellPadding=0 width=191>
+              <TBODY>
+              <TR>
+                <TD colSpan=2>
+                  <TABLE border=0 cellSpacing=0 cellPadding=0 width=191>
+                    <TBODY>
+                    <TR>
+                      <TD colSpan=2>
+                        <TABLE border=0 cellSpacing=0 cellPadding=0 width=191>
+                          <TBODY>
+                          <TR>
+                            <TD class=navhighlight1 colSpan=2>
+                              <TABLE border=0 cellSpacing=0 cellPadding=0 
+                              width=190>
+                                <TBODY>
+                                <TR>
+                                <TD width=10><IMG border=0 alt="" 
+                                src="HINTON%20INSTRUMENTS%20MIDI%20Protocol%20Guide%203_files/spacer.gif" 
+                                width=10 height=10></TD>
+                                <TD><IMG border=0 alt="" 
+                                src="HINTON%20INSTRUMENTS%20MIDI%20Protocol%20Guide%203_files/spacer.gif" 
+                                width=8 height=8><BR><A 
+                                onmouseup="changeImages( /*CMP*/'ref3',/*URL*/'../../../images/nav_headings/ref_on.gif');return true" 
+                                onmouseover="changeImages( /*CMP*/'ref3',/*URL*/'../../../images/nav_headings/ref_on.gif');return true" 
+                                onmouseout="changeImages( /*CMP*/'ref3',/*URL*/'../../../images/nav_headings/ref_off.gif');return true" 
+                                onmousedown="changeImages( /*CMP*/'ref3',/*URL*/'../../../images/nav_headings/ref_on.gif');return true" 
+                                href="http://www.hinton-instruments.co.uk/reference/index.htm"><IMG 
+                                border=0 name=ref3 alt="" 
+                                src="HINTON%20INSTRUMENTS%20MIDI%20Protocol%20Guide%203_files/ref_off.gif" 
+                                width=120 height=10></A></TD></TR>
+                                <TR>
+                                <TD width=10></TD>
+                                <TD><CSOBJ occur="14" w="180" t="Component" 
+                                h="363" 
+                                csref="../../../common/leftnav/bits/refmidiprotocol.htm">
+                                <TABLE border=0 cellSpacing=3 width=172>
+                                <TBODY>
+                                <TR>
+                                <TD vAlign=top width=9 align=left><IMG border=0 
+                                alt="" 
+                                src="HINTON%20INSTRUMENTS%20MIDI%20Protocol%20Guide%203_files/spacer.gif" 
+                                width=4 height=4></TD>
+                                <TD vAlign=top colSpan=3 align=left><IMG 
+                                border=0 alt="" 
+                                src="HINTON%20INSTRUMENTS%20MIDI%20Protocol%20Guide%203_files/spacer.gif" 
+                                width=4 height=4></TD></TR>
+                                <TR>
+                                <TD vAlign=top width=9 align=left><A 
+                                href="http://www.hinton-instruments.co.uk/reference/midi/promidi/index.htm"><IMG 
+                                border=0 alt="" vspace=2 
+                                src="HINTON%20INSTRUMENTS%20MIDI%20Protocol%20Guide%203_files/whitearrowright.gif" 
+                                width=9 height=9></A></TD>
+                                <TD vAlign=top colSpan=3 align=left><A 
+                                class=navsans2 
+                                href="http://www.hinton-instruments.co.uk/reference/audio/digiprimer/index.htm">Digital 
+                                Audio Primer<BR></A><IMG border=0 alt="" 
+                                src="HINTON%20INSTRUMENTS%20MIDI%20Protocol%20Guide%203_files/spacer.gif" 
+                                width=4 height=6></TD></TR>
+                                <TR>
+                                <TD vAlign=top width=9 align=left><A 
+                                href="http://www.hinton-instruments.co.uk/reference/midi/promidi/index.htm"><IMG 
+                                border=0 alt="" vspace=2 
+                                src="HINTON%20INSTRUMENTS%20MIDI%20Protocol%20Guide%203_files/whitearrowright.gif" 
+                                width=9 height=9></A></TD>
+                                <TD vAlign=top colSpan=3 align=left><A 
+                                class=navsans2 
+                                href="http://www.hinton-instruments.co.uk/reference/midi/promidi/index.htm">Professional 
+                                MIDI Guide<BR></A><IMG border=0 alt="" 
+                                src="HINTON%20INSTRUMENTS%20MIDI%20Protocol%20Guide%203_files/spacer.gif" 
+                                width=4 height=8></TD></TR>
+                                <TR>
+                                <TD vAlign=top width=9 align=left><A 
+                                href="http://www.hinton-instruments.co.uk/reference/midi/protocol/index.htm"><IMG 
+                                border=0 alt="" vspace=2 
+                                src="HINTON%20INSTRUMENTS%20MIDI%20Protocol%20Guide%203_files/whitearrowdown.gif" 
+                                width=9 height=9></A></TD>
+                                <TD vAlign=top colSpan=3 align=left><A 
+                                class=navsans2 
+                                href="http://www.hinton-instruments.co.uk/reference/midi/protocol/index.htm">MIDI 
+                                Protocol Guide</A><IMG border=0 alt="" 
+                                src="HINTON%20INSTRUMENTS%20MIDI%20Protocol%20Guide%203_files/spacer.gif" 
+                                width=4 height=8></TD></TR>
+                                <TR>
+                                <TD vAlign=top width=9 align=left><IMG border=0 
+                                alt="" 
+                                src="HINTON%20INSTRUMENTS%20MIDI%20Protocol%20Guide%203_files/spacer.gif" 
+                                width=4 height=4></TD>
+                                <TD vAlign=top width=6 align=left><IMG border=0 
+                                alt="" vspace=3 
+                                src="HINTON%20INSTRUMENTS%20MIDI%20Protocol%20Guide%203_files/goldbullet.gif" 
+                                width=5 height=5></TD>
+                                <TD colSpan=2><A class=navsans1 
+                                href="http://www.hinton-instruments.co.uk/reference/midi/protocol/index.htm#pt1">MIDI 
+                                Messages</A><BR></TD></TR>
+                                <TR>
+                                <TD vAlign=top width=9 align=left><IMG border=0 
+                                alt="" 
+                                src="HINTON%20INSTRUMENTS%20MIDI%20Protocol%20Guide%203_files/spacer.gif" 
+                                width=4 height=4></TD>
+                                <TD vAlign=top width=6 align=left><IMG border=0 
+                                alt="" vspace=3 
+                                src="HINTON%20INSTRUMENTS%20MIDI%20Protocol%20Guide%203_files/goldbullet.gif" 
+                                width=5 height=5></TD>
+                                <TD colSpan=2><A class=navsans1 
+                                href="http://www.hinton-instruments.co.uk/reference/midi/protocol/pg02.htm">MIDI 
+                                Controller Numbers</A><BR></TD></TR>
+                                <TR>
+                                <TD vAlign=top width=9 align=left><IMG border=0 
+                                alt="" 
+                                src="HINTON%20INSTRUMENTS%20MIDI%20Protocol%20Guide%203_files/spacer.gif" 
+                                width=4 height=4></TD>
+                                <TD vAlign=top width=6 align=left><IMG border=0 
+                                alt="" vspace=3 
+                                src="HINTON%20INSTRUMENTS%20MIDI%20Protocol%20Guide%203_files/goldbullet.gif" 
+                                width=5 height=5></TD>
+                                <TD colSpan=2><A class=navsans1 
+                                href="http://www.hinton-instruments.co.uk/reference/midi/protocol/pg03.htm">System 
+                                Exclusive Structure</A><BR></TD></TR>
+                                <TR>
+                                <TD vAlign=top width=9 align=left><IMG border=0 
+                                alt="" 
+                                src="HINTON%20INSTRUMENTS%20MIDI%20Protocol%20Guide%203_files/spacer.gif" 
+                                width=4 height=4></TD>
+                                <TD vAlign=top width=6 align=left><IMG border=0 
+                                alt="" vspace=3 
+                                src="HINTON%20INSTRUMENTS%20MIDI%20Protocol%20Guide%203_files/goldbullet.gif" 
+                                width=5 height=5></TD>
+                                <TD colSpan=2><A class=navsans1 
+                                href="http://www.hinton-instruments.co.uk/reference/midi/protocol/pg04.htm">MIDI 
+                                Manufacturers' ID Numbers</A><BR></TD></TR>
+                                <TR>
+                                <TD vAlign=top width=9 align=left></TD>
+                                <TD vAlign=top width=6 align=left></TD>
+                                <TD vAlign=top align=left><A class=navsans3 
+                                href="http://www.hinton-instruments.co.uk/reference/audio/digiprimer/index.htm">·</A></TD>
+                                <TD vAlign=top align=left><A class=navsans3 
+                                href="http://www.hinton-instruments.co.uk/reference/midi/protocol/pg04.htm#usa">USA</A><IMG 
+                                border=0 alt="" 
+                                src="HINTON%20INSTRUMENTS%20MIDI%20Protocol%20Guide%203_files/spacer.gif" 
+                                width=4 height=4></TD></TR>
+                                <TR>
+                                <TD vAlign=top width=9 align=left></TD>
+                                <TD vAlign=top width=6 align=left></TD>
+                                <TD vAlign=top align=left><A class=navsans3 
+                                href="http://www.hinton-instruments.co.uk/reference/audio/digiprimer/index.htm">·</A></TD>
+                                <TD vAlign=top align=left><A class=navsans3 
+                                href="http://www.hinton-instruments.co.uk/reference/midi/protocol/pg04.htm#europe">Europe</A><IMG 
+                                border=0 alt="" 
+                                src="HINTON%20INSTRUMENTS%20MIDI%20Protocol%20Guide%203_files/spacer.gif" 
+                                width=4 height=4></TD></TR>
+                                <TR>
+                                <TD vAlign=top width=9 align=left></TD>
+                                <TD vAlign=top width=6 align=left></TD>
+                                <TD vAlign=top align=left><A class=navsans3 
+                                href="http://www.hinton-instruments.co.uk/reference/audio/digiprimer/index.htm">·</A></TD>
+                                <TD vAlign=top align=left><A class=navsans3 
+                                href="http://www.hinton-instruments.co.uk/reference/midi/protocol/pg04.htm#japan">Japan</A><IMG 
+                                border=0 alt="" 
+                                src="HINTON%20INSTRUMENTS%20MIDI%20Protocol%20Guide%203_files/spacer.gif" 
+                                width=4 height=4></TD></TR>
+                                <TR>
+                                <TD vAlign=top width=9 align=left></TD>
+                                <TD vAlign=top width=6 align=left></TD>
+                                <TD vAlign=top align=left><A class=navsans3 
+                                href="http://www.hinton-instruments.co.uk/reference/audio/digiprimer/index.htm">·</A></TD>
+                                <TD vAlign=top align=left><A class=navsans3 
+                                href="http://www.hinton-instruments.co.uk/reference/midi/protocol/pg04.htm#universal">Universal</A><IMG 
+                                border=0 alt="" 
+                                src="HINTON%20INSTRUMENTS%20MIDI%20Protocol%20Guide%203_files/spacer.gif" 
+                                width=4 height=4></TD></TR>
+                                <TR>
+                                <TD vAlign=top width=9 align=left><IMG border=0 
+                                alt="" 
+                                src="HINTON%20INSTRUMENTS%20MIDI%20Protocol%20Guide%203_files/spacer.gif" 
+                                width=4 height=4></TD>
+                                <TD vAlign=top colSpan=3 align=left><IMG 
+                                border=0 alt="" 
+                                src="HINTON%20INSTRUMENTS%20MIDI%20Protocol%20Guide%203_files/spacer.gif" 
+                                width=4 height=4></TD></TR>
+                                <TR>
+                                <TD vAlign=top width=9 align=left><IMG border=0 
+                                alt="" vspace=2 
+                                src="HINTON%20INSTRUMENTS%20MIDI%20Protocol%20Guide%203_files/whitedash.gif" 
+                                width=9 height=9></TD>
+                                <TD vAlign=top colSpan=3 align=left><A 
+                                class=navsans2 
+                                href="http://www.hinton-instruments.co.uk/reference/microphones/mictable.htm">Vintage 
+                                Microphone Information<BR></A><IMG border=0 
+                                alt="" 
+                                src="HINTON%20INSTRUMENTS%20MIDI%20Protocol%20Guide%203_files/spacer.gif" 
+                                width=4 height=8></TD></TR>
+                                <TR>
+                                <TD vAlign=top width=9 align=left><A 
+                                href="http://www.hinton-instruments.co.uk/reference/legacy_products/index.htm"><IMG 
+                                border=0 alt="" vspace=2 
+                                src="HINTON%20INSTRUMENTS%20MIDI%20Protocol%20Guide%203_files/whitearrowright.gif" 
+                                width=9 height=9></A></TD>
+                                <TD vAlign=top colSpan=3 align=left><A 
+                                class=navsans2 
+                                href="http://www.hinton-instruments.co.uk/reference/legacy_products/index.htm">Legacy 
+                                Products<BR></A><IMG border=0 alt="" 
+                                src="HINTON%20INSTRUMENTS%20MIDI%20Protocol%20Guide%203_files/spacer.gif" 
+                                width=4 height=8></TD></TR>
+                                <TR>
+                                <TD vAlign=top width=9 align=left><IMG border=0 
+                                alt="" vspace=2 
+                                src="HINTON%20INSTRUMENTS%20MIDI%20Protocol%20Guide%203_files/whitedash.gif" 
+                                width=9 height=9></TD>
+                                <TD vAlign=top colSpan=3 align=left><A 
+                                class=navsans2 
+                                href="http://www.hinton-instruments.co.uk/reference/downloads/index.htm">PDFs 
+                                and Other Downloads<BR></A><IMG border=0 alt="" 
+                                src="HINTON%20INSTRUMENTS%20MIDI%20Protocol%20Guide%203_files/spacer.gif" 
+                                width=4 
+                                height=8></TD></TR></TBODY></TABLE></CSOBJ></TD></TR></TBODY></TABLE></TD></TR></TBODY></TABLE></TD></TR></TBODY></TABLE></TD></TR>
+              <TR>
+                <TD colSpan=2><IMG border=0 alt="" 
+                  src="HINTON%20INSTRUMENTS%20MIDI%20Protocol%20Guide%203_files/spacer.gif" 
+                  width=10 height=10></TD></TR>
+              <TR>
+                <TD width=10></TD>
+                <TD><A 
+                  onmouseup="changeImages( /*CMP*/'paserv',/*URL*/'../../../images/nav_headings/paserv_on.gif');return true" 
+                  onmouseover="changeImages( /*CMP*/'paserv',/*URL*/'../../../images/nav_headings/paserv_on.gif');return true" 
+                  onmouseout="changeImages( /*CMP*/'paserv',/*URL*/'../../../images/nav_headings/paserv_off.gif');return true" 
+                  onmousedown="changeImages( /*CMP*/'paserv',/*URL*/'../../../images/nav_headings/paserv_on.gif');return true" 
+                  href="http://www.hinton-instruments.co.uk/paserv/index.htm"><IMG 
+                  border=0 name=paserv alt="" 
+                  src="HINTON%20INSTRUMENTS%20MIDI%20Protocol%20Guide%203_files/paserv_off.gif" 
+                  width=150 height=10></A></TD></TR>
+              <TR>
+                <TD width=10></TD>
+                <TD><CSOBJ occur="46" w="182" t="Component" h="205" 
+                  csref="../../../common/leftnav/bits/paserv.htm">
+                  <TABLE border=0 cellSpacing=3 width=173>
+                    <TBODY>
+                    <TR>
+                      <TD vAlign=top width=9 align=left><IMG border=0 alt="" 
+                        src="HINTON%20INSTRUMENTS%20MIDI%20Protocol%20Guide%203_files/spacer.gif" 
+                        width=4 height=4></TD>
+                      <TD vAlign=top colSpan=2 align=left><IMG border=0 alt="" 
+                        src="HINTON%20INSTRUMENTS%20MIDI%20Protocol%20Guide%203_files/spacer.gif" 
+                        width=4 height=4></TD></TR>
+                    <TR>
+                      <TD vAlign=top width=9 align=left><IMG border=0 alt="" 
+                        vspace=2 
+                        src="HINTON%20INSTRUMENTS%20MIDI%20Protocol%20Guide%203_files/whitedash.gif" 
+                        width=9 height=9></TD>
+                      <TD vAlign=top colSpan=2 align=left><A class=navsans2 
+                        href="http://www.hinton-instruments.co.uk/paserv/installations/index.htm">Studio 
+                        Installations<BR></A><IMG border=0 alt="" 
+                        src="HINTON%20INSTRUMENTS%20MIDI%20Protocol%20Guide%203_files/spacer.gif" 
+                        width=4 height=6></TD></TR>
+                    <TR>
+                      <TD vAlign=top width=9 align=left><IMG border=0 alt="" 
+                        vspace=2 
+                        src="HINTON%20INSTRUMENTS%20MIDI%20Protocol%20Guide%203_files/whitedash.gif" 
+                        width=9 height=9></TD>
+                      <TD vAlign=top colSpan=2 align=left><A class=navsans2 
+                        href="http://www.hinton-instruments.co.uk/paserv/design/index.htm">Custom 
+                        Design and Consultancy<BR></A><IMG border=0 alt="" 
+                        src="HINTON%20INSTRUMENTS%20MIDI%20Protocol%20Guide%203_files/spacer.gif" 
+                        width=4 height=6></TD></TR>
+                    <TR>
+                      <TD vAlign=top width=9 align=left><IMG border=0 alt="" 
+                        vspace=2 
+                        src="HINTON%20INSTRUMENTS%20MIDI%20Protocol%20Guide%203_files/whitedash.gif" 
+                        width=9 height=9></TD>
+                      <TD vAlign=top colSpan=2 align=left><A class=navsans2 
+                        href="http://www.hinton-instruments.co.uk/paserv/recording/index.htm">Recording 
+                        and Mastering<BR></A><IMG border=0 alt="" 
+                        src="HINTON%20INSTRUMENTS%20MIDI%20Protocol%20Guide%203_files/spacer.gif" 
+                        width=4 height=8></TD></TR>
+                    <TR>
+                      <TD vAlign=top width=9 align=left><IMG border=0 alt="" 
+                        vspace=2 
+                        src="HINTON%20INSTRUMENTS%20MIDI%20Protocol%20Guide%203_files/whitedash.gif" 
+                        width=9 height=9></TD>
+                      <TD vAlign=top colSpan=2 align=left><A class=navsans2 
+                        href="http://www.hinton-instruments.co.uk/paserv/tapebaking/index.htm">Tape 
+                        Baking and Recovery<BR></A><IMG border=0 alt="" 
+                        src="HINTON%20INSTRUMENTS%20MIDI%20Protocol%20Guide%203_files/spacer.gif" 
+                        width=4 height=8></TD></TR>
+                    <TR>
+                      <TD vAlign=top width=9 align=left><IMG border=0 alt="" 
+                        vspace=2 
+                        src="HINTON%20INSTRUMENTS%20MIDI%20Protocol%20Guide%203_files/whitedash.gif" 
+                        width=9 height=9></TD>
+                      <TD vAlign=top colSpan=2 align=left><A class=navsans2 
+                        href="http://www.hinton-instruments.co.uk/paserv/mediatransfer/index.htm">Media 
+                        Transfer and Processing<BR></A><IMG border=0 alt="" 
+                        src="HINTON%20INSTRUMENTS%20MIDI%20Protocol%20Guide%203_files/spacer.gif" 
+                        width=4 height=8></TD></TR></TBODY></TABLE></CSOBJ></TD></TR>
+              <TR>
+                <TD class=navruletop colSpan=2><IMG border=0 alt="" 
+                  src="HINTON%20INSTRUMENTS%20MIDI%20Protocol%20Guide%203_files/spacer.gif" 
+                  width=10 height=10></TD></TR>
+              <TR>
+                <TD width=10><IMG border=0 alt="" 
+                  src="HINTON%20INSTRUMENTS%20MIDI%20Protocol%20Guide%203_files/spacer.gif" 
+                  width=10 height=10></TD>
+                <TD><A 
+                  onmouseup="changeImages( /*CMP*/'paprod',/*URL*/'../../../images/nav_headings/paprod_on.gif');return true" 
+                  onmouseover="changeImages( /*CMP*/'paprod',/*URL*/'../../../images/nav_headings/paprod_on.gif');return true" 
+                  onmouseout="changeImages( /*CMP*/'paprod',/*URL*/'../../../images/nav_headings/paprod_off.gif');return true" 
+                  onmousedown="changeImages( /*CMP*/'paprod',/*URL*/'../../../images/nav_headings/paprod_on.gif');return true" 
+                  href="http://www.hinton-instruments.co.uk/paprod/index.htm"><IMG 
+                  border=0 name=paprod alt="" 
+                  src="HINTON%20INSTRUMENTS%20MIDI%20Protocol%20Guide%203_files/paprod_off.gif" 
+                  width=150 height=10></A></TD></TR>
+              <TR>
+                <TD width=10></TD>
+                <TD><CSOBJ occur="4" w="182" t="Component" h="149" 
+                  csref="../../../common/leftnav/bits/paprod.htm">
+                  <TABLE border=0 cellSpacing=3 width=173>
+                    <TBODY>
+                    <TR>
+                      <TD vAlign=top width=9 align=left><IMG border=0 alt="" 
+                        src="HINTON%20INSTRUMENTS%20MIDI%20Protocol%20Guide%203_files/spacer.gif" 
+                        width=4 height=4></TD>
+                      <TD vAlign=top colSpan=2 align=left><IMG border=0 alt="" 
+                        src="HINTON%20INSTRUMENTS%20MIDI%20Protocol%20Guide%203_files/spacer.gif" 
+                        width=4 height=4></TD></TR>
+                    <TR>
+                      <TD vAlign=top width=9 align=left><A 
+                        href="http://www.hinton-instruments.co.uk/paprod/cables/index.htm"><IMG 
+                        border=0 alt="" vspace=2 
+                        src="HINTON%20INSTRUMENTS%20MIDI%20Protocol%20Guide%203_files/whitearrowright.gif" 
+                        width=9 height=9></A></TD>
+                      <TD vAlign=top colSpan=2 align=left><A class=navsans2 
+                        href="http://www.hinton-instruments.co.uk/paprod/cables/index.htm">Professional 
+                        Audio Cables<BR></A><IMG border=0 alt="" 
+                        src="HINTON%20INSTRUMENTS%20MIDI%20Protocol%20Guide%203_files/spacer.gif" 
+                        width=4 height=6></TD></TR>
+                    <TR>
+                      <TD vAlign=top width=9 align=left><IMG border=0 alt="" 
+                        vspace=2 
+                        src="HINTON%20INSTRUMENTS%20MIDI%20Protocol%20Guide%203_files/whitedash.gif" 
+                        width=9 height=9></TD>
+                      <TD vAlign=top colSpan=2 align=left><A class=navsans2 
+                        href="http://www.hinton-instruments.co.uk/paprod/digiproducts/patching.htm">Digital 
+                        Audio Patching Systems<BR></A><IMG border=0 alt="" 
+                        src="HINTON%20INSTRUMENTS%20MIDI%20Protocol%20Guide%203_files/spacer.gif" 
+                        width=4 height=8></TD></TR>
+                    <TR>
+                      <TD vAlign=top width=9 align=left><IMG border=0 alt="" 
+                        vspace=2 
+                        src="HINTON%20INSTRUMENTS%20MIDI%20Protocol%20Guide%203_files/whitedash.gif" 
+                        width=9 height=9></TD>
+                      <TD vAlign=top colSpan=2 align=left><A class=navsans2 
+                        href="http://www.hinton-instruments.co.uk/paprod/digiproducts/routing.htm">Digital 
+                        Audio Routing Matrices<BR></A><IMG border=0 alt="" 
+                        src="HINTON%20INSTRUMENTS%20MIDI%20Protocol%20Guide%203_files/spacer.gif" 
+                        width=4 height=8></TD></TR></TBODY></TABLE></CSOBJ></TD></TR>
+              <TR>
+                <TD class=navruletop colSpan=2><IMG border=0 alt="" 
+                  src="HINTON%20INSTRUMENTS%20MIDI%20Protocol%20Guide%203_files/spacer.gif" 
+                  width=10 height=10></TD></TR>
+              <TR>
+                <TD width=10></TD>
+                <TD><A 
+                  onmouseup="changeImages( /*CMP*/'pmprod',/*URL*/'../../../images/nav_headings/pmprod_on.gif');return true" 
+                  onmouseover="changeImages( /*CMP*/'pmprod',/*URL*/'../../../images/nav_headings/pmprod_on.gif');return true" 
+                  onmouseout="changeImages( /*CMP*/'pmprod',/*URL*/'../../../images/nav_headings/pmprod_off.gif');return true" 
+                  onmousedown="changeImages( /*CMP*/'pmprod',/*URL*/'../../../images/nav_headings/pmprod_on.gif');return true" 
+                  href="http://www.hinton-instruments.co.uk/pmprod/index.htm"><IMG 
+                  border=0 name=pmprod alt="" 
+                  src="HINTON%20INSTRUMENTS%20MIDI%20Protocol%20Guide%203_files/pmprod_off.gif" 
+                  width=145 height=10></A></TD></TR>
+              <TR>
+                <TD width=10></TD>
+                <TD><CSOBJ occur="36" w="182" t="Component" h="160" 
+                  csref="../../../common/leftnav/bits/pmprod.htm">
+                  <TABLE border=0 cellSpacing=3 width=173>
+                    <TBODY>
+                    <TR>
+                      <TD vAlign=top width=9 align=left><IMG border=0 alt="" 
+                        src="HINTON%20INSTRUMENTS%20MIDI%20Protocol%20Guide%203_files/spacer.gif" 
+                        width=4 height=4></TD>
+                      <TD vAlign=top colSpan=2 align=left><IMG border=0 alt="" 
+                        src="HINTON%20INSTRUMENTS%20MIDI%20Protocol%20Guide%203_files/spacer.gif" 
+                        width=4 height=4></TD></TR>
+                    <TR>
+                      <TD vAlign=top width=9 align=left><IMG border=0 alt="" 
+                        vspace=2 
+                        src="HINTON%20INSTRUMENTS%20MIDI%20Protocol%20Guide%203_files/whitedash.gif" 
+                        width=9 height=9></TD>
+                      <TD vAlign=top colSpan=2 align=left><A class=navsans2 
+                        href="http://www.hinton-instruments.co.uk/pmprod/longhaul/index.htm">MIDI 
+                        Long Haul Converters<BR></A><IMG border=0 alt="" 
+                        src="HINTON%20INSTRUMENTS%20MIDI%20Protocol%20Guide%203_files/spacer.gif" 
+                        width=4 height=8></TD></TR>
+                    <TR>
+                      <TD vAlign=top width=9 align=left><IMG border=0 alt="" 
+                        vspace=2 
+                        src="HINTON%20INSTRUMENTS%20MIDI%20Protocol%20Guide%203_files/whitedash.gif" 
+                        width=9 height=9></TD>
+                      <TD vAlign=top colSpan=2 align=left><A class=navsans2 
+                        href="http://www.hinton-instruments.co.uk/pmprod/mergers/index.htm">MIDI 
+                        Merging and Filtering<BR></A><IMG border=0 alt="" 
+                        src="HINTON%20INSTRUMENTS%20MIDI%20Protocol%20Guide%203_files/spacer.gif" 
+                        width=4 height=8></TD></TR>
+                    <TR>
+                      <TD vAlign=top width=9 align=left><IMG border=0 alt="" 
+                        vspace=2 
+                        src="HINTON%20INSTRUMENTS%20MIDI%20Protocol%20Guide%203_files/whitedash.gif" 
+                        width=9 height=9></TD>
+                      <TD vAlign=top colSpan=2 align=left><A class=navsans2 
+                        href="http://www.hinton-instruments.co.uk/pmprod/routing/index.htm">MIDI 
+                        Routing Matrices<BR></A><IMG border=0 alt="" 
+                        src="HINTON%20INSTRUMENTS%20MIDI%20Protocol%20Guide%203_files/spacer.gif" 
+                        width=4 height=6></TD></TR>
+                    <TR>
+                      <TD vAlign=top width=9 align=left><IMG border=0 alt="" 
+                        vspace=2 
+                        src="HINTON%20INSTRUMENTS%20MIDI%20Protocol%20Guide%203_files/whitedash.gif" 
+                        width=9 height=9></TD>
+                      <TD vAlign=top colSpan=2 align=left><A class=navsans2 
+                        href="http://www.hinton-instruments.co.uk/pmprod/custom.htm">Custom 
+                        MIDI Devices<BR></A><IMG border=0 alt="" 
+                        src="HINTON%20INSTRUMENTS%20MIDI%20Protocol%20Guide%203_files/spacer.gif" 
+                        width=4 height=8></TD></TR></TBODY></TABLE></CSOBJ></TD></TR>
+              <TR>
+                <TD colSpan=2>
+                  <TABLE border=0 cellSpacing=0 cellPadding=0 width=191>
+                    <TBODY>
+                    <TR>
+                      <TD colSpan=2>
+                        <TABLE border=0 cellSpacing=0 cellPadding=0 width=190>
+                          <TBODY>
+                          <TR>
+                            <TD class=navruletop colSpan=2><IMG border=0 
+                              alt="" 
+                              src="HINTON%20INSTRUMENTS%20MIDI%20Protocol%20Guide%203_files/spacer.gif" 
+                              width=10 height=10></TD></TR>
+                          <TR>
+                            <TD width=10><IMG border=0 alt="" 
+                              src="HINTON%20INSTRUMENTS%20MIDI%20Protocol%20Guide%203_files/spacer.gif" 
+                              width=10 height=10></TD>
+                            <TD><IMG border=0 alt="" 
+                              src="HINTON%20INSTRUMENTS%20MIDI%20Protocol%20Guide%203_files/spacer.gif" 
+                              width=8 height=8><A 
+                              onmouseup="changeImages( /*CMP*/'components',/*URL*/'../../../images/nav_headings/comp_on.gif');return true" 
+                              onmouseover="changeImages( /*CMP*/'components',/*URL*/'../../../images/nav_headings/comp_on.gif');return true" 
+                              onmouseout="changeImages( /*CMP*/'components',/*URL*/'../../../images/nav_headings/comp_off.gif');return true" 
+                              onmousedown="changeImages( /*CMP*/'components',/*URL*/'../../../images/nav_headings/comp_on.gif');return true" 
+                              href="http://www.hinton-instruments.co.uk/components/index.htm"><IMG 
+                              border=0 name=components alt="" 
+                              src="HINTON%20INSTRUMENTS%20MIDI%20Protocol%20Guide%203_files/comp_off.gif" 
+                              width=68 height=12></A></TD></TR>
+                          <TR>
+                            <TD width=10></TD>
+                            <TD><CSOBJ occur="19" w="180" t="Component" 
+                              h="178" 
+                              csref="../../../common/leftnav/bits/comp.htm">
+                              <TABLE border=0 cellSpacing=3 width=173>
+                                <TBODY>
+                                <TR>
+                                <TD vAlign=top width=9 align=left><IMG border=0 
+                                alt="" 
+                                src="HINTON%20INSTRUMENTS%20MIDI%20Protocol%20Guide%203_files/spacer.gif" 
+                                width=4 height=4></TD>
+                                <TD vAlign=top colSpan=2 align=left><IMG 
+                                border=0 alt="" 
+                                src="HINTON%20INSTRUMENTS%20MIDI%20Protocol%20Guide%203_files/spacer.gif" 
+                                width=4 height=4></TD></TR>
+                                <TR>
+                                <TD vAlign=top width=9 align=left><IMG border=0 
+                                alt="" vspace=2 
+                                src="HINTON%20INSTRUMENTS%20MIDI%20Protocol%20Guide%203_files/whitedash.gif" 
+                                width=9 height=9></TD>
+                                <TD vAlign=top colSpan=2 align=left><A 
+                                class=navsans2 
+                                href="http://www.hinton-instruments.co.uk/components/eureka/index.htm">EUREKA 
+                                Timecode Reader<BR></A><IMG border=0 alt="" 
+                                src="HINTON%20INSTRUMENTS%20MIDI%20Protocol%20Guide%203_files/spacer.gif" 
+                                width=4 height=6></TD></TR>
+                                <TR>
+                                <TD vAlign=top width=9 align=left><IMG border=0 
+                                alt="" vspace=2 
+                                src="HINTON%20INSTRUMENTS%20MIDI%20Protocol%20Guide%203_files/whitedash.gif" 
+                                width=9 height=9></TD>
+                                <TD vAlign=top colSpan=2 align=left><A 
+                                class=navsans2 
+                                href="http://www.hinton-instruments.co.uk/components/kv64/index.htm">KV64 
+                                192 Key Velocity Keyboard Scanner<BR></A><IMG 
+                                border=0 alt="" 
+                                src="HINTON%20INSTRUMENTS%20MIDI%20Protocol%20Guide%203_files/spacer.gif" 
+                                width=4 height=8></TD></TR>
+                                <TR>
+                                <TD vAlign=top width=9 align=left><IMG border=0 
+                                alt="" vspace=2 
+                                src="HINTON%20INSTRUMENTS%20MIDI%20Protocol%20Guide%203_files/whitedash.gif" 
+                                width=9 height=9></TD>
+                                <TD vAlign=top colSpan=2 align=left><A 
+                                class=navsans2 
+                                href="http://www.hinton-instruments.co.uk/components/z80-dio/index.htm">Z80-DIO 
+                                Panel Interface Peripheral<BR></A><IMG border=0 
+                                alt="" 
+                                src="HINTON%20INSTRUMENTS%20MIDI%20Protocol%20Guide%203_files/spacer.gif" 
+                                width=4 height=8></TD></TR>
+                                <TR>
+                                <TD vAlign=top width=9 align=left><IMG border=0 
+                                alt="" vspace=2 
+                                src="HINTON%20INSTRUMENTS%20MIDI%20Protocol%20Guide%203_files/whitedash.gif" 
+                                width=9 height=9></TD>
+                                <TD vAlign=top colSpan=2 align=left><A 
+                                class=navsans2 
+                                href="http://www.hinton-instruments.co.uk/components/custom/index.htm">Custom 
+                                Chip Design<BR></A><IMG border=0 alt="" 
+                                src="HINTON%20INSTRUMENTS%20MIDI%20Protocol%20Guide%203_files/spacer.gif" 
+                                width=4 
+                            height=8></TD></TR></TBODY></TABLE></CSOBJ></TD></TR></TBODY></TABLE></TD></TR></TBODY></TABLE></TD></TR>
+              <TR>
+                <TD class=navruletop colSpan=2><IMG border=0 alt="" 
+                  src="HINTON%20INSTRUMENTS%20MIDI%20Protocol%20Guide%203_files/spacer.gif" 
+                  width=10 height=10></TD></TR>
+              <TR>
+                <TD colSpan=2>
+                  <TABLE border=0 cellSpacing=0 cellPadding=0 width=190>
+                    <TBODY>
+                    <TR>
+                      <TD width=10></TD>
+                      <TD><A 
+                        onmouseup="changeImages( /*CMP*/'spoffers',/*URL*/'../../../images/nav_headings/spoffers_on.gif');return true" 
+                        onmouseover="changeImages( /*CMP*/'spoffers',/*URL*/'../../../images/nav_headings/spoffers_on.gif');return true" 
+                        onmouseout="changeImages( /*CMP*/'spoffers',/*URL*/'../../../images/nav_headings/spoffers_off.gif');return true" 
+                        onmousedown="changeImages( /*CMP*/'spoffers',/*URL*/'../../../images/nav_headings/spoffers_off.gif');return true" 
+                        href="http://hinton-instruments-sales.blogspot.com/"><IMG 
+                        border=0 name=spoffers alt="" 
+                        src="HINTON%20INSTRUMENTS%20MIDI%20Protocol%20Guide%203_files/spoffers_off.gif" 
+                        width=78 height=13></A></TD></TR>
+                    <TR>
+                      <TD></TD>
+                      <TD><CSOBJ occur="84" w="180" t="Component" h="37" 
+                        csref="../../../common/leftnav/bits/spoffers.htm">
+                        <TABLE border=0 cellSpacing=3 width=173>
+                          <TBODY>
+                          <TR>
+                            <TD vAlign=top width=9 align=left><IMG border=0 
+                              alt="" 
+                              src="HINTON%20INSTRUMENTS%20MIDI%20Protocol%20Guide%203_files/spacer.gif" 
+                              width=4 height=4></TD>
+                            <TD vAlign=top colSpan=2 align=left><IMG border=0 
+                              alt="" 
+                              src="HINTON%20INSTRUMENTS%20MIDI%20Protocol%20Guide%203_files/spacer.gif" 
+                              width=4 height=4></TD></TR>
+                          <TR>
+                            <TD vAlign=top width=9 align=left><IMG border=0 
+                              alt="" vspace=2 
+                              src="HINTON%20INSTRUMENTS%20MIDI%20Protocol%20Guide%203_files/whitedash.gif" 
+                              width=9 height=9></TD>
+                            <TD vAlign=top colSpan=2 align=left><A 
+                              class=navsans2 
+                              href="http://hinton-instruments-sales.blogspot.com/2010/11/vintage-synthesizer-chips.html">Synthesizer 
+                              Parts<BR></A><IMG border=0 alt="" 
+                              src="HINTON%20INSTRUMENTS%20MIDI%20Protocol%20Guide%203_files/spacer.gif" 
+                              width=4 height=6></TD></TR>
+                          <TR>
+                            <TD vAlign=top width=9 align=left><IMG border=0 
+                              alt="" vspace=2 
+                              src="HINTON%20INSTRUMENTS%20MIDI%20Protocol%20Guide%203_files/whitedash.gif" 
+                              width=9 height=9></TD>
+                            <TD vAlign=top colSpan=2 align=left><A 
+                              class=navsans2 
+                              href="http://hinton-instruments-sales.blogspot.com/2010/11/midi16-professional-midi-routing-matrix.html">MIDI 
+                              Router<BR></A><IMG border=0 alt="" 
+                              src="HINTON%20INSTRUMENTS%20MIDI%20Protocol%20Guide%203_files/spacer.gif" 
+                              width=4 
+                    height=6></TD></TR></TBODY></TABLE></CSOBJ></TD></TR></TBODY></TABLE></TD></TR>
+              <TR>
+                <TD colSpan=2><IMG border=0 alt="" 
+                  src="HINTON%20INSTRUMENTS%20MIDI%20Protocol%20Guide%203_files/spacer.gif" 
+                  width=10 height=10></TD></TR></TBODY></TABLE></CSOBJ></TD>
+          <TD class=pagebody2 bgColor=white vAlign=top width=607 align=left>
+            <DIV class=headingtext4><IMG border=0 alt="" 
+            src="HINTON%20INSTRUMENTS%20MIDI%20Protocol%20Guide%203_files/midiprotocol.gif" 
+            width=167 height=17><BR><IMG border=0 alt="" 
+            src="HINTON%20INSTRUMENTS%20MIDI%20Protocol%20Guide%203_files/spacer.gif" 
+            width=8 height=31><BR><BR>Part 3:<BR><B>SYSTEM EXCLUSIVE 
+            STRUCTURE</B><BR><IMG border=0 alt="" 
+            src="HINTON%20INSTRUMENTS%20MIDI%20Protocol%20Guide%203_files/spacer.gif" 
+            width=14 height=33><BR><BR></DIV>
+            <DIV class=bodytext1>
+            <DIV class=bodytext1></DIV></DIV>
+            <DIV class=greyblue1border>
+            <TABLE border=0 cellSpacing=0 cellPadding=6 width=553>
+              <TBODY>
+              <TR>
+                <TD class=whiteborder bgColor=#dddeeb vAlign=middle width=541 
+                colSpan=3 align=center><IMG border=0 alt="" 
+                  src="HINTON%20INSTRUMENTS%20MIDI%20Protocol%20Guide%203_files/spacer.gif" 
+                  width=1 height=1></TD></TR>
+              <TR>
+                <TD class=whiteborder bgColor=#2f3b63 vAlign=top width=134 
+                align=left>
+                  <DIV class=headingtext2><B><FONT 
+                  color=white>Commercial</FONT></B></DIV></TD>
+                <TD class=whiteborder bgColor=#ededf1 vAlign=top width=149 
+                align=left>
+                  <DIV class=bodytext3>F0, ID, data, F7</DIV></TD>
+                <TD class=whiteborder bgColor=#ededf1 vAlign=top width=234 
+                align=left>
+                  <DIV class=bodytext3>Manufacturer ID must be registered and 
+                  data published</DIV></TD></TR>
+              <TR>
+                <TD class=whiteborder bgColor=#2f3b63 vAlign=top width=134 
+                align=left>
+                  <DIV class=headingtext2><B><FONT 
+                  color=white>Non-Commercial</FONT></B></DIV></TD>
+                <TD class=whiteborder bgColor=white vAlign=top width=149 
+                align=left>
+                  <DIV class=bodytext3>F0, 7D, data, F7</DIV></TD>
+                <TD class=whiteborder bgColor=white vAlign=top width=234 
+                align=left>
+                  <DIV class=bodytext3>Private use where unlikely to clash with 
+                  other private use</DIV></TD></TR>
+              <TR>
+                <TD class=whiteborder bgColor=#2f3b63 vAlign=top width=134 
+                align=left>
+                  <DIV class=headingtext2><FONT 
+                  color=white><B>Universal<BR>Non-Real Time</B></FONT></DIV></TD>
+                <TD class=whiteborder bgColor=#ededf1 vAlign=top width=149 
+                align=left>
+                  <DIV class=bodytext3>F0, 7E, nn, sub-ID, data, F7</DIV></TD>
+                <TD class=whiteborder bgColor=#ededf1 vAlign=top width=234 
+                align=left>
+                  <DIV class=bodytext3>nn = channel number, 00 to 7F 
+                  <P><B><FONT color=#2f3b63>sub-IDs:</FONT></B> <BR>01 = Sample 
+                  Dump header <BR>02 = Sample Dump packet <BR>03 = Dump Request 
+                  <BR>04 = MIDI Time Code Setup <BR>05 = Sample Dump extensions 
+                  <BR>06 = Inquiry Message <BR>07 = File Dump <BR>08 = MIDI 
+                  Tuning Standard <BR>09 = General MIDI Message <BR>7B = End of 
+                  File <BR>7C = Wait <BR>7D = Cancel <BR>7E = NAK <BR>7F = 
+                  Ack</P></DIV></TD></TR>
+              <TR>
+                <TD class=whiteborder bgColor=#2f3b63 vAlign=top width=134 
+                align=left>
+                  <DIV class=headingtext2><FONT color=white><B>Universal<BR>Real 
+                  Time</B></FONT></DIV></TD>
+                <TD class=whiteborder bgColor=white vAlign=top width=149 
+                align=left>
+                  <DIV class=bodytext3>F0, 7F, nn, sub-ID, data, F7</DIV></TD>
+                <TD class=whiteborder bgColor=white vAlign=top width=234 
+                align=left>
+                  <DIV class=bodytext3>nn = channel number, 00 to 7F; 7F = 
+                  global 
+                  <P><B><FONT color=#2f3b63>sub-IDs:</FONT></B> <BR>01 = Long 
+                  Form MTC <BR>02 = MIDI Show Control <BR>03 = Notation 
+                  Information <BR>04 = Device Control <BR>05 = Real Time MTC 
+                  Cueing <BR>06 = MIDI Machine Control Command <BR>07 = MIDI 
+                  Machine Control Response <BR>08 = Single Note 
+                Retune</P></DIV></TD></TR>
+              <TR>
+                <TD class=whiteborder bgColor=#dddeeb vAlign=middle width=541 
+                colSpan=3 align=center><IMG border=0 alt="" 
+                  src="HINTON%20INSTRUMENTS%20MIDI%20Protocol%20Guide%203_files/spacer.gif" 
+                  width=1 height=1></TD></TR></TBODY></TABLE></DIV>
+            <DIV class=headingtext4><BR><IMG border=0 alt="" 
+            src="HINTON%20INSTRUMENTS%20MIDI%20Protocol%20Guide%203_files/spacer.gif" 
+            width=11 height=43><BR></DIV>
+            <DIV class=bodytext1></DIV>
+            <DIV class=headingtext4></DIV>
+            <DIV class=greyblue1border align=center>
+            <TABLE border=0 cellSpacing=0 cellPadding=6 width=553>
+              <TBODY>
+              <TR>
+                <TD bgColor=#dddeeb vAlign=top width=265 align=left>
+                  <DIV class=bodytext3>&lt;&lt; Previous section: <A 
+                  class=bodylink3 
+                  href="http://www.hinton-instruments.co.uk/reference/midi/protocol/pg02.htm">MIDI 
+                  Controller Numbers</A></DIV></TD>
+                <TD bgColor=#dddeeb vAlign=top width=264 align=right>
+                  <DIV class=bodytext3>Next section: <A class=bodylink3 
+                  href="http://www.hinton-instruments.co.uk/reference/midi/protocol/pg04.htm">MIDI 
+                  Manufacturers' ID Numbers</A> &gt;&gt;</DIV></TD></TR>
+              <TR>
+                <TD bgColor=#ededf1 vAlign=top width=541 colSpan=2 align=left>
+                  <DIV class=bodytext3 align=center><IMG border=0 alt="" 
+                  src="HINTON%20INSTRUMENTS%20MIDI%20Protocol%20Guide%203_files/spacer.gif" 
+                  width=541 height=1><BR><A class=bodylink3 
+                  href="http://www.hinton-instruments.co.uk/reference/midi/protocol/pg02.htm">&lt;&lt;</A> 
+                  | <A class=bodylink3 
+                  href="http://www.hinton-instruments.co.uk/reference/midi/protocol/index.htm">1</A> 
+                  | <A class=bodylink3 
+                  href="http://www.hinton-instruments.co.uk/reference/midi/protocol/pg02.htm">2</A> 
+                  | 3 | <A class=bodylink3 
+                  href="http://www.hinton-instruments.co.uk/reference/midi/protocol/pg04.htm">4</A> 
+                  | <A class=bodylink3 
+                  href="http://www.hinton-instruments.co.uk/reference/midi/protocol/pg04.htm">&gt;&gt;<BR></A><IMG 
+                  border=0 alt="" 
+                  src="HINTON%20INSTRUMENTS%20MIDI%20Protocol%20Guide%203_files/spacer.gif" 
+                  width=541 height=1></DIV></TD></TR></TBODY></TABLE></DIV>
+            <DIV align=center><BR><IMG border=0 alt="" 
+            src="HINTON%20INSTRUMENTS%20MIDI%20Protocol%20Guide%203_files/spacer.gif" 
+            width=11 height=64><BR><A class=bodylink1 
+            href="http://www.hinton-instruments.co.uk/reference/midi/protocol/index.htm">MIDI 
+            Protocol Guide Index</A> | <A class=bodylink1 
+            href="http://www.hinton-instruments.co.uk/index.htm">Hinton 
+            Instruments Home<BR></A><IMG border=0 alt="" 
+            src="HINTON%20INSTRUMENTS%20MIDI%20Protocol%20Guide%203_files/spacer.gif" 
+            width=60 height=20><BR><IMG border=0 alt="" 
+            src="HINTON%20INSTRUMENTS%20MIDI%20Protocol%20Guide%203_files/spacer.gif" 
+            width=60 height=50><BR></DIV>
+            <DIV class=bodytext1 align=center></DIV></TD></TR></TBODY></TABLE></TD></TR>
+  <TR>
+    <TD vAlign=top align=center><IMG border=0 alt="" 
+      src="HINTON%20INSTRUMENTS%20MIDI%20Protocol%20Guide%203_files/spacer.gif" 
+      width=100 height=8> 
+      <TABLE border=0 cellSpacing=0 cellPadding=0 width=800>
+        <TBODY>
+        <TR>
+          <TD vAlign=top align=right><CSOBJ occur="98" w="800" t="Component" 
+            h="60" csref="../../../common/footer/links.htm">
+            <DIV class=footer_text><IMG border=0 alt="" 
+            src="HINTON%20INSTRUMENTS%20MIDI%20Protocol%20Guide%203_files/spacer.gif" 
+            width=10 height=10><BR><A class=footer_links 
+            href="http://www.hinton-instruments.co.uk/paserv/index.htm">Professional 
+            Audio Services</A><B> | </B><A class=footer_links 
+            href="http://www.hinton-instruments.co.uk/paprod/index.htm">Professional 
+            Audio Products</A><B> | </B><A class=footer_links 
+            href="http://www.hinton-instruments.co.uk/pmprod/index.htm">Professional 
+            MIDI Products</A><B> | </B><A class=footer_links 
+            href="http://www.hinton-instruments.co.uk/components/index.htm">Components</A><B> 
+            | </B><A class=footer_links 
+            href="http://www.hinton-instruments.co.uk/reference/index.htm">Reference</A><B> 
+            | </B><A class=footer_links 
+            href="http://hinton-instruments-sales.blogspot.com/">Special 
+            Offers</A><BR><A class=footer_links 
+            href="http://www.hinton-instruments.co.uk/index.htm">Home</A><B> | 
+            </B><A class=footer_links 
+            href="http://www.hinton-instruments.co.uk/news">News</A><B> | </B><A 
+            class=footer_links 
+            href="http://www.hinton-instruments.co.uk/contact/index.htm">Contact</A><B> 
+            | </B><A class=footer_links 
+            href="http://www.hinton-instruments.co.uk/links/index.htm">Links</A><B> 
+            | </B><A class=footer_links 
+            onclick="CSAction(new Array(/*CMP*/'C04CC7E20'));return CSClickReturn();" 
+            href="http://www.hinton-instruments.co.uk/reference/midi/protocol/pg03.htm#" 
+            csclick="C04CC7E20">FAQ</A><B> | </B><A class=footer_links 
+            onclick="CSAction(new Array(/*CMP*/'C06C6FFC9'));return CSClickReturn();" 
+            href="http://www.hinton-instruments.co.uk/reference/midi/protocol/pg03.htm#" 
+            csclick="C06C6FFC9">Conditions of Sale</A><BR><IMG border=0 alt="" 
+            src="HINTON%20INSTRUMENTS%20MIDI%20Protocol%20Guide%203_files/spacer.gif" 
+            width=10 height=10></DIV></CSOBJ></TD></TR>
+        <TR>
+          <TD vAlign=top align=right><CSOBJ occur="38" w="800" t="Component" 
+            h="34" csref="../../../common/footer/copyright.htm">
+            <DIV class=copyright><IMG border=0 alt="" 
+            src="HINTON%20INSTRUMENTS%20MIDI%20Protocol%20Guide%203_files/spacer.gif" 
+            width=10 height=10><BR>All material on this website copyright © 
+            2001-2010 Hinton Instruments<BR><IMG border=0 alt="" 
+            src="HINTON%20INSTRUMENTS%20MIDI%20Protocol%20Guide%203_files/spacer.gif" 
+            width=8 height=8></DIV></CSOBJ></TD></TR>
+        <TR>
+          <TD vAlign=top align=right>
+            <DIV class=last_updated>Last updated: <I>19 November 
+          2010</I></DIV></TD></TR></TBODY></TABLE></TD></TR>
+  <TR>
+    <TD vAlign=top align=center><IMG border=0 alt="" 
+      src="HINTON%20INSTRUMENTS%20MIDI%20Protocol%20Guide%203_files/spacer.gif" 
+      width=100 height=30></TD></TR></TBODY></TABLE>
+<P></P></BODY></HTML>

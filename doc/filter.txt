@@ -1,0 +1,178 @@
+The digital filter used in this application is the digital filter described in Hal Chamberlin's Musical Applications of Microprocessors.
+It is derived by straight-forward replacement of components from the analog state variable filter with digital counterparts.
+The digital state variable is a popular synthesizer filter, as was its analog counterpart.
+
+The state variable filter has similar advantages as biquads (second order IIR filters) as a synthesizer filter.
+Lowpass, highpass, bandpass, and band reject filters are all available simultaneously as part of this digital filter.
+Also, corner frequencies and Q values are independent and have easily calculated values.
+
+The frequency control coefficient, f, is defined as
+
+		f = 2 * sin (PI * Fc / Fs)
+
+where Fs is the sample rate and Fc is the filter's corner frequency you want to set.
+
+The q coefficient is defined as
+
+		q = 1 / Q
+
+where Q normally ranges from 0.5 to infinity. The filter oscillates at Q = infinity.
+
+Like its analog counterpart, the digital state variable filter has a cutoff slope of 12 dB/octave.
+
+The main drawback of the digital state variable is that it becomes unstable at higher frequencies.
+It depends on the Q setting, but basically the upper bound of stability is about where f reaches 1,
+which is at one-sixth of the sample rate (8 kHz at 48 kHz). The only way around this is to oversample.
+A simple way to double the filter’s sample rate (and thereby double the filter’s frequency range)
+is to run the filter twice with the same input sample, and discard one output sample.
+
+
+As a sine oscillator
+
+The state variable makes a great low frequency sine wave oscillator.
+Just set the Q to infinity, and make sure it has an impulse to get it started.
+Simply preset the delays (set the “cosine” delay to 1, or other peak value, and the other to 0) and run,
+and it will oscillate forever without instability, with fixed point or floating point.
+Even better, it gives you two waves in quadrature—simultaneous sine and cosine.
+
+Simplified to remove unecessary parts, the oscillator looks like this:
+
+For low frequencies, we can reduce the calculation of the f coefficient equation to
+
+		f = 2 * PI * Fc / Fs
+
+Here’s an example in C to show how easy this oscillator is to use; first initialize the oscillator amplitude, amp, to whatever amplitude you want (normally 1.0 for ±1.0 peak-to-peak output):
+
+// initialize oscillator
+sinZ = 0.0;
+cosZ = amp;
+
+Then, for every new sample, compute the sine and cosine components and use them as needed:
+
+// iterate oscillator
+sinZ = sinZ + f * cosZ;
+cosZ = cosZ – f * sinZ;
+
+The sine purity is excellent at low frequencies (becoming asymmetrical at high frequencies).
+
+=====================================================================================================
+
+State variable
+
+Type : 12db resonant low, high or bandpass
+References : Effect Deisgn Part 1, Jon Dattorro, J. Audio Eng. Soc., Vol 45, No. 9, 1997 September
+
+Notes :
+Digital approximation of Chamberlin two-pole low pass. Easy to calculate coefficients, easy to process algorithm.
+
+Code :
+cutoff = cutoff freq in Hz
+fs = sampling frequency //(e.g. 44100Hz)
+f = 2 sin (pi * cutoff / fs) //[approximately]
+q = resonance/bandwidth [0 < q <= 1]  most res: q=1, less: q=0
+low = lowpass output
+high = highpass output
+band = bandpass output
+notch = notch output
+
+scale = q
+
+low=high=band=0;
+
+//--beginloop
+low = low + f * band;
+high = scale * input - low - q*band;
+band = f * high + band;
+notch = high + low;
+//--endloop
+
+
+========================================================================================================
+
+
+State Variable Filter (Chamberlin version)
+
+References : Hal Chamberlin, "Musical Applications of Microprocessors," 2nd Ed, Hayden Book Company 1985. pp 490-492.
+Code :
+//Input/Output
+    I - input sample
+    L - lowpass output sample
+    B - bandpass output sample
+    H - highpass output sample
+    N - notch output sample
+    F1 - Frequency control parameter
+    Q1 - Q control parameter
+    D1 - delay associated with bandpass output
+    D2 - delay associated with low-pass output
+    
+// parameters:
+    Q1 = 1/Q
+    // where Q1 goes from 2 to 0, ie Q goes from .5 to infinity
+    
+    // simple frequency tuning with error towards nyquist
+    // F is the filter's center frequency, and Fs is the sampling rate
+    F1 = 2*pi*F/Fs
+
+    // ideal tuning:
+    F1 = 2 * sin( pi * F / Fs )
+
+// algorithm
+    // loop
+    L = D2 + F1 * D1
+    H = I - L - Q1*D1
+    B = F1 * H + D1
+    N = H + L
+    
+    // store delays
+    D1 = B
+    D2 = L
+
+    // outputs
+    L,H,B,N
+
+=========================================================================================
+
+State Variable Filter (Double Sampled, Stable)
+
+Type : 2 Pole Low, High, Band, Notch and Peaking
+References : Posted by Andrew Simper
+
+Notes :
+Thanks to Laurent de Soras for the stability limit
+and Steffan Diedrichsen for the correct notch output.
+
+
+
+Code :
+input  = input buffer;
+output = output buffer;
+fs     = sampling frequency;
+fc     = cutoff frequency normally something like:
+         440.0*pow(2.0, (midi_note - 69.0)/12.0);
+res    = resonance 0 to 1;
+drive  = internal distortion 0 to 0.1
+freq   = 2.0*sin(PI*MIN(0.25, fc/(fs*2)));  // the fs*2 is because it's double sampled
+damp   = MIN(2.0*(1.0 - pow(res, 0.25)), MIN(2.0, 2.0/freq - freq*0.5));
+notch  = notch output
+low    = low pass output
+high   = high pass output
+band   = band pass output
+peak   = peaking output = low - high
+--
+double sampled svf loop:
+for (i=0; i<numSamples; i++)
+{
+  in    = input[i];
+  notch = in - damp*band;
+  low   = low + freq*band;
+  high  = notch - low;
+  band  = freq*high + band - drive*band*band*band;
+  out   = 0.5*(notch or low or high or band or peak);
+  notch = in - damp*band;
+  low   = low + freq*band;
+  high  = notch - low;
+  band  = freq*high + band - drive*band*band*band;
+  out  += 0.5*(same out as above);
+  output[i] = out;
+}
+

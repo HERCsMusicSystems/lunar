@@ -25,7 +25,7 @@
 /////////////////////////////////////////////////////////////////////
 
 #include "prolog_lunar.h"
-#include "keyboard_calculator.h"
+#include "graphics2d.h"
 #include "gtk/gtk.h"
 
 static gboolean RemoveViewportIdleCode (GtkWidget * viewport) {gtk_widget_destroy (viewport); return FALSE;}
@@ -40,12 +40,10 @@ static char * GetResource (int ind) {
 	return (char *) LockResource (loader);
 }
 #else
-extern char resource_small_keyboard_start;
-extern char resource_small_keyboard_end;
-extern char resource_keyboard_start;
-extern char resource_keyboard_end;
-extern char resource_big_keyboard_start;
-extern char resource_big_keyboard_end;
+extern char resource_vector_frame_start;
+extern char resource_vector_frame_end;
+extern char resource_vector_handle_start;
+extern char resource_vector_handle_end;
 #endif
 
 class png_closure {
@@ -64,24 +62,22 @@ static cairo_status_t png_reader (void * closure, unsigned char * data, unsigned
 	return CAIRO_STATUS_SUCCESS;
 }
 
-class keyboard_action : public PrologNativeCode {
+class vector_action : public PrologNativeCode {
 public:
 	PrologRoot * root;
-	PrologAtom * keyon;
 	PrologAtom * atom;
 	PrologAtom * command;
+	bool on;
 	GtkWidget * viewport;
 	cairo_surface_t * surface;
-	int keyboard_width;
-	int keyboard_height;
-	keyboard_calculator kb;
-	void action (int velocity, int x, int y) {
-		int key = kb . get (x, y);
+	cairo_surface_t * handle;
+	point position;
+	point reference;
+	void action (void) {
 		PrologElement * query = root -> pair (root -> atom (command),
-								root -> pair (root -> atom (keyon),
-								root -> pair (root -> integer (key),
-								root -> pair (root -> integer (velocity),
-								root -> earth ()))));
+								root -> pair (root -> Double (1.0 - position . x / 48.0),
+								root -> pair (root -> Double (-1.0 + position . y / 48.0),
+								root -> earth ())));
 		query = root -> pair (root -> head (0), root -> pair (query, root -> earth ()));
 		root -> resolution (query);
 		delete query;
@@ -91,106 +87,99 @@ public:
 		delete this;
 		return true;
 	}
-	bool code (PrologElement * parameters, PrologResolution * resolution) {
-		if (parameters -> isEarth ()) return remove ();
-		return true;
-	}
-	keyboard_action (PrologRoot * root, PrologDirectory * directory, PrologAtom * atom, PrologAtom * command, int size) : kb (0, 0) {
+	bool code (PrologElement * parameters, PrologResolution * resolution) {if (parameters -> isEarth ()) return remove (); return true;}
+	vector_action (PrologRoot * root, PrologAtom * atom, PrologAtom * command) : position (48.0, 48.0) {
+		on = false;
 		this -> root = root;
-		keyon = directory == 0 ? 0 : directory -> searchAtom ("keyon");
 		this -> atom = atom; COLLECTOR_REFERENCE_INC (atom);
 		this -> command = command; COLLECTOR_REFERENCE_INC (command);
 		viewport = 0;
-		keyboard_width = 200; keyboard_height = 100;
 #ifdef WIN32
-		char * resource = GetResource (SMALL_KEYBOARD_PNG);
-		png_closure small_keyboard_png_closure (resource, resource + SMALL_KEYBOARD_SIZE);
-		resource = GetResource (KEYBOARD_PNG);
-		png_closure keyboard_png_closure (resource, resource + KEYBOARD_SIZE);
-		resource = GetResource (BIG_KEYBOARD_PNG);
-		png_closure big_keyboard_png_closure (resource, resource + BIG_KEYBOARD_SIZE);
+		char * resource = GetResource (VECTOR_FRAME_PNG);
+		png_closure frame_closure (resource, resource + VECTOR_FRAME_SIZE);
+		surface = cairo_image_surface_create_from_png_stream (png_reader, & frame_closure);
+		resource = GetResource (VECTOR_HANDLE_PNG);
+		png_closure handle_closure (resource, resource + VECTOR_HANDLE_SIZE);
+		handle = cairo_image_surface_create_from_png_stream (png_reader, & handle_closure);
 #else
-		png_closure small_keyboard_png_closure (& resource_small_keyboard_start, & resource_small_keyboard_end);
-		png_closure keyboard_png_closure (& resource_keyboard_start, & resource_keyboard_end);
-		png_closure big_keyboard_png_closure (& resource_big_keyboard_start, & resource_big_keyboard_end);
 #endif
-		switch (size) {
-		case 1:
-			surface = cairo_image_surface_create_from_png_stream (png_reader, & small_keyboard_png_closure);
-			kb . set_keyboard_layout_y (66, 44);
-			kb . set_keyboard_layout_x (11, 1, 2, 3, 4, 5);
-			kb . set_ambitus (17, 54);
-			break;
-		case 3:
-			surface = cairo_image_surface_create_from_png_stream (png_reader, & big_keyboard_png_closure);
-			kb . set_keyboard_layout_y (132, 88);
-			kb . set_keyboard_layout_x (22, 2, 4, 6, 8, 10);
-			kb . set_ambitus (17, 54);
-			break;
-		default:
-			surface = cairo_image_surface_create_from_png_stream (png_reader, & keyboard_png_closure);
-			kb . set_keyboard_layout_y (99, 66);
-			kb . set_keyboard_layout_x (16, 2, 3, 4, 5, 6);
-			kb . set_ambitus (17, 54);
-			break;
-		}
-		if (cairo_surface_status (surface) != CAIRO_STATUS_SUCCESS) {cairo_surface_destroy (surface); surface = 0; return;}
-		keyboard_width = cairo_image_surface_get_width (surface);
-		keyboard_height = cairo_image_surface_get_height (surface);
 	}
-	~ keyboard_action (void) {
+	~ vector_action (void) {
 		atom -> setMachine (0);
 		atom -> removeAtom ();
 		command -> removeAtom ();
 		if (surface != 0) cairo_surface_destroy (surface);
+		if (handle != 0) cairo_surface_destroy (handle);
 	}
 };
 
-static gboolean ViewportDeleteEvent (GtkWidget * viewport, GdkEvent * event, keyboard_action * machine) {
+static gboolean ViewportDeleteEvent (GtkWidget * viewport, GdkEvent * event, vector_action * machine) {
 	gtk_widget_destroy (machine -> viewport);
 	machine -> remove (false);
 	return FALSE;
 }
 
-static gboolean RedrawKeyboard (GtkWidget * viewport, GdkEvent * event, keyboard_action * machine) {
+static gboolean RedrawVector (GtkWidget * viewport, GdkEvent * event, vector_action * machine) {
 	cairo_t * cr = gdk_cairo_create (gtk_widget_get_window (viewport));
 	if (machine -> surface == 0) return FALSE;
 	cairo_set_source_surface (cr, machine -> surface, 0.0, 0.0);
 	cairo_paint (cr);
+	cairo_surface_t * sub = cairo_surface_create_for_rectangle (machine -> handle, machine -> position . x, machine -> position . y, 97.0, 97.0);
+	cairo_set_source_surface (cr, sub, 25.0, 25.0);
+	cairo_paint (cr);
+	cairo_surface_destroy (sub);
 	cairo_destroy (cr);
 	return FALSE;
 }
 
-static gint KeyboardKeyon (GtkWidget * viewport, GdkEventButton * event, keyboard_action * machine) {
-	machine -> action ((int) event -> button == 1 ? 100 : 0, (int) event -> x, (int) event -> y);
+static gint VectorKeyon (GtkWidget * viewport, GdkEventButton * event, vector_action * machine) {
+	machine -> on = true;
+	machine -> reference = point (event -> x, event -> y);
 	return TRUE;
 }
-static gint KeyboardKeyoff (GtkWidget * viewport, GdkEventButton * event, keyboard_action * machine) {machine -> action (0, (int) event -> x, (int) event -> y); return TRUE;}
 
-static gboolean CreateKeyboardIdleCode (keyboard_action * parameter) {
+static gint VectorKeyoff (GtkWidget * viewport, GdkEventButton * event, vector_action * machine) {
+	machine -> on = false;
+	return TRUE;
+}
+
+static gint VectorMove (GtkWidget * viewport, GdkEventButton * event, vector_action * machine) {
+	if (machine -> on) {
+		point p (event -> x, event -> y);
+		machine -> position -= (p - machine -> reference) * 0.25;
+		machine -> reference = p;
+		if (machine -> position . x < 0.0) machine -> position . x = 0.0;
+		if (machine -> position . y < 0.0) machine -> position . y = 0.0;
+		if (machine -> position . x > 96.0) machine -> position . x = 96.0;
+		if (machine -> position . y > 96.0) machine -> position . y = 96.0;
+		gtk_widget_queue_draw (machine -> viewport);
+		machine -> action ();
+	}
+	return TRUE;
+}
+
+static gboolean CreateVectorIdleCode (vector_action * parameter) {
 	parameter -> viewport = gtk_window_new (GTK_WINDOW_TOPLEVEL);
 	gtk_window_set_title (GTK_WINDOW (parameter -> viewport), parameter -> atom -> name ());
 	g_signal_connect (parameter -> viewport, "delete-event", G_CALLBACK (ViewportDeleteEvent), parameter);
-	GtkWidget * drawing_area = gtk_drawing_area_new ();
-	gtk_container_add (GTK_CONTAINER (parameter -> viewport), drawing_area);
-	g_signal_connect (G_OBJECT (drawing_area), "expose-event", G_CALLBACK (RedrawKeyboard), parameter);
-	gtk_widget_add_events (parameter -> viewport, GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK);
-	g_signal_connect (G_OBJECT (parameter -> viewport), "button_press_event", G_CALLBACK (KeyboardKeyon), parameter);
-	g_signal_connect (G_OBJECT (parameter -> viewport), "button_release_event", G_CALLBACK (KeyboardKeyoff), parameter);
-	gtk_window_resize (GTK_WINDOW (parameter -> viewport), parameter -> keyboard_width, parameter -> keyboard_height);
+	GtkWidget * area = gtk_drawing_area_new ();
+	gtk_container_add (GTK_CONTAINER (parameter -> viewport), area);
+	g_signal_connect (G_OBJECT (area), "expose-event", G_CALLBACK (RedrawVector), parameter);
+	gtk_widget_add_events (parameter -> viewport, GDK_BUTTON_PRESS_MASK | GDK_POINTER_MOTION_MASK | GDK_BUTTON_RELEASE_MASK);
+	g_signal_connect (G_OBJECT (parameter -> viewport), "button_press_event", G_CALLBACK (VectorKeyon), parameter);
+	g_signal_connect (G_OBJECT (parameter -> viewport), "button_release_event", G_CALLBACK (VectorKeyoff), parameter);
+	g_signal_connect (G_OBJECT (parameter -> viewport), "motion_notify_event", G_CALLBACK (VectorMove), parameter);
+	gtk_window_resize (GTK_WINDOW (parameter -> viewport), cairo_image_surface_get_width (parameter -> surface), cairo_image_surface_get_height (parameter -> surface));
 	gtk_widget_show_all (parameter -> viewport);
 	return FALSE;
 }
 
-bool keyboard_class :: code (PrologElement * parameters, PrologResolution * resolution) {
+bool vector_class :: code (PrologElement * parameters, PrologResolution * resolution) {
 	PrologElement * atom = 0;
 	PrologElement * command = 0;
 	while (parameters -> isPair ()) {
 		PrologElement * el = parameters -> getLeft ();
-		if (el -> isAtom ()) {
-			if (atom == 0) atom = el;
-			else command = el;
-		}
+		if (el -> isAtom ()) {if (atom == 0) atom = el; else command = el;}
 		if (el -> isVar ()) {if (atom != 0) command = atom; atom = el;}
 		parameters = parameters -> getRight ();
 	}
@@ -198,15 +187,10 @@ bool keyboard_class :: code (PrologElement * parameters, PrologResolution * reso
 	if (atom -> isVar ()) atom -> setAtom (new PrologAtom ());
 	if (! atom -> isAtom ()) return false;
 	if (atom -> getAtom () -> getMachine () != 0) return false;
-	keyboard_action * machine = new keyboard_action (root, directory, atom -> getAtom (), command -> getAtom (), size);
+	vector_action * machine = new vector_action (root, atom -> getAtom (), command -> getAtom ());
 	if (! atom -> getAtom () -> setMachine (machine)) {delete machine; return false;}
-	g_idle_add ((GSourceFunc) CreateKeyboardIdleCode, machine);
+	g_idle_add ((GSourceFunc) CreateVectorIdleCode, machine);
 	return true;
 }
 
-keyboard_class :: keyboard_class (PrologRoot * root, PrologDirectory * directory, int size) {
-	this -> root = root;
-	this -> directory = directory;
-	this -> size = size;
-}
-
+vector_class :: vector_class (PrologRoot * root) {this -> root = root;}

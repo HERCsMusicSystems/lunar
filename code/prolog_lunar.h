@@ -65,6 +65,13 @@ public:
 	keyboard_class (PrologRoot * root, PrologDirectory * directory, int size);
 };
 
+class vector_class : public PrologNativeCode {
+public:
+	PrologRoot * root;
+	bool code (PrologElement * parameters, PrologResolution * resolution);
+	vector_class (PrologRoot * root);
+};
+
 class oscilloscope_class : public PrologNativeOrbiterCreator {
 public:
 	virtual orbiter * create_orbiter (PrologElement * parameters);

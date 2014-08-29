@@ -12,6 +12,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\prolog\code\prolog\encoder.cpp" />
+    <ClCompile Include="..\..\prolog\code\prolog\graphics2d.cpp" />
     <ClCompile Include="..\..\prolog\code\prolog\joystick_windows.cpp" />
     <ClCompile Include="..\..\prolog\code\prolog\midi_stream.cpp" />
     <ClCompile Include="..\..\prolog\code\prolog\object_tracker.cpp" />
@@ -49,6 +50,7 @@
     <ClCompile Include="..\code\lunar_prolog_moonbase.cpp" />
     <ClCompile Include="..\code\lunar_prolog_operator.cpp" />
     <ClCompile Include="..\code\lunar_prolog_oscilloscope.cpp" />
+    <ClCompile Include="..\code\lunar_prolog_vector.cpp" />
     <ClCompile Include="..\code\lunar_wave.cpp" />
     <ClCompile Include="..\code\multiplatform_audio.cpp" />
     <ClCompile Include="..\code\prcgtk.cpp" />

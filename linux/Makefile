@@ -15,7 +15,7 @@ objects = \
 	$(pi)prolog_midi.o $(pi)prolog_conductor.o $(pi)prolog_http.o $(pi)prolog_control.o $(pi)joystick_linux.o\
 	prolog_lunar.o lunar_core.o lunar_prolog_oscilloscope.o lunar_prolog_keyboard.o lunar_prolog_operator.o lunar_operator.o\
 	keyboard_calculator.o lunar_prolog_moonbase.o lunar_moonbase.o lunar_prolog_landers.o lunar_landers.o lunar_wave.o\
-	multiplatform_audio.o\
+	lunar_prolog_vector.o graphics2d.o multiplatform_audio.o\
 	prcgtk.o
 
 prc_resources = $(pi)studio_prc.o $(pi)conductor_prc.o $(pi)midi_prc.o $(pi)http_prc.o $(pi)store_prc.o $(pi)f1_prc.o $(pi)help_prc.o $(pi)record_prc.o\
@@ -60,8 +60,14 @@ lunar_prolog_landers.o: ../code/lunar_prolog_landers.cpp ../code/lunar_prolog_la
 lunar_prolog_keyboard.o: ../code/lunar_prolog_keyboard.cpp ../code/lunar.h ../code/prolog_lunar.h $(pc)prolog.h ../code/keyboard_calculator.h
 	g++ -Wno-write-strings -I. -I$(pc) ../code/lunar_prolog_keyboard.cpp -c -o lunar_prolog_keyboard.o `pkg-config --cflags gtk+-2.0`
 
+lunar_prolog_vector.o: ../code/lunar_prolog_vector.cpp ../code/lunar.h ../code/prolog_lunar.h $(pc)prolog.h
+	g++ -Wno-write-strings -I. -I$(pc) ../code/lunar_prolog_vector.cpp -c -o lunar_prolog_vector.o `pkg-config --cflags gtk+-2.0`
+
 prolog_lunar.o: ../code/prolog_lunar.h ../code/prolog_lunar.cpp ../code/lunar.h $(pc)prolog.h
 	g++ -Wno-write-strings -I. -I$(pc) ../code/prolog_lunar.cpp -c -o prolog_lunar.o
+
+graphics2d.o: $(pc)graphics2d.cpp $(pc)graphics2d.h
+	g++ -Wno-write-strings -I. -I$(pc) $(pc)graphics2d.cpp -c -o graphics2d.o
 
 small_keyboard.o: ../graphics/small_keyboard.png
 	objcopy --input binary --output elf64-x86-64 --binary-architecture i386\
@@ -69,18 +75,39 @@ small_keyboard.o: ../graphics/small_keyboard.png
 		--redefine-sym _binary____graphics_small_keyboard_png_end=resource_small_keyboard_end\
 		--redefine-sym _binary____graphics_small_keyboard_png_size=resource_small_keyboard_size\
 		../graphics/small_keyboard.png small_keyboard.o
+	objdump -t small_keyboard.o
+
 keyboard.o: ../graphics/keyboard.png
 	objcopy --input binary --output elf64-x86-64 --binary-architecture i386\
 		--redefine-sym _binary____graphics_keyboard_png_start=resource_keyboard_start\
 		--redefine-sym _binary____graphics_keyboard_png_end=resource_keyboard_end\
 		--redefine-sym _binary____graphics_keyboard_png_size=resource_keyboard_size\
 		../graphics/keyboard.png keyboard.o
+	objdump -t keyboard.o
+
 big_keyboard.o: ../graphics/big_keyboard.png
 	objcopy --input binary --output elf64-x86-64 --binary-architecture i386\
 		--redefine-sym _binary____graphics_big_keyboard_png_start=resource_big_keyboard_start\
 		--redefine-sym _binary____graphics_big_keyboard_png_end=resource_big_keyboard_end\
 		--redefine-sym _binary____graphics_big_keyboard_png_size=resource_big_keyboard_size\
 		../graphics/big_keyboard.png big_keyboard.o
+	objdump -t big_keyboard.o
+
+vector_frame.o: ../graphics/vector_frame.png
+	objcopy --input binary --output elf64-x86-64 --binary-architecture i386\
+		--redefine-sym _binary____graphics_vector_frame_png_start=resource_vector_frame_start\
+		--redefine-sym _binary____graphics_vector_frame_png_end=resource_vector_frame_end\
+		--redefine-sym _binary____graphics_vector_frame_png_size=resource_vector_frame_size\
+		../graphics/vector_frame.png vector_frame.o
+	objdump -t vector_frame.o
+
+vector_handle.o: ../graphics/vector_handle.png
+	objcopy --input binary --output elf64-x86-64 --binary-architecture i386\
+		--redefine-sym _binary____graphics_vector_handle_png_start=resource_vector_handle_start\
+		--redefine-sym _binary____graphics_vector_handle_png_end=resource_vector_handle_end\
+		--redefine-sym _binary____graphics_vector_handle_png_size=resource_vector_handle_size\
+		../graphics/vector_handle.png vector_handle.o
+	objdump -t vector_handle.o
 
 lunar_prc.o: ../code/lunar.prc
 	objcopy --input binary --output elf64-x86-64 --binary-architecture i386\
@@ -92,8 +119,10 @@ prcgtk.o: ../code/prcgtk.cpp ../code/prolog_lunar.h\
 	$(pc)prolog_http.h $(pc)prolog_distribution.h $(pc)prolog_control.h
 	g++ -Wno-write-strings -I. -I$(pc) ../code/prcgtk.cpp -c -o prcgtk.o `pkg-config --cflags gtk+-2.0`
 
-~/bin/lunar: $(lunar_objects) $(objects) small_keyboard.o keyboard.o big_keyboard.o $(prc_resources)
-	g++ $(lunar_objects) $(objects) $(prc_resources) small_keyboard.o keyboard.o big_keyboard.o \
+graphics = small_keyboard.o keyboard.o big_keyboard.o vector_frame.o vector_handle.o
+
+~/bin/lunar: $(lunar_objects) $(objects) $(graphics) $(prc_resources)
+	g++ $(lunar_objects) $(objects) $(prc_resources) $(graphics) \
 	-o ~/bin/lunar -lpthread -ldl -lreadline -lasound `pkg-config --libs gtk+-2.0`
 
 lunar: ~/bin/lunar

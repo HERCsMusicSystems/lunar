@@ -75,8 +75,8 @@ public:
 	point reference;
 	void action (void) {
 		PrologElement * query = root -> pair (root -> atom (command),
-								root -> pair (root -> Double (1.0 - position . x / 48.0),
-								root -> pair (root -> Double (-1.0 + position . y / 48.0),
+								root -> pair (root -> Double (1.0 - position . x / 64.0),
+								root -> pair (root -> Double (-1.0 + position . y / 64.0),
 								root -> earth ())));
 		query = root -> pair (root -> head (0), root -> pair (query, root -> earth ()));
 		root -> resolution (query);
@@ -88,7 +88,7 @@ public:
 		return true;
 	}
 	bool code (PrologElement * parameters, PrologResolution * resolution) {if (parameters -> isEarth ()) return remove (); return true;}
-	vector_action (PrologRoot * root, PrologAtom * atom, PrologAtom * command) : position (48.0, 48.0) {
+	vector_action (PrologRoot * root, PrologAtom * atom, PrologAtom * command) : position (64.0, 64.0) {
 		on = false;
 		this -> root = root;
 		this -> atom = atom; COLLECTOR_REFERENCE_INC (atom);
@@ -97,12 +97,14 @@ public:
 #ifdef WIN32
 		char * resource = GetResource (VECTOR_FRAME_PNG);
 		png_closure frame_closure (resource, resource + VECTOR_FRAME_SIZE);
-		surface = cairo_image_surface_create_from_png_stream (png_reader, & frame_closure);
 		resource = GetResource (VECTOR_HANDLE_PNG);
 		png_closure handle_closure (resource, resource + VECTOR_HANDLE_SIZE);
-		handle = cairo_image_surface_create_from_png_stream (png_reader, & handle_closure);
 #else
+		png_closure frame_closure (& resource_vector_frame_start, & resource_vector_frame_end);
+		png_closure handle_closure (& resource_vector_handle_start, & resource_vector_handle_end);
 #endif
+		surface = cairo_image_surface_create_from_png_stream (png_reader, & frame_closure);
+		handle = cairo_image_surface_create_from_png_stream (png_reader, & handle_closure);
 	}
 	~ vector_action (void) {
 		atom -> setMachine (0);
@@ -124,8 +126,8 @@ static gboolean RedrawVector (GtkWidget * viewport, GdkEvent * event, vector_act
 	if (machine -> surface == 0) return FALSE;
 	cairo_set_source_surface (cr, machine -> surface, 0.0, 0.0);
 	cairo_paint (cr);
-	cairo_surface_t * sub = cairo_surface_create_for_rectangle (machine -> handle, machine -> position . x, machine -> position . y, 97.0, 97.0);
-	cairo_set_source_surface (cr, sub, 25.0, 25.0);
+	cairo_surface_t * sub = cairo_surface_create_for_rectangle (machine -> handle, machine -> position . x, machine -> position . y, 129.0, 129.0);
+	cairo_set_source_surface (cr, sub, 23.0, 24.0);
 	cairo_paint (cr);
 	cairo_surface_destroy (sub);
 	cairo_destroy (cr);
@@ -150,8 +152,8 @@ static gint VectorMove (GtkWidget * viewport, GdkEventButton * event, vector_act
 		machine -> reference = p;
 		if (machine -> position . x < 0.0) machine -> position . x = 0.0;
 		if (machine -> position . y < 0.0) machine -> position . y = 0.0;
-		if (machine -> position . x > 96.0) machine -> position . x = 96.0;
-		if (machine -> position . y > 96.0) machine -> position . y = 96.0;
+		if (machine -> position . x > 128.0) machine -> position . x = 128.0;
+		if (machine -> position . y > 128.0) machine -> position . y = 128.0;
 		gtk_widget_queue_draw (machine -> viewport);
 		machine -> action ();
 	}
@@ -194,3 +196,4 @@ bool vector_class :: code (PrologElement * parameters, PrologResolution * resolu
 }
 
 vector_class :: vector_class (PrologRoot * root) {this -> root = root;}
+

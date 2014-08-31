@@ -26,6 +26,7 @@
 
 #include "prolog_lunar.h"
 #include "keyboard_calculator.h"
+#include "graphics2d.h"
 #include "graphic_resources.h"
 #include "gtk/gtk.h"
 
@@ -42,6 +43,7 @@ public:
 	int keyboard_width;
 	int keyboard_height;
 	keyboard_calculator kb;
+	point location;
 	void action (int velocity, int x, int y) {
 		int key = kb . get (x, y);
 		PrologElement * query = root -> pair (root -> atom (command),
@@ -58,10 +60,7 @@ public:
 		delete this;
 		return true;
 	}
-	bool code (PrologElement * parameters, PrologResolution * resolution) {
-		if (parameters -> isEarth ()) return remove ();
-		return true;
-	}
+	bool code (PrologElement * parameters, PrologResolution * resolution);
 	keyboard_action (GraphicResources * resources, PrologRoot * root, PrologDirectory * directory, PrologAtom * atom, PrologAtom * command, int size) : kb (0, 0) {
 		this -> root = root;
 		keyon = directory == 0 ? 0 : directory -> searchAtom ("keyon");
@@ -99,6 +98,25 @@ public:
 		command -> removeAtom ();
 	}
 };
+
+static gboolean RepositionKeyboard (keyboard_action * keyboard) {
+	gtk_window_move (GTK_WINDOW (keyboard -> viewport), (int) keyboard -> location . x, (int) keyboard -> location . y);
+	return FALSE;
+}
+bool keyboard_action :: code (PrologElement * parameters, PrologResolution * resolution) {
+	if (parameters -> isEarth ()) return remove ();
+	PrologElement * x = 0;
+	PrologElement * y = 0;
+	while (parameters -> isPair ()) {
+		PrologElement * el = parameters -> getLeft ();
+		if (el -> isNumber ()) if (x == 0) x = el; else y = el;
+		parameters = parameters -> getRight ();
+	}
+	if (x == 0 || y == 0) return true;
+	location = point (x -> getNumber (), y -> getNumber ());
+	g_idle_add ((GSourceFunc) RepositionKeyboard, this);
+	return true;
+}
 
 static gboolean ViewportDeleteEvent (GtkWidget * viewport, GdkEvent * event, keyboard_action * machine) {
 	gtk_widget_destroy (machine -> viewport);

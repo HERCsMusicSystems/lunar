@@ -15,8 +15,8 @@
 #define SMALL_KEYBOARD_SIZE             435
 #define KEYBOARD_SIZE                   579
 #define BIG_KEYBOARD_SIZE               1765
-#define VECTOR_FRAME_SIZE               19824
-#define VECTOR_HANDLE_SIZE              788
+#define VECTOR_FRAME_SIZE               6171
+#define VECTOR_HANDLE_SIZE              1151
 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS

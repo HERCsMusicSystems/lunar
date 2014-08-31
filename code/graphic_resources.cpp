@@ -3,6 +3,7 @@
 
 #ifdef WIN32
 #include "lunar_resource.h"
+#include <Windows.h>
 static char * GetResource (int ind) {
 	HRSRC resource = FindResource (NULL, MAKEINTRESOURCE (ind), RT_RCDATA);
 	if (! resource) return 0;
@@ -46,10 +47,10 @@ static cairo_status_t png_reader (void * closure, unsigned char * data, unsigned
 GraphicResources :: GraphicResources (void) {
 #ifdef WIN32
 	png_closure frame_closure (GetResource (VECTOR_FRAME_PNG), VECTOR_FRAME_SIZE);
-	png_closure handle_closure (GetResource (VECTOR_FRAME_HANDLE_PNG), VECTOR_HANDLE_SIZE);
-	png_closure small_keyboard_png_closure (GetResource (SMALL_KEYBOARD_PNG), SMALL_KEYBOARD_SIZE);
-	png_closure keyboard_png_closure (GetResource (KEYBOARD_PNG), KEYBOARD_SIZE);
-	png_closure big_keyboard_png_closure (GetResource (BIG_KEYBOARD_PNG), BIG_KEYBOARD_SIZE);
+	png_closure handle_closure (GetResource (VECTOR_HANDLE_PNG), VECTOR_HANDLE_SIZE);
+	png_closure small_keyboard_closure (GetResource (SMALL_KEYBOARD_PNG), SMALL_KEYBOARD_SIZE);
+	png_closure keyboard_closure (GetResource (KEYBOARD_PNG), KEYBOARD_SIZE);
+	png_closure big_keyboard_closure (GetResource (BIG_KEYBOARD_PNG), BIG_KEYBOARD_SIZE);
 #else
 	png_closure frame_closure (& resource_vector_frame_start, & resource_vector_frame_end);
 	png_closure handle_closure (& resource_vector_handle_start, & resource_vector_handle_end);

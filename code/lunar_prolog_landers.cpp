@@ -236,7 +236,11 @@ public:
 					else trigger -> keyon (key -> getInteger (), velocity -> getInteger ());
 					return true;
 				}
-				if (a == keyoff) {trigger -> keyoff (); return true;}
+				if (a == keyoff) {
+					if (key != 0) trigger -> keyoff (key -> getInteger (), velocity == 0 ? 0 : velocity -> getInteger ());
+					else trigger -> keyoff ();
+					return true;
+				}
 				if (a == mono) {trigger -> mono (); return true;}
 				if (a == poly) {trigger -> poly (); return true;}
 				PrologNativeCode * machine = a -> getMachine ();

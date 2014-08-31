@@ -25,6 +25,7 @@
 //////////////////////////////////////////////////////////////////////
 
 #include "prolog_lunar.h"
+#include "graphics2d.h"
 #define _USE_MATH_DEFINES
 #include <math.h>
 #include "gtk/gtk.h"
@@ -37,6 +38,7 @@ public:
 	bool no_redraw;
 	double wave [256];
 	int frame_count;
+	point location;
 	virtual int numberOfInputs (void) {return numberOfOutputs ();}
 	virtual char * inputName (int ind) {return outputName (ind);}
 	virtual double * inputAddress (int ind) {return outputAddress (ind);}
@@ -68,6 +70,7 @@ public:
 		atom -> setMachine (0);
 		delete this;
 	}
+	bool code (PrologElement * parameters, PrologResolution * resolution);
 	oscilloscope_action (PrologAtom * atom, orbiter_core * core, orbiter * module) : PrologNativeOrbiter (atom, core, module) {
 		remove_gtk = true;
 		COLLECTOR_REFERENCE_INC (atom);
@@ -77,6 +80,26 @@ public:
 		atom -> removeAtom ();
 	}
 };
+
+static gboolean RepositionOscilloscope (lunar_oscilloscope * osc) {
+	gtk_window_move (GTK_WINDOW (osc -> viewport), (int) osc -> location . x, (int) osc -> location . y);
+	return FALSE;
+}
+bool oscilloscope_action :: code (PrologElement * parameters, PrologResolution * resolution) {
+	PrologElement * x = 0;
+	PrologElement * y = 0;
+	PrologElement * p = parameters;
+	while (p -> isPair ()) {
+		PrologElement * el = p -> getLeft ();
+		if (el -> isNumber ()) if (x == 0) x = el; else y = el;
+		p = p -> getRight ();
+	}
+	if (x == 0 || y == 0) return PrologNativeOrbiter :: code (parameters, resolution);
+	lunar_oscilloscope * osc = (lunar_oscilloscope *) module;
+	osc -> location = point (x -> getNumber (), y -> getNumber ());
+	g_idle_add ((GSourceFunc) RepositionOscilloscope, osc);
+	return true;
+}
 
 static gboolean DeleteOscilloscopeEvent (GtkWidget * viewport, GdkEvent * event, oscilloscope_action * osc) {
 	((lunar_oscilloscope *) osc -> module) -> no_redraw = true;

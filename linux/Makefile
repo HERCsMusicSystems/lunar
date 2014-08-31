@@ -30,7 +30,7 @@ keyboard_calculator.o: ../code/keyboard_calculator.cpp ../code/keyboard_calculat
 lunar_core.o: ../code/lunar.h ../code/lunar.cpp
 	g++ -Wno-write-strings ../code/lunar.cpp -c -o lunar_core.o
 
-lunar_prolog_oscilloscope.o: ../code/lunar_prolog_oscilloscope.cpp ../code/lunar.h ../code/prolog_lunar.h $(pc)prolog.h
+lunar_prolog_oscilloscope.o: ../code/lunar_prolog_oscilloscope.cpp ../code/lunar.h ../code/prolog_lunar.h $(pc)prolog.h $(pc)graphics2d.h
 	g++ -Wno-write-strings -I. -I$(pc) ../code/lunar_prolog_oscilloscope.cpp -c -o lunar_prolog_oscilloscope.o `pkg-config --cflags gtk+-2.0`
 
 lunar_moonbase.o: ../code/lunar_moonbase.cpp ../code/lunar_moonbase.h ../code/lunar.h ../code/lunar_landers.h

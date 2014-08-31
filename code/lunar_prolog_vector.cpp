@@ -26,41 +26,9 @@
 
 #include "prolog_lunar.h"
 #include "graphics2d.h"
-#include "gtk/gtk.h"
+#include "graphic_resources.h"
 
 static gboolean RemoveViewportIdleCode (GtkWidget * viewport) {gtk_widget_destroy (viewport); return FALSE;}
-
-#ifdef WIN32
-#include "lunar_resource.h"
-static char * GetResource (int ind) {
-	HRSRC resource = FindResource (NULL, MAKEINTRESOURCE (ind), RT_RCDATA);
-	if (! resource) return 0;
-	HGLOBAL loader = LoadResource (0, resource);
-	if (! loader) return 0;
-	return (char *) LockResource (loader);
-}
-#else
-extern char resource_vector_frame_start;
-extern char resource_vector_frame_end;
-extern char resource_vector_handle_start;
-extern char resource_vector_handle_end;
-#endif
-
-class png_closure {
-public:
-	char * from;
-	char * to;
-	png_closure (char * from, char * to) {this -> from = from; this -> to = from == 0 ? from : to;}
-};
-
-static cairo_status_t png_reader (void * closure, unsigned char * data, unsigned int length) {
-	png_closure * png_data = (png_closure *) closure;
-	if (png_data -> from >= png_data -> to) return CAIRO_STATUS_READ_ERROR;
-	while (length-- > 0 && png_data -> from < png_data -> to) {
-		* data++ = * png_data -> from++;
-	}
-	return CAIRO_STATUS_SUCCESS;
-}
 
 class vector_action : public PrologNativeCode {
 public:
@@ -88,30 +56,19 @@ public:
 		return true;
 	}
 	bool code (PrologElement * parameters, PrologResolution * resolution) {if (parameters -> isEarth ()) return remove (); return true;}
-	vector_action (PrologRoot * root, PrologAtom * atom, PrologAtom * command) : position (64.0, 64.0) {
+	vector_action (GraphicResources * resources, PrologRoot * root, PrologAtom * atom, PrologAtom * command) : position (64.0, 64.0) {
 		on = false;
 		this -> root = root;
 		this -> atom = atom; COLLECTOR_REFERENCE_INC (atom);
 		this -> command = command; COLLECTOR_REFERENCE_INC (command);
 		viewport = 0;
-#ifdef WIN32
-		char * resource = GetResource (VECTOR_FRAME_PNG);
-		png_closure frame_closure (resource, resource + VECTOR_FRAME_SIZE);
-		resource = GetResource (VECTOR_HANDLE_PNG);
-		png_closure handle_closure (resource, resource + VECTOR_HANDLE_SIZE);
-#else
-		png_closure frame_closure (& resource_vector_frame_start, & resource_vector_frame_end);
-		png_closure handle_closure (& resource_vector_handle_start, & resource_vector_handle_end);
-#endif
-		surface = cairo_image_surface_create_from_png_stream (png_reader, & frame_closure);
-		handle = cairo_image_surface_create_from_png_stream (png_reader, & handle_closure);
+		this -> surface = resources -> vector_surface;
+		this -> handle = resources -> vector_handle;
 	}
 	~ vector_action (void) {
 		atom -> setMachine (0);
 		atom -> removeAtom ();
 		command -> removeAtom ();
-		if (surface != 0) cairo_surface_destroy (surface);
-		if (handle != 0) cairo_surface_destroy (handle);
 	}
 };
 
@@ -189,11 +146,14 @@ bool vector_class :: code (PrologElement * parameters, PrologResolution * resolu
 	if (atom -> isVar ()) atom -> setAtom (new PrologAtom ());
 	if (! atom -> isAtom ()) return false;
 	if (atom -> getAtom () -> getMachine () != 0) return false;
-	vector_action * machine = new vector_action (root, atom -> getAtom (), command -> getAtom ());
+	vector_action * machine = new vector_action (resources, root, atom -> getAtom (), command -> getAtom ());
 	if (! atom -> getAtom () -> setMachine (machine)) {delete machine; return false;}
 	g_idle_add ((GSourceFunc) CreateVectorIdleCode, machine);
 	return true;
 }
 
-vector_class :: vector_class (PrologRoot * root) {this -> root = root;}
+vector_class :: vector_class (PrologLunarServiceClass * servo) {
+	this -> root = servo -> root;
+	this -> resources = servo -> resources;
+}
 

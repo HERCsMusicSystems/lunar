@@ -178,11 +178,11 @@ void PrologLunarServiceClass :: init (PrologRoot * root, PrologDirectory * direc
 PrologNativeCode * PrologLunarServiceClass :: getNativeCode (char * name) {
 	if (strcmp (name, "dock") == 0) return new dock_class ();
 	if (strcmp (name, "undock") == 0) return new undock_class ();
-	if (strcmp (name, "small_keyboard") == 0) return new keyboard_class (root, directory, 1);
-	if (strcmp (name, "keyboard") == 0) return new keyboard_class (root, directory, 2);
-	if (strcmp (name, "big_keyboard") == 0) return new keyboard_class (root, directory, 3);
+	if (strcmp (name, "small_keyboard") == 0) return new keyboard_class (this, 1);
+	if (strcmp (name, "keyboard") == 0) return new keyboard_class (this, 2);
+	if (strcmp (name, "big_keyboard") == 0) return new keyboard_class (this, 3);
 	if (strcmp (name, "oscilloscope") == 0) return new oscilloscope_class (& core);
-	if (strcmp (name, "vector") == 0) return new vector_class (root);
+	if (strcmp (name, "vector") == 0) return new vector_class (this);
 	if (strcmp (name, "core") == 0) return new core_class (& core);
 	if (strcmp (name, "operator") == 0) return new operator_class (& core);
 	if (strcmp (name, "square_operator") == 0) return new square_operator_class (& core);
@@ -207,4 +207,9 @@ PrologNativeCode * PrologLunarServiceClass :: getNativeCode (char * name) {
 	if (strcmp (name, "moonbase") == 0) return new moonbase_class (directory, & core);
 	return 0;
 }
+
+extern GraphicResources * create_graphic_resources (void);
+extern void destroy_graphic_resources (GraphicResources * resources);
+PrologLunarServiceClass :: PrologLunarServiceClass (void) {resources = create_graphic_resources ();}
+PrologLunarServiceClass :: ~ PrologLunarServiceClass (void) {destroy_graphic_resources (resources);}
 

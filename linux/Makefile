@@ -15,7 +15,7 @@ objects = \
 	$(pi)prolog_midi.o $(pi)prolog_conductor.o $(pi)prolog_http.o $(pi)prolog_control.o $(pi)joystick_linux.o\
 	prolog_lunar.o lunar_core.o lunar_prolog_oscilloscope.o lunar_prolog_keyboard.o lunar_prolog_operator.o lunar_operator.o\
 	keyboard_calculator.o lunar_prolog_moonbase.o lunar_moonbase.o lunar_prolog_landers.o lunar_landers.o lunar_wave.o\
-	lunar_prolog_vector.o graphics2d.o multiplatform_audio.o\
+	lunar_prolog_vector.o graphics2d.o graphic_resources.o multiplatform_audio.o\
 	prcgtk.o
 
 prc_resources = $(pi)studio_prc.o $(pi)conductor_prc.o $(pi)midi_prc.o $(pi)http_prc.o $(pi)store_prc.o $(pi)f1_prc.o $(pi)help_prc.o $(pi)record_prc.o\
@@ -57,10 +57,11 @@ lunar_prolog_landers.o: ../code/lunar_prolog_landers.cpp ../code/lunar_prolog_la
 			 ../code/prolog_lunar.h $(pc)prolog.h ../code/lunar.h ../code/lunar_landers.h ../code/lunar_wave.h
 	g++ -Wno-write-strings -I. -I$(pc) ../code/lunar_prolog_landers.cpp -c -o lunar_prolog_landers.o
 
-lunar_prolog_keyboard.o: ../code/lunar_prolog_keyboard.cpp ../code/lunar.h ../code/prolog_lunar.h $(pc)prolog.h ../code/keyboard_calculator.h
+lunar_prolog_keyboard.o: ../code/lunar_prolog_keyboard.cpp ../code/lunar.h\
+			 ../code/prolog_lunar.h $(pc)prolog.h ../code/keyboard_calculator.h ../code/graphic_resources.h
 	g++ -Wno-write-strings -I. -I$(pc) ../code/lunar_prolog_keyboard.cpp -c -o lunar_prolog_keyboard.o `pkg-config --cflags gtk+-2.0`
 
-lunar_prolog_vector.o: ../code/lunar_prolog_vector.cpp ../code/lunar.h ../code/prolog_lunar.h $(pc)prolog.h
+lunar_prolog_vector.o: ../code/lunar_prolog_vector.cpp ../code/lunar.h ../code/prolog_lunar.h $(pc)prolog.h ../code/graphic_resources.h
 	g++ -Wno-write-strings -I. -I$(pc) ../code/lunar_prolog_vector.cpp -c -o lunar_prolog_vector.o `pkg-config --cflags gtk+-2.0`
 
 prolog_lunar.o: ../code/prolog_lunar.h ../code/prolog_lunar.cpp ../code/lunar.h $(pc)prolog.h
@@ -68,6 +69,9 @@ prolog_lunar.o: ../code/prolog_lunar.h ../code/prolog_lunar.cpp ../code/lunar.h 
 
 graphics2d.o: $(pc)graphics2d.cpp $(pc)graphics2d.h
 	g++ -Wno-write-strings -I. -I$(pc) $(pc)graphics2d.cpp -c -o graphics2d.o
+
+graphic_resources.o: ../code/graphic_resources.h ../code/graphic_resources.cpp
+	g++ -Wno-write-strings ../code/graphic_resources.cpp -c -o graphic_resources.o `pkg-config --cflags gtk+-2.0`
 
 small_keyboard.o: ../graphics/small_keyboard.png
 	objcopy --input binary --output elf64-x86-64 --binary-architecture i386\

@@ -31,6 +31,7 @@
 #include "lunar.h"
 
 class PrologLunarServiceClass;
+class GraphicResources;
 
 class PrologNativeOrbiter : public PrologNativeCode {
 public:
@@ -61,15 +62,17 @@ public:
 	int size;
 	PrologRoot * root;
 	PrologDirectory * directory;
+	GraphicResources * resources;
 	bool code (PrologElement * parameters, PrologResolution * resolution);
-	keyboard_class (PrologRoot * root, PrologDirectory * directory, int size);
+	keyboard_class (PrologLunarServiceClass * servo, int size);
 };
 
 class vector_class : public PrologNativeCode {
 public:
 	PrologRoot * root;
+	GraphicResources * resources;
 	bool code (PrologElement * parameters, PrologResolution * resolution);
-	vector_class (PrologRoot * root);
+	vector_class (PrologLunarServiceClass * servo);
 };
 
 class oscilloscope_class : public PrologNativeOrbiterCreator {
@@ -127,9 +130,12 @@ class PrologLunarServiceClass : public PrologServiceClass {
 public:
 	PrologRoot * root;
 	PrologDirectory * directory;
+	GraphicResources * resources;
 	orbiter_core core;
 	void init (PrologRoot * root, PrologDirectory * directory);
 	PrologNativeCode * getNativeCode (char * name);
+	PrologLunarServiceClass (void);
+	~ PrologLunarServiceClass (void);
 };
 
 #endif

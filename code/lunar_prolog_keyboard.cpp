@@ -26,43 +26,10 @@
 
 #include "prolog_lunar.h"
 #include "keyboard_calculator.h"
+#include "graphic_resources.h"
 #include "gtk/gtk.h"
 
 static gboolean RemoveViewportIdleCode (GtkWidget * viewport) {gtk_widget_destroy (viewport); return FALSE;}
-
-#ifdef WIN32
-#include "lunar_resource.h"
-static char * GetResource (int ind) {
-	HRSRC resource = FindResource (NULL, MAKEINTRESOURCE (ind), RT_RCDATA);
-	if (! resource) return 0;
-	HGLOBAL loader = LoadResource (0, resource);
-	if (! loader) return 0;
-	return (char *) LockResource (loader);
-}
-#else
-extern char resource_small_keyboard_start;
-extern char resource_small_keyboard_end;
-extern char resource_keyboard_start;
-extern char resource_keyboard_end;
-extern char resource_big_keyboard_start;
-extern char resource_big_keyboard_end;
-#endif
-
-class png_closure {
-public:
-	char * from;
-	char * to;
-	png_closure (char * from, char * to) {this -> from = from; this -> to = from == 0 ? from : to;}
-};
-
-static cairo_status_t png_reader (void * closure, unsigned char * data, unsigned int length) {
-	png_closure * png_data = (png_closure *) closure;
-	if (png_data -> from >= png_data -> to) return CAIRO_STATUS_READ_ERROR;
-	while (length-- > 0 && png_data -> from < png_data -> to) {
-		* data++ = * png_data -> from++;
-	}
-	return CAIRO_STATUS_SUCCESS;
-}
 
 class keyboard_action : public PrologNativeCode {
 public:
@@ -95,46 +62,34 @@ public:
 		if (parameters -> isEarth ()) return remove ();
 		return true;
 	}
-	keyboard_action (PrologRoot * root, PrologDirectory * directory, PrologAtom * atom, PrologAtom * command, int size) : kb (0, 0) {
+	keyboard_action (GraphicResources * resources, PrologRoot * root, PrologDirectory * directory, PrologAtom * atom, PrologAtom * command, int size) : kb (0, 0) {
 		this -> root = root;
 		keyon = directory == 0 ? 0 : directory -> searchAtom ("keyon");
 		this -> atom = atom; COLLECTOR_REFERENCE_INC (atom);
 		this -> command = command; COLLECTOR_REFERENCE_INC (command);
 		viewport = 0;
 		keyboard_width = 200; keyboard_height = 100;
-#ifdef WIN32
-		char * resource = GetResource (SMALL_KEYBOARD_PNG);
-		png_closure small_keyboard_png_closure (resource, resource + SMALL_KEYBOARD_SIZE);
-		resource = GetResource (KEYBOARD_PNG);
-		png_closure keyboard_png_closure (resource, resource + KEYBOARD_SIZE);
-		resource = GetResource (BIG_KEYBOARD_PNG);
-		png_closure big_keyboard_png_closure (resource, resource + BIG_KEYBOARD_SIZE);
-#else
-		png_closure small_keyboard_png_closure (& resource_small_keyboard_start, & resource_small_keyboard_end);
-		png_closure keyboard_png_closure (& resource_keyboard_start, & resource_keyboard_end);
-		png_closure big_keyboard_png_closure (& resource_big_keyboard_start, & resource_big_keyboard_end);
-#endif
 		switch (size) {
 		case 1:
-			surface = cairo_image_surface_create_from_png_stream (png_reader, & small_keyboard_png_closure);
+			surface = resources -> small_keyboard_surface;
 			kb . set_keyboard_layout_y (66, 44);
 			kb . set_keyboard_layout_x (11, 1, 2, 3, 4, 5);
 			kb . set_ambitus (17, 54);
 			break;
 		case 3:
-			surface = cairo_image_surface_create_from_png_stream (png_reader, & big_keyboard_png_closure);
+			surface = resources -> big_keyboard_surface;
 			kb . set_keyboard_layout_y (132, 88);
 			kb . set_keyboard_layout_x (22, 2, 4, 6, 8, 10);
 			kb . set_ambitus (17, 54);
 			break;
 		default:
-			surface = cairo_image_surface_create_from_png_stream (png_reader, & keyboard_png_closure);
+			surface = resources -> keyboard_surface;
 			kb . set_keyboard_layout_y (99, 66);
 			kb . set_keyboard_layout_x (16, 2, 3, 4, 5, 6);
 			kb . set_ambitus (17, 54);
 			break;
 		}
-		if (cairo_surface_status (surface) != CAIRO_STATUS_SUCCESS) {cairo_surface_destroy (surface); surface = 0; return;}
+		if (cairo_surface_status (surface) != CAIRO_STATUS_SUCCESS) {surface = 0; return;}
 		keyboard_width = cairo_image_surface_get_width (surface);
 		keyboard_height = cairo_image_surface_get_height (surface);
 	}
@@ -142,7 +97,6 @@ public:
 		atom -> setMachine (0);
 		atom -> removeAtom ();
 		command -> removeAtom ();
-		if (surface != 0) cairo_surface_destroy (surface);
 	}
 };
 
@@ -198,15 +152,16 @@ bool keyboard_class :: code (PrologElement * parameters, PrologResolution * reso
 	if (atom -> isVar ()) atom -> setAtom (new PrologAtom ());
 	if (! atom -> isAtom ()) return false;
 	if (atom -> getAtom () -> getMachine () != 0) return false;
-	keyboard_action * machine = new keyboard_action (root, directory, atom -> getAtom (), command -> getAtom (), size);
+	keyboard_action * machine = new keyboard_action (resources, root, directory, atom -> getAtom (), command -> getAtom (), size);
 	if (! atom -> getAtom () -> setMachine (machine)) {delete machine; return false;}
 	g_idle_add ((GSourceFunc) CreateKeyboardIdleCode, machine);
 	return true;
 }
 
-keyboard_class :: keyboard_class (PrologRoot * root, PrologDirectory * directory, int size) {
-	this -> root = root;
-	this -> directory = directory;
+keyboard_class :: keyboard_class (PrologLunarServiceClass * servo, int size) {
+	this -> resources = servo -> resources;
+	this -> root = servo -> root;
+	this -> directory = servo -> directory;
 	this -> size = size;
 }
 

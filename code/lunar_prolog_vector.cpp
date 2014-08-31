@@ -41,6 +41,7 @@ public:
 	cairo_surface_t * handle;
 	point position;
 	point reference;
+	point screen_position;
 	void action (void) {
 		PrologElement * query = root -> pair (root -> atom (command),
 								root -> pair (root -> Double (1.0 - position . x / 64.0),
@@ -55,7 +56,7 @@ public:
 		delete this;
 		return true;
 	}
-	bool code (PrologElement * parameters, PrologResolution * resolution) {if (parameters -> isEarth ()) return remove (); return true;}
+	bool code (PrologElement * parameters, PrologResolution * resolution);
 	vector_action (GraphicResources * resources, PrologRoot * root, PrologAtom * atom, PrologAtom * command) : position (64.0, 64.0) {
 		on = false;
 		this -> root = root;
@@ -71,6 +72,35 @@ public:
 		command -> removeAtom ();
 	}
 };
+
+static gboolean RepositionVector (vector_action * vector) {
+	gtk_window_move (GTK_WINDOW (vector -> viewport), (int) vector -> screen_position . x, (int) vector -> screen_position . y);
+	return FALSE;
+}
+static gboolean RepaintVector (vector_action * vector) {gtk_widget_queue_draw (vector -> viewport); return FALSE;}
+
+bool vector_action :: code (PrologElement * parameters, PrologResolution * resolution) {
+	if (parameters -> isEarth ()) return remove ();
+	PrologElement * x = 0;
+	PrologElement * y = 0;
+	while (parameters -> isPair ()) {
+		PrologElement * el = parameters -> getLeft ();
+		if (el -> isNumber ()) if (x == 0) x = el; else y = el;
+		parameters = parameters -> getRight ();
+	}
+	if (x == 0 || y == 0) return true;
+	if (x -> isInteger () && y -> isInteger ()) {
+		screen_position = point (x -> getNumber (), y -> getNumber ());
+		g_idle_add ((GSourceFunc) RepositionVector, this);
+	}
+	if (x -> isDouble () && y -> isDouble ()) {
+		double xx = x -> getDouble (); if (xx < -1.0) xx = -1.0; if (xx > 1.0) xx = 1.0;
+		double yy = y -> getDouble (); if (yy < -1.0) yy = -1.0; if (yy > 1.0) yy = 1.0;
+		position = point (64.0 - xx * 64, 64.0 + yy * 64.0);
+		g_idle_add ((GSourceFunc) RepaintVector, this);
+	}
+	return true;
+}
 
 static gboolean ViewportDeleteEvent (GtkWidget * viewport, GdkEvent * event, vector_action * machine) {
 	gtk_widget_destroy (machine -> viewport);

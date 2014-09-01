@@ -55,7 +55,7 @@ public:
 	double min_blep [16384];
 	double filter_freqs [16384];
 	double * filter_freq;
-	int noise14b;
+	int noise24b;
 	pthread_mutex_t main_mutex;
 	pthread_mutex_t maintenance_mutex;
 	orbiter * root;

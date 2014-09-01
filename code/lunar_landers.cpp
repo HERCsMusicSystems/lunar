@@ -297,12 +297,12 @@ void lunar_lfo :: move (void) {
 	case 3: // random
 		if (time < t) {if (! stage_one) {
 			origin = target;
-			target = 0.00006103515625 * (double) core -> noise14b;
+			target = 0.000000059604644775390625 * (double) core -> noise24b;
 			delta = target - origin;
 			stage_one = true;
 		}} else {if (stage_one) {
 			origin = target;
-			target = 0.00006103515625 * (double) core -> noise14b;
+			target = 0.000000059604644775390625 * (double) core -> noise24b;
 			delta = target - origin;
 			stage_one = false;
 		}}
@@ -315,12 +315,12 @@ void lunar_lfo :: move (void) {
 		break;
 	case 4: // S/H
 		if (time < t) {if (! stage_one) {
-			signal = 0.0001220703125 * (double) core -> noise14b - 1.0;
-			positive = 0.00006103515625 * (double) core -> noise14b;
+			signal = 0.00000011920928955078125 * (double) core -> noise24b - 1.0;
+			positive = 0.000000059604644775390625 * (double) core -> noise24b;
 			stage_one = true;
 		}} else {if (stage_one) {
-			signal = 0.0001220703125 * (double) core -> noise14b - 1.0;
-			positive = 0.00006103515625 * (double) core -> noise14b;
+			signal = 0.00000011920928955078125 * (double) core -> noise24b - 1.0;
+			positive = 0.000000059604644775390625 * (double) core -> noise24b;
 			stage_one = false;
 		}}
 		negative = positive - 1.0;

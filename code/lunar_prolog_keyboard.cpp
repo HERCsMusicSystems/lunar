@@ -30,8 +30,6 @@
 #include "graphic_resources.h"
 #include "gtk/gtk.h"
 
-static gboolean RemoveViewportIdleCode (GtkWidget * viewport) {gtk_widget_destroy (viewport); return FALSE;}
-
 class keyboard_action : public PrologNativeCode {
 public:
 	PrologRoot * root;

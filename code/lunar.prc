@@ -6,7 +6,7 @@ import studio
 
 program lunar #machine := "prolog.lunar"
 			[
-				small_keyboard keyboard big_keyboard oscilloscope vector
+				small_keyboard keyboard big_keyboard oscilloscope vector control_panel
 				dock undock
 				core moonbase operator parameter_block key_map velocity_map impulse trigger porta_trigger mixer stereo_mixer gateway lfo adsr eg
 				square_operator saw_operator noise_operator sampler_operator sensitivity filter
@@ -23,6 +23,7 @@ program lunar #machine := "prolog.lunar"
 #machine big_keyboard := "big_keyboard"
 #machine oscilloscope := "oscilloscope"
 #machine vector := "vector"
+#machine control_panel := "control_panel"
 ;#machine dock := "dock"
 ;#machine undock := "undock"
 #machine parameter_block := "parameter_block"

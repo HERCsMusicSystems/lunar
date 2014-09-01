@@ -4,7 +4,7 @@
 import studio
 import lunar
 
-program lunar_eclipse [reactor base radar eagle kb blep distro tr1 tr2 tr3 wv smpl sampler filtering noise fir vect callback]
+program lunar_eclipse [reactor base radar eagle kb blep distro tr1 tr2 tr3 wv smpl sampler filtering noise fir vect callback panel]
 
 [[eagle]
 	[Moonbase base *]
@@ -63,7 +63,8 @@ end := [
 		;[distro]
 		;[sampler]
 		;[filtering]
-		[vector vect callback]
+		;[vector vect callback]
+		[control_panel panel callback] [panel 2400 1000]
 		[command]
 		] .
 end := [

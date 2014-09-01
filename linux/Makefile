@@ -70,7 +70,7 @@ prolog_lunar.o: ../code/prolog_lunar.h ../code/prolog_lunar.cpp ../code/lunar.h 
 graphics2d.o: $(pc)graphics2d.cpp $(pc)graphics2d.h
 	g++ -Wno-write-strings -I. -I$(pc) $(pc)graphics2d.cpp -c -o graphics2d.o
 
-graphic_resources.o: ../code/graphic_resources.h ../code/graphic_resources.cpp
+graphic_resources.o: ../code/graphic_resources.h ../code/graphic_resources.cpp $(pc)graphics2d.h
 	g++ -Wno-write-strings ../code/graphic_resources.cpp -c -o graphic_resources.o `pkg-config --cflags gtk+-2.0`
 
 small_keyboard.o: ../graphics/small_keyboard.png

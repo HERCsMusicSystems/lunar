@@ -100,7 +100,16 @@ void destroy_graphic_resources (GraphicResources * resource) {if (resource != 0)
 
 bool knob :: keyon (point position, GtkWidget * viewport) {
 	if (! location . overlap (rect (position, point ()))) return false;
-	angle += 0.1;
+	on = true;
+	return true;
+}
+
+bool knob :: keyoff (point position, GtkWidget * viewport) {on = false; return location . overlap (rect (position, point ()));}
+
+bool knob :: move (point delta, GtkWidget * viewport) {
+	if (! on) return false;
+	printf ("delta [%i %f]\n", id, delta . y);
+	angle += 0.1 * delta . y;
 	gtk_widget_queue_draw (viewport);
 	return true;
 }
@@ -124,6 +133,7 @@ void knob :: draw (cairo_t * cr) {
 }
 
 knob :: knob (point location, GraphicResources * resources, int id) {
+	on = false;
 	this -> id = id;
 	knob_surface_png = knob_png = knob_handle_png = 0;
 	if (resources != 0) {

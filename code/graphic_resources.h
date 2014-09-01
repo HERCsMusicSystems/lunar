@@ -29,7 +29,10 @@ public:
 	cairo_surface_t * knob_handle_png;
 	rect location;
 	double angle;
+	bool on;
 	bool keyon (point position, GtkWidget * viewport);
+	bool keyoff (point position, GtkWidget * viewport);
+	bool move (point delta, GtkWidget * viewport);
 	void draw (cairo_t * cr);
 	knob (point location, GraphicResources * resources, int id);
 };

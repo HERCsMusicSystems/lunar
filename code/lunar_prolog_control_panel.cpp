@@ -71,6 +71,7 @@ public:
 	knob decay;
 	knob sustain;
 	knob release;
+	point captured;
 	bool remove (bool remove_gtk = true) {
 		if (remove_gtk) g_idle_add ((GSourceFunc) RemoveViewportIdleCode, viewport);
 		delete this;
@@ -134,6 +135,7 @@ static gboolean ControlPanelDeleteEvent (GtkWidget * viewport, GdkEvent * event,
 }
 static gint ControlPanelKeyon (GtkWidget * viewport, GdkEventButton * event, control_panel_action * action) {
 	point location (event -> x, event -> y);
+	action -> captured = location;
 	if (action -> attack . keyon (location, viewport)) printf ("attack [%f]\n", action -> attack . angle);
 	if (action -> decay . keyon (location, viewport)) printf ("decay [%f]\n", action -> decay . angle);
 	if (action -> sustain . keyon (location, viewport)) printf ("sustain [%f]\n", action -> sustain . angle);
@@ -141,9 +143,21 @@ static gint ControlPanelKeyon (GtkWidget * viewport, GdkEventButton * event, con
 	return TRUE;
 }
 static gint ControlPanelKeyoff (GtkWidget * viewport, GdkEventButton * event, control_panel_action * action) {
+	point location (event -> x, event -> y);
+	if (action -> attack . keyoff (location, viewport)) printf ("attack [%f]\n", action -> attack . angle);
+	if (action -> decay . keyoff (location, viewport)) printf ("decay [%f]\n", action -> decay . angle);
+	if (action -> sustain . keyoff (location, viewport)) printf ("sustain [%f]\n", action -> sustain . angle);
+	if (action -> release . keyoff (location, viewport)) printf ("release [%f]\n", action -> release . angle);
 	return TRUE;
 }
 static gint ControlPanelMove (GtkWidget * viewport, GdkEventButton * event, control_panel_action * action) {
+	point location (event -> x, event -> y);
+	point delta = action -> captured - location;
+	action -> captured = location;
+	if (action -> attack . move (delta, viewport)) printf ("attack [%f]\n", action -> attack . angle);
+	if (action -> decay . move (delta, viewport)) printf ("decay [%f]\n", action -> decay . angle);
+	if (action -> sustain . move (delta, viewport)) printf ("sustain [%f]\n", action -> sustain . angle);
+	if (action -> release . move (delta, viewport)) printf ("release [%f]\n", action -> release . angle);
 	return TRUE;
 }
 static gboolean CreateControlPanelIdleCode (control_panel_action * action) {

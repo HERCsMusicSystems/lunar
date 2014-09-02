@@ -15,7 +15,7 @@ objects = \
 	$(pi)prolog_midi.o $(pi)prolog_conductor.o $(pi)prolog_http.o $(pi)prolog_control.o $(pi)joystick_linux.o\
 	prolog_lunar.o lunar_core.o lunar_prolog_oscilloscope.o lunar_prolog_keyboard.o lunar_prolog_operator.o lunar_operator.o\
 	keyboard_calculator.o lunar_prolog_moonbase.o lunar_moonbase.o lunar_prolog_landers.o lunar_landers.o lunar_wave.o\
-	lunar_prolog_vector.o graphics2d.o graphic_resources.o multiplatform_audio.o\
+	lunar_prolog_vector.o lunar_prolog_control_panel.o graphics2d.o graphic_resources.o multiplatform_audio.o\
 	prcgtk.o
 
 prc_resources = $(pi)studio_prc.o $(pi)conductor_prc.o $(pi)midi_prc.o $(pi)http_prc.o $(pi)store_prc.o $(pi)f1_prc.o $(pi)help_prc.o $(pi)record_prc.o\
@@ -64,6 +64,10 @@ lunar_prolog_keyboard.o: ../code/lunar_prolog_keyboard.cpp ../code/lunar.h\
 lunar_prolog_vector.o: ../code/lunar_prolog_vector.cpp ../code/lunar.h ../code/prolog_lunar.h $(pc)prolog.h $(pc)graphics2d.h ../code/graphic_resources.h
 	g++ -Wno-write-strings -I. -I$(pc) ../code/lunar_prolog_vector.cpp -c -o lunar_prolog_vector.o `pkg-config --cflags gtk+-2.0`
 
+lunar_prolog_control_panel.o: ../code/lunar_prolog_control_panel.cpp ../code/lunar.h ../code/prolog_lunar.h $(pc)prolog.h\
+			$(pc)graphics2d.h ../code/graphic_resources.h
+	g++ -Wno-write-strings -I. -I$(pc) ../code/lunar_prolog_control_panel.cpp -c -o lunar_prolog_control_panel.o `pkg-config --cflags gtk+-2.0`
+
 prolog_lunar.o: ../code/prolog_lunar.h ../code/prolog_lunar.cpp ../code/lunar.h $(pc)prolog.h
 	g++ -Wno-write-strings -I. -I$(pc) ../code/prolog_lunar.cpp -c -o prolog_lunar.o
 
@@ -71,7 +75,7 @@ graphics2d.o: $(pc)graphics2d.cpp $(pc)graphics2d.h
 	g++ -Wno-write-strings -I. -I$(pc) $(pc)graphics2d.cpp -c -o graphics2d.o
 
 graphic_resources.o: ../code/graphic_resources.h ../code/graphic_resources.cpp $(pc)graphics2d.h
-	g++ -Wno-write-strings ../code/graphic_resources.cpp -c -o graphic_resources.o `pkg-config --cflags gtk+-2.0`
+	g++ -Wno-write-strings -I$(pc) ../code/graphic_resources.cpp -c -o graphic_resources.o `pkg-config --cflags gtk+-2.0`
 
 small_keyboard.o: ../graphics/small_keyboard.png
 	objcopy --input binary --output elf64-x86-64 --binary-architecture i386\
@@ -113,6 +117,30 @@ vector_handle.o: ../graphics/vector_handle.png
 		../graphics/vector_handle.png vector_handle.o
 	objdump -t vector_handle.o
 
+knob.o: ../graphics/knob.png
+	objcopy --input binary --output elf64-x86-64 --binary-architecture i386\
+		--redefine-sym _binary____graphics_knob_png_start=resource_knob_start\
+		--redefine-sym _binary____graphics_knob_png_end=resource_knob_end\
+		--redefine-sym _binary____graphics_knob_png_size=resource_knob_size\
+		../graphics/knob.png knob.o
+	objdump -t knob.o
+
+knob_surface.o: ../graphics/knob_surface.png
+	objcopy --input binary --output elf64-x86-64 --binary-architecture i386\
+		--redefine-sym _binary____graphics_knob_surface_png_start=resource_knob_surface_start\
+		--redefine-sym _binary____graphics_knob_surface_png_end=resource_knob_surface_end\
+		--redefine-sym _binary____graphics_knob_surface_png_size=resource_knob_surface_size\
+		../graphics/knob_surface.png knob_surface.o
+	objdump -t knob_surface.o
+
+knob_handle.o: ../graphics/knob_handle.png
+	objcopy --input binary --output elf64-x86-64 --binary-architecture i386\
+		--redefine-sym _binary____graphics_knob_handle_png_start=resource_knob_handle_start\
+		--redefine-sym _binary____graphics_knob_handle_png_end=resource_knob_handle_end\
+		--redefine-sym _binary____graphics_knob_handle_png_size=resource_knob_handle_size\
+		../graphics/knob_handle.png knob_handle.o
+	objdump -t knob_handle.o
+
 lunar_prc.o: ../code/lunar.prc
 	objcopy --input binary --output elf64-x86-64 --binary-architecture i386\
 		--redefine-sym _binary____code_lunar_prc_start=resource_lunar\
@@ -123,7 +151,7 @@ prcgtk.o: ../code/prcgtk.cpp ../code/prolog_lunar.h\
 	$(pc)prolog_http.h $(pc)prolog_distribution.h $(pc)prolog_control.h
 	g++ -Wno-write-strings -I. -I$(pc) ../code/prcgtk.cpp -c -o prcgtk.o `pkg-config --cflags gtk+-2.0`
 
-graphics = small_keyboard.o keyboard.o big_keyboard.o vector_frame.o vector_handle.o
+graphics = small_keyboard.o keyboard.o big_keyboard.o vector_frame.o vector_handle.o knob.o knob_surface.o knob_handle.o
 
 ~/bin/lunar: $(lunar_objects) $(objects) $(graphics) $(prc_resources)
 	g++ $(lunar_objects) $(objects) $(prc_resources) $(graphics) \

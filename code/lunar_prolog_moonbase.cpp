@@ -119,12 +119,14 @@ void alpha_callback (int frames, AudioBuffers * data, void * source) {
 	core_action * base = (core_action *) source;
 	orbiter_core * core = base -> core;
 	double * moon = base -> module -> inputAddress (0);
+	double * left_moon = base -> module -> inputAddress (1);
+	double * right_moon = base -> module -> inputAddress (2);
 	pthread_mutex_lock (& core -> maintenance_mutex);
 	pthread_mutex_lock (& core -> main_mutex);
 	for (int ind = 0; ind < frames; ind++) {
 		core -> move_modules ();
 		core -> propagate_signals ();
-		data -> insertMono ((* moon) * 0.2);
+		data -> insertStereo (((* moon) + (* left_moon)) * 0.2, ((* moon) + (* right_moon)) * 0.2);
 	}
 	pthread_mutex_unlock (& core -> main_mutex);
 	pthread_mutex_unlock (& core -> maintenance_mutex);

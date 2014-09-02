@@ -430,6 +430,51 @@ lunar_adsr :: lunar_adsr (orbiter_core * core) : orbiter (core) {
 
 lunar_eg :: lunar_eg (orbiter_core * core) : orbiter (core) {initialise (); activate ();}
 
+int lunar_delay :: numberOfInputs (void) {return 4;}
+char * lunar_delay :: inputName (int ind) {
+	switch (ind) {
+	case 0: return "SIGNAL"; break;
+	case 1: return "FEEDBACK"; break;
+	case 2: return "TIME"; break;
+	case 3: return "HIGHDUMP"; break;
+	default: break;
+	}
+	return orbiter :: inputName (ind);
+}
+double * lunar_delay :: inputAddress (int ind) {
+	switch (ind) {
+	case 0: return & enter; break;
+	case 1: return & feedback; break;
+	case 2: return & time; break;
+	case 3: return & high_dump; break;
+	default: break;
+	}
+	return orbiter :: inputAddress (ind);
+}
+int lunar_delay :: numberOfOuptuts (void) {return 2;}
+char * lunar_delay :: outputName (int ind) {
+	switch (ind) {
+	case 0: return "LEFT"; break;
+	case 1: return "RGHT"; break;
+	default: break;
+	}
+	return orbiter :: outputName (ind);
+}
+double * lunar_delay :: outputAddress (int ind) {
+	switch (ind) {
+	case 0: return & signal; break;
+	case 1: return & signal_right; break;
+	default: break;
+	}
+	return orbiter :: outputAddress (ind);
+}
+void lunar_delay :: move (void) {
+	signal = signal_right = enter;
+}
+lunar_delay :: lunar_delay (orbiter_core * core) : orbiter (core) {
+	initialise (); activate ();
+}
+
 int lunar_sensitivity :: numberOfInputs (void) {return 4;}
 char * lunar_sensitivity :: inputName (int ind) {
 	switch (ind) {

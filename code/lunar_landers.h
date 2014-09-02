@@ -187,6 +187,24 @@ public:
 	lunar_eg (orbiter_core * core);
 };
 
+class lunar_delay : public orbiter {
+private:
+	double enter;
+	double feedback;
+	double time;
+	double high_dump;
+	double signal_right;
+public:
+	virtual int numberOfInputs (void);
+	virtual char * inputName (int ind);
+	virtual double * inputAddress (int ind);
+	virtual int numberOfOuptuts (void);
+	virtual char * outputName (int ind);
+	virtual double * outputAddress (int ind);
+	virtual void move (void);
+	lunar_delay (orbiter_core * core);
+};
+
 class lunar_sensitivity : public orbiter {
 private:
 	double enter;

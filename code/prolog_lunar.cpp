@@ -204,6 +204,7 @@ PrologNativeCode * PrologLunarServiceClass :: getNativeCode (char * name) {
 	if (strcmp (name, "lfo") == 0) return new lfo_class (& core);
 	if (strcmp (name, "adsr") == 0) return new adsr_class (& core);
 	if (strcmp (name, "eg") == 0) return new eg_class (& core);
+	if (strcmp (name, "delay") == 0) return new delay_class (& core);
 	if (strcmp (name, "sensitivity") == 0) return new sensitivity_class (& core);
 	if (strcmp (name, "moonbase") == 0) return new moonbase_class (directory, & core);
 	return 0;

@@ -4,7 +4,7 @@
 import studio
 import lunar
 
-program lunar_eclipse [reactor base radar eagle kb blep distro tr1 tr2 tr3 wv smpl sampler filtering noise fir vect callback panel]
+program lunar_eclipse [reactor base radar eagle kb blep op dl tg eg distro tr1 tr2 tr3 wv smpl sampler filtering noise fir vect callback panel delay_test]
 
 [[eagle]
 	[Moonbase base *]
@@ -54,17 +54,30 @@ program lunar_eclipse [reactor base radar eagle kb blep distro tr1 tr2 tr3 wv sm
 	[fir *op] [radar fir]
 ]
 
+[[delay_test]
+	[operator op]
+	[trigger tg]
+	[adsr eg]
+	[oscilloscope radar] [radar 3000 1000]
+	[op "amp" eg]
+	[eg "trigger" tg "trigger"]
+	[op tg]
+	[delay dl]
+	[radar op]
+]
+
 [[callback *x *y] [times *x 64.0 *xx] [times *y 64.0 *yy] [show [vect *xx *yy]]]
 [[callback : *command] [show *command]]
 
 end := [
-		;[core reactor 330 22050 2048]
+		[core reactor 330 22050 2048]
 		;[eagle]
 		;[distro]
 		;[sampler]
 		;[filtering]
 		;[vector vect callback]
 		[control_panel panel callback] [panel 2400 1000]
+		[delay_test]
 		[command]
 		] .
 end := [

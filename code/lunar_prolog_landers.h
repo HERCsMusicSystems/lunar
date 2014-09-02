@@ -118,6 +118,12 @@ public:
 	eg_class (orbiter_core * core);
 };
 
+class delay_class : public PrologNativeOrbiterCreator {
+public:
+	virtual orbiter * create_orbiter (PrologElement * parameters);
+	delay_class (orbiter_core * core);
+};
+
 class sensitivity_class : public PrologNativeOrbiterCreator {
 public:
 	virtual orbiter * create_orbiter (PrologElement * parameters);

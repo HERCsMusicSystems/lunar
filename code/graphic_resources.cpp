@@ -1,3 +1,24 @@
+///////////////////////////////////////////////////////////////////////////////////
+//                       Copyright (C) 2014 Robert P. Wolf                       //
+//                                                                               //
+// Permission is hereby granted, free of charge, to any person obtaining a copy  //
+// of this software and associated documentation files (the "Software"), to deal //
+// in the Software without restriction, including without limitation the rights  //
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell     //
+// copies of the Software, and to permit persons to whom the Software is         //
+// furnished to do so, subject to the following conditions:                      //
+//                                                                               //
+// The above copyright notice and this permission notice shall be included in    //
+// all copies or substantial portions of the Software.                           //
+//                                                                               //
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR    //
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,      //
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE   //
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER        //
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, //
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN     //
+// THE SOFTWARE.                                                                 //
+///////////////////////////////////////////////////////////////////////////////////
 
 #include "graphic_resources.h"
 #define _USE_MATH_DEFINES
@@ -98,23 +119,24 @@ GraphicResources :: ~ GraphicResources (void) {
 GraphicResources * create_graphic_resources (void) {return new GraphicResources ();}
 void destroy_graphic_resources (GraphicResources * resource) {if (resource != 0) delete resource;}
 
-bool knob :: keyon (point position, GtkWidget * viewport) {
+bool active_graphics :: keyon (point position, GtkWidget * viewport) {
 	if (! location . overlap (rect (position, point ()))) return false;
 	on = true;
 	return true;
 }
+bool active_graphics :: keyoff (point position, GtkWidget * viewport) {on = false; return location . overlap (rect (position, point ()));}
+bool active_graphics :: move (point delta, GtkWidget * viewport) {return on;}
+void active_graphics :: draw (cairo_t * cr) {}
+active_graphics :: active_graphics (point location, int id) {on = false; this -> id = id; this -> location = rect (location, point (16.0, 16.0));}
 
-bool knob :: keyoff (point position, GtkWidget * viewport) {on = false; return location . overlap (rect (position, point ()));}
-
-bool knob :: move (point delta, GtkWidget * viewport) {
+bool knob_active_graphics :: move (point delta, GtkWidget * viewport) {
 	if (! on) return false;
-	printf ("delta [%i %f]\n", id, delta . y);
 	angle += 0.1 * delta . y;
 	gtk_widget_queue_draw (viewport);
 	return true;
 }
 
-void knob :: draw (cairo_t * cr) {
+void knob_active_graphics :: draw (cairo_t * cr) {
 		if (knob_surface_png != 0) {
 			cairo_set_source_surface (cr, knob_surface_png, location . position . x, location . position . y);
 			cairo_paint (cr);
@@ -132,9 +154,8 @@ void knob :: draw (cairo_t * cr) {
 		}
 }
 
-knob :: knob (point location, GraphicResources * resources, int id) {
-	on = false;
-	this -> id = id;
+
+knob_active_graphics :: knob_active_graphics (point location, int id, GraphicResources * resources) : active_graphics (location, id) {
 	knob_surface_png = knob_png = knob_handle_png = 0;
 	if (resources != 0) {
 		knob_surface_png = resources -> knob_surface;
@@ -145,4 +166,33 @@ knob :: knob (point location, GraphicResources * resources, int id) {
 	this -> location = rect (location, point (62, 83));
 }
 
+bool vector_active_graphics :: move (point delta, GtkWidget * viewport) {
+	if (! on) return false;
+	position += delta * point (-0.00390625, 0.00390625);
+	if (position . x < -1.0) position . x = -1.0; if (position . x > 1.0) position . x = 1.0;
+	if (position . y < -1.0) position . y = -1.0; if (position . y > 1.0) position . y = 1.0;
+	gtk_widget_queue_draw (viewport);
+	return true;
+}
 
+void vector_active_graphics :: draw (cairo_t * cr) {
+	if (surface != 0) {
+		cairo_set_source_surface (cr, surface, location . position . x, location . position . y);
+		cairo_paint (cr);
+	}
+	if (handle != 0) {
+		cairo_surface_t * sub = cairo_surface_create_for_rectangle (handle, position . x * -64.0 + 64.0, position . y * 64.0 + 64.0, 129.0, 129.0);
+		point p = location . position + point (23.0, 24.0);
+		cairo_set_source_surface (cr, sub, p . x, p . y);
+		cairo_paint (cr);
+		cairo_surface_destroy (sub);
+	}
+}
+
+vector_active_graphics :: vector_active_graphics (point location, int id, GraphicResources * resources) : active_graphics (location, id) {
+	surface = handle = 0;
+	if (resources == 0) return;
+	surface = resources -> vector_surface;
+	handle = resources -> vector_handle;
+	this -> location . size = point (cairo_image_surface_get_width (surface), cairo_image_surface_get_height (surface));
+}

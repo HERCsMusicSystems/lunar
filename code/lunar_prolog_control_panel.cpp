@@ -28,36 +28,6 @@
 #include "graphics2d.h"
 #include "graphic_resources.h"
 
-/*
-class vector_action : public PrologNativeCode {
-public:
-	PrologRoot * root;
-	PrologAtom * atom;
-	PrologAtom * command;
-	bool on;
-	GtkWidget * viewport;
-	cairo_surface_t * surface;
-	cairo_surface_t * handle;
-	point position;
-	point reference;
-	point screen_position;
-	void action (void) {
-		PrologElement * query = root -> pair (root -> atom (command),
-								root -> pair (root -> Double (1.0 - position . x / 64.0),
-								root -> pair (root -> Double (-1.0 + position . y / 64.0),
-								root -> earth ())));
-		query = root -> pair (root -> head (0), root -> pair (query, root -> earth ()));
-		root -> resolution (query);
-		delete query;
-	}
-	bool code (PrologElement * parameters, PrologResolution * resolution);
-	vector_action (GraphicResources * resources, PrologRoot * root, PrologAtom * atom, PrologAtom * command) : position (64.0, 64.0) {
-		this -> surface = resources -> vector_surface;
-		this -> handle = resources -> vector_handle;
-	}
-};
-*/
-
 class control_panel_action : public PrologNativeCode {
 public:
 	PrologRoot * root;
@@ -67,11 +37,31 @@ public:
 	GraphicResources * resources;
 	GtkWidget * viewport;
 	point location;
-	knob attack;
-	knob decay;
-	knob sustain;
-	knob release;
+	knob_active_graphics attack;
+	knob_active_graphics decay;
+	knob_active_graphics sustain;
+	knob_active_graphics release;
+	vector_active_graphics vector;
 	point captured;
+	void action (int ind, double value) {
+		PrologElement * query = root -> pair (root -> atom (command),
+								root -> pair (root -> integer (ind),
+								root -> pair (root -> Double (value),
+								root -> earth ())));
+		query = root -> pair (root -> head (0), root -> pair (query, root -> earth ()));
+		root -> resolution (query);
+		delete query;
+	}
+	void action (int ind, double x, double y) {
+		PrologElement * query = root -> pair (root -> atom (command),
+								root -> pair (root -> integer (ind),
+								root -> pair (root -> Double (x),
+								root -> pair (root -> Double (y),
+								root -> earth ()))));
+		query = root -> pair (root -> head (0), root -> pair (query, root -> earth ()));
+		root -> resolution (query);
+		delete query;
+	}
 	bool remove (bool remove_gtk = true) {
 		if (remove_gtk) g_idle_add ((GSourceFunc) RemoveViewportIdleCode, viewport);
 		delete this;
@@ -79,8 +69,9 @@ public:
 	}
 	bool code (PrologElement * parameters, PrologResolution * resolution);
 	control_panel_action (GraphicResources * resources, PrologRoot * root, PrologDirectory * directory, PrologAtom * atom, PrologAtom * command)
-	: attack (point (10.0, 10.0), resources, 1), decay (point (110.0, 10.0), resources, 2),
-	sustain (point (210.0, 10.0), resources, 3), release (point (310.0, 10.0), resources, 4) {
+	: attack (point (10.0, 10.0), 1, resources), decay (point (110.0, 10.0), 2, resources),
+	sustain (point (210.0, 10.0), 3, resources), release (point (310.0, 10.0), 4, resources),
+	vector (point (410.0, 10.0), 5, resources) {
 		this -> root = root;
 		this -> directory = directory;
 		this -> resources = resources;
@@ -101,6 +92,7 @@ static gboolean RedrawControlPanel (GtkWidget * viewport, GdkEvent * event, cont
 	action -> decay . draw (cr);
 	action -> sustain . draw (cr);
 	action -> release . draw (cr);
+	action -> vector . draw (cr);
 	cairo_destroy (cr);
 	return FALSE;
 }
@@ -136,28 +128,31 @@ static gboolean ControlPanelDeleteEvent (GtkWidget * viewport, GdkEvent * event,
 static gint ControlPanelKeyon (GtkWidget * viewport, GdkEventButton * event, control_panel_action * action) {
 	point location (event -> x, event -> y);
 	action -> captured = location;
-	if (action -> attack . keyon (location, viewport)) printf ("attack [%f]\n", action -> attack . angle);
-	if (action -> decay . keyon (location, viewport)) printf ("decay [%f]\n", action -> decay . angle);
-	if (action -> sustain . keyon (location, viewport)) printf ("sustain [%f]\n", action -> sustain . angle);
-	if (action -> release . keyon (location, viewport)) printf ("release [%f]\n", action -> release . angle);
+	action -> attack . keyon (location, viewport);
+	action -> decay . keyon (location, viewport);
+	action -> sustain . keyon (location, viewport);
+	action -> release . keyon (location, viewport);
+	action -> vector . keyon (location, viewport);
 	return TRUE;
 }
 static gint ControlPanelKeyoff (GtkWidget * viewport, GdkEventButton * event, control_panel_action * action) {
 	point location (event -> x, event -> y);
-	if (action -> attack . keyoff (location, viewport)) printf ("attack [%f]\n", action -> attack . angle);
-	if (action -> decay . keyoff (location, viewport)) printf ("decay [%f]\n", action -> decay . angle);
-	if (action -> sustain . keyoff (location, viewport)) printf ("sustain [%f]\n", action -> sustain . angle);
-	if (action -> release . keyoff (location, viewport)) printf ("release [%f]\n", action -> release . angle);
+	action -> attack . keyoff (location, viewport);
+	action -> decay . keyoff (location, viewport);
+	action -> sustain . keyoff (location, viewport);
+	action -> release . keyoff (location, viewport);
+	action -> vector . keyoff (location, viewport);
 	return TRUE;
 }
 static gint ControlPanelMove (GtkWidget * viewport, GdkEventButton * event, control_panel_action * action) {
 	point location (event -> x, event -> y);
 	point delta = action -> captured - location;
 	action -> captured = location;
-	if (action -> attack . move (delta, viewport)) printf ("attack [%f]\n", action -> attack . angle);
-	if (action -> decay . move (delta, viewport)) printf ("decay [%f]\n", action -> decay . angle);
-	if (action -> sustain . move (delta, viewport)) printf ("sustain [%f]\n", action -> sustain . angle);
-	if (action -> release . move (delta, viewport)) printf ("release [%f]\n", action -> release . angle);
+	if (action -> attack . move (delta, viewport)) action -> action (action -> attack . id, action -> attack . angle);
+	if (action -> decay . move (delta, viewport))  action -> action (action -> decay . id, action -> decay . angle);
+	if (action -> sustain . move (delta, viewport)) action -> action (action -> sustain . id, action -> sustain . angle);
+	if (action -> release . move (delta, viewport)) action -> action (action -> release . id, action -> release . angle);
+	if (action -> vector . move (delta, viewport)) action -> action (action -> vector . id, action -> vector . position . x, action -> vector . position . y);
 	return TRUE;
 }
 static gboolean CreateControlPanelIdleCode (control_panel_action * action) {

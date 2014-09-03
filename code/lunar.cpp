@@ -45,6 +45,9 @@ orbiter_core :: orbiter_core (void) {
 	control_time_delta = control_time_deltas + 8192;
 	amplitude = amplitudes + 16383;
 	filter_freq = filter_freqs + 8192;
+	pan = pans + 8192;
+	power_pan = power_pans + 8192;
+	linear_pan = linear_pans + 8192;
 	for (int ind = 0; ind > -16384; ind--) * (amplitude + ind) = pow (2.0, (double) ind / 1536.0); * amplitudes = 0.0;
 	for (int ind = 0; ind <= 16384; ind++) sine_wave [ind] = sin ((double) ind * M_PI * 2.0 / 16384.0);
 	double blep = 0.0;
@@ -53,6 +56,11 @@ orbiter_core :: orbiter_core (void) {
 		double sinc = angle == 0.0 ? 1.0 : sin (angle) / angle;
 		blep += sinc / 512.0;
 		min_blep [ind] = 2.0 * blep / 1.08949;
+	}
+	for (int ind = 0; ind <= 16384; ind++) {
+		pans [ind] = sin (M_PI * (double) ind / 32768.0);
+		power_pans [ind] = sqrt ((double) ind / 16384.0);
+		linear_pans [ind] = (double) ind / 16384.0;
 	}
 	recalculate ();
 }

@@ -205,6 +205,34 @@ public:
 	lunar_delay (orbiter_core * core);
 };
 
+class lunar_pan : public orbiter {
+protected:
+	double enter;
+	double pan;
+	double right;
+public:
+	virtual int numberOfInputs (void);
+	virtual char * inputName (int ind);
+	virtual double * inputAddress (int ind);
+	virtual int numberOfOutputs (void);
+	virtual char * outputName (int ind);
+	virtual double * outputAddress (int ind);
+	virtual void move (void);
+	lunar_pan (orbiter_core * core);
+};
+
+class lunar_power_pan : public lunar_pan {
+public:
+	virtual void move (void);
+	lunar_power_pan (orbiter_core * core);
+};
+
+class lunar_linear_pan : public lunar_pan {
+public:
+	virtual void move (void);
+	lunar_linear_pan (orbiter_core * core);
+};
+
 class lunar_sensitivity : public orbiter {
 private:
 	double enter;

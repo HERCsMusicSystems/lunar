@@ -209,6 +209,16 @@ eg_class :: eg_class (orbiter_core * core) : PrologNativeOrbiterCreator (core) {
 orbiter * delay_class :: create_orbiter (PrologElement * parameters) {return new lunar_delay (core);}
 delay_class :: delay_class (orbiter_core * core) : PrologNativeOrbiterCreator (core) {}
 
+orbiter * pan_class :: create_orbiter (PrologElement * parameters) {
+	switch (type) {
+	case 0: return new lunar_pan (core); break;
+	case 1: return new lunar_power_pan (core); break;
+	default: break;
+	}
+	return new lunar_linear_pan (core);
+}
+pan_class :: pan_class (orbiter_core * core, int type) : PrologNativeOrbiterCreator (core) {this -> type = type;}
+
 orbiter * sensitivity_class :: create_orbiter (PrologElement * parameters) {return new lunar_sensitivity (core);}
 sensitivity_class :: sensitivity_class (orbiter_core * core) : PrologNativeOrbiterCreator (core) {}
 

@@ -55,6 +55,12 @@ public:
 	double min_blep [16384];
 	double filter_freqs [16384];
 	double * filter_freq;
+	double pans [16385];
+	double power_pans [16385];
+	double linear_pans [16385];
+	double * pan;
+	double * power_pan;
+	double * linear_pan;
 	int noise24b;
 	pthread_mutex_t main_mutex;
 	pthread_mutex_t maintenance_mutex;

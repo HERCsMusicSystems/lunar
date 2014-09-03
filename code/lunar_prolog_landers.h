@@ -124,6 +124,13 @@ public:
 	delay_class (orbiter_core * core);
 };
 
+class pan_class : public PrologNativeOrbiterCreator {
+public:
+	int type;
+	virtual orbiter * create_orbiter (PrologElement * parameters);
+	pan_class (orbiter_core * core, int type); // 0 = sine based recommended by MMA, 1 = power, 2 = linear
+};
+
 class sensitivity_class : public PrologNativeOrbiterCreator {
 public:
 	virtual orbiter * create_orbiter (PrologElement * parameters);

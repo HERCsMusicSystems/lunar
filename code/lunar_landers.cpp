@@ -475,10 +475,66 @@ lunar_delay :: lunar_delay (orbiter_core * core) : orbiter (core) {
 	initialise (); activate ();
 }
 
+int lunar_pan :: numberOfInputs (void) {return 2;}
+char * lunar_pan :: inputName (int ind) {
+	switch (ind) {
+	case 0: return "SIGNAL"; break;
+	case 1: return "PAN"; break;
+	default: break;
+	}
+	return orbiter :: inputName (ind);
+}
+double * lunar_pan :: inputAddress (int ind) {
+	switch (ind) {
+	case 0: return & enter; break;
+	case 1: return & pan; break;
+	default: break;
+	}
+	return orbiter :: inputAddress (ind);
+}
+int lunar_pan :: numberOfOutputs (void) {return 2;}
+char * lunar_pan :: outputName (int ind) {
+	switch (ind) {
+	case 0: return "LEFT"; break;
+	case 1: return "RIGHT"; break;
+	default: break;
+	}
+	return orbiter :: outputName (ind);
+}
+double * lunar_pan :: outputAddress (int ind) {
+	switch (ind) {
+	case 0: return & signal; break;
+	case 1: return & right; break;
+	default: break;
+	}
+	return orbiter :: outputAddress (ind);
+}
+void lunar_pan :: move (void) {
+	int ind = (int) pan;
+	if (ind > 8192) ind = 8192; if (ind < -8192) ind = 8192;
+	signal = * (core -> pan - ind) * enter;
+	right = * (core -> pan + ind) * enter;
+}
+lunar_pan :: lunar_pan (orbiter_core * core) : orbiter (core) {initialise (); activate ();}
+void lunar_power_pan :: move (void) {
+	int ind = (int) pan;
+	if (ind > 8192) ind = 8192; if (ind < -8192) ind = 8192;
+	signal = * (core -> power_pan - ind) * enter;
+	right = * (core -> power_pan + ind) * enter;
+}
+lunar_power_pan :: lunar_power_pan (orbiter_core * core) : lunar_pan (core) {}
+void lunar_linear_pan :: move (void) {
+	int ind = (int) pan;
+	if (ind > 8192) ind = 8192; if (ind < -8192) ind = 8192;
+	signal = * (core -> linear_pan - ind) * enter;
+	right = * (core -> linear_pan + ind) * enter;
+}
+lunar_linear_pan :: lunar_linear_pan (orbiter_core * core) : lunar_pan (core) {}
+
 int lunar_sensitivity :: numberOfInputs (void) {return 4;}
 char * lunar_sensitivity :: inputName (int ind) {
 	switch (ind) {
-	case 0: return "ENTER"; break;
+	case 0: return "SIGNAL"; break;
 	case 1: return "BREAKPOINT"; break;
 	case 2: return "LEFT"; break;
 	case 3: return "RIGHT"; break;

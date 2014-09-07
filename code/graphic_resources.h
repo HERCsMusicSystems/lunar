@@ -38,6 +38,7 @@ public:
 	cairo_surface_t * knob;
 	cairo_surface_t * knob_surface;
 	cairo_surface_t * knob_handle;
+	cairo_surface_t * display_surface;
 	GraphicResources (void);
 	~ GraphicResources (void);
 };
@@ -47,9 +48,9 @@ public:
 	int id;
 	rect location;
 	bool on;
-	virtual bool keyon (point position, GtkWidget * viewport);
-	virtual bool keyoff (point position, GtkWidget * viewport);
-	virtual bool move (point delta, GtkWidget * viewport);
+	virtual bool keyon (point position);
+	virtual bool keyoff (point position);
+	virtual bool move (point delta);
 	virtual void draw (cairo_t * cr);
 	active_graphics (point location, int id);
 };
@@ -60,9 +61,9 @@ public:
 	cairo_surface_t * knob_surface_png;
 	cairo_surface_t * knob_png;
 	cairo_surface_t * knob_handle_png;
-	bool move (point delta, GtkWidget * viewport);
+	bool move (point delta);
 	void draw (cairo_t * cr);
-	knob_active_graphics (point location, int id, GraphicResources * resources);
+	knob_active_graphics (point location, int id, GraphicResources * resources, bool active_surface = false);
 };
 
 class vector_active_graphics : public active_graphics {
@@ -70,9 +71,26 @@ public:
 	point position;
 	cairo_surface_t * surface;
 	cairo_surface_t * handle;
-	bool move (point delta, GtkWidget * viewport);
+	bool move (point delta);
 	void draw (cairo_t * cr);
-	vector_active_graphics (point loccation, int id, GraphicResources * resources);
+	vector_active_graphics (point location, int id, GraphicResources * resources, bool active_surface = false);
+};
+
+class keyboard_active_graphics : public active_graphics {
+public:
+	point position;
+	cairo_surface_t * surface;
+	void draw (cairo_t * cr);
+	keyboard_active_graphics (point location, int type, int id, GraphicResources * resources, bool active_surface = false);
+};
+
+class display_active_graphics : public active_graphics {
+public:
+	point position;
+	cairo_surface_t * surface;
+	char area [1024];
+	void draw (cairo_t * cr);
+	display_active_graphics (point location, int id, GraphicResources * resources, bool active_surface = false);
 };
 
 #endif

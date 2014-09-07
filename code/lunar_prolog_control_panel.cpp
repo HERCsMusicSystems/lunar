@@ -42,24 +42,36 @@ public:
 	knob_active_graphics sustain;
 	knob_active_graphics release;
 	vector_active_graphics vector;
+	keyboard_active_graphics keyboard;
+	display_active_graphics display;
 	point captured;
-	void action (int ind, double value) {
+	void action (int ind, double value, char * area) {
 		PrologElement * query = root -> pair (root -> atom (command),
+								root -> pair (root -> var (0),
 								root -> pair (root -> integer (ind),
 								root -> pair (root -> Double (value),
-								root -> earth ())));
-		query = root -> pair (root -> head (0), root -> pair (query, root -> earth ()));
-		root -> resolution (query);
+								root -> earth ()))));
+		query = root -> pair (root -> var (0), root -> pair (query, root -> earth ()));
+		if (root -> resolution (query) == 1) {
+			PrologElement * el = query;
+			if (el -> isPair ()) el = el -> getLeft ();
+			if (el -> isText ()) area_cat (area, 0, el -> getText ());
+		}
 		delete query;
 	}
-	void action (int ind, double x, double y) {
+	void action (int ind, double x, double y, char * area) {
 		PrologElement * query = root -> pair (root -> atom (command),
+								root -> pair (root -> var (0),
 								root -> pair (root -> integer (ind),
 								root -> pair (root -> Double (x),
 								root -> pair (root -> Double (y),
-								root -> earth ()))));
-		query = root -> pair (root -> head (0), root -> pair (query, root -> earth ()));
-		root -> resolution (query);
+								root -> earth ())))));
+		query = root -> pair (root -> var (0), root -> pair (query, root -> earth ()));
+		if (root -> resolution (query) == 1) {
+			PrologElement * el = query;
+			if (el -> isPair ()) el = el -> getLeft ();
+			if (el -> isText ()) area_cat (area, 0, el -> getText ());
+		}
 		delete query;
 	}
 	bool remove (bool remove_gtk = true) {
@@ -70,8 +82,9 @@ public:
 	bool code (PrologElement * parameters, PrologResolution * resolution);
 	control_panel_action (GraphicResources * resources, PrologRoot * root, PrologDirectory * directory, PrologAtom * atom, PrologAtom * command)
 	: attack (point (10.0, 10.0), 1, resources), decay (point (110.0, 10.0), 2, resources),
-	sustain (point (210.0, 10.0), 3, resources), release (point (310.0, 10.0), 4, resources),
-	vector (point (410.0, 10.0), 5, resources) {
+	sustain (point (210.0, 10.0), 3, resources), release (point (310.0, 10.0), 4, resources, true),
+	vector (point (10.0, 100.0), 5, resources), keyboard (point (100.0, 280.0), 2, 6, resources, true),
+	display (point (410.0, 10.0), 7, resources, true) {
 		this -> root = root;
 		this -> directory = directory;
 		this -> resources = resources;
@@ -93,6 +106,8 @@ static gboolean RedrawControlPanel (GtkWidget * viewport, GdkEvent * event, cont
 	action -> sustain . draw (cr);
 	action -> release . draw (cr);
 	action -> vector . draw (cr);
+	action -> keyboard . draw (cr);
+	action -> display . draw (cr);
 	cairo_destroy (cr);
 	return FALSE;
 }
@@ -128,31 +143,36 @@ static gboolean ControlPanelDeleteEvent (GtkWidget * viewport, GdkEvent * event,
 static gint ControlPanelKeyon (GtkWidget * viewport, GdkEventButton * event, control_panel_action * action) {
 	point location (event -> x, event -> y);
 	action -> captured = location;
-	action -> attack . keyon (location, viewport);
-	action -> decay . keyon (location, viewport);
-	action -> sustain . keyon (location, viewport);
-	action -> release . keyon (location, viewport);
-	action -> vector . keyon (location, viewport);
+	action -> attack . keyon (location);
+	action -> decay . keyon (location);
+	action -> sustain . keyon (location);
+	action -> release . keyon (location);
+	action -> vector . keyon (location);
 	return TRUE;
 }
 static gint ControlPanelKeyoff (GtkWidget * viewport, GdkEventButton * event, control_panel_action * action) {
 	point location (event -> x, event -> y);
-	action -> attack . keyoff (location, viewport);
-	action -> decay . keyoff (location, viewport);
-	action -> sustain . keyoff (location, viewport);
-	action -> release . keyoff (location, viewport);
-	action -> vector . keyoff (location, viewport);
+	action -> attack . keyoff (location);
+	action -> decay . keyoff (location);
+	action -> sustain . keyoff (location);
+	action -> release . keyoff (location);
+	action -> vector . keyoff (location);
 	return TRUE;
 }
 static gint ControlPanelMove (GtkWidget * viewport, GdkEventButton * event, control_panel_action * action) {
 	point location (event -> x, event -> y);
-	point delta = action -> captured - location;
+	point delta = location - action -> captured;
 	action -> captured = location;
-	if (action -> attack . move (delta, viewport)) action -> action (action -> attack . id, action -> attack . angle);
-	if (action -> decay . move (delta, viewport))  action -> action (action -> decay . id, action -> decay . angle);
-	if (action -> sustain . move (delta, viewport)) action -> action (action -> sustain . id, action -> sustain . angle);
-	if (action -> release . move (delta, viewport)) action -> action (action -> release . id, action -> release . angle);
-	if (action -> vector . move (delta, viewport)) action -> action (action -> vector . id, action -> vector . position . x, action -> vector . position . y);
+	bool redraw = false;
+	if (action -> attack . move (delta)) {action -> action (action -> attack . id, action -> attack . angle, action -> display . area); redraw = true;}
+	if (action -> decay . move (delta))  {action -> action (action -> decay . id, action -> decay . angle, action -> display . area); redraw = true;}
+	if (action -> sustain . move (delta)) {action -> action (action -> sustain . id, action -> sustain . angle, action -> display . area); redraw = true;}
+	if (action -> release . move (delta)) {action -> action (action -> release . id, action -> release . angle, action -> display . area); redraw = true;}
+	if (action -> vector . move (delta)) {
+		action -> action (action -> vector . id, action -> vector . position . x, action -> vector . position . y, action -> display . area);
+		redraw = true;
+	}
+	if (redraw) gtk_widget_queue_draw (viewport);
 	return TRUE;
 }
 static gboolean CreateControlPanelIdleCode (control_panel_action * action) {
@@ -166,7 +186,7 @@ static gboolean CreateControlPanelIdleCode (control_panel_action * action) {
 	g_signal_connect (G_OBJECT (action -> viewport), "button_press_event", G_CALLBACK (ControlPanelKeyon), action);
 	g_signal_connect (G_OBJECT (action -> viewport), "button_release_event", G_CALLBACK (ControlPanelKeyoff), action);
 	g_signal_connect (G_OBJECT (action -> viewport), "motion_notify_event", G_CALLBACK (ControlPanelMove), action);
-	gtk_window_resize (GTK_WINDOW (action -> viewport), 600, 200);
+	gtk_window_resize (GTK_WINDOW (action -> viewport), 900, 460);
 	gtk_widget_show_all (action -> viewport);
 	return FALSE;
 }

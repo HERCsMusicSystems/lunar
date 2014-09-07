@@ -183,7 +183,7 @@ PrologNativeCode * PrologLunarServiceClass :: getNativeCode (char * name) {
 	if (strcmp (name, "big_keyboard") == 0) return new keyboard_class (this, 3);
 	if (strcmp (name, "oscilloscope") == 0) return new oscilloscope_class (& core);
 	if (strcmp (name, "vector") == 0) return new vector_class (this);
-	if (strcmp (name, "control_panel") == 0) return new control_panel_class (this);
+	if (strcmp (name, "CommandCentre") == 0) return new control_panel_class (this);
 	if (strcmp (name, "core") == 0) return new core_class (& core);
 	if (strcmp (name, "operator") == 0) return new operator_class (& core);
 	if (strcmp (name, "square_operator") == 0) return new square_operator_class (& core);

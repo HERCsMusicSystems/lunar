@@ -53,6 +53,8 @@ extern char resource_knob_surface_start;
 extern char resource_knob_surface_end;
 extern char resource_knob_handle_start;
 extern char resource_knob_handle_end;
+extern char resource_display_start;
+extern char resource_display_end;
 #endif
 
 class png_closure {
@@ -94,6 +96,7 @@ GraphicResources :: GraphicResources (void) {
 	png_closure knob_closure (& resource_knob_start, & resource_knob_end);
 	png_closure knob_surface_closure (& resource_knob_surface_start, & resource_knob_surface_end);
 	png_closure knob_handle_closure (& resource_knob_handle_start, & resource_knob_handle_end);
+	png_closure display_closure (& resource_display_start, & resource_display_end);
 #endif
 	vector_surface = cairo_image_surface_create_from_png_stream (png_reader, & frame_closure);
 	vector_handle = cairo_image_surface_create_from_png_stream (png_reader, & handle_closure);
@@ -103,6 +106,7 @@ GraphicResources :: GraphicResources (void) {
 	knob = cairo_image_surface_create_from_png_stream (png_reader, & knob_closure);
 	knob_surface = cairo_image_surface_create_from_png_stream (png_reader, & knob_surface_closure);
 	knob_handle = cairo_image_surface_create_from_png_stream (png_reader, & knob_handle_closure);
+	display_surface = cairo_image_surface_create_from_png_stream (png_reader, & display_closure);
 }
 
 GraphicResources :: ~ GraphicResources (void) {
@@ -114,25 +118,26 @@ GraphicResources :: ~ GraphicResources (void) {
 	if (knob != 0) cairo_surface_destroy (knob);
 	if (knob_surface != 0) cairo_surface_destroy (knob_surface);
 	if (knob_handle != 0) cairo_surface_destroy (knob_handle);
+	if (display_surface != 0) cairo_surface_destroy (display_surface);
 }
 
 GraphicResources * create_graphic_resources (void) {return new GraphicResources ();}
 void destroy_graphic_resources (GraphicResources * resource) {if (resource != 0) delete resource;}
 
-bool active_graphics :: keyon (point position, GtkWidget * viewport) {
+bool active_graphics :: keyon (point position) {
 	if (! location . overlap (rect (position, point ()))) return false;
 	on = true;
 	return true;
 }
-bool active_graphics :: keyoff (point position, GtkWidget * viewport) {on = false; return location . overlap (rect (position, point ()));}
-bool active_graphics :: move (point delta, GtkWidget * viewport) {return on;}
+bool active_graphics :: keyoff (point position) {on = false; return location . overlap (rect (position, point ()));}
+bool active_graphics :: move (point delta) {return on;}
 void active_graphics :: draw (cairo_t * cr) {}
 active_graphics :: active_graphics (point location, int id) {on = false; this -> id = id; this -> location = rect (location, point (16.0, 16.0));}
 
-bool knob_active_graphics :: move (point delta, GtkWidget * viewport) {
+bool knob_active_graphics :: move (point delta) {
 	if (! on) return false;
-	angle += 0.1 * delta . y;
-	gtk_widget_queue_draw (viewport);
+	angle -= 0.03125 * delta . y;
+	if (angle < 0.0) angle = 0.0; if (angle > 1.0) angle = 1.0;
 	return true;
 }
 
@@ -147,31 +152,41 @@ void knob_active_graphics :: draw (cairo_t * cr) {
 			cairo_paint (cr);
 		}
 		if (knob_handle_png != 0) {
-			point position = location . position + point (30, 30);
-			position += point (sin (angle), cos (angle)) * 20.0;
+			point position = location . position + point (28, 29);
+			double alpha = (angle * -1.5 - 0.25) * M_PI;
+			position += point (sin (alpha), cos (alpha)) * 12.0;
 			cairo_set_source_surface (cr, knob_handle_png, position . x, position . y);
 			cairo_paint (cr);
 		}
+		char command [16];
+		sprintf (command, "%i", (int) (angle * 128.0 - 64.0));
+		cairo_set_font_size (cr, 10);
+		cairo_set_source_rgba (cr, 1.0, 1.0, 0.0, 1.0);
+		cairo_text_extents_t extent;
+		cairo_text_extents (cr, command, & extent);
+		point position = location . position + point (38.0 - extent . width, 62.0);
+		cairo_move_to (cr, position . x, position . y);
+		cairo_show_text (cr, command);
+		cairo_identity_matrix (cr);
 }
 
 
-knob_active_graphics :: knob_active_graphics (point location, int id, GraphicResources * resources) : active_graphics (location, id) {
+knob_active_graphics :: knob_active_graphics (point location, int id, GraphicResources * resources, bool active_surface) : active_graphics (location, id) {
 	knob_surface_png = knob_png = knob_handle_png = 0;
 	if (resources != 0) {
-		knob_surface_png = resources -> knob_surface;
-		knob_png = resources -> knob;
+		knob_surface_png = active_surface ? resources -> knob_surface : 0;
+		knob_png = active_surface ? resources -> knob : 0;
 		knob_handle_png = resources -> knob_handle;
 	}
 	angle = 0.0;
 	this -> location = rect (location, point (62, 83));
 }
 
-bool vector_active_graphics :: move (point delta, GtkWidget * viewport) {
+bool vector_active_graphics :: move (point delta) {
 	if (! on) return false;
-	position += delta * point (-0.00390625, 0.00390625);
+	position += delta * point (0.00390625, -0.00390625);
 	if (position . x < -1.0) position . x = -1.0; if (position . x > 1.0) position . x = 1.0;
 	if (position . y < -1.0) position . y = -1.0; if (position . y > 1.0) position . y = 1.0;
-	gtk_widget_queue_draw (viewport);
 	return true;
 }
 
@@ -189,10 +204,50 @@ void vector_active_graphics :: draw (cairo_t * cr) {
 	}
 }
 
-vector_active_graphics :: vector_active_graphics (point location, int id, GraphicResources * resources) : active_graphics (location, id) {
+vector_active_graphics :: vector_active_graphics (point location, int id, GraphicResources * resources, bool active_surface) : active_graphics (location, id) {
 	surface = handle = 0;
 	if (resources == 0) return;
-	surface = resources -> vector_surface;
+	surface = active_surface ? resources -> vector_surface : 0;
 	handle = resources -> vector_handle;
-	this -> location . size = point (cairo_image_surface_get_width (surface), cairo_image_surface_get_height (surface));
+	this -> location . size = point (cairo_image_surface_get_width (resources -> vector_surface), cairo_image_surface_get_height (resources -> vector_surface));
 }
+
+void keyboard_active_graphics :: draw (cairo_t * cr) {
+	if (surface != 0) {
+		cairo_set_source_surface (cr, surface, location . position . x, location . position . y);
+		cairo_paint (cr);
+	}
+}
+
+keyboard_active_graphics :: keyboard_active_graphics (point location, int type, int id, GraphicResources * resources, bool active_surface) :
+		active_graphics (location, id) {
+	surface = 0;
+	if (resources == 0) return;
+	if (! active_surface) return;
+	switch (type) {
+	case 1: surface = resources -> keyboard_surface; break;
+	case 2: surface = resources -> big_keyboard_surface; break;
+	default: surface = resources -> small_keyboard_surface; break;
+	}
+}
+
+void display_active_graphics :: draw (cairo_t * cr) {
+	if (surface != 0) {
+		cairo_set_source_surface (cr, surface, location . position . x, location . position . y);
+		cairo_paint (cr);
+	}
+	point text_position = location . position + point (26.0, 46.0);
+	cairo_move_to (cr, text_position . x, text_position . y);
+	cairo_set_font_size (cr, 22);
+	cairo_set_source_rgba (cr, 1.0, 1.0, 0.0, 1.0);
+	cairo_show_text (cr, area);
+	cairo_identity_matrix (cr);
+}
+
+display_active_graphics :: display_active_graphics (point location, int id, GraphicResources * resource, bool active_surface) : active_graphics (location, id) {
+	surface = 0;
+	* area = '\0';
+	if (resource == 0) return;
+	surface = active_surface ? resource -> display_surface : 0;
+}
+

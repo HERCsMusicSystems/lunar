@@ -141,17 +141,24 @@ knob_handle.o: ../graphics/knob_handle.png
 		../graphics/knob_handle.png knob_handle.o
 	objdump -t knob_handle.o
 
+display.o: ../graphics/display.png
+	objcopy --input binary --output elf64-x86-64 --binary-architecture i386\
+		--redefine-sym _binary____graphics_display_png_start=resource_display_start\
+		--redefine-sym _binary____graphics_display_png_end=resource_display_end\
+		../graphics/display.png display.o
+	objdump -t display.o
+
 lunar_prc.o: ../code/lunar.prc
 	objcopy --input binary --output elf64-x86-64 --binary-architecture i386\
 		--redefine-sym _binary____code_lunar_prc_start=resource_lunar\
 		../code/lunar.prc lunar_prc.o
 
-prcgtk.o: ../code/prcgtk.cpp ../code/prolog_lunar.h\
+prcgtk.o: ../code/prcgtk.cpp ../code/prolog_lunar.h ../code/lunar.h\
 	$(pc)prolog.h $(pc)prolog_conductor.h $(pc)prolog_midi.h $(pc)prolog_neural.h $(pc)prolog_xml.h\
 	$(pc)prolog_http.h $(pc)prolog_distribution.h $(pc)prolog_control.h
 	g++ -Wno-write-strings -I. -I$(pc) ../code/prcgtk.cpp -c -o prcgtk.o `pkg-config --cflags gtk+-2.0`
 
-graphics = small_keyboard.o keyboard.o big_keyboard.o vector_frame.o vector_handle.o knob.o knob_surface.o knob_handle.o
+graphics = small_keyboard.o keyboard.o big_keyboard.o vector_frame.o vector_handle.o knob.o knob_surface.o knob_handle.o display.o
 
 ~/bin/lunar: $(lunar_objects) $(objects) $(graphics) $(prc_resources)
 	g++ $(lunar_objects) $(objects) $(prc_resources) $(graphics) \

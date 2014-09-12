@@ -7,7 +7,7 @@ import studio
 program lunar #machine := "prolog.lunar"
 			[
 				small_keyboard keyboard big_keyboard oscilloscope vector CommandCentre
-				dock undock
+				dock undock noise
 				core moonbase operator parameter_block key_map velocity_map impulse trigger porta_trigger mixer stereo_mixer gateway lfo adsr eg
 				square_operator saw_operator noise_operator sampler_operator sensitivity filter delay pan power_pan linear_pan
 				signal freq amp ratio sync attack decay sustain release busy time speed wave pulse phase poly
@@ -57,8 +57,7 @@ program lunar #machine := "prolog.lunar"
 [[Moonbase *base *distributor]
 	[create_atom *modules] [create_atom *parameters]
 	[moonbase *distributor]
-	[addcl [[*base *parameters *modules]]]
-	[addcl [[*modules *distributor]]]
+	[addcl [[*base *parameters *modules *distributor]]]
 ]
 
 [[AddParameterBlock *parameters *parameter *module *selector *initial]
@@ -88,6 +87,10 @@ program lunar #machine := "prolog.lunar"
 	[AddParameterBlock *parameters amp *operator *selector 0]
 	[AddParameterBlock *parameters ratio *operator *selector 1]
 	[AddParameterBlock *parameters sync *operator *selector 0]
+]
+
+[[InsertIO *parameters *noise *selector [["AMP"] ["SIGNAL"]]]
+	[AddParameterBlock *parameters amp *noise *selector 0]
 ]
 
 [[InsertIO *parameters *adsr *selector [["TRIGGER" "ATTACK" "DECAY" "SUSTAIN" "RELEASE" : *] *]]

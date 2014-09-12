@@ -148,6 +148,20 @@ display.o: ../graphics/display.png
 		../graphics/display.png display.o
 	objdump -t display.o
 
+button_on.o: ../graphics/button_on.png
+	objcopy --input binary --output elf64-x86-64 --binary-architecture i386\
+		--redefine-sym _binary____graphics_button_on_png_start=resource_button_on_start\
+		--redefine-sym _binary____graphics_button_on_png_end=resource_button_on_end\
+		../graphics/button_on.png button_on.o
+	objdump -t button_on.o
+
+button_off.o: ../graphics/button_off.png
+	objcopy --input binary --output elf64-x86-64 --binary-architecture i386\
+		--redefine-sym _binary____graphics_button_off_png_start=resource_button_off_start\
+		--redefine-sym _binary____graphics_button_off_png_end=resource_button_off_end\
+		../graphics/button_off.png button_off.o
+	objdump -t button_off.o
+
 lunar_prc.o: ../code/lunar.prc
 	objcopy --input binary --output elf64-x86-64 --binary-architecture i386\
 		--redefine-sym _binary____code_lunar_prc_start=resource_lunar\
@@ -158,7 +172,7 @@ prcgtk.o: ../code/prcgtk.cpp ../code/prolog_lunar.h ../code/lunar.h\
 	$(pc)prolog_http.h $(pc)prolog_distribution.h $(pc)prolog_control.h
 	g++ -Wno-write-strings -I. -I$(pc) ../code/prcgtk.cpp -c -o prcgtk.o `pkg-config --cflags gtk+-2.0`
 
-graphics = small_keyboard.o keyboard.o big_keyboard.o vector_frame.o vector_handle.o knob.o knob_surface.o knob_handle.o display.o
+graphics = small_keyboard.o keyboard.o big_keyboard.o vector_frame.o vector_handle.o knob.o knob_surface.o knob_handle.o display.o button_on.o button_off.o
 
 ~/bin/lunar: $(lunar_objects) $(objects) $(graphics) $(prc_resources)
 	g++ $(lunar_objects) $(objects) $(prc_resources) $(graphics) \

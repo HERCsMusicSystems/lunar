@@ -44,7 +44,32 @@ public:
 	vector_active_graphics vector;
 	keyboard_active_graphics keyboard;
 	display_active_graphics display;
+	button_active_graphics program0, program1, program2, program3, program4, program5, program6, program7, program8, program9;
 	point captured;
+	void program_action (button_active_graphics * button, char * area) {
+		program0 . engaged = false;
+		program1 . engaged = false;
+		program2 . engaged = false;
+		program3 . engaged = false;
+		program4 . engaged = false;
+		program5 . engaged = false;
+		program6 . engaged = false;
+		program7 . engaged = false;
+		program8 . engaged = false;
+		program9 . engaged = false;
+		button -> engaged = true;
+		PrologElement * query = root -> pair (root -> atom (command),
+								root -> pair (root -> var (0),
+								root -> pair (root -> integer (button -> id),
+								root -> earth ())));
+		query = root -> pair (root -> var (0), root -> pair (query, root -> earth ()));
+		if (root -> resolution (query) == 1) {
+			PrologElement * el = query;
+			if (el -> isPair ()) el = el -> getLeft ();
+			if (el -> isText ()) area_cat (area, 0, el -> getText ());
+		}
+		delete query;
+	}
 	void action (int ind, double value, char * area) {
 		PrologElement * query = root -> pair (root -> atom (command),
 								root -> pair (root -> var (0),
@@ -84,7 +109,18 @@ public:
 	: attack (point (10.0, 10.0), 1, resources), decay (point (110.0, 10.0), 2, resources),
 	sustain (point (210.0, 10.0), 3, resources), release (point (310.0, 10.0), 4, resources, true),
 	vector (point (10.0, 100.0), 5, resources), keyboard (point (100.0, 280.0), 2, 6, resources, true),
-	display (point (410.0, 10.0), 7, resources, true) {
+	display (point (410.0, 10.0), 7, resources, true),
+	program0 (point (200.0, 260.0), 100, resources, true),
+	program1 (point (240.0, 260.0), 101, resources, true),
+	program2 (point (280.0, 260.0), 102, resources, true),
+	program3 (point (320.0, 260.0), 103, resources, true),
+	program4 (point (360.0, 260.0), 104, resources, true),
+	program5 (point (400.0, 260.0), 105, resources, true),
+	program6 (point (440.0, 260.0), 106, resources, true),
+	program7 (point (480.0, 260.0), 107, resources, true),
+	program8 (point (520.0, 260.0), 108, resources, true),
+	program9 (point (560.0, 260.0), 109, resources, true)
+	{
 		this -> root = root;
 		this -> directory = directory;
 		this -> resources = resources;
@@ -108,6 +144,16 @@ static gboolean RedrawControlPanel (GtkWidget * viewport, GdkEvent * event, cont
 	action -> vector . draw (cr);
 	action -> keyboard . draw (cr);
 	action -> display . draw (cr);
+	action -> program0 . draw (cr);
+	action -> program1 . draw (cr);
+	action -> program2 . draw (cr);
+	action -> program3 . draw (cr);
+	action -> program4 . draw (cr);
+	action -> program5 . draw (cr);
+	action -> program6 . draw (cr);
+	action -> program7 . draw (cr);
+	action -> program8 . draw (cr);
+	action -> program9 . draw (cr);
 	cairo_destroy (cr);
 	return FALSE;
 }
@@ -148,6 +194,18 @@ static gint ControlPanelKeyon (GtkWidget * viewport, GdkEventButton * event, con
 	action -> sustain . keyon (location);
 	action -> release . keyon (location);
 	action -> vector . keyon (location);
+	bool redraw = false;
+	if (action -> program0 . keyon (location)) {action -> program_action (& action -> program0, action -> display . area); redraw = true;}
+	if (action -> program1 . keyon (location)) {action -> program_action (& action -> program1, action -> display . area); redraw = true;}
+	if (action -> program2 . keyon (location)) {action -> program_action (& action -> program2, action -> display . area); redraw = true;}
+	if (action -> program3 . keyon (location)) {action -> program_action (& action -> program3, action -> display . area); redraw = true;}
+	if (action -> program4 . keyon (location)) {action -> program_action (& action -> program4, action -> display . area); redraw = true;}
+	if (action -> program5 . keyon (location)) {action -> program_action (& action -> program5, action -> display . area); redraw = true;}
+	if (action -> program6 . keyon (location)) {action -> program_action (& action -> program6, action -> display . area); redraw = true;}
+	if (action -> program7 . keyon (location)) {action -> program_action (& action -> program7, action -> display . area); redraw = true;}
+	if (action -> program8 . keyon (location)) {action -> program_action (& action -> program8, action -> display . area); redraw = true;}
+	if (action -> program9 . keyon (location)) {action -> program_action (& action -> program9, action -> display . area); redraw = true;}
+	if (redraw) gtk_widget_queue_draw (viewport);
 	return TRUE;
 }
 static gint ControlPanelKeyoff (GtkWidget * viewport, GdkEventButton * event, control_panel_action * action) {

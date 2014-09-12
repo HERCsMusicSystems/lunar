@@ -39,6 +39,8 @@ public:
 	cairo_surface_t * knob_surface;
 	cairo_surface_t * knob_handle;
 	cairo_surface_t * display_surface;
+	cairo_surface_t * button_surface_off;
+	cairo_surface_t * button_surface_on;
 	GraphicResources (void);
 	~ GraphicResources (void);
 };
@@ -78,7 +80,6 @@ public:
 
 class keyboard_active_graphics : public active_graphics {
 public:
-	point position;
 	cairo_surface_t * surface;
 	void draw (cairo_t * cr);
 	keyboard_active_graphics (point location, int type, int id, GraphicResources * resources, bool active_surface = false);
@@ -86,11 +87,19 @@ public:
 
 class display_active_graphics : public active_graphics {
 public:
-	point position;
 	cairo_surface_t * surface;
 	char area [1024];
 	void draw (cairo_t * cr);
 	display_active_graphics (point location, int id, GraphicResources * resources, bool active_surface = false);
+};
+
+class button_active_graphics : public active_graphics {
+public:
+	cairo_surface_t * surface_off;
+	cairo_surface_t * surface_on;
+	bool engaged;
+	void draw (cairo_t *cr);
+	button_active_graphics (point location, int id, GraphicResources * resource, bool active_surface = false);
 };
 
 #endif

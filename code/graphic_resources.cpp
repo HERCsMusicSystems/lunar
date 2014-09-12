@@ -55,6 +55,10 @@ extern char resource_knob_handle_start;
 extern char resource_knob_handle_end;
 extern char resource_display_start;
 extern char resource_display_end;
+extern char resource_button_on_start;
+extern char resource_button_on_end;
+extern char resource_button_off_start;
+extern char resource_button_off_end;
 #endif
 
 class png_closure {
@@ -97,6 +101,8 @@ GraphicResources :: GraphicResources (void) {
 	png_closure knob_surface_closure (& resource_knob_surface_start, & resource_knob_surface_end);
 	png_closure knob_handle_closure (& resource_knob_handle_start, & resource_knob_handle_end);
 	png_closure display_closure (& resource_display_start, & resource_display_end);
+	png_closure button_on_closure (& resource_button_on_start, & resource_button_on_end);
+	png_closure button_off_closure (& resource_button_off_start, & resource_button_off_end);
 #endif
 	vector_surface = cairo_image_surface_create_from_png_stream (png_reader, & frame_closure);
 	vector_handle = cairo_image_surface_create_from_png_stream (png_reader, & handle_closure);
@@ -107,6 +113,8 @@ GraphicResources :: GraphicResources (void) {
 	knob_surface = cairo_image_surface_create_from_png_stream (png_reader, & knob_surface_closure);
 	knob_handle = cairo_image_surface_create_from_png_stream (png_reader, & knob_handle_closure);
 	display_surface = cairo_image_surface_create_from_png_stream (png_reader, & display_closure);
+	button_surface_on = cairo_image_surface_create_from_png_stream (png_reader, & button_on_closure);
+	button_surface_off = cairo_image_surface_create_from_png_stream (png_reader, & button_off_closure);
 }
 
 GraphicResources :: ~ GraphicResources (void) {
@@ -119,6 +127,8 @@ GraphicResources :: ~ GraphicResources (void) {
 	if (knob_surface != 0) cairo_surface_destroy (knob_surface);
 	if (knob_handle != 0) cairo_surface_destroy (knob_handle);
 	if (display_surface != 0) cairo_surface_destroy (display_surface);
+	if (button_surface_on != 0) cairo_surface_destroy (button_surface_on);
+	if (button_surface_off != 0) cairo_surface_destroy (button_surface_off);
 }
 
 GraphicResources * create_graphic_resources (void) {return new GraphicResources ();}
@@ -249,5 +259,24 @@ display_active_graphics :: display_active_graphics (point location, int id, Grap
 	* area = '\0';
 	if (resource == 0) return;
 	surface = active_surface ? resource -> display_surface : 0;
+}
+
+void button_active_graphics :: draw (cairo_t * cr) {
+	if (engaged && surface_on != 0) {
+		cairo_set_source_surface (cr, surface_on, location . position . x, location . position . y);
+		cairo_paint (cr);
+		return;
+	}
+	if (surface_off != 0) {
+		cairo_set_source_surface (cr, surface_off, location . position . x, location . position . y);
+		cairo_paint (cr);
+	}
+}
+button_active_graphics :: button_active_graphics (point location, int id, GraphicResources * resource, bool active_surface) : active_graphics (location, id) {
+	engaged = false;
+	surface_on = surface_off = 0;
+	if (resource == 0) return;
+	surface_on = resource -> button_surface_on;
+	surface_off = active_surface ? resource -> button_surface_off : 0;
 }
 

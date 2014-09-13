@@ -45,18 +45,35 @@ public:
 	keyboard_active_graphics keyboard;
 	display_active_graphics display;
 	button_active_graphics program0, program1, program2, program3, program4, program5, program6, program7, program8, program9;
+	button_active_graphics selector0, selector1, selector2, selector3, selector4, selector5, selector6, selector7, selector8, selector9;
 	point captured;
+	void reset_buttons (int id) {
+		if (selector0 . id <= id && id <= selector9 . id) {
+			selector0 . engaged = false;
+			selector1 . engaged = false;
+			selector2 . engaged = false;
+			selector3 . engaged = false;
+			selector4 . engaged = false;
+			selector5 . engaged = false;
+			selector6 . engaged = false;
+			selector7 . engaged = false;
+			selector8 . engaged = false;
+			selector9 . engaged = false;
+		} else {
+			program0 . engaged = false;
+			program1 . engaged = false;
+			program2 . engaged = false;
+			program3 . engaged = false;
+			program4 . engaged = false;
+			program5 . engaged = false;
+			program6 . engaged = false;
+			program7 . engaged = false;
+			program8 . engaged = false;
+			program9 . engaged = false;
+		}
+	}
 	void program_action (button_active_graphics * button, char * area) {
-		program0 . engaged = false;
-		program1 . engaged = false;
-		program2 . engaged = false;
-		program3 . engaged = false;
-		program4 . engaged = false;
-		program5 . engaged = false;
-		program6 . engaged = false;
-		program7 . engaged = false;
-		program8 . engaged = false;
-		program9 . engaged = false;
+		reset_buttons (button -> id);
 		button -> engaged = true;
 		PrologElement * query = root -> pair (root -> atom (command),
 								root -> pair (root -> var (0),
@@ -106,20 +123,30 @@ public:
 	}
 	bool code (PrologElement * parameters, PrologResolution * resolution);
 	control_panel_action (GraphicResources * resources, PrologRoot * root, PrologDirectory * directory, PrologAtom * atom, PrologAtom * command)
-	: attack (point (10.0, 10.0), 1, resources), decay (point (110.0, 10.0), 2, resources),
-	sustain (point (210.0, 10.0), 3, resources), release (point (310.0, 10.0), 4, resources, true),
-	vector (point (10.0, 100.0), 5, resources), keyboard (point (100.0, 280.0), 2, 6, resources, true),
+	: attack (point (10.0, 10.0), 1, resources, true), decay (point (110.0, 10.0), 2, resources, true),
+	sustain (point (210.0, 10.0), 3, resources, true), release (point (310.0, 10.0), 4, resources, true),
+	vector (point (10.0, 100.0), 5, resources, true), keyboard (point (100.0, 280.0), 2, 6, resources, true),
 	display (point (410.0, 10.0), 7, resources, true),
-	program0 (point (200.0, 260.0), 100, resources, true),
-	program1 (point (240.0, 260.0), 101, resources, true),
-	program2 (point (280.0, 260.0), 102, resources, true),
-	program3 (point (320.0, 260.0), 103, resources, true),
-	program4 (point (360.0, 260.0), 104, resources, true),
-	program5 (point (400.0, 260.0), 105, resources, true),
-	program6 (point (440.0, 260.0), 106, resources, true),
-	program7 (point (480.0, 260.0), 107, resources, true),
-	program8 (point (520.0, 260.0), 108, resources, true),
-	program9 (point (560.0, 260.0), 109, resources, true)
+	selector0 (point (400.0, 120.0), 200, resources, true),
+	selector1 (point (440.0, 120.0), 201, resources, true),
+	selector2 (point (480.0, 120.0), 202, resources, true),
+	selector3 (point (520.0, 120.0), 203, resources, true),
+	selector4 (point (560.0, 120.0), 204, resources, true),
+	selector5 (point (600.0, 120.0), 205, resources, true),
+	selector6 (point (640.0, 120.0), 206, resources, true),
+	selector7 (point (680.0, 120.0), 207, resources, true),
+	selector8 (point (720.0, 120.0), 208, resources, true),
+	selector9 (point (760.0, 120.0), 209, resources, true),
+	program0 (point (400.0, 160.0), 100, resources, true),
+	program1 (point (440.0, 160.0), 101, resources, true),
+	program2 (point (480.0, 160.0), 102, resources, true),
+	program3 (point (520.0, 160.0), 103, resources, true),
+	program4 (point (560.0, 160.0), 104, resources, true),
+	program5 (point (600.0, 160.0), 105, resources, true),
+	program6 (point (640.0, 160.0), 106, resources, true),
+	program7 (point (680.0, 160.0), 107, resources, true),
+	program8 (point (720.0, 160.0), 108, resources, true),
+	program9 (point (760.0, 160.0), 109, resources, true)
 	{
 		this -> root = root;
 		this -> directory = directory;
@@ -144,6 +171,16 @@ static gboolean RedrawControlPanel (GtkWidget * viewport, GdkEvent * event, cont
 	action -> vector . draw (cr);
 	action -> keyboard . draw (cr);
 	action -> display . draw (cr);
+	action -> selector0 . draw (cr);
+	action -> selector1 . draw (cr);
+	action -> selector2 . draw (cr);
+	action -> selector3 . draw (cr);
+	action -> selector4 . draw (cr);
+	action -> selector5 . draw (cr);
+	action -> selector6 . draw (cr);
+	action -> selector7 . draw (cr);
+	action -> selector8 . draw (cr);
+	action -> selector9 . draw (cr);
 	action -> program0 . draw (cr);
 	action -> program1 . draw (cr);
 	action -> program2 . draw (cr);
@@ -195,6 +232,16 @@ static gint ControlPanelKeyon (GtkWidget * viewport, GdkEventButton * event, con
 	action -> release . keyon (location);
 	action -> vector . keyon (location);
 	bool redraw = false;
+	if (action -> selector0 . keyon (location)) {action -> program_action (& action -> selector0, action -> display . area); redraw = true;}
+	if (action -> selector1 . keyon (location)) {action -> program_action (& action -> selector1, action -> display . area); redraw = true;}
+	if (action -> selector2 . keyon (location)) {action -> program_action (& action -> selector2, action -> display . area); redraw = true;}
+	if (action -> selector3 . keyon (location)) {action -> program_action (& action -> selector3, action -> display . area); redraw = true;}
+	if (action -> selector4 . keyon (location)) {action -> program_action (& action -> selector4, action -> display . area); redraw = true;}
+	if (action -> selector5 . keyon (location)) {action -> program_action (& action -> selector5, action -> display . area); redraw = true;}
+	if (action -> selector6 . keyon (location)) {action -> program_action (& action -> selector6, action -> display . area); redraw = true;}
+	if (action -> selector7 . keyon (location)) {action -> program_action (& action -> selector7, action -> display . area); redraw = true;}
+	if (action -> selector8 . keyon (location)) {action -> program_action (& action -> selector8, action -> display . area); redraw = true;}
+	if (action -> selector9 . keyon (location)) {action -> program_action (& action -> selector9, action -> display . area); redraw = true;}
 	if (action -> program0 . keyon (location)) {action -> program_action (& action -> program0, action -> display . area); redraw = true;}
 	if (action -> program1 . keyon (location)) {action -> program_action (& action -> program1, action -> display . area); redraw = true;}
 	if (action -> program2 . keyon (location)) {action -> program_action (& action -> program2, action -> display . area); redraw = true;}
@@ -244,7 +291,7 @@ static gboolean CreateControlPanelIdleCode (control_panel_action * action) {
 	g_signal_connect (G_OBJECT (action -> viewport), "button_press_event", G_CALLBACK (ControlPanelKeyon), action);
 	g_signal_connect (G_OBJECT (action -> viewport), "button_release_event", G_CALLBACK (ControlPanelKeyoff), action);
 	g_signal_connect (G_OBJECT (action -> viewport), "motion_notify_event", G_CALLBACK (ControlPanelMove), action);
-	gtk_window_resize (GTK_WINDOW (action -> viewport), 900, 460);
+	gtk_window_resize (GTK_WINDOW (action -> viewport), 1300, 420);
 	gtk_widget_show_all (action -> viewport);
 	return FALSE;
 }

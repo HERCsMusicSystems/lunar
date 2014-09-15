@@ -274,7 +274,7 @@ void orbiter :: activate (void) {
 	}
 	core -> activate (this);
 	pthread_mutex_unlock (& core -> main_mutex);
-	printf ("ORBITER ACTIVATED [%i]\n", orbiter_count);
+	//printf ("ORBITER ACTIVATED [%i]\n", orbiter_count);
 }
 
 orbiter :: orbiter (orbiter_core * core) {
@@ -298,7 +298,7 @@ orbiter :: ~ orbiter (void) {
 	}
 	if (connection_addresses != 0) delete [] connection_addresses;
 	orbiter_count--;
-	printf ("ORBITER DESTROYED [%i]\n", orbiter_count);
+	//printf ("ORBITER DESTROYED [%i]\n", orbiter_count);
 }
 
 dock :: dock (orbiter * source, int source_port, double * source_address, dock * next) {

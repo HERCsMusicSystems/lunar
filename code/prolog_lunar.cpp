@@ -97,12 +97,12 @@ PrologNativeOrbiter :: PrologNativeOrbiter (PrologAtom * atom, orbiter_core * co
 	this -> module = module;
 	if (module == 0) return;
 	module -> hold ();
-	printf ("	NATIVE ORBITER CREATED\n");
+	//printf ("	NATIVE ORBITER CREATED\n");
 }
 
 PrologNativeOrbiter :: ~ PrologNativeOrbiter (void) {
 	if (module != 0) module -> release (); module = 0;
-	printf ("	NATIVE ORBITER DESTROYED\n");
+	//printf ("	NATIVE ORBITER DESTROYED\n");
 }
 
 PrologNativeOrbiter * PrologNativeOrbiterCreator :: create_native_orbiter (PrologAtom * atom, orbiter * module) {return new PrologNativeOrbiter (atom, core, module);}
@@ -216,5 +216,8 @@ PrologNativeCode * PrologLunarServiceClass :: getNativeCode (char * name) {
 extern GraphicResources * create_graphic_resources (void);
 extern void destroy_graphic_resources (GraphicResources * resources);
 PrologLunarServiceClass :: PrologLunarServiceClass (void) {resources = create_graphic_resources ();}
-PrologLunarServiceClass :: ~ PrologLunarServiceClass (void) {destroy_graphic_resources (resources);}
+PrologLunarServiceClass :: ~ PrologLunarServiceClass (void) {
+	destroy_graphic_resources (resources);
+	printf ("orbiter counter [%i]\n", orbiter_count);
+}
 

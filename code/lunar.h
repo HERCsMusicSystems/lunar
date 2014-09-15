@@ -35,6 +35,8 @@ typedef dock * dock_pointer;
 typedef double * connection_address;
 class orbiter_core;
 
+extern int orbiter_count;
+
 class orbiter_core {
 public:
 	double centre_frequency;

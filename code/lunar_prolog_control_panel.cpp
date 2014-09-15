@@ -47,6 +47,8 @@ public:
 	button_active_graphics program0, program1, program2, program3, program4, program5, program6, program7, program8, program9;
 	button_active_graphics selector0, selector1, selector2, selector3, selector4, selector5, selector6, selector7, selector8, selector9;
 	point captured;
+	int programs [10];
+	int current_program;
 	void reset_buttons (int id) {
 		if (selector0 . id <= id && id <= selector9 . id) {
 			selector0 . engaged = false;
@@ -59,26 +61,50 @@ public:
 			selector7 . engaged = false;
 			selector8 . engaged = false;
 			selector9 . engaged = false;
-		} else {
-			program0 . engaged = false;
-			program1 . engaged = false;
-			program2 . engaged = false;
-			program3 . engaged = false;
-			program4 . engaged = false;
-			program5 . engaged = false;
-			program6 . engaged = false;
-			program7 . engaged = false;
-			program8 . engaged = false;
-			program9 . engaged = false;
 		}
+		program0 . engaged = false;
+		program1 . engaged = false;
+		program2 . engaged = false;
+		program3 . engaged = false;
+		program4 . engaged = false;
+		program5 . engaged = false;
+		program6 . engaged = false;
+		program7 . engaged = false;
+		program8 . engaged = false;
+		program9 . engaged = false;
 	}
 	void program_action (button_active_graphics * button, char * area) {
 		reset_buttons (button -> id);
+		if (selector0 . id <= button -> id && button -> id <= selector9 . id) {
+			current_program = button -> id - selector0 . id;
+			switch (programs [current_program]) {
+			case 0: program0 . engaged = true; break;
+			case 1: program1 . engaged = true; break;
+			case 2: program2 . engaged = true; break;
+			case 3: program3 . engaged = true; break;
+			case 4: program4 . engaged = true; break;
+			case 5: program5 . engaged = true; break;
+			case 6: program6 . engaged = true; break;
+			case 7: program7 . engaged = true; break;
+			case 8: program8 . engaged = true; break;
+			case 9: program9 . engaged = true; break;
+			default: break;
+			}
+		} else programs [current_program] = button -> id - program0 . id;
 		button -> engaged = true;
 		PrologElement * query = root -> pair (root -> atom (command),
 								root -> pair (root -> var (0),
-								root -> pair (root -> integer (button -> id),
-								root -> earth ())));
+								root -> pair (root -> integer (programs [0]),
+								root -> pair (root -> integer (programs [1]),
+								root -> pair (root -> integer (programs [2]),
+								root -> pair (root -> integer (programs [3]),
+								root -> pair (root -> integer (programs [4]),
+								root -> pair (root -> integer (programs [5]),
+								root -> pair (root -> integer (programs [6]),
+								root -> pair (root -> integer (programs [7]),
+								root -> pair (root -> integer (programs [8]),
+								root -> pair (root -> integer (programs [9]),
+								root -> earth ()))))))))))));
 		query = root -> pair (root -> var (0), root -> pair (query, root -> earth ()));
 		if (root -> resolution (query) == 1) {
 			PrologElement * el = query;
@@ -154,6 +180,8 @@ public:
 		this -> atom = atom; COLLECTOR_REFERENCE_INC (atom);
 		this -> command = command; COLLECTOR_REFERENCE_INC (command);
 		viewport = 0;
+		current_program = 0;
+		for (int ind = 0; ind < 10; ind++) programs [ind] = 0;
 	}
 	~ control_panel_action (void) {
 		atom -> setMachine (0);

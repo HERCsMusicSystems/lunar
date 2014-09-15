@@ -43,7 +43,7 @@ program eclipse [
 [[cb *ret 3 *v] [add *ret "Sustain = " *v]]
 [[cb *ret 4 *v] [add *ret "Release = " *v]]
 [[cb *ret 5 *x *y] [add *ret "Vector = [" *x " / " *y "]"]]
-[[cb *program *id] [add "parameter [" *id "]" *program]]
+[[cb *program : *id] [text_term *program *id]]
 
 [[moonbase]
 	[Moonbase moon mooncb]

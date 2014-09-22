@@ -436,7 +436,7 @@ char * lunar_delay :: inputName (int ind) {
 	case 0: return "SIGNAL"; break;
 	case 1: return "FEEDBACK"; break;
 	case 2: return "TIME"; break;
-	case 3: return "HIGHDUMP"; break;
+	case 3: return "HIGHDAMP"; break;
 	default: break;
 	}
 	return orbiter :: inputName (ind);
@@ -451,11 +451,11 @@ double * lunar_delay :: inputAddress (int ind) {
 	}
 	return orbiter :: inputAddress (ind);
 }
-int lunar_delay :: numberOfOuptuts (void) {return 2;}
+int lunar_delay :: numberOfOutputs (void) {return 2;}
 char * lunar_delay :: outputName (int ind) {
 	switch (ind) {
 	case 0: return "LEFT"; break;
-	case 1: return "RGHT"; break;
+	case 1: return "RIGHT"; break;
 	default: break;
 	}
 	return orbiter :: outputName (ind);

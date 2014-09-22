@@ -7,15 +7,15 @@ import studio
 program lunar #machine := "prolog.lunar"
 			[
 				small_keyboard keyboard big_keyboard oscilloscope vector CommandCentre
-				dock undock noise
+				dock undock noise orbiter
 				core moonbase operator parameter_block key_map velocity_map impulse trigger porta_trigger mixer stereo_mixer gateway lfo adsr eg
 				square_operator saw_operator noise_operator sampler_operator sensitivity filter delay pan power_pan linear_pan
-				signal freq amp ratio sync attack decay sustain release busy time speed wave pulse phase poly
+				signal freq amp ratio sync attack decay sustain release busy time speed wave pulse phase poly feedback highdamp
 				mono left right mic mic_left mic_right breakpoint
 				keyon keyoff
 				Lunar Lander Activate Deactivate
 				AddParameterBlock
-				Moonbase Insert InsertIO Store Restore
+				Moonbase Insert InsertIO Store Restore Moons
 			]
 
 #machine small_keyboard := "small_keyboard"
@@ -53,6 +53,8 @@ program lunar #machine := "prolog.lunar"
 #machine noise_operator := "noise_operator"
 #machine sampler_operator := "sampler_operator"
 #machine filter := "filter"
+
+#machine orbiter := "orbiter"
 
 [[Moonbase *base *distributor]
 	[create_atom *modules] [create_atom *parameters]
@@ -114,8 +116,14 @@ program lunar #machine := "prolog.lunar"
 
 [[InsertIO *parameters *sensitivity *selector [["ENTER" "BREAKPOINT" "LEFT" "RIGHT" : *] *]]
 	[AddParameterBlock *parameters breakpoint *sensitivity *selector 0]
-	[AddParameterBlock *parameters left *selector *sensitivity -128]
+	[AddParameterBlock *parameters left *sensitivity *selector -128]
 	[AddParameterBlock *parameters right *sensitivity *selector 128]
+]
+
+[[InsertIO *parameters *delay *selector [["SIGNAL" "FEEDBACK" "TIME" "HIGHDAMP"] ["LEFT" "RIGHT"]]]
+	[AddParameterBlock *parameters feedback *delay *selector 0]
+	[AddParameterBlock *parameters time *delay *selector 0]
+	[AddParameterBlock *parameters highdamp *delay *selector 0]
 ]
 
 [[InsertIO *parameters *mixer *selector [["ENTER" : *] *]]]

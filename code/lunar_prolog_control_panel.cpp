@@ -46,9 +46,11 @@ public:
 	display_active_graphics display;
 	button_active_graphics program0, program1, program2, program3, program4, program5, program6, program7, program8, program9;
 	button_active_graphics selector0, selector1, selector2, selector3, selector4, selector5, selector6, selector7, selector8, selector9;
+	button_active_graphics add_one, sub_one, delta_1, delta_8, delta_128;
 	point captured;
 	int programs [10];
 	int current_program;
+	int current_delta;
 	void reset_buttons (int id) {
 		if (selector0 . id <= id && id <= selector9 . id) {
 			selector0 . engaged = false;
@@ -172,7 +174,12 @@ public:
 	program6 (point (640.0, 160.0), 106, resources, true),
 	program7 (point (680.0, 160.0), 107, resources, true),
 	program8 (point (720.0, 160.0), 108, resources, true),
-	program9 (point (760.0, 160.0), 109, resources, true)
+	program9 (point (760.0, 160.0), 109, resources, true),
+	add_one (point (840.0, 220.0), 301, resources, true),
+	sub_one (point (880.0, 220.0), 302, resources, true),
+	delta_1 (point (820.0, 240.0), 303, resources, true),
+	delta_8 (point (860.0, 240.0), 304, resources, true),
+	delta_128 (point (900.0, 240.0), 305, resources, true)
 	{
 		this -> root = root;
 		this -> directory = directory;
@@ -182,6 +189,7 @@ public:
 		viewport = 0;
 		current_program = 0;
 		for (int ind = 0; ind < 10; ind++) programs [ind] = 0;
+		current_delta = 128;
 	}
 	~ control_panel_action (void) {
 		atom -> setMachine (0);
@@ -219,6 +227,11 @@ static gboolean RedrawControlPanel (GtkWidget * viewport, GdkEvent * event, cont
 	action -> program7 . draw (cr);
 	action -> program8 . draw (cr);
 	action -> program9 . draw (cr);
+	action -> add_one . draw (cr);
+	action -> sub_one . draw (cr);
+	action -> delta_1 . draw (cr);
+	action -> delta_8 . draw (cr);
+	action -> delta_128 . draw (cr);
 	cairo_destroy (cr);
 	return FALSE;
 }
@@ -280,6 +293,18 @@ static gint ControlPanelKeyon (GtkWidget * viewport, GdkEventButton * event, con
 	if (action -> program7 . keyon (location)) {action -> program_action (& action -> program7, action -> display . area); redraw = true;}
 	if (action -> program8 . keyon (location)) {action -> program_action (& action -> program8, action -> display . area); redraw = true;}
 	if (action -> program9 . keyon (location)) {action -> program_action (& action -> program9, action -> display . area); redraw = true;}
+	if (action -> delta_1 . keyon (location)) {
+		action -> delta_1 . engaged = true; action -> delta_8 . engaged = action -> delta_128 . engaged = false;
+		action -> current_delta = 1; redraw = true;
+	}
+	if (action -> delta_8 . keyon (location)) {
+		action -> delta_8 . engaged = true; action -> delta_1 . engaged = action -> delta_128 . engaged = false;
+		action -> current_delta = 8; redraw = true;
+	}
+	if (action -> delta_128 . keyon (location)) {
+		action -> delta_128 . engaged = true; action -> delta_1 . engaged = action -> delta_8 . engaged = false;
+		action -> current_delta = 128; redraw = true;
+	}
 	if (redraw) gtk_widget_queue_draw (viewport);
 	return TRUE;
 }
@@ -348,3 +373,4 @@ control_panel_class :: control_panel_class (PrologLunarServiceClass * servo) {
 	this -> directory = servo -> directory;
 	this -> resources = servo -> resources;
 }
+

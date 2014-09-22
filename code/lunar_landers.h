@@ -198,7 +198,7 @@ public:
 	virtual int numberOfInputs (void);
 	virtual char * inputName (int ind);
 	virtual double * inputAddress (int ind);
-	virtual int numberOfOuptuts (void);
+	virtual int numberOfOutputs (void);
 	virtual char * outputName (int ind);
 	virtual double * outputAddress (int ind);
 	virtual void move (void);

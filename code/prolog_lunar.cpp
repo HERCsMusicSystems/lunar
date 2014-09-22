@@ -170,6 +170,15 @@ class undock_class : public PrologNativeCode {
 public:
 };
 
+class orbiter_statistics : public PrologNativeCode {
+public:
+	bool code (PrologElement * parameters, PrologResolution * resolution) {
+		if (parameters -> isPair ()) parameters = parameters -> getLeft ();
+		parameters -> setInteger (orbiter_count);
+		return true;
+	}
+};
+
 void PrologLunarServiceClass :: init (PrologRoot * root, PrologDirectory * directory) {
 	this -> root = root;
 	this -> directory = directory;
@@ -210,6 +219,7 @@ PrologNativeCode * PrologLunarServiceClass :: getNativeCode (char * name) {
 	if (strcmp (name, "linear_pan") == 0) return new pan_class (& core, 2);
 	if (strcmp (name, "sensitivity") == 0) return new sensitivity_class (& core);
 	if (strcmp (name, "moonbase") == 0) return new moonbase_class (directory, & core);
+	if (strcmp (name, "orbiter") == 0) return new orbiter_statistics ();
 	return 0;
 }
 

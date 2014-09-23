@@ -305,6 +305,8 @@ static gint ControlPanelKeyon (GtkWidget * viewport, GdkEventButton * event, con
 		action -> delta_128 . engaged = true; action -> delta_1 . engaged = action -> delta_8 . engaged = false;
 		action -> current_delta = 128; redraw = true;
 	}
+	if (action -> add_one . keyon (location)) {action -> add_one . engaged = true; redraw = true;}
+	if (action -> sub_one . keyon (location)) {action -> sub_one . engaged = true; redraw = true;}
 	if (redraw) gtk_widget_queue_draw (viewport);
 	return TRUE;
 }
@@ -315,6 +317,10 @@ static gint ControlPanelKeyoff (GtkWidget * viewport, GdkEventButton * event, co
 	action -> sustain . keyoff (location);
 	action -> release . keyoff (location);
 	action -> vector . keyoff (location);
+	bool redraw = false;
+	if (action -> add_one . keyoff (location)) {action -> add_one . engaged = false; redraw = true;}
+	if (action -> sub_one . keyoff (location)) {action -> sub_one . engaged = false; redraw = true;}
+	if (redraw) gtk_widget_queue_draw (viewport);
 	return TRUE;
 }
 static gint ControlPanelMove (GtkWidget * viewport, GdkEventButton * event, control_panel_action * action) {

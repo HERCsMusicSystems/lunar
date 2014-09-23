@@ -28,14 +28,63 @@
 #include "lunar_landers.h"
 #include "lunar_moonbase.h"
 #include "lunar_wave.h"
+#include "string.h"
+
+#ifdef WIN32
+#define strcasecmp _strcmpi
+#endif
+
+class pb_native_orbiter : public PrologNativeOrbiter {
+public:
+	bool code (PrologElement * parameters, PrologResolution * resolution) {
+		lunar_inactive_parameter_block * pb = (lunar_inactive_parameter_block *) module;
+		if (pb -> style != 0 && parameters -> isVar ()) {
+			char command [128];
+			switch (pb -> style) {
+			case 1: sprintf (command, "%i", (int) pb -> signal); break;
+			case 2: sprintf (command, "%i Hz", (int) pb -> signal); break;
+			case 3: sprintf (command, "%i Db", (int) pb -> signal); break;
+			case 4: sprintf (command, "%i sec.", (int) pb -> signal); break;
+			case 5: if (pb -> signal == 0) sprintf (command, "off"); else sprintf (command, "on"); break;
+			case 6: sprintf (command, "wave [%i]", (int) pb -> signal); break;
+			default: sprintf (command, "??"); break;
+			}
+			parameters -> setText (command);
+			return true;
+		}
+		return PrologNativeOrbiter :: code (parameters, resolution);
+	}
+	pb_native_orbiter (PrologAtom * atom, orbiter_core * core, orbiter * module) : PrologNativeOrbiter (atom, core, module) {}
+};
 
 orbiter * parameter_block_class :: create_orbiter (PrologElement * parameters) {
-	if (parameters -> isEarth ()) return new lunar_inactive_parameter_block (core);
-	if (parameters -> isPair ()) parameters = parameters -> getLeft ();
-	if (parameters -> isInteger ()) return new lunar_active_parameter_block (core, (double) parameters -> getInteger ());
-	if (parameters -> isDouble ()) return new lunar_active_parameter_block (core, parameters -> getDouble ());
-	return new lunar_inactive_parameter_block (core);
+	PrologElement * activity = 0;
+	PrologElement * style_selector = 0;
+	while (parameters -> isPair ()) {
+		PrologElement * el = parameters -> getLeft ();
+		if (el -> isNumber ()) activity = el;
+		if (el -> isAtom ()) style_selector = el;
+		if (el -> isText ()) style_selector = el;
+		parameters = parameters -> getRight ();
+	}
+	char * style_name = 0;
+	if (style_selector != 0) {
+		if (style_selector -> isText ()) style_name = style_selector -> getText ();
+		if (style_selector -> isAtom ()) style_name = style_selector -> getAtom () -> name ();
+	}
+	int style = 0;
+	if (style_name != 0) {
+		if (strcasecmp (style_name, "index") == 0) style = 1;
+		if (strcasecmp (style_name, "freq") == 0) style = 2;
+		if (strcasecmp (style_name, "amp") == 0) style = 3;
+		if (strcasecmp (style_name, "time") == 0) style = 4;
+		if (strcasecmp (style_name, "onoff") == 0) style = 5;
+		if (strcasecmp (style_name, "wave") == 0) style = 6;
+	}
+	if (activity == 0) return new lunar_inactive_parameter_block (core, style);
+	return new lunar_active_parameter_block (core, style, activity -> getNumber ());
 }
+PrologNativeOrbiter * parameter_block_class :: create_native_orbiter (PrologAtom * atom, orbiter * module) {return new pb_native_orbiter (atom, core, module);}
 parameter_block_class :: parameter_block_class (orbiter_core * core) : PrologNativeOrbiterCreator (core) {}
 
 static char * key_orbiter_action_code = "Lunar Map Action";

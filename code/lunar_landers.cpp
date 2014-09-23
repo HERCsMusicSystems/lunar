@@ -29,7 +29,8 @@
 int lunar_active_parameter_block :: numberOfInputs (void) {return 1;}
 char * lunar_active_parameter_block :: inputName (int ind) {if (ind == 0) return "SIGNAL"; else return  orbiter :: inputName (ind);}
 double * lunar_active_parameter_block :: inputAddress (int ind) {return ind == 0 ? & enter : 0;}
-lunar_active_parameter_block :: lunar_active_parameter_block (orbiter_core * core, double maximum_change) : orbiter (core) {
+lunar_active_parameter_block :: lunar_active_parameter_block (orbiter_core * core, int style, double maximum_change) :
+		lunar_inactive_parameter_block (core, style) {
 	if (maximum_change < 0.0) maximum_change = 0.0;
 	initialise (); activate ();
 }
@@ -44,7 +45,7 @@ void lunar_active_parameter_block :: move (void) {
 int lunar_inactive_parameter_block :: numberOfInputs (void) {return orbiter :: numberOfOutputs ();}
 char * lunar_inactive_parameter_block :: inputName (int ind) {return orbiter :: outputName (ind);}
 double * lunar_inactive_parameter_block :: inputAddress (int ind) {return orbiter :: outputAddress (ind);}
-lunar_inactive_parameter_block :: lunar_inactive_parameter_block (orbiter_core * core) : orbiter (core) {initialise ();}
+lunar_inactive_parameter_block :: lunar_inactive_parameter_block (orbiter_core * core, int style) : orbiter (core) {this -> style = style; initialise ();}
 
 int lunar_mixer :: numberOfInputs (void) {return 1;}
 char * lunar_mixer :: inputName (int ind) {if (ind == 0) return "ENTER"; else return orbiter :: inputName (ind);}

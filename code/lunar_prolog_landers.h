@@ -33,6 +33,7 @@
 class parameter_block_class : public PrologNativeOrbiterCreator {
 public:
 	virtual orbiter * create_orbiter (PrologElement * parameters);
+	virtual PrologNativeOrbiter * create_native_orbiter (PrologAtom * atom, orbiter * module);
 	parameter_block_class (orbiter_core * core);
 };
 

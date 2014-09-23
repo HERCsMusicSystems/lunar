@@ -63,7 +63,8 @@ program eclipse [
 	[*moon *parameters : *]
 	[sub *parameters *is *path *path]
 	[text_term *pather [*moon : *path]]
-	[Lunar *v *moon : *path]
+	[*parameters *pb : *path] [*pb : *v]
+	;[Lunar *v *moon : *path]
 	[add *program *pather " = " *v]
 ]
 

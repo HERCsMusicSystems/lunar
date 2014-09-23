@@ -254,9 +254,11 @@ void orbiter :: propagate_signals (void) {
 }
 
 void orbiter :: initialise (void) {
-	number_of_connections = numberOfInputs ();
-	connectors = number_of_connections > 0 ? new dock_pointer [number_of_connections] : 0;
-	connection_addresses = number_of_connections > 0 ? new connection_address [number_of_connections] : 0; 
+	if (connectors == 0) {
+		number_of_connections = numberOfInputs ();
+		connectors = number_of_connections > 0 ? new dock_pointer [number_of_connections] : 0;
+		connection_addresses = number_of_connections > 0 ? new connection_address [number_of_connections] : 0;
+	} else if (number_of_connections != numberOfInputs ()) return;
 	for (int ind = 0; ind < number_of_connections; ind++) {connectors [ind] = 0; connection_addresses [ind] = inputAddress (ind);}
 }
 

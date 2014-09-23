@@ -31,13 +31,14 @@
 
 class lunar_inactive_parameter_block : public orbiter {
 public:
+	int style; // 0 = none, 1 = index, 2 = freq, 3 = amp, 4 = time, 5 = on/off, 6 = wave
 	virtual int numberOfInputs (void);
 	virtual char * inputName (int ind);
 	virtual double * inputAddress (int ind);
-	lunar_inactive_parameter_block (orbiter_core * core);
+	lunar_inactive_parameter_block (orbiter_core * core, int style);
 };
 
-class lunar_active_parameter_block : public orbiter {
+class lunar_active_parameter_block : public lunar_inactive_parameter_block {
 private:
 	double enter;
 	double maximum_change;
@@ -46,7 +47,7 @@ public:
 	virtual char * inputName (int ind);
 	virtual double * inputAddress (int ind);
 	virtual void move (void);
-	lunar_active_parameter_block (orbiter_core * core, double maximum_change);
+	lunar_active_parameter_block (orbiter_core * core, int style, double maximum_change);
 };
 
 class lunar_mixer : public orbiter {

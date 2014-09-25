@@ -5,7 +5,7 @@ import studio
 import lunar
 
 program eclipse [
-					commander cb moonbase moon mooncb phobosbase phobos phoboscb
+					commander cb cb_path moonbase moon mooncb phobosbase phobos phoboscb
 					paths modules adjacent next_path previous_path next_module previous_module
 					AT sub
 				]
@@ -57,6 +57,20 @@ program eclipse [
 [[cb *ret 4 *v] [add *ret "Release = " *v]]
 [[cb *ret 5 *x *y] [add *ret "Vector = [" *x " / " *y "]"]]
 
+[[cb *ret [] *delta]
+	;[add *ret "delta [" *delta "]"]
+	[cb_path : *path]
+	[eq *path [*m : *p]]
+	[*m *parameters : *]
+	[*parameters *pb : *p]
+	[*pb *v1]
+	[add *v1 *delta *v2]
+	[*pb *v2]
+	[*pb : *v3]
+	[text_term *pather *path]
+	[add *ret *pather " = " *v3]
+]
+
 [[cb *program *i1 : *is]
 	[isallr *y *x [Moons *x]]
 	[AT *i1 *moon *y]
@@ -64,8 +78,8 @@ program eclipse [
 	[sub *parameters *is *path *path]
 	[text_term *pather [*moon : *path]]
 	[*parameters *pb : *path] [*pb : *v]
-	;[Lunar *v *moon : *path]
 	[add *program *pather " = " *v]
+	[cb_path [*moon : *path]]
 ]
 
 
@@ -103,6 +117,7 @@ program eclipse [
 
 end := [
 		;[core reactor 330 22050 2048]
+		[var cb_path]
 		[CommandCentre commander cb]
 		[moonbase] [phobosbase]
 		[command]

@@ -144,6 +144,20 @@ public:
 		}
 		delete query;
 	}
+	void value_change_action (int delta) {
+		PrologElement * query = root -> pair (root -> atom (command),
+								root -> pair (root -> var (0),
+								root -> pair (root -> earth (),
+								root -> pair (root -> integer (delta * current_delta),
+								root -> earth ()))));
+		query = root -> pair (root -> var (0), root -> pair (query, root -> earth ()));
+		if (root -> resolution (query) == 1) {
+			PrologElement * el = query;
+			if (el -> isPair ()) el = el -> getLeft ();
+			if (el -> isText ()) area_cat (display . area, 0, el -> getText ());
+		}
+		delete query;
+	}
 	bool remove (bool remove_gtk = true) {
 		if (remove_gtk) g_idle_add ((GSourceFunc) RemoveViewportIdleCode, viewport);
 		delete this;
@@ -175,8 +189,8 @@ public:
 	program7 (point (680.0, 160.0), 107, resources, true),
 	program8 (point (720.0, 160.0), 108, resources, true),
 	program9 (point (760.0, 160.0), 109, resources, true),
-	add_one (point (840.0, 220.0), 301, resources, true),
-	sub_one (point (880.0, 220.0), 302, resources, true),
+	sub_one (point (840.0, 220.0), 302, resources, true),
+	add_one (point (880.0, 220.0), 301, resources, true),
 	delta_1 (point (820.0, 240.0), 303, resources, true),
 	delta_8 (point (860.0, 240.0), 304, resources, true),
 	delta_128 (point (900.0, 240.0), 305, resources, true)
@@ -305,8 +319,8 @@ static gint ControlPanelKeyon (GtkWidget * viewport, GdkEventButton * event, con
 		action -> delta_128 . engaged = true; action -> delta_1 . engaged = action -> delta_8 . engaged = false;
 		action -> current_delta = 128; redraw = true;
 	}
-	if (action -> add_one . keyon (location)) {action -> add_one . engaged = true; redraw = true;}
-	if (action -> sub_one . keyon (location)) {action -> sub_one . engaged = true; redraw = true;}
+	if (action -> add_one . keyon (location)) {action -> value_change_action (1); action -> add_one . engaged = true; redraw = true;}
+	if (action -> sub_one . keyon (location)) {action -> value_change_action (-1); action -> sub_one . engaged = true; redraw = true;}
 	if (redraw) gtk_widget_queue_draw (viewport);
 	return TRUE;
 }

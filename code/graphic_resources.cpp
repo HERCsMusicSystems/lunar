@@ -59,6 +59,14 @@ extern char resource_button_on_start;
 extern char resource_button_on_end;
 extern char resource_button_off_start;
 extern char resource_button_off_end;
+extern char resource_encoder_surface_start;
+extern char resource_encoder_surface_end;
+extern char resource_encoder_handle_start;
+extern char resource_encoder_handle_end;
+extern char resource_slider_surface_start;
+extern char resource_slider_surface_end;
+extern char resource_slider_handle_start;
+extern char resource_slider_handle_end;
 #endif
 
 class png_closure {
@@ -103,6 +111,10 @@ GraphicResources :: GraphicResources (void) {
 	png_closure display_closure (& resource_display_start, & resource_display_end);
 	png_closure button_on_closure (& resource_button_on_start, & resource_button_on_end);
 	png_closure button_off_closure (& resource_button_off_start, & resource_button_off_end);
+	png_closure encoder_surface_closure (& resource_encoder_surface_start, & resource_encoder_surface_end);
+	png_closure encoder_handle_closure (& resource_encoder_handle_start, & resource_encoder_handle_end);
+	png_closure slider_surface_closure (& resource_slider_surface_start, & resource_slider_surface_end);
+	png_closure slider_handle_closure (& resource_slider_handle_start, & resource_slider_handle_end);
 #endif
 	vector_surface = cairo_image_surface_create_from_png_stream (png_reader, & frame_closure);
 	vector_handle = cairo_image_surface_create_from_png_stream (png_reader, & handle_closure);
@@ -115,6 +127,10 @@ GraphicResources :: GraphicResources (void) {
 	display_surface = cairo_image_surface_create_from_png_stream (png_reader, & display_closure);
 	button_surface_on = cairo_image_surface_create_from_png_stream (png_reader, & button_on_closure);
 	button_surface_off = cairo_image_surface_create_from_png_stream (png_reader, & button_off_closure);
+	encoder_surface = cairo_image_surface_create_from_png_stream (png_reader, & encoder_surface_closure);
+	encoder_handle = cairo_image_surface_create_from_png_stream (png_reader, & encoder_handle_closure);
+	slider_surface = cairo_image_surface_create_from_png_stream (png_reader, & slider_surface_closure);
+	slider_handle = cairo_image_surface_create_from_png_stream (png_reader, & slider_handle_closure);
 }
 
 GraphicResources :: ~ GraphicResources (void) {
@@ -129,6 +145,10 @@ GraphicResources :: ~ GraphicResources (void) {
 	if (display_surface != 0) cairo_surface_destroy (display_surface);
 	if (button_surface_on != 0) cairo_surface_destroy (button_surface_on);
 	if (button_surface_off != 0) cairo_surface_destroy (button_surface_off);
+	if (encoder_surface != 0) cairo_surface_destroy (encoder_surface);
+	if (encoder_handle != 0) cairo_surface_destroy (encoder_handle);
+	if (slider_surface != 0) cairo_surface_destroy (slider_surface);
+	if (slider_handle != 0) cairo_surface_destroy (slider_handle);
 }
 
 GraphicResources * create_graphic_resources (void) {return new GraphicResources ();}
@@ -152,32 +172,32 @@ bool knob_active_graphics :: move (point delta) {
 }
 
 void knob_active_graphics :: draw (cairo_t * cr) {
-		if (knob_surface_png != 0) {
-			cairo_set_source_surface (cr, knob_surface_png, location . position . x, location . position . y);
-			cairo_paint (cr);
-		}
-		if (knob_png != 0) {
-			point position = location . position + point (9, 9);
-			cairo_set_source_surface (cr, knob_png, position . x, position . y);
-			cairo_paint (cr);
-		}
-		if (knob_handle_png != 0) {
-			point position = location . position + point (28, 29);
-			double alpha = (angle * -1.5 - 0.25) * M_PI;
-			position += point (sin (alpha), cos (alpha)) * 12.0;
-			cairo_set_source_surface (cr, knob_handle_png, position . x, position . y);
-			cairo_paint (cr);
-		}
-		char command [16];
-		sprintf (command, "%i", (int) (angle * 128.0 - 64.0));
-		cairo_set_font_size (cr, 10);
-		cairo_set_source_rgba (cr, 1.0, 1.0, 0.0, 1.0);
-		cairo_text_extents_t extent;
-		cairo_text_extents (cr, command, & extent);
-		point position = location . position + point (38.0 - extent . width, 62.0);
-		cairo_move_to (cr, position . x, position . y);
-		cairo_show_text (cr, command);
-		cairo_identity_matrix (cr);
+	if (knob_surface_png != 0) {
+		cairo_set_source_surface (cr, knob_surface_png, location . position . x, location . position . y);
+		cairo_paint (cr);
+	}
+	if (knob_png != 0) {
+		point position = location . position + point (9, 9);
+		cairo_set_source_surface (cr, knob_png, position . x, position . y);
+		cairo_paint (cr);
+	}
+	if (knob_handle_png != 0) {
+		point position = location . position + point (28, 29);
+		double alpha = (angle * -1.5 - 0.25) * M_PI;
+		position += point (sin (alpha), cos (alpha)) * 12.0;
+		cairo_set_source_surface (cr, knob_handle_png, position . x, position . y);
+		cairo_paint (cr);
+	}
+	char command [16];
+	sprintf (command, "%i", (int) (angle * 128.0 - 64.0));
+	cairo_set_font_size (cr, 10);
+	cairo_set_source_rgba (cr, 1.0, 1.0, 0.0, 1.0);
+	cairo_text_extents_t extent;
+	cairo_text_extents (cr, command, & extent);
+	point position = location . position + point (38.0 - extent . width, 62.0);
+	cairo_move_to (cr, position . x, position . y);
+	cairo_show_text (cr, command);
+	cairo_identity_matrix (cr);
 }
 
 
@@ -190,6 +210,79 @@ knob_active_graphics :: knob_active_graphics (point location, int id, GraphicRes
 	}
 	angle = 0.0;
 	this -> location = rect (location, point (62, 83));
+}
+
+bool encoder_active_graphics :: move (point delta) {
+	if (! on) return false;
+	angle += 0.03125 * delta . y;
+	increment = 0.0;
+	if (delta . y < 0.0) increment = 1.0;
+	if (delta . y > 0.0) increment = -1.0;
+	while (angle < 0.0) angle += 1.0;
+	while (angle > 1.0) angle -= 1.0;
+	return true;
+}
+
+void encoder_active_graphics :: draw (cairo_t * cr) {
+	if (encoder_surface_png != 0) {
+		cairo_set_source_surface (cr, encoder_surface_png, location . position . x, location . position . y);
+		cairo_paint (cr);
+	}
+	if (encoder_handle_png != 0) {
+		point position = location . position + point (24.0, 24.0);
+		double alpha = angle * 2.0 * M_PI;
+		position += point (sin (alpha), cos (alpha)) * 14.0;
+		cairo_set_source_surface (cr, encoder_handle_png, position . x, position . y);
+		cairo_paint (cr);
+	}
+}
+
+encoder_active_graphics :: encoder_active_graphics (point location, int id, GraphicResources * resources, bool active_surface) :
+		active_graphics (location, id) {
+	encoder_surface_png = encoder_handle_png = 0;
+	if (resources != 0) {
+		encoder_surface_png = active_surface ? resources -> encoder_surface : 0;
+		encoder_handle_png = resources -> encoder_handle;
+	}
+	angle = 0.0;
+	increment = 0.0;
+	this -> location = rect (location, point (62, 83));
+}
+
+bool slider_active_graphics :: keyoff (point location) {
+	if (spring_loaded) {position = 0.5; bool oon = on; active_graphics :: keyoff (location); return oon;}
+	return active_graphics :: keyoff (location);
+}
+
+bool slider_active_graphics :: move (point delta) {
+	if (! on) return false;
+	position -= delta . y / 128.0;
+	if (position < 0.0) position = 0.0; if (position > 1.0) position = 1.0;
+	return true;
+}
+
+void slider_active_graphics :: draw (cairo_t * cr) {
+	if (slider_surface_png != 0) {
+		cairo_set_source_surface (cr, slider_surface_png, location . position . x, location . position . y);
+		cairo_paint (cr);
+	}
+	if (slider_handle_png != 0) {
+		point position = location . position + point (0.0, 62.0) * (1.0 - this -> position);
+		cairo_set_source_surface (cr, slider_handle_png, position . x, position . y);
+		cairo_paint (cr);
+	}
+}
+
+slider_active_graphics :: slider_active_graphics (point location, int id, bool spring_loaded, GraphicResources * resources, bool active_surface) :
+		active_graphics (location, id) {
+	slider_surface_png = slider_handle_png = 0;
+	if (resources != 0) {
+		slider_surface_png = active_surface ? resources -> slider_surface : 0;
+		slider_handle_png = resources -> slider_handle;
+	}
+	this -> position = 0.0;
+	this -> spring_loaded = spring_loaded;
+	this -> location = rect (location, point (8, 70));
 }
 
 bool vector_active_graphics :: move (point delta) {

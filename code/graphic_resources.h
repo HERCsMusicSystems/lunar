@@ -41,6 +41,10 @@ public:
 	cairo_surface_t * display_surface;
 	cairo_surface_t * button_surface_off;
 	cairo_surface_t * button_surface_on;
+	cairo_surface_t * encoder_surface;
+	cairo_surface_t * encoder_handle;
+	cairo_surface_t * slider_surface;
+	cairo_surface_t * slider_handle;
 	GraphicResources (void);
 	~ GraphicResources (void);
 };
@@ -66,6 +70,29 @@ public:
 	bool move (point delta);
 	void draw (cairo_t * cr);
 	knob_active_graphics (point location, int id, GraphicResources * resources, bool active_surface = false);
+};
+
+class encoder_active_graphics : public active_graphics {
+public:
+	double angle;
+	double increment;
+	cairo_surface_t * encoder_surface_png;
+	cairo_surface_t * encoder_handle_png;
+	bool move (point delta);
+	void draw (cairo_t * cr);
+	encoder_active_graphics (point location, int id, GraphicResources * resource, bool active_surface = false);
+};
+
+class slider_active_graphics : public active_graphics {
+public:
+	double position;
+	bool spring_loaded;
+	cairo_surface_t * slider_surface_png;
+	cairo_surface_t * slider_handle_png;
+	bool keyoff (point position);
+	bool move (point delta);
+	void draw (cairo_t * cr);
+	slider_active_graphics (point location, int id, bool spring_loaded, GraphicResources * resource, bool active_surface = false);
 };
 
 class vector_active_graphics : public active_graphics {

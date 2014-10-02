@@ -47,6 +47,8 @@ public:
 	button_active_graphics program0, program1, program2, program3, program4, program5, program6, program7, program8, program9;
 	button_active_graphics selector0, selector1, selector2, selector3, selector4, selector5, selector6, selector7, selector8, selector9;
 	button_active_graphics add_one, sub_one, delta_1, delta_8, delta_128;
+	encoder_active_graphics encoder;
+	slider_active_graphics pitch, modulation;
 	point captured;
 	int programs [10];
 	int current_program;
@@ -193,7 +195,10 @@ public:
 	add_one (point (880.0, 220.0), 301, resources, true),
 	delta_1 (point (820.0, 240.0), 303, resources, true),
 	delta_8 (point (860.0, 240.0), 304, resources, true),
-	delta_128 (point (900.0, 240.0), 305, resources, true)
+	delta_128 (point (900.0, 240.0), 305, resources, true),
+	encoder (point (840.0, 140.0), 401, resources, true),
+	pitch (point (40.0, 280.0), 501, true, resources, true),
+	modulation (point (60.0, 280.0), 502, false, resources, true)
 	{
 		this -> root = root;
 		this -> directory = directory;
@@ -246,6 +251,9 @@ static gboolean RedrawControlPanel (GtkWidget * viewport, GdkEvent * event, cont
 	action -> delta_1 . draw (cr);
 	action -> delta_8 . draw (cr);
 	action -> delta_128 . draw (cr);
+	action -> encoder . draw (cr);
+	action -> pitch . draw (cr);
+	action -> modulation . draw (cr);
 	cairo_destroy (cr);
 	return FALSE;
 }
@@ -286,6 +294,9 @@ static gint ControlPanelKeyon (GtkWidget * viewport, GdkEventButton * event, con
 	action -> sustain . keyon (location);
 	action -> release . keyon (location);
 	action -> vector . keyon (location);
+	action -> encoder . keyon (location);
+	action -> pitch . keyon (location);
+	action -> modulation . keyon (location);
 	bool redraw = false;
 	if (action -> selector0 . keyon (location)) {action -> program_action (& action -> selector0, action -> display . area); redraw = true;}
 	if (action -> selector1 . keyon (location)) {action -> program_action (& action -> selector1, action -> display . area); redraw = true;}
@@ -331,7 +342,10 @@ static gint ControlPanelKeyoff (GtkWidget * viewport, GdkEventButton * event, co
 	action -> sustain . keyoff (location);
 	action -> release . keyoff (location);
 	action -> vector . keyoff (location);
+	action -> encoder . keyoff (location);
+	action -> modulation . keyoff (location);
 	bool redraw = false;
+	if (action -> pitch . keyoff (location)) {redraw = true;}
 	if (action -> add_one . keyoff (location)) {action -> add_one . engaged = false; redraw = true;}
 	if (action -> sub_one . keyoff (location)) {action -> sub_one . engaged = false; redraw = true;}
 	if (redraw) gtk_widget_queue_draw (viewport);
@@ -350,6 +364,9 @@ static gint ControlPanelMove (GtkWidget * viewport, GdkEventButton * event, cont
 		action -> action (action -> vector . id, action -> vector . position . x, action -> vector . position . y, action -> display . area);
 		redraw = true;
 	}
+	if (action -> encoder . move (delta)) {action -> value_change_action ((int) action -> encoder . increment); redraw = true;}
+	if (action -> pitch . move (delta)) {redraw = true;}
+	if (action -> modulation . move (delta)) {redraw = true;}
 	if (redraw) gtk_widget_queue_draw (viewport);
 	return TRUE;
 }

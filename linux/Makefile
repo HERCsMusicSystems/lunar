@@ -162,6 +162,34 @@ button_off.o: ../graphics/button_off.png
 		../graphics/button_off.png button_off.o
 	objdump -t button_off.o
 
+encoder_surface.o: ../graphics/encoder_surface.png
+	objcopy --input binary --output elf64-x86-64 --binary-architecture i386\
+		--redefine-sym _binary____graphics_encoder_surface_png_start=resource_encoder_surface_start\
+		--redefine-sym _binary____graphics_encoder_surface_png_end=resource_encoder_surface_end\
+		../graphics/encoder_surface.png encoder_surface.o
+	objdump -t encoder_surface.o
+
+encoder_handle.o: ../graphics/encoder_handle.png
+	objcopy --input binary --output elf64-x86-64 --binary-architecture i386\
+		--redefine-sym _binary____graphics_encoder_handle_png_start=resource_encoder_handle_start\
+		--redefine-sym _binary____graphics_encoder_handle_png_end=resource_encoder_handle_end\
+		../graphics/encoder_handle.png encoder_handle.o
+	objdump -t encoder_handle.o
+
+slider_surface.o: ../graphics/slider_surface.png
+	objcopy --input binary --output elf64-x86-64 --binary-architecture i386\
+		--redefine-sym _binary____graphics_slider_surface_png_start=resource_slider_surface_start\
+		--redefine-sym _binary____graphics_slider_surface_png_end=resource_slider_surface_end\
+		../graphics/slider_surface.png slider_surface.o
+	objdump -t slider_surface.o
+
+slider_handle.o: ../graphics/slider_handle.png
+	objcopy --input binary --output elf64-x86-64 --binary-architecture i386\
+		--redefine-sym _binary____graphics_slider_handle_png_start=resource_slider_handle_start\
+		--redefine-sym _binary____graphics_slider_handle_png_end=resource_slider_handle_end\
+		../graphics/slider_handle.png slider_handle.o
+	objdump -t slider_handle.o
+
 lunar_prc.o: ../code/lunar.prc
 	objcopy --input binary --output elf64-x86-64 --binary-architecture i386\
 		--redefine-sym _binary____code_lunar_prc_start=resource_lunar\
@@ -172,7 +200,8 @@ prcgtk.o: ../code/prcgtk.cpp ../code/prolog_lunar.h ../code/lunar.h\
 	$(pc)prolog_http.h $(pc)prolog_distribution.h $(pc)prolog_control.h
 	g++ -Wno-write-strings -I. -I$(pc) ../code/prcgtk.cpp -c -o prcgtk.o `pkg-config --cflags gtk+-2.0`
 
-graphics = small_keyboard.o keyboard.o big_keyboard.o vector_frame.o vector_handle.o knob.o knob_surface.o knob_handle.o display.o button_on.o button_off.o
+graphics = small_keyboard.o keyboard.o big_keyboard.o vector_frame.o vector_handle.o knob.o knob_surface.o\
+	knob_handle.o display.o button_on.o button_off.o encoder_surface.o encoder_handle.o slider_surface.o slider_handle.o
 
 ~/bin/lunar: $(lunar_objects) $(objects) $(graphics) $(prc_resources)
 	g++ $(lunar_objects) $(objects) $(prc_resources) $(graphics) \

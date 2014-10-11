@@ -12,7 +12,7 @@ program lunar #machine := "prolog.lunar"
 				square_operator saw_operator noise_operator sampler_operator sensitivity filter delay pan power_pan linear_pan
 				signal freq amp ratio sync attack decay sustain release busy time speed wave pulse phase poly feedback highdamp
 				mono left right mic mic_left mic_right breakpoint
-				keyon keyoff
+				keyon keyoff control
 				Lunar Lander Activate Deactivate
 				AddParameterBlock
 				Moonbase Insert InsertIO Store Restore Moons

@@ -273,7 +273,7 @@ sensitivity_class :: sensitivity_class (orbiter_core * core) : PrologNativeOrbit
 
 class native_moonbase : public PrologNativeOrbiter {
 private:
-	PrologAtom * keyon, * keyoff, * mono, * poly;
+	PrologAtom * keyon, * keyoff, * control, * mono, * poly;
 public:
 	virtual bool code (PrologElement * parameters, PrologResolution * resolution) {
 		PrologElement * atom = 0;
@@ -289,7 +289,11 @@ public:
 		}
 		moonbase * trigger = (moonbase *) module;
 		if (atom != 0) {
-			if (atom -> isEarth ()) {trigger -> set_map (0); return true;}
+			if (atom -> isEarth ()) {
+				if (key != 0) return trigger -> insert_controller (0, key -> getInteger ());
+				trigger -> set_map (0);
+				return true;
+			}
 			if (atom -> isAtom ()) {
 				PrologAtom * a = atom -> getAtom ();
 				if (a == keyon) {
@@ -303,21 +307,36 @@ public:
 					else trigger -> keyoff ();
 					return true;
 				}
+				if (a == control) {
+					if (key == 0 || velocity == 0) return false;
+					trigger -> control (key -> getInteger (), velocity -> getInteger ());
+					return true;
+				}
 				if (a == mono) {trigger -> mono (); return true;}
 				if (a == poly) {trigger -> poly (); return true;}
 				PrologNativeCode * machine = a -> getMachine ();
 				if (machine == 0) return false;
-				if (machine -> isTypeOf (key_map_native_orbiter :: name ())) {trigger -> set_map ((lunar_map *) ((key_map_native_orbiter *) machine) -> module); return true;}
-				if (machine -> isTypeOf (trigger_native_orbiter :: name ())) {trigger -> insert_trigger ((lunar_trigger *) ((trigger_native_orbiter *) machine) -> module); return true;}
+				if (machine -> isTypeOf (key_map_native_orbiter :: name ())) {
+					trigger -> set_map ((lunar_map *) ((key_map_native_orbiter *) machine) -> module);
+					return true;
+				}
+				if (machine -> isTypeOf (trigger_native_orbiter :: name ())) {
+					trigger -> insert_trigger ((lunar_trigger *) ((trigger_native_orbiter *) machine) -> module);
+					return true;
+				}
+				if (machine -> isTypeOf (PrologNativeOrbiter :: name ()) && key != 0) {
+					return trigger -> insert_controller ((orbiter *) ((PrologNativeOrbiter *) machine) -> module, key -> getInteger ());
+				}
 			}
 		}
 		return PrologNativeOrbiter :: code (parameters, resolution);
 	}
 	native_moonbase (PrologDirectory * dir, PrologAtom * atom, orbiter_core * core, orbiter * module) : PrologNativeOrbiter (atom, core, module) {
-		keyon = keyoff = mono = poly = 0;
+		keyon = keyoff = control = mono = poly = 0;
 		if (dir == 0) return;
 		keyon = dir -> searchAtom ("keyon");
 		keyoff = dir -> searchAtom ("keyoff");
+		control = dir -> searchAtom ("control");
 		mono = dir -> searchAtom ("mono");
 		poly = dir -> searchAtom ("poly");
 	}

@@ -37,6 +37,8 @@ private:
 	lunar_trigger * choice;
 	lunar_trigger * select (void);
 	lunar_trigger * select (int key);
+	orbiter * controllers [129];
+	int ctrl_lsbs [129];
 	bool mono_mode;
 	pthread_mutex_t critical;
 public:
@@ -44,12 +46,14 @@ public:
 	virtual bool release (void);
 	void set_map (lunar_map * map);
 	void insert_trigger (lunar_trigger * trigger);
+	bool insert_controller (orbiter * controller, int location);
 	void keyon (int key);
 	void keyon (int key, int velocity);
 	void keyoff (void);
 	void keyoff (int key, int velocity = 0);
 	void mono (void);
 	void poly (void);
+	void control (int ctrl, int value);
 	moonbase (orbiter_core * core);
 	~ moonbase (void);
 };

@@ -5,7 +5,7 @@ import studio
 import lunar
 
 program eclipse [
-					commander cb cb_path moonbase moon mooncb phobosbase phobos phoboscb
+					commander cb cb_path moon_base moon mooncb phobos_base phobos phoboscb
 					paths modules adjacent next_path previous_path next_module previous_module
 					AT sub
 				]
@@ -83,7 +83,7 @@ program eclipse [
 ]
 
 
-[[moonbase]
+[[moon_base]
 	[Moonbase moon mooncb]
 	[adsr *adsr1]
 	[operator *op1]
@@ -104,7 +104,7 @@ program eclipse [
 	[addcl [[Moons moon]]]
 ]
 
-[[phobosbase]
+[[phobos_base]
 	[Moonbase phobos phoboscb]
 	[operator *op1]
 	[lfo *lfo1]
@@ -118,8 +118,8 @@ program eclipse [
 end := [
 		;[core reactor 330 22050 2048]
 		[var cb_path]
-		[CommandCentre commander cb]
-		[moonbase] [phobosbase]
+		;[CommandCentre commander cb]
+		[moon_base] [phobos_base]
 		[command]
 		] .
 

@@ -54,7 +54,7 @@ lunar_prolog_moonbase.o: ../code/lunar_prolog_moonbase.cpp ../code/lunar_moonbas
 	g++ -Wno-write-strings -I. -I$(pc) ../code/lunar_prolog_moonbase.cpp -c -o lunar_prolog_moonbase.o
 
 lunar_prolog_landers.o: ../code/lunar_prolog_landers.cpp ../code/lunar_prolog_landers.h\
-			 ../code/prolog_lunar.h $(pc)prolog.h ../code/lunar.h ../code/lunar_landers.h ../code/lunar_wave.h
+			 ../code/prolog_lunar.h $(pc)prolog.h ../code/lunar.h ../code/lunar_landers.h ../code/lunar_wave.h ../code/lunar_moonbase.h
 	g++ -Wno-write-strings -I. -I$(pc) ../code/lunar_prolog_landers.cpp -c -o lunar_prolog_landers.o
 
 lunar_prolog_keyboard.o: ../code/lunar_prolog_keyboard.cpp ../code/lunar.h\

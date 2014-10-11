@@ -39,6 +39,14 @@ void moonbase :: insert_trigger (lunar_trigger * trigger) {
 	choice = triggers = trigger;
 	trigger -> hold ();
 }
+bool moonbase :: insert_controller (orbiter * controller, int location) {
+	if (location < 0 || location > 128) return false;
+	if (controller != 0 && controller -> numberOfInputs () < 1) return false;
+	if (controllers [location] != 0) controllers [location] -> release ();
+	controllers [location] = controller;
+	if (controller != 0) controller -> hold ();
+	return true;
+}
 lunar_trigger * moonbase :: select (void) {
 	if (mono_mode) return triggers;
 	if (choice == 0) return 0;
@@ -91,18 +99,35 @@ void moonbase :: keyoff (int key, int velocity) {
 }
 void moonbase :: mono (void) {mono_mode = true;}
 void moonbase :: poly (void) {mono_mode = false;}
+void moonbase :: control (int ctrl, int value) {
+	if (ctrl < 0 || ctrl > 128) return;
+	if (controllers [ctrl] != 0) {
+		* (controllers [ctrl] -> inputAddress (0)) = (double) ((value << 7) + ctrl_lsbs [ctrl]);
+		ctrl_lsbs [ctrl] = 0;
+	} else if (ctrl > 31) ctrl_lsbs [ctrl - 32] = value;
+	if (ctrl == 126) mono ();
+	if (ctrl == 127) poly ();
+}
 bool moonbase :: release (void) {
 	lunar_map * map_to_delete = map;
 	lunar_trigger * triggers_to_delete = triggers;
+	orbiter * * controllers_to_delete = controllers;
 	bool ret = orbiter :: release ();
-	if (ret && map_to_delete != 0) map_to_delete -> release ();
-	if (ret && triggers_to_delete != 0) triggers_to_delete -> release ();
+	if (ret) {
+		if (map_to_delete != 0) map_to_delete -> release ();
+		if (triggers_to_delete != 0) triggers_to_delete -> release ();
+		for (int ind = 0; ind < 129; ind++) {
+			if (controllers_to_delete [ind] != 0) controllers_to_delete [ind] -> release ();
+		}
+	}
 	return ret;
 }
 moonbase :: moonbase (orbiter_core * core) : orbiter (core) {
 	pthread_mutex_init (& critical, 0);
 	map = 0; choice = triggers = 0; mono_mode = false;
+	for (int ind = 0; ind < 129; ind++) {controllers [ind] = 0; ctrl_lsbs [ind] = 0;}
 	initialise ();
 }
 
 moonbase :: ~ moonbase (void) {pthread_mutex_destroy (& critical);}
+

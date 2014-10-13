@@ -7,6 +7,8 @@ import lunar
 program eclipse [
 					commander cb cb_path moon_base moon mooncb phobos_base phobos phoboscb
 					paths modules adjacent next_path previous_path next_module previous_module
+					build_abakos build_abakos_part abakos abakoscb
+					reactor
 					AT sub
 				]
 
@@ -115,11 +117,33 @@ program eclipse [
 	[addcl [[Moons phobos]]]
 ]
 
+[[build_abakos *mixer]
+	[Moonbase abakos abakoscb]
+	[mixer *mixer]
+	[build_abakos_part abakos *mixer abakoscb]
+	[build_abakos_part abakos *mixer abakoscb]
+	[addcl [[Moons abakos]]]
+]
+
+[[build_abakos_part *abakos *mixer *cb]
+	[operator *op1]
+	[adsr *adsr1]
+	[trigger *trigger] [*cb *trigger]
+	[*op1 "freq" *trigger "key"]
+	[*adsr1 "trigger" *trigger "trigger"]
+	[*op1 "amp" *adsr1 "signal"]
+	[*mixer *op1]
+	[Insert *op1 *abakos operator]
+	[Insert *adsr1 *abakos adsr]
+]
+
 end := [
-		;[core reactor 330 22050 2048]
+		[core reactor 330 22050 2048]
 		[var cb_path]
 		;[CommandCentre commander cb]
+		[build_abakos *abakos_mixer]
 		[moon_base] [phobos_base]
+		[reactor *abakos_mixer]
 		[command]
 		] .
 

@@ -289,6 +289,7 @@ static gboolean ControlPanelDeleteEvent (GtkWidget * viewport, GdkEvent * event,
 static gint ControlPanelKeyon (GtkWidget * viewport, GdkEventButton * event, control_panel_action * action) {
 	point location (event -> x, event -> y);
 	action -> captured = location;
+	if (action -> keyboard . keyon (location)) {printf ("KEY ON\n"); return TRUE;}
 	action -> attack . keyon (location);
 	action -> decay . keyon (location);
 	action -> sustain . keyon (location);

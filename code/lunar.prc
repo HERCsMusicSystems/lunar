@@ -16,6 +16,13 @@ program lunar #machine := "prolog.lunar"
 				Lunar Lander Activate Deactivate
 				AddParameterBlock
 				Moonbase Insert InsertIO Store Restore Moons
+				Cbb Cb C C# Cx
+				Dbb Db D D# Dx
+				Ebb Eb E E# Ex
+				Fbb Fb F F# Fx
+				Gbb Gb G G# Gx
+				Abb Ab A A# Ax
+				Bbb Bb B B# Bx
 			]
 
 #machine small_keyboard := "small_keyboard"

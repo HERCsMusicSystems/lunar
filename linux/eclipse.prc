@@ -140,7 +140,7 @@ program eclipse [
 end := [
 		[core reactor 330 22050 2048]
 		[var cb_path]
-		;[CommandCentre commander cb]
+		[CommandCentre commander cb]
 		[build_abakos *abakos_mixer]
 		[moon_base] [phobos_base]
 		[reactor *abakos_mixer]

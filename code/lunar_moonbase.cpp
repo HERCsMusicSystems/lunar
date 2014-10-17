@@ -111,14 +111,13 @@ void moonbase :: control (int ctrl, int value) {
 bool moonbase :: release (void) {
 	lunar_map * map_to_delete = map;
 	lunar_trigger * triggers_to_delete = triggers;
-	orbiter * * controllers_to_delete = controllers;
+	orbiter * controllers_to_delete [129];
+	for (int ind = 0; ind < 129; ind++) controllers_to_delete [ind] = controllers [ind];
 	bool ret = orbiter :: release ();
 	if (ret) {
 		if (map_to_delete != 0) map_to_delete -> release ();
 		if (triggers_to_delete != 0) triggers_to_delete -> release ();
-		for (int ind = 0; ind < 129; ind++) {
-			if (controllers_to_delete [ind] != 0) controllers_to_delete [ind] -> release ();
-		}
+		for (int ind = 0; ind < 129; ind++) {if (controllers_to_delete [ind] != 0) controllers_to_delete [ind] -> release ();}
 	}
 	return ret;
 }

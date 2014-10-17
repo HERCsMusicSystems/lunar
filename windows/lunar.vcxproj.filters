@@ -72,9 +72,6 @@
     <ClCompile Include="..\..\prolog\code\prolog\prolog_xml.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\prolog\code\prolog\prolog_irrklang.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\prolog\code\prolog\prolog_neural.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>

@@ -96,7 +96,6 @@ public:
 		if (strcmp (name, "xml.prc") == 0) resource = FindResource (NULL, MAKEINTRESOURCE (XML_PRC), RT_RCDATA);
 		if (strcmp (name, "distribution.prc") == 0) resource = FindResource (NULL, MAKEINTRESOURCE (DISTRIBUTION_PRC), RT_RCDATA);
 		if (strcmp (name, "control.prc") == 0) resource = FindResource (NULL, MAKEINTRESOURCE (CONTROL_PRC), RT_RCDATA);
-		if (strcmp (name, "irrklang.prc") == 0) resource = FindResource (NULL, MAKEINTRESOURCE (IRRKLANG_PRC), RT_RCDATA);
 		if (strcmp (name, "lunar.prc") == 0) resource = FindResource (NULL, MAKEINTRESOURCE (LUNAR_PRC), RT_RCDATA);
 		if (! resource) return 0;
 		HGLOBAL loader = LoadResource (0, resource);
@@ -115,9 +114,6 @@ public:
 #ifdef LINUX_OPERATING_SYSTEM
 #include "prolog_http.h"
 #endif
-#ifdef WINDOWS_OPERATING_SYSTEM
-#include "prolog_irrklang.h"
-#endif
 #include "prolog_lunar.h"
 
 class service_class_loader_class : public PrologServiceClassLoader {
@@ -132,9 +128,6 @@ public:
 		if (strcmp (name, "prolog.xml") == 0) return new PrologXMLServiceClass ();
 		if (strcmp (name, "prolog.distribution") == 0) return new PrologDistributionServiceClass ();
 		if (strcmp (name, "prolog.control") == 0) return new PrologControlServiceClass ();
-#ifdef WINDOWS_OPERATING_SYSTEM
-		if (strcmp (name, "prolog.irrklang") == 0) return new PrologIrrKlangServiceClass ();
-#endif
 		if (strcmp (name, "prolog.lunar") == 0) return new PrologLunarServiceClass ();
 		return NULL;
 	}

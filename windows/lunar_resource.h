@@ -14,6 +14,13 @@
 #define KNOB_PNG                        207
 #define KNOB_SURFACE_PNG                208
 #define KNOB_HANDLE_PNG                 209
+#define DISPLAY_PNG                     210
+#define BUTTON_ON_PNG                   211
+#define BUTTON_OFF_PNG                  212
+#define ENCODER_SURFACE_PNG             213
+#define ENCODER_HANDLE_PNG              214
+#define SLIDER_SURFACE_PNG              215
+#define SLIDER_HANDLE_PNG               216
 
 #define SMALL_KEYBOARD_SIZE             435
 #define KEYBOARD_SIZE                   579
@@ -23,10 +30,17 @@
 #define KNOB_SIZE                       3917
 #define KNOB_SURFACE_SIZE               3840
 #define KNOB_HANDLE_SIZE                244
+#define DISPLAY_SIZE                    231063
+#define BUTTON_ON_SIZE                  231063
+#define BUTTON_OFF_SIZE                 213063
+#define ENCODER_SURFACE_SIZE            213063
+#define ENCODER_HANDLE_SIZE             213063
+#define SLIDER_SURFACE_SIZE             213063
+#define SLIDER_HANDLE_SIZE              213063
 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        210
+#define _APS_NEXT_RESOURCE_VALUE        217
 #define _APS_NEXT_COMMAND_VALUE         40001
 #define _APS_NEXT_CONTROL_VALUE         1001
 #define _APS_NEXT_SYMED_VALUE           101

@@ -99,6 +99,13 @@ GraphicResources :: GraphicResources (void) {
 	png_closure knob_closure (GetResource (KNOB_PNG), KNOB_SIZE);
 	png_closure knob_surface_closure (GetResource (KNOB_SURFACE_PNG), KNOB_SURFACE_SIZE);
 	png_closure knob_handle_closure (GetResource (KNOB_HANDLE_PNG), KNOB_HANDLE_SIZE);
+	png_closure display_closure (GetResource (DISPLAY_PNG), DISPLAY_SIZE);
+	png_closure button_on_closure (GetResource (BUTTON_ON_PNG), BUTTON_ON_SIZE);
+	png_closure button_off_closure (GetResource (BUTTON_OFF_PNG), BUTTON_OFF_SIZE);
+	png_closure encoder_surface_closure (GetResource (ENCODER_SURFACE_PNG), ENCODER_SURFACE_SIZE);
+	png_closure encoder_handle_closure (GetResource (ENCODER_HANDLE_PNG), ENCODER_HANDLE_SIZE);
+	png_closure slider_surface_closure (GetResource (SLIDER_SURFACE_PNG), SLIDER_SURFACE_SIZE);
+	png_closure slider_handle_closure (GetResource (SLIDER_HANDLE_PNG), SLIDER_HANDLE_SIZE);
 #else
 	png_closure frame_closure (& resource_vector_frame_start, & resource_vector_frame_end);
 	png_closure handle_closure (& resource_vector_handle_start, & resource_vector_handle_end);

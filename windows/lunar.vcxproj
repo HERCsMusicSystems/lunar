@@ -24,7 +24,6 @@
     <ClCompile Include="..\..\prolog\code\prolog\prolog_distribution.cpp" />
     <ClCompile Include="..\..\prolog\code\prolog\prolog_dll_loader.cpp" />
     <ClCompile Include="..\..\prolog\code\prolog\prolog_element.cpp" />
-    <ClCompile Include="..\..\prolog\code\prolog\prolog_irrklang.cpp" />
     <ClCompile Include="..\..\prolog\code\prolog\prolog_loader.cpp" />
     <ClCompile Include="..\..\prolog\code\prolog\prolog_match.cpp" />
     <ClCompile Include="..\..\prolog\code\prolog\prolog_midi.cpp" />
@@ -120,7 +119,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>pthread.lib;dinput8.lib;dsound.lib;dxguid.lib;irrKlang.lib;atk-1.0.lib;cairo.lib;expat.lib;fontconfig.lib;freetype.lib;gailutil.lib;gdk_pixbuf-2.0.lib;gdk-win32-2.0.lib;gio-2.0.lib;glib-2.0.lib;gmodule-2.0.lib;gobject-2.0.lib;gtk-win32-2.0.lib;intl.lib;libpng.lib;pango-1.0.lib;pangocairo-1.0.lib;pangoft2-1.0.lib;pangowin32-1.0.lib;zdll.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>pthread.lib;dinput8.lib;dsound.lib;dxguid.lib;atk-1.0.lib;cairo.lib;expat.lib;fontconfig.lib;freetype.lib;gailutil.lib;gdk_pixbuf-2.0.lib;gdk-win32-2.0.lib;gio-2.0.lib;glib-2.0.lib;gmodule-2.0.lib;gobject-2.0.lib;gtk-win32-2.0.lib;intl.lib;libpng.lib;pango-1.0.lib;pangocairo-1.0.lib;pangoft2-1.0.lib;pangowin32-1.0.lib;zdll.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>..\..\gtk+-bundle_2.24.10-20120208_win32\lib;..\..\Debug;..\..\irrKlang-1.5.0\lib\Win32-visualStudio;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
@@ -141,7 +140,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>..\..\gtk+-bundle_2.24.10-20120208_win32\lib;..\..\Release;..\..\irrKlang-1.5.0\lib\Win32-visualStudio;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>pthread.lib;dinput8.lib;dsound.lib;dxguid.lib;irrKlang.lib;atk-1.0.lib;cairo.lib;expat.lib;fontconfig.lib;freetype.lib;gailutil.lib;gdk_pixbuf-2.0.lib;gdk-win32-2.0.lib;gio-2.0.lib;glib-2.0.lib;gmodule-2.0.lib;gobject-2.0.lib;gtk-win32-2.0.lib;intl.lib;libpng.lib;pango-1.0.lib;pangocairo-1.0.lib;pangoft2-1.0.lib;pangowin32-1.0.lib;zdll.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>pthread.lib;dinput8.lib;dsound.lib;dxguid.lib;atk-1.0.lib;cairo.lib;expat.lib;fontconfig.lib;freetype.lib;gailutil.lib;gdk_pixbuf-2.0.lib;gdk-win32-2.0.lib;gio-2.0.lib;glib-2.0.lib;gmodule-2.0.lib;gobject-2.0.lib;gtk-win32-2.0.lib;intl.lib;libpng.lib;pango-1.0.lib;pangocairo-1.0.lib;pangoft2-1.0.lib;pangowin32-1.0.lib;zdll.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

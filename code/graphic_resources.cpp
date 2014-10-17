@@ -343,25 +343,23 @@ keyboard_active_graphics :: keyboard_active_graphics (point location, int type, 
 		active_graphics (location, id), calculator ((int) location . x, (int) location . y) {
 	surface = 0;
 	key = 0;
-	if (resources == 0) return;
-	if (! active_surface) return;
 	switch (type) {
 	case 1:
-		surface = resources -> keyboard_surface;
+		if (resources != 0 && active_surface) surface = resources -> keyboard_surface;
 		this -> location . size = point (865, 100);
 		calculator . set_keyboard_layout_y (99, 66);
 		calculator . set_keyboard_layout_x (16, 2, 3, 4, 5, 6);
 		calculator . set_ambitus (17, 54);
 		break;
 	case 2:
-		surface = resources -> big_keyboard_surface;
+		if (resources != 0 && active_surface) surface = resources -> big_keyboard_surface;
 		this -> location . size = point (1189, 133);
 		calculator . set_keyboard_layout_y (132, 88);
 		calculator . set_keyboard_layout_x (22, 2, 4, 6, 8, 10);
 		calculator . set_ambitus (17, 54);
 		break;
 	default:
-		surface = resources -> small_keyboard_surface;
+		if (resources != 0 && active_surface) surface = resources -> small_keyboard_surface;
 		this -> location . size = point (595, 67);
 		calculator . set_keyboard_layout_y (66, 44);
 		calculator . set_keyboard_layout_x (11, 1, 2, 3, 4, 5);

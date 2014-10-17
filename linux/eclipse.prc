@@ -5,7 +5,7 @@ import studio
 import lunar
 
 program eclipse [
-					commander cb cb_path moon_base moon mooncb phobos_base phobos phoboscb
+					commander cb cb_path cb_callback moon_base moon mooncb phobos_base phobos phoboscb
 					paths modules adjacent next_path previous_path next_module previous_module
 					build_abakos build_abakos_part abakos abakoscb
 					reactor
@@ -54,7 +54,7 @@ program eclipse [
 ]
 [[sub * * * []]]
 
-[[cb *key *velocity] [show [keyon *key *velocity]]]
+[[cb *key *velocity] [cb_callback : *callback] [*callback keyon *key *velocity]]
 [[cb *ret 1 *v] [add *ret "Attack = " *v]]
 [[cb *ret 2 *v] [add *ret "Decay = " *v]]
 [[cb *ret 3 *v] [add *ret "Sustain = " *v]]
@@ -84,6 +84,9 @@ program eclipse [
 	[*parameters *pb : *path] [*pb : *v]
 	[add *program *pather " = " *v]
 	[cb_path [*moon : *path]]
+	[*moon * * *moon_callback]
+	[cb_callback *moon_callback]
+	[show "Moon => " *moon_callback]
 ]
 
 
@@ -149,7 +152,7 @@ program eclipse [
 
 end := [
 		[core reactor 330 22050 2048]
-		[var cb_path]
+		[var cb_path cb_callback]
 		[CommandCentre commander cb]
 		[build_abakos *abakos_mixer]
 		[moon_base] [phobos_base]

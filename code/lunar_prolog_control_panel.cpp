@@ -160,6 +160,15 @@ public:
 		}
 		delete query;
 	}
+	void key_action (int key, int velocity) {
+		PrologElement * query = root -> pair (root -> atom (command),
+								root -> pair (root -> integer (key),
+								root -> pair (root -> integer (velocity),
+								root -> earth ())));
+		query = root -> pair (root -> earth (), root -> pair (query, root -> earth ()));
+		root -> resolution (query);
+		delete query;
+	}
 	bool remove (bool remove_gtk = true) {
 		if (remove_gtk) g_idle_add ((GSourceFunc) RemoveViewportIdleCode, viewport);
 		delete this;
@@ -289,7 +298,7 @@ static gboolean ControlPanelDeleteEvent (GtkWidget * viewport, GdkEvent * event,
 static gint ControlPanelKeyon (GtkWidget * viewport, GdkEventButton * event, control_panel_action * action) {
 	point location (event -> x, event -> y);
 	action -> captured = location;
-	if (action -> keyboard . keyon (location)) {printf ("KEY ON\n"); return TRUE;}
+	if (action -> keyboard . keyon (location)) {action -> key_action (action -> keyboard . key, 100); return TRUE;}
 	action -> attack . keyon (location);
 	action -> decay . keyon (location);
 	action -> sustain . keyon (location);
@@ -338,6 +347,7 @@ static gint ControlPanelKeyon (GtkWidget * viewport, GdkEventButton * event, con
 }
 static gint ControlPanelKeyoff (GtkWidget * viewport, GdkEventButton * event, control_panel_action * action) {
 	point location (event -> x, event -> y);
+	if (action -> keyboard . keyoff (location)) {action -> key_action (action -> keyboard . key, 0); return TRUE;}
 	action -> attack . keyoff (location);
 	action -> decay . keyoff (location);
 	action -> sustain . keyoff (location);

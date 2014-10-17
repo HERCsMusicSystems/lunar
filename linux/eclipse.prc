@@ -9,6 +9,7 @@ program eclipse [
 					paths modules adjacent next_path previous_path next_module previous_module
 					build_abakos build_abakos_part abakos abakoscb
 					reactor
+					kb kbcb
 					AT sub
 				]
 
@@ -53,6 +54,7 @@ program eclipse [
 ]
 [[sub * * * []]]
 
+[[cb *key *velocity] [show [keyon *key *velocity]]]
 [[cb *ret 1 *v] [add *ret "Attack = " *v]]
 [[cb *ret 2 *v] [add *ret "Decay = " *v]]
 [[cb *ret 3 *v] [add *ret "Sustain = " *v]]
@@ -136,6 +138,14 @@ program eclipse [
 	[Insert *op1 *abakos operator]
 	[Insert *adsr1 *abakos adsr]
 ]
+
+[[kbcb : *command] [show *command]]
+
+;end := [
+;		[small_keyboard kb kbcb]
+;		[kb 1000 1000]
+;		[command]
+;		] .
 
 end := [
 		[core reactor 330 22050 2048]

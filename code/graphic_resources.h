@@ -24,6 +24,7 @@
 #define _LUNAR_GRAPHIC_RESOURCES_
 
 #include "graphics2d.h"
+#include "keyboard_calculator.h"
 #include "gtk/gtk.h"
 
 extern gboolean RemoveViewportIdleCode (GtkWidget * viewport);
@@ -108,6 +109,10 @@ public:
 class keyboard_active_graphics : public active_graphics {
 public:
 	cairo_surface_t * surface;
+	keyboard_calculator calculator;
+	int key;
+	bool keyon (point position);
+	bool keyoff (point position);
 	void draw (cairo_t * cr);
 	keyboard_active_graphics (point location, int type, int id, GraphicResources * resources, bool active_surface = false);
 };

@@ -25,7 +25,6 @@
 /////////////////////////////////////////////////////////////////////
 
 #include "prolog_lunar.h"
-#include "keyboard_calculator.h"
 #include "graphics2d.h"
 #include "graphic_resources.h"
 #include "gtk/gtk.h"
@@ -37,16 +36,12 @@ public:
 	PrologAtom * atom;
 	PrologAtom * command;
 	GtkWidget * viewport;
-	cairo_surface_t * surface;
-	int keyboard_width;
-	int keyboard_height;
-	keyboard_calculator kb;
+	keyboard_active_graphics keyboard;
 	point location;
-	void action (int velocity, int x, int y) {
-		int key = kb . get (x, y);
+	void action (int velocity) {
 		PrologElement * query = root -> pair (root -> atom (command),
 								root -> pair (root -> atom (keyon),
-								root -> pair (root -> integer (key),
+								root -> pair (root -> integer (keyboard . key),
 								root -> pair (root -> integer (velocity),
 								root -> earth ()))));
 		query = root -> pair (root -> head (0), root -> pair (query, root -> earth ()));
@@ -59,36 +54,13 @@ public:
 		return true;
 	}
 	bool code (PrologElement * parameters, PrologResolution * resolution);
-	keyboard_action (GraphicResources * resources, PrologRoot * root, PrologDirectory * directory, PrologAtom * atom, PrologAtom * command, int size) : kb (0, 0) {
+	keyboard_action (GraphicResources * resources, PrologRoot * root, PrologDirectory * directory, PrologAtom * atom, PrologAtom * command, int size) :
+			keyboard (point (0, 0), size - 1, 0, resources, true) {
 		this -> root = root;
 		keyon = directory == 0 ? 0 : directory -> searchAtom ("keyon");
 		this -> atom = atom; COLLECTOR_REFERENCE_INC (atom);
 		this -> command = command; COLLECTOR_REFERENCE_INC (command);
 		viewport = 0;
-		keyboard_width = 200; keyboard_height = 100;
-		switch (size) {
-		case 1:
-			surface = resources -> small_keyboard_surface;
-			kb . set_keyboard_layout_y (66, 44);
-			kb . set_keyboard_layout_x (11, 1, 2, 3, 4, 5);
-			kb . set_ambitus (17, 54);
-			break;
-		case 3:
-			surface = resources -> big_keyboard_surface;
-			kb . set_keyboard_layout_y (132, 88);
-			kb . set_keyboard_layout_x (22, 2, 4, 6, 8, 10);
-			kb . set_ambitus (17, 54);
-			break;
-		default:
-			surface = resources -> keyboard_surface;
-			kb . set_keyboard_layout_y (99, 66);
-			kb . set_keyboard_layout_x (16, 2, 3, 4, 5, 6);
-			kb . set_ambitus (17, 54);
-			break;
-		}
-		if (cairo_surface_status (surface) != CAIRO_STATUS_SUCCESS) {surface = 0; return;}
-		keyboard_width = cairo_image_surface_get_width (surface);
-		keyboard_height = cairo_image_surface_get_height (surface);
 	}
 	~ keyboard_action (void) {
 		atom -> setMachine (0);
@@ -124,18 +96,23 @@ static gboolean ViewportDeleteEvent (GtkWidget * viewport, GdkEvent * event, key
 
 static gboolean RedrawKeyboard (GtkWidget * viewport, GdkEvent * event, keyboard_action * machine) {
 	cairo_t * cr = gdk_cairo_create (gtk_widget_get_window (viewport));
-	if (machine -> surface == 0) return FALSE;
-	cairo_set_source_surface (cr, machine -> surface, 0.0, 0.0);
-	cairo_paint (cr);
+	machine -> keyboard . draw (cr);
 	cairo_destroy (cr);
 	return FALSE;
 }
 
 static gint KeyboardKeyon (GtkWidget * viewport, GdkEventButton * event, keyboard_action * machine) {
-	machine -> action ((int) event -> button == 1 ? 100 : 0, (int) event -> x, (int) event -> y);
+	point location ((int) event -> x, (int) event -> y);
+	if ((int) event -> button == 1) machine -> keyboard . keyon (location);
+	else machine -> keyboard . keyoff (location);
+	machine -> action ((int) event -> button == 1 ? 100 : 0);
 	return TRUE;
 }
-static gint KeyboardKeyoff (GtkWidget * viewport, GdkEventButton * event, keyboard_action * machine) {machine -> action (0, (int) event -> x, (int) event -> y); return TRUE;}
+static gint KeyboardKeyoff (GtkWidget * viewport, GdkEventButton * event, keyboard_action * machine) {
+	machine -> keyboard . keyoff (point ((int) event -> x, (int) event -> y));
+	machine -> action (0);
+	return TRUE;
+}
 
 static gboolean CreateKeyboardIdleCode (keyboard_action * parameter) {
 	parameter -> viewport = gtk_window_new (GTK_WINDOW_TOPLEVEL);
@@ -147,7 +124,7 @@ static gboolean CreateKeyboardIdleCode (keyboard_action * parameter) {
 	gtk_widget_add_events (parameter -> viewport, GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK);
 	g_signal_connect (G_OBJECT (parameter -> viewport), "button_press_event", G_CALLBACK (KeyboardKeyon), parameter);
 	g_signal_connect (G_OBJECT (parameter -> viewport), "button_release_event", G_CALLBACK (KeyboardKeyoff), parameter);
-	gtk_window_resize (GTK_WINDOW (parameter -> viewport), parameter -> keyboard_width, parameter -> keyboard_height);
+	gtk_window_resize (GTK_WINDOW (parameter -> viewport), (int) parameter -> keyboard . location . size . x, (int) parameter -> keyboard . location . size . y);
 	gtk_widget_show_all (parameter -> viewport);
 	return FALSE;
 }

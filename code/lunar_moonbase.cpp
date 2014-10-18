@@ -79,6 +79,7 @@ void moonbase :: keyon (int key) {
 	pthread_mutex_unlock (& critical);
 }
 void moonbase :: keyon (int key, int velocity) {
+	if (velocity == 0) {keyoff (key, 0); return;}
 	pthread_mutex_lock (& critical);
 	lunar_trigger * trigger = select ();
 	if (trigger != 0) trigger -> keyon (key, velocity);

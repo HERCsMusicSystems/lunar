@@ -10,12 +10,12 @@ program lunar #machine := "prolog.lunar"
 				dock undock noise orbiter
 				core moonbase operator parameter_block key_map velocity_map impulse trigger porta_trigger mixer stereo_mixer gateway lfo adsr eg
 				square_operator saw_operator noise_operator sampler_operator sensitivity filter delay pan power_pan linear_pan
-				signal freq amp ratio sync attack decay sustain release busy time speed wave pulse phase poly feedback highdamp
+				signal freq amp ratio sync attack decay sustain release busy portamento time speed wave pulse phase poly feedback highdamp
 				mono left right mic mic_left mic_right breakpoint
 				keyon keyoff control
 				Lunar Lander Activate Deactivate
 				AddParameterBlock
-				Moonbase Insert InsertIO Store Restore Moons
+				Moonbase Insert InsertIO Store Restore SubRestore Moons
 				Cbb Cb C C# Cx
 				Dbb Db D D# Dx
 				Ebb Eb E E# Ex
@@ -148,11 +148,26 @@ program lunar #machine := "prolog.lunar"
 		[*parameters *orbiter : *selector]
 		[*orbiter *x]
 		[show *selector " => " *x]
-		[*tc [*selector] " => " [*x] "\n"]
+		[*tc [*selector] [*x] "\n"]
 		fail
 	]
 	[*tc]
 ]
+
+[[Restore *moonbase *file_name]
+	[file_reader *fr *file_name]
+	[SubRestore *moonbase *fr]
+	[*fr]
+]
+
+[[SubRestore *moonbase *fr]
+	[*fr *one] [*fr *two]
+	[show *one " => " *two]
+	[show [Lunar *two *moonbase : *one]]
+	[Lunar *two *moonbase : *one]
+	/ [SubRestore *moonbase *fr]
+]
+[[SubRestore : *]]
 
 [[Activate *core : *moonbase]
 	[Lander *base : *moonbase]
@@ -171,7 +186,7 @@ program lunar #machine := "prolog.lunar"
 	]
 ]
 
-private [AddParameterBlock]
+private [AddParameterBlock SubRestore]
 
 end .
 

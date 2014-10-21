@@ -32,6 +32,7 @@ double * lunar_active_parameter_block :: inputAddress (int ind) {return ind == 0
 lunar_active_parameter_block :: lunar_active_parameter_block (orbiter_core * core, int style, double maximum_change) :
 		lunar_inactive_parameter_block (core, style) {
 	if (maximum_change < 0.0) maximum_change = 0.0;
+	this -> maximum_change = maximum_change;
 	initialise (); activate ();
 }
 void lunar_active_parameter_block :: move (void) {

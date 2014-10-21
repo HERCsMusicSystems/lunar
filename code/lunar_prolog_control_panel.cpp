@@ -37,10 +37,8 @@ public:
 	GraphicResources * resources;
 	GtkWidget * viewport;
 	point location;
-	knob_active_graphics attack;
-	knob_active_graphics decay;
-	knob_active_graphics sustain;
-	knob_active_graphics release;
+	knob_active_graphics ctrl1, ctrl2, ctrl3, ctrl4, ctrl5, ctrl6;
+	knob_active_graphics ctrl7, ctrl8, ctrl9, ctrla, ctrlb, ctrlc;
 	vector_active_graphics vector;
 	keyboard_active_graphics keyboard;
 	display_active_graphics display;
@@ -175,37 +173,41 @@ public:
 		return true;
 	}
 	bool code (PrologElement * parameters, PrologResolution * resolution);
-	control_panel_action (GraphicResources * resources, PrologRoot * root, PrologDirectory * directory, PrologAtom * atom, PrologAtom * command)
-	: attack (point (10.0, 10.0), 1, resources, true), decay (point (110.0, 10.0), 2, resources, true),
-	sustain (point (210.0, 10.0), 3, resources, true), release (point (310.0, 10.0), 4, resources, true),
-	vector (point (10.0, 100.0), 5, resources, true), keyboard (point (100.0, 280.0), 2, 6, resources, true),
-	display (point (410.0, 10.0), 7, resources, true),
-	selector0 (point (400.0, 120.0), 200, resources, true),
-	selector1 (point (440.0, 120.0), 201, resources, true),
-	selector2 (point (480.0, 120.0), 202, resources, true),
-	selector3 (point (520.0, 120.0), 203, resources, true),
-	selector4 (point (560.0, 120.0), 204, resources, true),
-	selector5 (point (600.0, 120.0), 205, resources, true),
-	selector6 (point (640.0, 120.0), 206, resources, true),
-	selector7 (point (680.0, 120.0), 207, resources, true),
-	selector8 (point (720.0, 120.0), 208, resources, true),
-	selector9 (point (760.0, 120.0), 209, resources, true),
-	program0 (point (400.0, 160.0), 100, resources, true),
-	program1 (point (440.0, 160.0), 101, resources, true),
-	program2 (point (480.0, 160.0), 102, resources, true),
-	program3 (point (520.0, 160.0), 103, resources, true),
-	program4 (point (560.0, 160.0), 104, resources, true),
-	program5 (point (600.0, 160.0), 105, resources, true),
-	program6 (point (640.0, 160.0), 106, resources, true),
-	program7 (point (680.0, 160.0), 107, resources, true),
-	program8 (point (720.0, 160.0), 108, resources, true),
-	program9 (point (760.0, 160.0), 109, resources, true),
-	sub_one (point (840.0, 220.0), 302, resources, true),
-	add_one (point (880.0, 220.0), 301, resources, true),
-	delta_1 (point (820.0, 240.0), 303, resources, true),
-	delta_8 (point (860.0, 240.0), 304, resources, true),
-	delta_128 (point (900.0, 240.0), 305, resources, true),
-	encoder (point (840.0, 140.0), 401, resources, true),
+	control_panel_action (GraphicResources * resources, PrologRoot * root, PrologDirectory * directory, PrologAtom * atom, PrologAtom * command, bool active)
+	: ctrl1 (point (190.0, 14.0), 1, resources, active), ctrl2 (point (240.0, 14.0), 2, resources, active),
+	ctrl3 (point (290.0, 14.0), 3, resources, active), ctrl4 (point (340.0, 14.0), 4, resources, active),
+	ctrl5 (point (390.0, 14.0), 5, resources, active), ctrl6 (point (440.0, 14.0), 6, resources, active),
+	ctrl7 (point (190.0, 94.0), 7, resources, active), ctrl8 (point (240.0, 94.0), 8, resources, active),
+	ctrl9 (point (290.0, 94.0), 9, resources, active), ctrla (point (340.0, 94.0), 10, resources, active),
+	ctrlb (point (390.0, 94.0), 11, resources, active), ctrlc (point (440.0, 94.0), 12, resources, active),
+	vector (point (14.0, 14.0), 16, resources, active), keyboard (point (100.0, 280.0), 2, 6, resources, active),
+	display (point (510.0, 10.0), 7, resources, active),
+	selector0 (point (540.0, 120.0), 200, resources, true),
+	selector1 (point (580.0, 120.0), 201, resources, true),
+	selector2 (point (620.0, 120.0), 202, resources, true),
+	selector3 (point (660.0, 120.0), 203, resources, true),
+	selector4 (point (700.0, 120.0), 204, resources, true),
+	selector5 (point (740.0, 120.0), 205, resources, true),
+	selector6 (point (780.0, 120.0), 206, resources, true),
+	selector7 (point (820.0, 120.0), 207, resources, true),
+	selector8 (point (860.0, 120.0), 208, resources, true),
+	selector9 (point (900.0, 120.0), 209, resources, true),
+	program0 (point (540.0, 160.0), 100, resources, true),
+	program1 (point (580.0, 160.0), 101, resources, true),
+	program2 (point (620.0, 160.0), 102, resources, true),
+	program3 (point (660.0, 160.0), 103, resources, true),
+	program4 (point (700.0, 160.0), 104, resources, true),
+	program5 (point (740.0, 160.0), 105, resources, true),
+	program6 (point (780.0, 160.0), 106, resources, true),
+	program7 (point (820.0, 160.0), 107, resources, true),
+	program8 (point (860.0, 160.0), 108, resources, true),
+	program9 (point (900.0, 160.0), 109, resources, true),
+	sub_one (point (1040.0, 120.0), 302, resources, true),
+	add_one (point (1080.0, 120.0), 301, resources, true),
+	delta_1 (point (1020.0, 160.0), 303, resources, true),
+	delta_8 (point (1060.0, 160.0), 304, resources, true),
+	delta_128 (point (1100.0, 160.0), 305, resources, true),
+	encoder (point (944.0, 110.0), 401, resources, true),
 	pitch (point (40.0, 280.0), 501, true, resources, true),
 	modulation (point (60.0, 280.0), 502, false, resources, true)
 	{
@@ -228,10 +230,18 @@ public:
 
 static gboolean RedrawControlPanel (GtkWidget * viewport, GdkEvent * event, control_panel_action * action) {
 	cairo_t * cr = gdk_cairo_create (gtk_widget_get_window (viewport));
-	action -> attack . draw (cr);
-	action -> decay . draw (cr);
-	action -> sustain . draw (cr);
-	action -> release . draw (cr);
+	action -> ctrl1 . draw (cr);
+	action -> ctrl2 . draw (cr);
+	action -> ctrl3 . draw (cr);
+	action -> ctrl4 . draw (cr);
+	action -> ctrl5 . draw (cr);
+	action -> ctrl6 . draw (cr);
+	action -> ctrl7 . draw (cr);
+	action -> ctrl8 . draw (cr);
+	action -> ctrl9 . draw (cr);
+	action -> ctrla . draw (cr);
+	action -> ctrlb . draw (cr);
+	action -> ctrlc . draw (cr);
 	action -> vector . draw (cr);
 	action -> keyboard . draw (cr);
 	action -> display . draw (cr);
@@ -299,10 +309,18 @@ static gint ControlPanelKeyon (GtkWidget * viewport, GdkEventButton * event, con
 	point location (event -> x, event -> y);
 	action -> captured = location;
 	if (action -> keyboard . keyon (location)) {action -> key_action (action -> keyboard . key, 100); return TRUE;}
-	action -> attack . keyon (location);
-	action -> decay . keyon (location);
-	action -> sustain . keyon (location);
-	action -> release . keyon (location);
+	action -> ctrl1 . keyon (location);
+	action -> ctrl2 . keyon (location);
+	action -> ctrl3 . keyon (location);
+	action -> ctrl4 . keyon (location);
+	action -> ctrl5 . keyon (location);
+	action -> ctrl6 . keyon (location);
+	action -> ctrl7 . keyon (location);
+	action -> ctrl8 . keyon (location);
+	action -> ctrl9 . keyon (location);
+	action -> ctrla . keyon (location);
+	action -> ctrlb . keyon (location);
+	action -> ctrlc . keyon (location);
 	action -> vector . keyon (location);
 	action -> encoder . keyon (location);
 	action -> pitch . keyon (location);
@@ -348,10 +366,18 @@ static gint ControlPanelKeyon (GtkWidget * viewport, GdkEventButton * event, con
 static gint ControlPanelKeyoff (GtkWidget * viewport, GdkEventButton * event, control_panel_action * action) {
 	point location (event -> x, event -> y);
 	if (action -> keyboard . keyoff (location)) {action -> key_action (action -> keyboard . key, 0); return TRUE;}
-	action -> attack . keyoff (location);
-	action -> decay . keyoff (location);
-	action -> sustain . keyoff (location);
-	action -> release . keyoff (location);
+	action -> ctrl1 . keyoff (location);
+	action -> ctrl2 . keyoff (location);
+	action -> ctrl3 . keyoff (location);
+	action -> ctrl4 . keyoff (location);
+	action -> ctrl5 . keyoff (location);
+	action -> ctrl6 . keyoff (location);
+	action -> ctrl7 . keyoff (location);
+	action -> ctrl8 . keyoff (location);
+	action -> ctrl9 . keyoff (location);
+	action -> ctrla . keyoff (location);
+	action -> ctrlb . keyoff (location);
+	action -> ctrlc . keyoff (location);
 	action -> vector . keyoff (location);
 	action -> encoder . keyoff (location);
 	action -> modulation . keyoff (location);
@@ -367,10 +393,18 @@ static gint ControlPanelMove (GtkWidget * viewport, GdkEventButton * event, cont
 	point delta = location - action -> captured;
 	action -> captured = location;
 	bool redraw = false;
-	if (action -> attack . move (delta)) {action -> action (action -> attack . id, action -> attack . angle, action -> display . area); redraw = true;}
-	if (action -> decay . move (delta))  {action -> action (action -> decay . id, action -> decay . angle, action -> display . area); redraw = true;}
-	if (action -> sustain . move (delta)) {action -> action (action -> sustain . id, action -> sustain . angle, action -> display . area); redraw = true;}
-	if (action -> release . move (delta)) {action -> action (action -> release . id, action -> release . angle, action -> display . area); redraw = true;}
+	if (action -> ctrl1 . move (delta)) {action -> action (action -> ctrl1 . id, action -> ctrl1 . angle, action -> display . area); redraw = true;}
+	if (action -> ctrl2 . move (delta)) {action -> action (action -> ctrl2 . id, action -> ctrl2 . angle, action -> display . area); redraw = true;}
+	if (action -> ctrl3 . move (delta)) {action -> action (action -> ctrl3 . id, action -> ctrl3 . angle, action -> display . area); redraw = true;}
+	if (action -> ctrl4 . move (delta)) {action -> action (action -> ctrl4 . id, action -> ctrl4 . angle, action -> display . area); redraw = true;}
+	if (action -> ctrl5 . move (delta)) {action -> action (action -> ctrl5 . id, action -> ctrl5 . angle, action -> display . area); redraw = true;}
+	if (action -> ctrl6 . move (delta)) {action -> action (action -> ctrl6 . id, action -> ctrl6 . angle, action -> display . area); redraw = true;}
+	if (action -> ctrl7 . move (delta)) {action -> action (action -> ctrl7 . id, action -> ctrl7 . angle, action -> display . area); redraw = true;}
+	if (action -> ctrl8 . move (delta)) {action -> action (action -> ctrl8 . id, action -> ctrl8 . angle, action -> display . area); redraw = true;}
+	if (action -> ctrl9 . move (delta)) {action -> action (action -> ctrl9 . id, action -> ctrl9 . angle, action -> display . area); redraw = true;}
+	if (action -> ctrla . move (delta)) {action -> action (action -> ctrla . id, action -> ctrla . angle, action -> display . area); redraw = true;}
+	if (action -> ctrlb . move (delta)) {action -> action (action -> ctrlb . id, action -> ctrlb . angle, action -> display . area); redraw = true;}
+	if (action -> ctrlc . move (delta)) {action -> action (action -> ctrlc . id, action -> ctrlc . angle, action -> display . area); redraw = true;}
 	if (action -> vector . move (delta)) {
 		action -> action (action -> vector . id, action -> vector . position . x, action -> vector . position . y, action -> display . area);
 		redraw = true;
@@ -410,7 +444,7 @@ bool control_panel_class :: code (PrologElement * parameters, PrologResolution *
 	if (atom -> isVar ()) atom -> setAtom (new PrologAtom ());
 	if (! atom -> isAtom ()) return false;
 	if (atom -> getAtom () -> getMachine () != 0) return false;
-	control_panel_action * machine = new control_panel_action (resources, root, directory, atom -> getAtom (), command -> getAtom ());
+	control_panel_action * machine = new control_panel_action (resources, root, directory, atom -> getAtom (), command -> getAtom (), false);
 	if (! atom -> getAtom () -> setMachine (machine)) {delete machine; return false;}
 	g_idle_add ((GSourceFunc) CreateControlPanelIdleCode, machine);
 	return true;

@@ -26,27 +26,23 @@
 
 #include "lunar_landers.h"
 
-int lunar_active_parameter_block :: numberOfInputs (void) {return 1;}
-char * lunar_active_parameter_block :: inputName (int ind) {if (ind == 0) return "SIGNAL"; else return  orbiter :: inputName (ind);}
-double * lunar_active_parameter_block :: inputAddress (int ind) {return ind == 0 ? & enter : 0;}
-lunar_active_parameter_block :: lunar_active_parameter_block (orbiter_core * core, int style, double maximum_change) :
-		lunar_inactive_parameter_block (core, style) {
-	if (maximum_change < 0.0) maximum_change = 0.0;
-	this -> maximum_change = maximum_change;
-	initialise (); activate ();
-}
-void lunar_active_parameter_block :: move (void) {
+int lunar_parameter_block :: numberOfInputs (void) {return 1;}
+char * lunar_parameter_block :: inputName (int ind) {if (ind == 0) return "SIGNAL"; else return  orbiter :: inputName (ind);}
+double * lunar_parameter_block :: inputAddress (int ind) {return ind != 0 ? orbiter :: inputAddress (ind) : active ? & enter : orbiter :: outputAddress (ind);}
+void lunar_parameter_block :: move (void) {
 	if (maximum_change == 0.0) {signal = enter; return;}
 	if (enter == signal) return;
 	if (enter > signal) {signal += maximum_change * core -> gate_delay; if (signal > enter) signal = enter;}
 	signal -= maximum_change * core -> gate_delay;
 	if (signal < enter) signal = enter;
 }
-
-int lunar_inactive_parameter_block :: numberOfInputs (void) {return orbiter :: numberOfOutputs ();}
-char * lunar_inactive_parameter_block :: inputName (int ind) {return orbiter :: outputName (ind);}
-double * lunar_inactive_parameter_block :: inputAddress (int ind) {return orbiter :: outputAddress (ind);}
-lunar_inactive_parameter_block :: lunar_inactive_parameter_block (orbiter_core * core, int style) : orbiter (core) {this -> style = style; initialise ();}
+lunar_parameter_block :: lunar_parameter_block (orbiter_core * core, int style, bool active, double maximum_change) : orbiter (core) {
+	this -> active = active;
+	this -> style = style;
+	this -> maximum_change = maximum_change >= 0.0 ? maximum_change : 0.0;
+	initialise ();
+	if (active) activate ();
+}
 
 int lunar_mixer :: numberOfInputs (void) {return 1;}
 char * lunar_mixer :: inputName (int ind) {if (ind == 0) return "ENTER"; else return orbiter :: inputName (ind);}

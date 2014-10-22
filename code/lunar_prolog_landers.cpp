@@ -37,7 +37,7 @@
 class pb_native_orbiter : public PrologNativeOrbiter {
 public:
 	bool code (PrologElement * parameters, PrologResolution * resolution) {
-		lunar_inactive_parameter_block * pb = (lunar_inactive_parameter_block *) module;
+		lunar_parameter_block * pb = (lunar_parameter_block *) module;
 		if (pb -> style != 0 && parameters -> isVar ()) {
 			char command [128];
 			switch (pb -> style) {
@@ -81,8 +81,7 @@ orbiter * parameter_block_class :: create_orbiter (PrologElement * parameters) {
 		if (strcasecmp (style_name, "onoff") == 0) style = 5;
 		if (strcasecmp (style_name, "wave") == 0) style = 6;
 	}
-	if (activity == 0) return new lunar_inactive_parameter_block (core, style);
-	return new lunar_active_parameter_block (core, style, activity -> getNumber ());
+	return new lunar_parameter_block (core, style, activity != 0, activity != 0 ? activity -> getNumber () : 0.0);
 }
 PrologNativeOrbiter * parameter_block_class :: create_native_orbiter (PrologAtom * atom, orbiter * module) {return new pb_native_orbiter (atom, core, module);}
 parameter_block_class :: parameter_block_class (orbiter_core * core) : PrologNativeOrbiterCreator (core) {}

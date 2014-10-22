@@ -109,8 +109,10 @@ program lunar #machine := "prolog.lunar"
 	[AddParameterBlock *parameters release *adsr *selector 0 "time"]
 ]
 
-[[InsertIO *parameters *trigger *selector [["BUSY" "TIME" : *] *]]
+[[InsertIO *parameters *trigger *selector [["BUSY" "PORTA" "TIME" "CONTROL" : *] *]]
+	[AddParameterBlock *parameters portamento *trigger *selector 0 "onoff"]
 	[AddParameterBlock *parameters time *trigger *selector 0 "time"]
+	[AddParameterBlock *parameters control *trigger *selector 0 "index"]
 ]
 
 [[InsertIO *parameters *lfo *selector [["SPEED" "WAVE" "PULSE" "PHASE" "SYNC" : *] *]]

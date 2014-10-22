@@ -91,11 +91,13 @@ lunar_map :: lunar_map (orbiter_core * core, int initial) : orbiter (core) {
 	initialise ();
 }
 
-int lunar_trigger :: numberOfInputs (void) {return 2;}
+int lunar_trigger :: numberOfInputs (void) {return 4;}
 char * lunar_trigger :: inputName (int ind) {
 	switch (ind) {
 	case 0: return "BUSY"; break;
-	case 1: return "TIME"; break;
+	case 1: return "PORTA"; break;
+	case 2: return "TIME"; break;
+	case 3: return "CONTROL"; break;
 	default: break;
 	}
 	return orbiter :: inputName (ind);
@@ -103,7 +105,9 @@ char * lunar_trigger :: inputName (int ind) {
 double * lunar_trigger :: inputAddress (int ind) {
 	switch (ind) {
 	case 0: return & busy; break;
-	case 1: return & porta_time; break;
+	case 1: return & porta_switch; break;
+	case 2: return & porta_time; break;
+	case 3: return & porta_control; break;
 	default: break;
 	}
 	return orbiter :: inputAddress (ind);
@@ -159,7 +163,7 @@ void lunar_trigger :: sub_keyon (int key) {
 	if (key > 127) key = 127;
 	target = key_map == 0 ? (double) (key - 64) * 128.0 : key_map -> map [key];
 	this -> key = key;
-	if (! active || porta_time == 0.0) this -> signal = target;
+	if (! active || porta_switch == 0.0 || porta_time == 0.0 || (porta_control != 0.0 && trigger == 0)) this -> signal = target;
 	else {origin = this -> signal; delta = target - origin; time = 0.0;}
 	trigger = 1.0;
 	add_stack (key);
@@ -214,7 +218,7 @@ lunar_trigger :: lunar_trigger (orbiter_core * core, bool active, lunar_trigger 
 	key = -1;
 	signal = trigger = busy = 0.0;
 	origin = delta = target = 0.0;
-	porta_time = 0.0;
+	porta_switch = porta_time = porta_control = 0.0;
 	time = 2.0;
 	velocity = 12800.0;
 	key_map = 0;

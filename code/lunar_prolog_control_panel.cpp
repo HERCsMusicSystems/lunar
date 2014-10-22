@@ -37,8 +37,9 @@ public:
 	GraphicResources * resources;
 	GtkWidget * viewport;
 	point location;
-	knob_active_graphics ctrl1, ctrl2, ctrl3, ctrl4, ctrl5, ctrl6;
-	knob_active_graphics ctrl7, ctrl8, ctrl9, ctrla, ctrlb, ctrlc;
+	knob_active_graphics ctrl_volume;
+	knob_active_graphics ctrl_attack, ctrl_decay, ctrl_sustain, ctrl_release;
+	knob_active_graphics ctrl_freq, ctrl_drywet, ctrl_pan, ctrl_porta, ctrl_speed, ctrl_vibrato;
 	vector_active_graphics vector;
 	keyboard_active_graphics keyboard;
 	display_active_graphics display;
@@ -174,12 +175,12 @@ public:
 	}
 	bool code (PrologElement * parameters, PrologResolution * resolution);
 	control_panel_action (GraphicResources * resources, PrologRoot * root, PrologDirectory * directory, PrologAtom * atom, PrologAtom * command, bool active)
-	: ctrl1 (point (190.0, 14.0), 1, resources, active), ctrl2 (point (240.0, 14.0), 2, resources, active),
-	ctrl3 (point (290.0, 14.0), 3, resources, active), ctrl4 (point (340.0, 14.0), 4, resources, active),
-	ctrl5 (point (390.0, 14.0), 5, resources, active), ctrl6 (point (440.0, 14.0), 6, resources, active),
-	ctrl7 (point (190.0, 94.0), 7, resources, active), ctrl8 (point (240.0, 94.0), 8, resources, active),
-	ctrl9 (point (290.0, 94.0), 9, resources, active), ctrla (point (340.0, 94.0), 10, resources, active),
-	ctrlb (point (390.0, 94.0), 11, resources, active), ctrlc (point (440.0, 94.0), 12, resources, active),
+	: ctrl_volume (point (0.0, 0.0), 11, resources, active),
+	ctrl_attack (point (190.0, 14.0), 1, resources, active), ctrl_decay (point (240.0, 14.0), 2, resources, active),
+	ctrl_sustain (point (290.0, 14.0), 3, resources, active), ctrl_release (point (340.0, 14.0), 4, resources, active),
+	ctrl_freq (point (390.0, 14.0), 5, resources, active), ctrl_drywet (point (440.0, 14.0), 6, resources, active),
+	ctrl_pan (point (190.0, 94.0), 7, resources, active), ctrl_porta (point (240.0, 94.0), 8, resources, active),
+	ctrl_speed (point (290.0, 94.0), 9, resources, active), ctrl_vibrato (point (340.0, 94.0), 10, resources, active),
 	vector (point (14.0, 14.0), 16, resources, active), keyboard (point (100.0, 280.0), 2, 6, resources, active),
 	display (point (510.0, 10.0), 7, resources, active),
 	selector0 (point (540.0, 120.0), 200, resources, true),
@@ -230,18 +231,17 @@ public:
 
 static gboolean RedrawControlPanel (GtkWidget * viewport, GdkEvent * event, control_panel_action * action) {
 	cairo_t * cr = gdk_cairo_create (gtk_widget_get_window (viewport));
-	action -> ctrl1 . draw (cr);
-	action -> ctrl2 . draw (cr);
-	action -> ctrl3 . draw (cr);
-	action -> ctrl4 . draw (cr);
-	action -> ctrl5 . draw (cr);
-	action -> ctrl6 . draw (cr);
-	action -> ctrl7 . draw (cr);
-	action -> ctrl8 . draw (cr);
-	action -> ctrl9 . draw (cr);
-	action -> ctrla . draw (cr);
-	action -> ctrlb . draw (cr);
-	action -> ctrlc . draw (cr);
+	action -> ctrl_volume . draw (cr);
+	action -> ctrl_attack . draw (cr);
+	action -> ctrl_decay . draw (cr);
+	action -> ctrl_sustain . draw (cr);
+	action -> ctrl_release . draw (cr);
+	action -> ctrl_freq . draw (cr);
+	action -> ctrl_drywet . draw (cr);
+	action -> ctrl_pan . draw (cr);
+	action -> ctrl_porta . draw (cr);
+	action -> ctrl_speed . draw (cr);
+	action -> ctrl_vibrato . draw (cr);
 	action -> vector . draw (cr);
 	action -> keyboard . draw (cr);
 	action -> display . draw (cr);
@@ -309,18 +309,17 @@ static gint ControlPanelKeyon (GtkWidget * viewport, GdkEventButton * event, con
 	point location (event -> x, event -> y);
 	action -> captured = location;
 	if (action -> keyboard . keyon (location)) {action -> key_action (action -> keyboard . key, 100); return TRUE;}
-	action -> ctrl1 . keyon (location);
-	action -> ctrl2 . keyon (location);
-	action -> ctrl3 . keyon (location);
-	action -> ctrl4 . keyon (location);
-	action -> ctrl5 . keyon (location);
-	action -> ctrl6 . keyon (location);
-	action -> ctrl7 . keyon (location);
-	action -> ctrl8 . keyon (location);
-	action -> ctrl9 . keyon (location);
-	action -> ctrla . keyon (location);
-	action -> ctrlb . keyon (location);
-	action -> ctrlc . keyon (location);
+	action -> ctrl_volume . keyon (location);
+	action -> ctrl_attack . keyon (location);
+	action -> ctrl_decay . keyon (location);
+	action -> ctrl_sustain . keyon (location);
+	action -> ctrl_release . keyon (location);
+	action -> ctrl_freq . keyon (location);
+	action -> ctrl_drywet . keyon (location);
+	action -> ctrl_pan . keyon (location);
+	action -> ctrl_porta . keyon (location);
+	action -> ctrl_speed . keyon (location);
+	action -> ctrl_vibrato . keyon (location);
 	action -> vector . keyon (location);
 	action -> encoder . keyon (location);
 	action -> pitch . keyon (location);
@@ -366,18 +365,17 @@ static gint ControlPanelKeyon (GtkWidget * viewport, GdkEventButton * event, con
 static gint ControlPanelKeyoff (GtkWidget * viewport, GdkEventButton * event, control_panel_action * action) {
 	point location (event -> x, event -> y);
 	if (action -> keyboard . keyoff (location)) {action -> key_action (action -> keyboard . key, 0); return TRUE;}
-	action -> ctrl1 . keyoff (location);
-	action -> ctrl2 . keyoff (location);
-	action -> ctrl3 . keyoff (location);
-	action -> ctrl4 . keyoff (location);
-	action -> ctrl5 . keyoff (location);
-	action -> ctrl6 . keyoff (location);
-	action -> ctrl7 . keyoff (location);
-	action -> ctrl8 . keyoff (location);
-	action -> ctrl9 . keyoff (location);
-	action -> ctrla . keyoff (location);
-	action -> ctrlb . keyoff (location);
-	action -> ctrlc . keyoff (location);
+	action -> ctrl_volume . keyoff (location);
+	action -> ctrl_attack . keyoff (location);
+	action -> ctrl_decay . keyoff (location);
+	action -> ctrl_sustain . keyoff (location);
+	action -> ctrl_release . keyoff (location);
+	action -> ctrl_freq . keyoff (location);
+	action -> ctrl_drywet . keyoff (location);
+	action -> ctrl_pan . keyoff (location);
+	action -> ctrl_porta . keyoff (location);
+	action -> ctrl_speed . keyoff (location);
+	action -> ctrl_vibrato . keyoff (location);
 	action -> vector . keyoff (location);
 	action -> encoder . keyoff (location);
 	action -> modulation . keyoff (location);
@@ -393,18 +391,17 @@ static gint ControlPanelMove (GtkWidget * viewport, GdkEventButton * event, cont
 	point delta = location - action -> captured;
 	action -> captured = location;
 	bool redraw = false;
-	if (action -> ctrl1 . move (delta)) {action -> action (action -> ctrl1 . id, action -> ctrl1 . angle, action -> display . area); redraw = true;}
-	if (action -> ctrl2 . move (delta)) {action -> action (action -> ctrl2 . id, action -> ctrl2 . angle, action -> display . area); redraw = true;}
-	if (action -> ctrl3 . move (delta)) {action -> action (action -> ctrl3 . id, action -> ctrl3 . angle, action -> display . area); redraw = true;}
-	if (action -> ctrl4 . move (delta)) {action -> action (action -> ctrl4 . id, action -> ctrl4 . angle, action -> display . area); redraw = true;}
-	if (action -> ctrl5 . move (delta)) {action -> action (action -> ctrl5 . id, action -> ctrl5 . angle, action -> display . area); redraw = true;}
-	if (action -> ctrl6 . move (delta)) {action -> action (action -> ctrl6 . id, action -> ctrl6 . angle, action -> display . area); redraw = true;}
-	if (action -> ctrl7 . move (delta)) {action -> action (action -> ctrl7 . id, action -> ctrl7 . angle, action -> display . area); redraw = true;}
-	if (action -> ctrl8 . move (delta)) {action -> action (action -> ctrl8 . id, action -> ctrl8 . angle, action -> display . area); redraw = true;}
-	if (action -> ctrl9 . move (delta)) {action -> action (action -> ctrl9 . id, action -> ctrl9 . angle, action -> display . area); redraw = true;}
-	if (action -> ctrla . move (delta)) {action -> action (action -> ctrla . id, action -> ctrla . angle, action -> display . area); redraw = true;}
-	if (action -> ctrlb . move (delta)) {action -> action (action -> ctrlb . id, action -> ctrlb . angle, action -> display . area); redraw = true;}
-	if (action -> ctrlc . move (delta)) {action -> action (action -> ctrlc . id, action -> ctrlc . angle, action -> display . area); redraw = true;}
+	if (action -> ctrl_vibrato . move (delta)) {action -> action (action -> ctrl_vibrato . id, action -> ctrl_vibrato . angle, action -> display . area); redraw = true;}
+	if (action -> ctrl_attack . move (delta)) {action -> action (action -> ctrl_attack . id, action -> ctrl_attack . angle, action -> display . area); redraw = true;}
+	if (action -> ctrl_decay . move (delta)) {action -> action (action -> ctrl_decay . id, action -> ctrl_decay . angle, action -> display . area); redraw = true;}
+	if (action -> ctrl_sustain . move (delta)) {action -> action (action -> ctrl_sustain . id, action -> ctrl_sustain . angle, action -> display . area); redraw = true;}
+	if (action -> ctrl_release . move (delta)) {action -> action (action -> ctrl_release . id, action -> ctrl_release . angle, action -> display . area); redraw = true;}
+	if (action -> ctrl_freq . move (delta)) {action -> action (action -> ctrl_freq . id, action -> ctrl_freq . angle, action -> display . area); redraw = true;}
+	if (action -> ctrl_drywet . move (delta)) {action -> action (action -> ctrl_drywet . id, action -> ctrl_drywet . angle, action -> display . area); redraw = true;}
+	if (action -> ctrl_pan . move (delta)) {action -> action (action -> ctrl_pan . id, action -> ctrl_pan . angle, action -> display . area); redraw = true;}
+	if (action -> ctrl_porta . move (delta)) {action -> action (action -> ctrl_porta . id, action -> ctrl_porta . angle, action -> display . area); redraw = true;}
+	if (action -> ctrl_speed . move (delta)) {action -> action (action -> ctrl_speed . id, action -> ctrl_speed . angle, action -> display . area); redraw = true;}
+	if (action -> ctrl_vibrato . move (delta)) {action -> action (action -> ctrl_vibrato . id, action -> ctrl_vibrato . angle, action -> display . area); redraw = true;}
 	if (action -> vector . move (delta)) {
 		action -> action (action -> vector . id, action -> vector . position . x, action -> vector . position . y, action -> display . area);
 		redraw = true;

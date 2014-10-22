@@ -66,7 +66,6 @@ program eclipse [
 [[cb *ret 9 *v] [add *ret "Attack = " *v]]
 [[cb *ret 10 *v] [add *ret "Decay = " *v]]
 [[cb *ret 11 *v] [add *ret "Sustain = " *v]]
-[[cb *ret 12 *v] [add *ret "Release = " *v]]
 [[cb *ret 16 *x *y] [add *ret "Vector = [" *x " / " *y "]"]]
 
 [[cb *ret [] *delta]

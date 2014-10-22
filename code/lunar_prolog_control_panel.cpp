@@ -46,6 +46,7 @@ public:
 	button_active_graphics program0, program1, program2, program3, program4, program5, program6, program7, program8, program9;
 	button_active_graphics selector0, selector1, selector2, selector3, selector4, selector5, selector6, selector7, selector8, selector9;
 	button_active_graphics add_one, sub_one, delta_1, delta_8, delta_128;
+	button_active_graphics poly_mono, porta_on_off;
 	encoder_active_graphics encoder;
 	slider_active_graphics pitch, modulation;
 	point captured;
@@ -210,7 +211,9 @@ public:
 	delta_128 (point (1100.0, 160.0), 305, resources, true),
 	encoder (point (944.0, 110.0), 401, resources, true),
 	pitch (point (40.0, 280.0), 501, true, resources, true),
-	modulation (point (60.0, 280.0), 502, false, resources, true)
+	modulation (point (60.0, 280.0), 502, false, resources, true),
+	poly_mono (point (30.0, 260.0), 503, resources, true),
+	porta_on_off (point (60.0, 260.0), 504, resources, true)
 	{
 		this -> root = root;
 		this -> directory = directory;
@@ -273,6 +276,8 @@ static gboolean RedrawControlPanel (GtkWidget * viewport, GdkEvent * event, cont
 	action -> encoder . draw (cr);
 	action -> pitch . draw (cr);
 	action -> modulation . draw (cr);
+	action -> poly_mono . draw (cr);
+	action -> porta_on_off . draw (cr);
 	cairo_destroy (cr);
 	return FALSE;
 }
@@ -325,6 +330,8 @@ static gint ControlPanelKeyon (GtkWidget * viewport, GdkEventButton * event, con
 	action -> pitch . keyon (location);
 	action -> modulation . keyon (location);
 	bool redraw = false;
+	if (action -> poly_mono . keyon (location)) {action -> poly_mono . engaged = ! action -> poly_mono . engaged; redraw = true;}
+	if (action -> porta_on_off . keyon (location)) {action -> porta_on_off . engaged = ! action -> porta_on_off . engaged; redraw = true;}
 	if (action -> selector0 . keyon (location)) {action -> program_action (& action -> selector0, action -> display . area); redraw = true;}
 	if (action -> selector1 . keyon (location)) {action -> program_action (& action -> selector1, action -> display . area); redraw = true;}
 	if (action -> selector2 . keyon (location)) {action -> program_action (& action -> selector2, action -> display . area); redraw = true;}
@@ -379,6 +386,8 @@ static gint ControlPanelKeyoff (GtkWidget * viewport, GdkEventButton * event, co
 	action -> vector . keyoff (location);
 	action -> encoder . keyoff (location);
 	action -> modulation . keyoff (location);
+	action -> poly_mono . keyoff (location);
+	action -> porta_on_off . keyoff (location);
 	bool redraw = false;
 	if (action -> pitch . keyoff (location)) {redraw = true;}
 	if (action -> add_one . keyoff (location)) {action -> add_one . engaged = false; redraw = true;}
@@ -391,7 +400,7 @@ static gint ControlPanelMove (GtkWidget * viewport, GdkEventButton * event, cont
 	point delta = location - action -> captured;
 	action -> captured = location;
 	bool redraw = false;
-	if (action -> ctrl_vibrato . move (delta)) {action -> action (action -> ctrl_vibrato . id, action -> ctrl_vibrato . angle, action -> display . area); redraw = true;}
+	if (action -> ctrl_volume . move (delta)) {action -> action (action -> ctrl_vibrato . id, action -> ctrl_vibrato . angle, action -> display . area); redraw = true;}
 	if (action -> ctrl_attack . move (delta)) {action -> action (action -> ctrl_attack . id, action -> ctrl_attack . angle, action -> display . area); redraw = true;}
 	if (action -> ctrl_decay . move (delta)) {action -> action (action -> ctrl_decay . id, action -> ctrl_decay . angle, action -> display . area); redraw = true;}
 	if (action -> ctrl_sustain . move (delta)) {action -> action (action -> ctrl_sustain . id, action -> ctrl_sustain . angle, action -> display . area); redraw = true;}

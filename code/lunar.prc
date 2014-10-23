@@ -23,6 +23,7 @@ program lunar #machine := "prolog.lunar"
 				Gbb Gb G G# Gx
 				Abb Ab A A# Ax
 				Bbb Bb B B# Bx
+				midi
 			]
 
 #machine small_keyboard := "small_keyboard"
@@ -62,6 +63,8 @@ program lunar #machine := "prolog.lunar"
 #machine filter := "filter"
 
 #machine orbiter := "orbiter"
+
+#machine midi := "midi"
 
 [[Moonbase *base *distributor]
 	[create_atom *modules] [create_atom *parameters]

@@ -16,7 +16,7 @@ objects = \
 	prolog_lunar.o lunar_core.o lunar_prolog_oscilloscope.o lunar_prolog_keyboard.o lunar_prolog_operator.o lunar_operator.o\
 	keyboard_calculator.o lunar_prolog_moonbase.o lunar_moonbase.o lunar_prolog_landers.o lunar_landers.o lunar_wave.o\
 	lunar_prolog_vector.o lunar_prolog_control_panel.o graphics2d.o graphic_resources.o multiplatform_audio.o\
-	prcgtk.o
+	lunar_linux_midi.o prcgtk.o
 
 prc_resources = $(pi)studio_prc.o $(pi)conductor_prc.o $(pi)midi_prc.o $(pi)http_prc.o $(pi)store_prc.o $(pi)f1_prc.o $(pi)help_prc.o $(pi)record_prc.o\
 	$(pi)neural_prc.o $(pi)keyboard_prc.o $(pi)sql_prc.o $(pi)test_prc.o $(pi)xml_prc.o $(pi)distribution_prc.o $(pi)control_prc.o lunar_prc.o
@@ -68,8 +68,11 @@ lunar_prolog_control_panel.o: ../code/lunar_prolog_control_panel.cpp ../code/lun
 			$(pc)graphics2d.h ../code/graphic_resources.h
 	g++ -Wno-write-strings -I. -I$(pc) ../code/lunar_prolog_control_panel.cpp -c -o lunar_prolog_control_panel.o `pkg-config --cflags gtk+-2.0`
 
-prolog_lunar.o: ../code/prolog_lunar.h ../code/prolog_lunar.cpp ../code/lunar.h $(pc)prolog.h
+prolog_lunar.o: ../code/prolog_lunar.h ../code/prolog_lunar.cpp ../code/lunar.h $(pc)prolog.h ../code/lunar_linux_midi.h
 	g++ -Wno-write-strings -I. -I$(pc) ../code/prolog_lunar.cpp -c -o prolog_lunar.o
+
+lunar_linux_midi.o: ../code/lunar_linux_midi.h ../code/lunar_linux_midi.cpp $(pc)prolog.h
+	g++ -Wno-write-strings -I. -I$(pc) ../code/lunar_linux_midi.cpp -c -o lunar_linux_midi.o
 
 graphics2d.o: $(pc)graphics2d.cpp $(pc)graphics2d.h
 	g++ -Wno-write-strings -I. -I$(pc) $(pc)graphics2d.cpp -c -o graphics2d.o

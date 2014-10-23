@@ -25,6 +25,7 @@
 //////////////////////////////////////////////////////////////////////
 
 #include "lunar_prolog_landers.h"
+#include "lunar_linux_midi.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -179,6 +180,32 @@ public:
 	}
 };
 
+class midi_class : public PrologNativeCode {
+public:
+	PrologDirectory * directory;
+	bool code (PrologElement * parameters, PrologResolution * resolution) {
+		if (directory == 0) return false;
+		PrologElement * atom = 0;
+		PrologElement * location = 0;
+		while (parameters -> isPair ()) {
+			PrologElement * el = parameters -> getLeft ();
+			if (el -> isAtom ()) atom = el;
+			if (el -> isText ()) location = el;
+			parameters = parameters -> getRight ();
+		}
+		if (atom == 0) return false;
+		if (atom -> getAtom () -> getMachine () != 0) return false;
+		char * midi_location;
+		if (location != 0) midi_location = location -> getText ();
+		else midi_location = "/dev/input/midi0";
+		midi_code * mc = new midi_code (directory, atom -> getAtom (), midi_location);
+		if (atom -> getAtom () -> setMachine (mc)) return true;
+		delete mc;
+		return false;
+	}
+	midi_class (PrologDirectory * directory) {this -> directory = directory;}
+};
+
 void PrologLunarServiceClass :: init (PrologRoot * root, PrologDirectory * directory) {
 	this -> root = root;
 	this -> directory = directory;
@@ -220,6 +247,7 @@ PrologNativeCode * PrologLunarServiceClass :: getNativeCode (char * name) {
 	if (strcmp (name, "sensitivity") == 0) return new sensitivity_class (& core);
 	if (strcmp (name, "moonbase") == 0) return new moonbase_class (directory, & core);
 	if (strcmp (name, "orbiter") == 0) return new orbiter_statistics ();
+	if (strcmp (name, "midi") == 0) return new midi_class (directory);
 	return 0;
 }
 

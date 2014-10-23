@@ -8,7 +8,7 @@ program lunar #machine := "prolog.lunar"
 			[
 				small_keyboard keyboard big_keyboard oscilloscope vector CommandCentre
 				dock undock noise orbiter
-				core moonbase operator parameter_block key_map velocity_map impulse trigger porta_trigger mixer stereo_mixer gateway lfo adsr eg
+				core moonbase operator parameter_block key_map velocity_map impulse trigger inactive_trigger mixer stereo_mixer gateway lfo adsr eg
 				square_operator saw_operator noise_operator sampler_operator sensitivity filter delay pan power_pan linear_pan
 				signal freq amp ratio sync attack decay sustain release hold busy portamento porta time speed wave pulse phase poly feedback highdamp
 				mono left right mic mic_left mic_right breakpoint
@@ -39,7 +39,7 @@ program lunar #machine := "prolog.lunar"
 #machine velocity_map := "velocity_map"
 #machine impulse := "impulse"
 #machine trigger := "trigger"
-#machine porta_trigger := "porta_trigger"
+#machine inactive_trigger := "inactive_trigger"
 #machine mixer := "mixer"
 #machine stereo_mixer := "stereo_mixer"
 #machine lfo := "lfo"

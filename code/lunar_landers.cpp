@@ -87,13 +87,14 @@ lunar_map :: lunar_map (orbiter_core * core, int initial) : orbiter (core) {
 	initialise ();
 }
 
-int lunar_trigger :: numberOfInputs (void) {return 4;}
+int lunar_trigger :: numberOfInputs (void) {return 5;}
 char * lunar_trigger :: inputName (int ind) {
 	switch (ind) {
 	case 0: return "BUSY"; break;
-	case 1: return "PORTA"; break;
-	case 2: return "TIME"; break;
-	case 3: return "CONTROL"; break;
+	case 1: return "HOLD"; break;
+	case 2: return "PORTA"; break;
+	case 3: return "TIME"; break;
+	case 4: return "CONTROL"; break;
 	default: break;
 	}
 	return orbiter :: inputName (ind);
@@ -101,9 +102,10 @@ char * lunar_trigger :: inputName (int ind) {
 double * lunar_trigger :: inputAddress (int ind) {
 	switch (ind) {
 	case 0: return & busy; break;
-	case 1: return & porta_switch; break;
-	case 2: return & porta_time; break;
-	case 3: return & porta_control; break;
+	case 1: return & hold_ctrl; break;
+	case 2: return & porta_switch; break;
+	case 3: return & porta_time; break;
+	case 4: return & porta_control; break;
 	default: break;
 	}
 	return orbiter :: inputAddress (ind);
@@ -152,7 +154,7 @@ void lunar_trigger :: drop_stack (int key) {
 		}
 	}
 	if (continue_playing) return;
-	if (keystack_pointer > 0) keyon (keystack [--keystack_pointer]);
+	if (keystack_pointer > 0) sub_keyon (keystack [--keystack_pointer]);
 }
 void lunar_trigger :: sub_keyon (int key) {
 	if (key < 0) key = 0;
@@ -182,7 +184,7 @@ void lunar_trigger :: keyon (int key, int velocity) {
 }
 void lunar_trigger :: keyoff (int key) {
 	pthread_mutex_lock (& critical);
-	this -> key = -1; drop_stack (key); if (keystack_pointer == 0) trigger = 0.0;
+	this -> key = -1; drop_stack (key); if (keystack_pointer == 0 && hold_ctrl == 0.0) trigger = 0.0;
 	pthread_mutex_unlock (& critical);
 }
 void lunar_trigger :: keyoff (void) {
@@ -203,6 +205,7 @@ bool lunar_trigger :: release (void) {
 	return ret;
 }
 void lunar_trigger :: move (void) {
+	if (trigger != 0.0 && keystack_pointer == 0 && hold_ctrl == 0.0) trigger = 0.0;
 	if (signal == target) return;
 	if (time >= 1.0) {signal = target; return;}
 	signal = origin + delta * time;
@@ -215,6 +218,7 @@ lunar_trigger :: lunar_trigger (orbiter_core * core, bool active, lunar_trigger 
 	signal = trigger = busy = 0.0;
 	origin = delta = target = 0.0;
 	porta_switch = porta_time = porta_control = 0.0;
+	hold_ctrl = 0.0;
 	time = 2.0;
 	velocity = 12800.0;
 	key_map = 0;

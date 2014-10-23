@@ -10,7 +10,7 @@ program lunar #machine := "prolog.lunar"
 				dock undock noise orbiter
 				core moonbase operator parameter_block key_map velocity_map impulse trigger porta_trigger mixer stereo_mixer gateway lfo adsr eg
 				square_operator saw_operator noise_operator sampler_operator sensitivity filter delay pan power_pan linear_pan
-				signal freq amp ratio sync attack decay sustain release busy portamento time speed wave pulse phase poly feedback highdamp
+				signal freq amp ratio sync attack decay sustain release hold busy portamento porta time speed wave pulse phase poly feedback highdamp
 				mono left right mic mic_left mic_right breakpoint
 				keyon keyoff control
 				Lunar Lander Activate Deactivate
@@ -109,10 +109,11 @@ program lunar #machine := "prolog.lunar"
 	[AddParameterBlock *parameters release *adsr *selector 0 "time"]
 ]
 
-[[InsertIO *parameters *trigger *selector [["BUSY" "PORTA" "TIME" "CONTROL" : *] *]]
-	[AddParameterBlock *parameters portamento *trigger *selector 0 "onoff"]
+[[InsertIO *parameters *trigger *selector [["BUSY" "HOLD" "PORTA" "TIME" "CONTROL" : *] *]]
+	[AddParameterBlock *parameters porta *trigger *selector 0 "onoff"]
 	[AddParameterBlock *parameters time *trigger *selector 0 "time"]
 	[AddParameterBlock *parameters control *trigger *selector 0 "index"]
+	[AddParameterBlock *parameters hold *trigger *selector 0 "onoff"]
 ]
 
 [[InsertIO *parameters *lfo *selector [["SPEED" "WAVE" "PULSE" "PHASE" "SYNC" : *] *]]

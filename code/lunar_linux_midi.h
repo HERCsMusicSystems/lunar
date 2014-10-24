@@ -31,8 +31,24 @@
 
 class midi_code : public PrologNativeCode {
 public:
+	unsigned char command;
+	unsigned char channel;
+	unsigned char v1, v2;
+	int fd;
+	pthread_t thread;
+	bool should_continue;
+	PrologAtom * atom;
+	PrologAtom * callback;
+	PrologRoot * root;
+	PrologAtom * keyoff, * keyon, * polyaftertouch, * control, * programchange, * aftertouch, * pitch;
+	PrologAtom * sysex, * timingclock, * start, * cont, * stop, * activesensing;
+	void move (void);
+	void one_parameter (void);
+	void two_parameters (void);
+	void many_parameter (void);
 	bool code (PrologElement * parameters, PrologResolution * resolution);
-	midi_code (PrologDirectory * directory, PrologAtom * atom, char * location);
+	midi_code (PrologRoot * root, PrologDirectory * directory, PrologAtom * atom, PrologAtom * callback, char * location);
+	~ midi_code (void);
 };
 
 #endif

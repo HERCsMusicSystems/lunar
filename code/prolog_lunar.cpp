@@ -182,28 +182,30 @@ public:
 
 class midi_class : public PrologNativeCode {
 public:
+	PrologRoot * root;
 	PrologDirectory * directory;
 	bool code (PrologElement * parameters, PrologResolution * resolution) {
 		if (directory == 0) return false;
 		PrologElement * atom = 0;
+		PrologElement * callback = 0;
 		PrologElement * location = 0;
 		while (parameters -> isPair ()) {
 			PrologElement * el = parameters -> getLeft ();
-			if (el -> isAtom ()) atom = el;
+			if (el -> isAtom ()) if (atom == 0) atom = el; else callback = el;
 			if (el -> isText ()) location = el;
 			parameters = parameters -> getRight ();
 		}
-		if (atom == 0) return false;
+		if (atom == 0 || callback == 0) return false;
 		if (atom -> getAtom () -> getMachine () != 0) return false;
 		char * midi_location;
 		if (location != 0) midi_location = location -> getText ();
 		else midi_location = "/dev/input/midi0";
-		midi_code * mc = new midi_code (directory, atom -> getAtom (), midi_location);
+		midi_code * mc = new midi_code (root, directory, atom -> getAtom (), callback -> getAtom (), midi_location);
 		if (atom -> getAtom () -> setMachine (mc)) return true;
 		delete mc;
 		return false;
 	}
-	midi_class (PrologDirectory * directory) {this -> directory = directory;}
+	midi_class (PrologRoot * root, PrologDirectory * directory) {this -> root = root; this -> directory = directory;}
 };
 
 void PrologLunarServiceClass :: init (PrologRoot * root, PrologDirectory * directory) {
@@ -247,7 +249,7 @@ PrologNativeCode * PrologLunarServiceClass :: getNativeCode (char * name) {
 	if (strcmp (name, "sensitivity") == 0) return new sensitivity_class (& core);
 	if (strcmp (name, "moonbase") == 0) return new moonbase_class (directory, & core);
 	if (strcmp (name, "orbiter") == 0) return new orbiter_statistics ();
-	if (strcmp (name, "midi") == 0) return new midi_class (directory);
+	if (strcmp (name, "midi") == 0) return new midi_class (this -> root, directory);
 	return 0;
 }
 

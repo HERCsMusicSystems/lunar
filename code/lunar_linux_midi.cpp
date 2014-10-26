@@ -25,51 +25,45 @@
 ////////////////////////////////////////////////////////////////////////
 
 #include "lunar_linux_midi.h"
-int tread (int x, unsigned char * command, int size) {return 0;}
+#include <unistd.h>
+#include <fcntl.h>
 
 static void * midi_runner (void * parameters) {
 	midi_code * mc = (midi_code *) parameters;
 	mc -> should_continue = true;
 	while (mc -> should_continue) {
 		mc -> move ();
-		Sleep (1000);
+		usleep (10000);
 	}
 	mc -> should_continue = true;
 	return 0;
 };
 
 void midi_code :: move (void) {
-	while (tread (fd, & v1, 1) > 0) {
+	while (read (fd, & v1, 1) > 0) {
 		if (v1 < 128) {
 			if ((command >= 0x80 && command < 0xc0) || (command >= 0xe0 && command < 0xf0)) {
-				tread (fd, & v2, 1); two_parameters ();
+				read (fd, & v2, 1); two_parameters ();
 			} else one_parameter ();
 		} else {
 			command = v1; channel = command & 0xf;
 			if ((command >= 0x80 && command < 0xc0) || (command >= 0xe0 && command < 0xf0)) {
-				command &= 0xf0; tread (fd, & v1, 1); tread (fd, & v2, 1); two_parameters ();
+				command &= 0xf0; read (fd, & v1, 1); read (fd, & v2, 1); two_parameters ();
 			} else {
 				if (command < 0xf0) {
-					command &= 0xf0; tread (fd, & v1, 1); one_parameter ();
+					command &= 0xf0; read (fd, & v1, 1); one_parameter ();
 				} else {
 				}
 			}
 		}
 	}
-	PrologElement * query = root -> pair (root -> atom (callback),
-								root -> pair (root -> atom ((PrologAtom *) 0),
-								root -> earth ()));
-	query = root -> pair (root -> head (0), root -> pair (query, root -> earth ()));
-	root -> resolution (query);
-	delete query;
 }
 
 void midi_code :: one_parameter (void) {
 	PrologElement * query = root -> pair (root -> atom (callback),
 								root -> pair (root -> atom (command < 0xd0 ? programchange : aftertouch),
 								root -> pair (root -> integer (v1),
-								root -> pair (root -> integer (v2),
-								root -> earth ()))));
+								root -> earth ())));
 	query = root -> pair (root -> head (0), root -> pair (query, root -> earth ()));
 	root -> resolution (query);
 	delete query;
@@ -88,7 +82,8 @@ void midi_code :: two_parameters (void) {
 	PrologElement * query = root -> pair (root -> atom (callback),
 								root -> pair (root -> atom (command_atom),
 								root -> pair (root -> integer (v1),
-								root -> earth ())));
+								root -> pair (root -> integer (v2),
+								root -> earth ()))));
 	query = root -> pair (root -> head (0), root -> pair (query, root -> earth ()));
 	root -> resolution (query);
 	delete query;
@@ -124,15 +119,16 @@ midi_code :: midi_code (PrologRoot * root, PrologDirectory * directory, PrologAt
 	if (callback != 0) {COLLECTOR_REFERENCE_INC (callback);}
 	pthread_create (& thread, 0, midi_runner, this);
 	pthread_detach (thread);
-	//fd = open (location, O_RDONLY | O_NONBLOCK);
+	fd = open (location, O_RDONLY | O_NONBLOCK);
 }
 
 midi_code :: ~ midi_code (void) {
-	//if (fd >= 0) close (fd);
+	if (fd >= 0) close (fd);
 	if (should_continue) {
 		should_continue = false;
-		while (! should_continue) Sleep (100);
+		while (! should_continue) usleep (100);
 		should_continue = false;
 	}
 	if (callback != 0) callback -> removeAtom (); callback = 0;
 }
+

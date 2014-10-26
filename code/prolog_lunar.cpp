@@ -199,7 +199,7 @@ public:
 		if (atom -> getAtom () -> getMachine () != 0) return false;
 		char * midi_location;
 		if (location != 0) midi_location = location -> getText ();
-		else midi_location = "/dev/input/midi0";
+		else midi_location = "/dev/snd/midiC2D0";
 		midi_code * mc = new midi_code (root, directory, atom -> getAtom (), callback -> getAtom (), midi_location);
 		if (atom -> getAtom () -> setMachine (mc)) return true;
 		delete mc;

@@ -42,7 +42,7 @@ public:
 	PrologRoot * root;
 	PrologAtom * keyoff, * keyon, * polyaftertouch, * control, * programchange, * aftertouch, * pitch;
 	PrologAtom * sysex, * timingclock, * start, * cont, * stop, * activesensing;
-	void move (void);
+	void run (void);
 	void one_parameter (void);
 	void two_parameters (void);
 	void many_parameter (void);

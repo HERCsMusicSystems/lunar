@@ -25,38 +25,54 @@
 ////////////////////////////////////////////////////////////////////////
 
 #include "lunar_linux_midi.h"
+#ifndef WIN32
 #include <unistd.h>
+int tmread (int fd) {
+	fd_set readset;
+	FD_ZERO (& readset);
+	FD_SET (fd, & readset);
+	timeval timeout;
+	timeout . tv_sec = 1;
+	timeout . tv_usec = 0;
+	if (select (fd + 1, & readset, 0, 0, & timeout) > 0) {int v; read (fd, & v, 1); return v;}
+	return -1;
+}
+#else
+#define tmread(fd) 0
+#define usleep(time)
+#define open(a, b) 0
+#define close(a) 0
+#endif
 #include <fcntl.h>
 
 static void * midi_runner (void * parameters) {
 	midi_code * mc = (midi_code *) parameters;
-	mc -> should_continue = true;
-	while (mc -> should_continue) {
-		mc -> move ();
-		usleep (10000);
-	}
-	mc -> should_continue = true;
+	mc -> run ();
 	return 0;
 };
 
-void midi_code :: move (void) {
-	while (read (fd, & v1, 1) > 0) {
+void midi_code :: run (void) {
+	should_continue = true;
+	while (should_continue) {
+		v1 = tmread (fd);
+		if (v1 < 0) continue;
 		if (v1 < 128) {
 			if ((command >= 0x80 && command < 0xc0) || (command >= 0xe0 && command < 0xf0)) {
-				read (fd, & v2, 1); two_parameters ();
+				v2 = tmread (fd); two_parameters ();
 			} else one_parameter ();
 		} else {
 			command = v1; channel = command & 0xf;
 			if ((command >= 0x80 && command < 0xc0) || (command >= 0xe0 && command < 0xf0)) {
-				command &= 0xf0; read (fd, & v1, 1); read (fd, & v2, 1); two_parameters ();
+				command &= 0xf0; v1 = tmread (fd); v2 = tmread (fd); two_parameters ();
 			} else {
 				if (command < 0xf0) {
-					command &= 0xf0; read (fd, & v1, 1); one_parameter ();
+					command &= 0xf0; v1 = tmread (fd); one_parameter ();
 				} else {
 				}
 			}
 		}
 	}
+	should_continue = true;
 }
 
 void midi_code :: one_parameter (void) {

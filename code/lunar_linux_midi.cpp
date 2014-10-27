@@ -62,8 +62,9 @@ void midi_code :: move (void) {
 void midi_code :: one_parameter (void) {
 	PrologElement * query = root -> pair (root -> atom (callback),
 								root -> pair (root -> atom (command < 0xd0 ? programchange : aftertouch),
+								root -> pair (root -> integer (channel),
 								root -> pair (root -> integer (v1),
-								root -> earth ())));
+								root -> earth ()))));
 	query = root -> pair (root -> head (0), root -> pair (query, root -> earth ()));
 	root -> resolution (query);
 	delete query;
@@ -81,9 +82,10 @@ void midi_code :: two_parameters (void) {
 	}
 	PrologElement * query = root -> pair (root -> atom (callback),
 								root -> pair (root -> atom (command_atom),
+								root -> pair (root -> integer (channel),
 								root -> pair (root -> integer (v1),
 								root -> pair (root -> integer (v2),
-								root -> earth ()))));
+								root -> earth ())))));
 	query = root -> pair (root -> head (0), root -> pair (query, root -> earth ()));
 	root -> resolution (query);
 	delete query;

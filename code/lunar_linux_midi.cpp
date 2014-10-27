@@ -27,6 +27,7 @@
 #include "lunar_linux_midi.h"
 #ifndef WIN32
 #include <unistd.h>
+#include <sys/select.h>
 int tmread (int fd) {
 	fd_set readset;
 	FD_ZERO (& readset);

@@ -47,6 +47,7 @@ public:
 	button_active_graphics selector0, selector1, selector2, selector3, selector4, selector5, selector6, selector7, selector8, selector9;
 	button_active_graphics add_one, sub_one, delta_1, delta_8, delta_128;
 	button_active_graphics poly_mono, porta_on_off;
+	button_active_graphics store, restore;
 	encoder_active_graphics encoder;
 	slider_active_graphics pitch, modulation;
 	point captured;
@@ -227,8 +228,8 @@ public:
 	program7 (point (820.0, 160.0), 107, resources, true),
 	program8 (point (860.0, 160.0), 108, resources, true),
 	program9 (point (900.0, 160.0), 109, resources, true),
-	sub_one (point (1040.0, 120.0), 302, resources, true),
-	add_one (point (1080.0, 120.0), 301, resources, true),
+	sub_one (point (1040.0, 140.0), 302, resources, true),
+	add_one (point (1080.0, 140.0), 301, resources, true),
 	delta_1 (point (1020.0, 160.0), 303, resources, true),
 	delta_8 (point (1060.0, 160.0), 304, resources, true),
 	delta_128 (point (1100.0, 160.0), 305, resources, true),
@@ -236,7 +237,9 @@ public:
 	pitch (point (40.0, 280.0), 501, true, resources, true),
 	modulation (point (60.0, 280.0), 502, false, resources, true),
 	poly_mono (point (30.0, 260.0), 503, resources, true),
-	porta_on_off (point (60.0, 260.0), 504, resources, true)
+	porta_on_off (point (60.0, 260.0), 504, resources, true),
+	store (point (1040.0, 110.0), 601, resources, true),
+	restore (point (1080.0, 110.0), 602, resources, true)
 	{
 		this -> root = root;
 		this -> directory = directory;
@@ -303,6 +306,8 @@ static gboolean RedrawControlPanel (GtkWidget * viewport, GdkEvent * event, cont
 	action -> modulation . draw (cr);
 	action -> poly_mono . draw (cr);
 	action -> porta_on_off . draw (cr);
+	action -> store . draw (cr);
+	action -> restore . draw (cr);
 	cairo_destroy (cr);
 	return FALSE;
 }
@@ -391,6 +396,10 @@ static gint ControlPanelKeyon (GtkWidget * viewport, GdkEventButton * event, con
 	}
 	if (action -> add_one . keyon (location)) {action -> value_change_action (1); action -> add_one . engaged = true; redraw = true;}
 	if (action -> sub_one . keyon (location)) {action -> value_change_action (-1); action -> sub_one . engaged = true; redraw = true;}
+	if (action -> store . keyon (location)) {
+		GtkWidget * dialog = gtk_file_chooser_dialog_new ("Open File", GTK_WINDOW (viewport), GTK_FILE_CHOOSER_ACTION_OPEN, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT, 0);
+		gtk_dialog_run (GTK_DIALOG (dialog));
+	}
 	if (redraw) gtk_widget_queue_draw (viewport);
 	return TRUE;
 }

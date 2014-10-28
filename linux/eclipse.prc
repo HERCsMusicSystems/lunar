@@ -68,6 +68,15 @@ program eclipse [
 [[cb *ret 11 *v] [add *ret "Sustain = " *v]]
 [[cb *ret 16 *x *y] [add *ret "Vector = [" *x " / " *y "]"]]
 
+;[[cb cb *1 *2 *3 *4 *5 : *] [show "I am here!"]]
+[[cb cb *poly : *x]
+	[is_var *poly]
+	[cb_callback : *cb]
+	[show *cb]
+	[*cb control 127 : *poly]
+	[show *poly]
+]
+
 [[cb *ret [] *delta]
 	;[add *ret "delta [" *delta "]"]
 	[cb_path : *path]

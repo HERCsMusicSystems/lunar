@@ -53,6 +53,29 @@ public:
 	int programs [10];
 	int current_program;
 	int current_delta;
+	void feedback_on_controllers (void) {
+		PrologElement * query = root -> earth ();
+		query = root -> pair (root -> var (12), query);
+		query = root -> pair (root -> var (11), query);
+		query = root -> pair (root -> var (10), query);
+		query = root -> pair (root -> var (9), query);
+		query = root -> pair (root -> var (8), query);
+		query = root -> pair (root -> var (7), query);
+		query = root -> pair (root -> var (6), query);
+		query = root -> pair (root -> var (5), query);
+		query = root -> pair (root -> var (4), query);
+		query = root -> pair (root -> var (3), query);
+		query = root -> pair (root -> var (2), query);
+		query = root -> pair (root -> var (1), query);
+		query = root -> pair (root -> var (0), query);
+		query = root -> pair (query, root -> pair (root -> pair (root -> atom (command), root -> pair (root -> atom (command), query -> duplicate ())), root -> earth ()));
+		root -> resolution (query);
+		PrologElement * var = query;
+		if (var -> isPair ()) var = var -> getLeft ();
+		PrologElement * el;
+		if (var -> isPair ()) {el = var -> getLeft (); if (el -> isDouble ()) poly_mono . engaged = el -> getDouble () != 0.0; var = var -> getRight ();}
+		delete query;
+	}
 	void reset_buttons (int id) {
 		if (selector0 . id <= id && id <= selector9 . id) {
 			selector0 . engaged = false;
@@ -224,6 +247,8 @@ public:
 		current_program = 0;
 		for (int ind = 0; ind < 10; ind++) programs [ind] = 0;
 		current_delta = 128;
+		program_action (& selector0, display . area);
+		feedback_on_controllers ();
 	}
 	~ control_panel_action (void) {
 		atom -> setMachine (0);

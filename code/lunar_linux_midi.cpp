@@ -74,7 +74,8 @@ void midi_code :: run (void) {
 				switch (command) {
 				case 0xf0:
 					el = root -> earth ();
-					query = root -> pair (root -> head (0), root -> pair (root -> pair (root -> atom (sysex), el), root -> earth ()));
+					query = root -> pair (root -> head (0), root -> pair (root -> pair (root -> atom (callback),
+											root -> pair (root -> atom (sysex), el)), root -> earth ()));
 					sub = tmread (fd);
 					while (sub >= 0 && sub < 128) {
 						el -> setPair (root -> integer (sub), root -> earth ());
@@ -84,23 +85,28 @@ void midi_code :: run (void) {
 					root -> resolution (query); delete query;
 					break;
 				case 0xf8:
-					query = root -> pair (root -> head (0), root -> pair (root -> pair (root -> atom (timingclock), root -> earth ()), root -> earth ()));
+					query = root -> pair (root -> head (0), root -> pair (root -> pair (root -> atom (callback),
+											root -> pair (root -> atom (timingclock), root -> earth ())), root -> earth ()));
 					root -> resolution (query); delete query;
 					break;
 				case 0xfa:
-					query = root -> pair (root -> head (0), root -> pair (root -> pair (root -> atom (start), root -> earth ()), root -> earth ()));
+					query = root -> pair (root -> head (0), root -> pair (root -> pair (root -> atom (callback),
+											root -> pair (root -> atom (start), root -> earth ())), root -> earth ()));
 					root -> resolution (query); delete query;
 					break;
 				case 0xfb:
-					query = root -> pair (root -> head (0), root -> pair (root -> pair (root -> atom (cont), root -> earth ()), root -> earth ()));
+					query = root -> pair (root -> head (0), root -> pair (root -> pair (root -> atom (callback),
+											root -> pair (root -> atom (cont), root -> earth ())), root -> earth ()));
 					root -> resolution (query); delete query;
 					break;
 				case 0xfc:
-					query = root -> pair (root -> head (0), root -> pair (root -> pair (root -> atom (stop), root -> earth ()), root -> earth ()));
+					query = root -> pair (root -> head (0), root -> pair (root -> pair (root -> atom (callback),
+											root -> pair (root -> atom (stop), root -> earth ())), root -> earth ()));
 					root -> resolution (query); delete query;
 					break;
 				case 0xfe:
-					query = root -> pair (root -> head (0), root -> pair (root -> pair (root -> atom (activesensing), root -> earth ()), root -> earth ()));
+					query = root -> pair (root -> head (0), root -> pair (root -> pair (root -> atom (callback),
+											root -> pair (root -> atom (activesensing), root -> earth ())), root -> earth ()));
 					root -> resolution (query); delete query;
 					break;
 				}

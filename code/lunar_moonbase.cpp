@@ -98,8 +98,9 @@ void moonbase :: keyoff (int key, int velocity) {
 	if (trigger != 0) trigger -> keyoff ();
 	pthread_mutex_unlock (& critical);
 }
-void moonbase :: mono (void) {mono_mode = true;}
-void moonbase :: poly (void) {mono_mode = false;}
+void moonbase :: mono (void) {mono_mode = true; keyoff ();}
+void moonbase :: poly (void) {mono_mode = false; keyoff ();}
+bool moonbase :: isMonoMode (void) {return mono_mode;}
 void moonbase :: control (int ctrl, int value) {
 	if (ctrl < 0 || ctrl > 128) return;
 	if (controllers [ctrl] != 0) {
@@ -108,6 +109,13 @@ void moonbase :: control (int ctrl, int value) {
 	} else if (ctrl > 31) ctrl_lsbs [ctrl - 32] = value;
 	if (ctrl == 126) mono ();
 	if (ctrl == 127) poly ();
+}
+double moonbase :: getControl (int ctrl) {
+	if (ctrl < 0 || ctrl > 128) return 0.0;
+	if (controllers [ctrl] != 0) return * (controllers [ctrl] -> outputAddress (0));
+	if (ctrl == 126) return mono_mode ? 1.0 : 0.0;
+	if (ctrl == 127) return mono_mode ? 0.0 : 1.0;
+	return 0.0;
 }
 bool moonbase :: release (void) {
 	lunar_map * map_to_delete = map;

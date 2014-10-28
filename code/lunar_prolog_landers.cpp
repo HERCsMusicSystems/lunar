@@ -306,12 +306,14 @@ public:
 		PrologElement * velocity = 0;
 		PrologElement * note = 0;
 		PrologElement * octave = 0;
+		PrologElement * var = 0;
 		PrologElement * pp = parameters;
 		while (pp -> isPair ()) {
 			PrologElement * el = pp -> getLeft ();
 			if (el -> isAtom ()) atom = el;
 			if (el -> isEarth ()) atom = el;
 			if (el -> isInteger ()) if (key == 0 && note == 0) key = el; else velocity = el;
+			if (el -> isVar ()) var = el;
 			if (el -> isPair ()) {
 				note = el -> getLeft ();
 				octave = el -> getRight ();
@@ -321,6 +323,7 @@ public:
 			}
 			pp = pp -> getRight ();
 		}
+		if (pp -> isVar ()) var = pp;
 		moonbase * trigger = (moonbase *) module;
 		if (atom != 0) {
 			if (atom -> isEarth ()) {
@@ -347,9 +350,12 @@ public:
 					return true;
 				}
 				if (a == control) {
-					if (key == 0 || velocity == 0) return false;
-					trigger -> control (key -> getInteger (), velocity -> getInteger ());
-					return true;
+					if (key != 0) {
+						if (var != 0) {var -> setDouble (trigger -> getControl (key -> getInteger ())); return true;}
+						if (velocity != 0) {trigger -> control (key -> getInteger (), velocity -> getInteger ()); return true;}
+					}
+					if (var != 0) {var -> setAtom (trigger -> isMonoMode () ? mono : poly); return true;}
+					return false;
 				}
 				if (a == mono) {trigger -> mono (); return true;}
 				if (a == poly) {trigger -> poly (); return true;}

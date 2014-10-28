@@ -53,7 +53,9 @@ public:
 	void keyoff (int key, int velocity = 0);
 	void mono (void);
 	void poly (void);
+	bool isMonoMode (void);
 	void control (int ctrl, int value);
+	double getControl (int ctrl);
 	moonbase (orbiter_core * core);
 	~ moonbase (void);
 };

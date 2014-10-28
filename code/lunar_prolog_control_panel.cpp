@@ -241,6 +241,7 @@ public:
 	store (point (1040.0, 110.0), 601, resources, true),
 	restore (point (1080.0, 110.0), 602, resources, true)
 	{
+		pitch . position = 0.5;
 		this -> root = root;
 		this -> directory = directory;
 		this -> resources = resources;
@@ -397,8 +398,14 @@ static gint ControlPanelKeyon (GtkWidget * viewport, GdkEventButton * event, con
 	if (action -> add_one . keyon (location)) {action -> value_change_action (1); action -> add_one . engaged = true; redraw = true;}
 	if (action -> sub_one . keyon (location)) {action -> value_change_action (-1); action -> sub_one . engaged = true; redraw = true;}
 	if (action -> store . keyon (location)) {
-		GtkWidget * dialog = gtk_file_chooser_dialog_new ("Open File", GTK_WINDOW (viewport), GTK_FILE_CHOOSER_ACTION_OPEN, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT, 0);
-		gtk_dialog_run (GTK_DIALOG (dialog));
+		GtkWidget * dialog = gtk_file_chooser_dialog_new ("Open File", GTK_WINDOW (viewport),
+											GTK_FILE_CHOOSER_ACTION_OPEN, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT, NULL);
+		if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT) {
+			char * file_name = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (dialog));
+			printf ("opening <%s>\n", file_name);
+			g_free (file_name);
+		}
+		gtk_widget_destroy (dialog);
 	}
 	if (redraw) gtk_widget_queue_draw (viewport);
 	return TRUE;

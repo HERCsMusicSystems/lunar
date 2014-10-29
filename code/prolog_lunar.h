@@ -105,6 +105,12 @@ public:
 	operator_class (orbiter_core * core);
 };
 
+class fm4_operator_class : public PrologNativeOrbiterCreator {
+public:
+	virtual orbiter * create_orbiter (PrologElement * parameters);
+	fm4_operator_class (orbiter_core * core);
+};
+
 class square_operator_class : public PrologNativeOrbiterCreator {
 public:
 	virtual orbiter * create_orbiter (PrologElement * parameters);

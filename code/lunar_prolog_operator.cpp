@@ -31,6 +31,9 @@
 orbiter * operator_class :: create_orbiter (PrologElement * parameters) {return new lunar_operator (core);}
 operator_class :: operator_class (orbiter_core * core) : PrologNativeOrbiterCreator (core) {}
 
+orbiter * fm4_operator_class :: create_orbiter (PrologElement * parameters) {return new lunar_fm4_block (core);}
+fm4_operator_class :: fm4_operator_class (orbiter_core * core) : PrologNativeOrbiterCreator (core) {}
+
 orbiter * square_operator_class :: create_orbiter (PrologElement * parameters) {
 	if (parameters -> isPair ()) {
 		parameters = parameters -> getLeft ();

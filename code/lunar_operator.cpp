@@ -197,3 +197,177 @@ lunar_sampler_operator :: lunar_sampler_operator (orbiter_core * core) : orbiter
 	initialise (); activate ();
 }
 
+//////////
+// FM 4 //
+//////////
+
+int lunar_fm4_block :: numberOfInputs (void) {return 27;}
+char * lunar_fm4_block :: inputName (int ind) {
+	switch (ind) {
+	case 0: return "ALGO"; break;
+	case 1: return "KEY"; break;
+	case 2: return "TRIGGER"; break;
+	case 3: return "FREQ1"; break;
+	case 4: return "AMP1"; break;
+	case 5: return "RATIO1"; break;
+	case 6: return "KEYRATIO1"; break;
+	case 7: return "SYNC1"; break;
+	case 8: return "FEEDBACK1"; break;
+	case 9: return "FREQ2"; break;
+	case 10: return "AMP2"; break;
+	case 11: return "RATIO2"; break;
+	case 12: return "KEYRATIO2"; break;
+	case 13: return "SYNC2"; break;
+	case 14: return "FEEDBACK2"; break;
+	case 15: return "FREQ3"; break;
+	case 16: return "AMP3"; break;
+	case 17: return "RATIO3"; break;
+	case 18: return "KEYRATIO3"; break;
+	case 19: return "SYNC3"; break;
+	case 20: return "FEEDBACK3"; break;
+	case 21: return "FREQ4"; break;
+	case 22: return "AMP4"; break;
+	case 23: return "RATIO4"; break;
+	case 24: return "KEYRATIO4"; break;
+	case 25: return "SYNC4"; break;
+	case 26: return "FEEDBACK4"; break;
+	default: break;
+	}
+	return orbiter :: inputName (ind);
+}
+double * lunar_fm4_block :: inputAddress (int ind) {
+	switch (ind) {
+	case 0: return & current_algo; break;
+	case 1: return & key; break;
+	case 2: return & trigger; break;
+	case 3: return & freq1; break;
+	case 4: return & amp1; break;
+	case 5: return & ratio1; break;
+	case 6: return & key_ratio1; break;
+	case 7: return & sync1; break;
+	case 8: return & feedback1; break;
+	case 9: return & freq2; break;
+	case 10: return & amp2; break;
+	case 11: return & ratio2; break;
+	case 12: return & key_ratio2; break;
+	case 13: return & sync2; break;
+	case 14: return & feedback2; break;
+	case 15: return & freq3; break;
+	case 16: return & amp3; break;
+	case 17: return & ratio3; break;
+	case 18: return & key_ratio3; break;
+	case 19: return & sync3; break;
+	case 20: return & feedback3; break;
+	case 21: return & freq4; break;
+	case 22: return & amp4; break;
+	case 23: return & ratio4; break;
+	case 24: return & key_ratio4; break;
+	case 25: return & sync4; break;
+	case 26: return & feedback4; break;
+	default: break;
+	}
+	return orbiter :: inputAddress (ind);
+}
+
+void lunar_fm4_block :: move (void) {
+	if (current_algo != previous_algo) {
+		switch ((int) current_algo) {
+		case 0: algo = algo1; break;
+		case 1: algo = algo2; break;
+		case 2: algo = algo3; break;
+		case 3: algo = algo4; break;
+		case 4: algo = algo5; break;
+		case 5: algo = algo6; break;
+		case 6: algo = algo7; break;
+		case 7: algo = algo8; break;
+		default: algo = algo1; break;
+		}
+		previous_algo = current_algo;
+	}
+	if (slope != trigger) {
+		if (trigger > 0.0) {
+			if (sync1 != 0.0) time1 = 0.0;
+			if (sync2 != 0.0) time2 = 0.0;
+			if (sync3 != 0.0) time3 = 0.0;
+			if (sync4 != 0.0) time4 = 0.0;
+		}
+		slope = trigger;
+	}
+	signal = algo (this);
+	time1 += core -> TimeDelta (freq1 + key * key_ratio1 / 1536.0) * ratio1;
+	time2 += core -> TimeDelta (freq2 + key * key_ratio2 / 1536.0) * ratio2;
+	time3 += core -> TimeDelta (freq3 + key * key_ratio3 / 1536.0) * ratio3;
+	time4 += core -> TimeDelta (freq4 + key * key_ratio4 / 1536.0) * ratio4;
+	while (time1 >= 1.0) time1 -= 1.0;
+	while (time2 >= 1.0) time2 -= 1.0;
+	while (time3 >= 1.0) time3 -= 1.0;
+	while (time4 >= 1.0) time4 -= 1.0;
+}
+
+double algo1 (lunar_fm4_block * block) {
+	block -> signal4 = block -> core -> Amplitude (block -> amp4) * block -> core -> Sine (block -> time4 + block -> feedback4 * block -> signal4 * 0.00006103515625);
+	block -> signal3 = block -> core -> Amplitude (block -> amp3) * block -> core -> Sine (block -> time3 + block -> signal4);
+	block -> signal2 = block -> core -> Amplitude (block -> amp2) * block -> core -> Sine (block -> time2 + block -> signal3);
+	return block -> signal1 = block -> core -> Amplitude (block -> amp1) * block -> core -> Sine (block -> time1 + block -> signal2);
+}
+double algo2 (lunar_fm4_block * block) {
+	block -> signal4 = block -> core -> Amplitude (block -> amp4) * block -> core -> Sine (block -> time4 + block -> feedback4 * block -> signal4 * 0.00006103515625);
+	block -> signal3 = block -> core -> Amplitude (block -> amp3) * block -> core -> Sine (block -> time3 + block -> feedback3 * block -> signal * 0.00006103515625);
+	block -> signal2 = block -> core -> Amplitude (block -> amp2) * block -> core -> Sine (block -> time2 + block -> signal3 + block -> signal4);
+	return block -> signal1 = block -> core -> Amplitude (block -> amp1) * block -> core -> Sine (block -> time1 + block -> signal2);
+}
+double algo3 (lunar_fm4_block * block) {
+	block -> signal4 = block -> core -> Amplitude (block -> amp4) * block -> core -> Sine (block -> time4 + block -> feedback4 * block -> signal4 * 0.00006103515625);
+	block -> signal3 = block -> core -> Amplitude (block -> amp3) * block -> core -> Sine (block -> time3 + block -> feedback3 * block -> signal * 0.00006103515625);
+	block -> signal2 = block -> core -> Amplitude (block -> amp2) * block -> core -> Sine (block -> time2 + block -> signal3);
+	return block -> signal1 = block -> core -> Amplitude (block -> amp1) * block -> core -> Sine (block -> time1 + block -> signal2 + block -> signal4);
+}
+double algo4 (lunar_fm4_block * block) {
+	block -> signal4 = block -> core -> Amplitude (block -> amp4) * block -> core -> Sine (block -> time4 + block -> feedback4 * block -> signal4 * 0.00006103515625);
+	block -> signal3 = block -> core -> Amplitude (block -> amp3) * block -> core -> Sine (block -> time3 + block -> signal4);
+	block -> signal2 = block -> core -> Amplitude (block -> amp2) * block -> core -> Sine (block -> time2 + block -> feedback2 * block -> signal * 0.00006103515625);
+	return block -> signal1 = block -> core -> Amplitude (block -> amp1) * block -> core -> Sine (block -> time1 + block -> signal2 + block -> signal3);
+}
+double algo5 (lunar_fm4_block * block) {
+	block -> signal4 = block -> core -> Amplitude (block -> amp4) * block -> core -> Sine (block -> time4 + block -> feedback4 * block -> signal4 * 0.00006103515625);
+	block -> signal3 = block -> core -> Amplitude (block -> amp3) * block -> core -> Sine (block -> time3 + block -> signal4);
+	block -> signal2 = block -> core -> Amplitude (block -> amp2) * block -> core -> Sine (block -> time2 + block -> feedback2 * block -> signal * 0.00006103515625);
+	block -> signal1 = block -> core -> Amplitude (block -> amp1) * block -> core -> Sine (block -> time1 + block -> signal2);
+	return block -> signal1 + block -> signal3;
+}
+double algo6 (lunar_fm4_block * block) {
+	block -> signal4 = block -> core -> Amplitude (block -> amp4) * block -> core -> Sine (block -> time4 + block -> feedback4 * block -> signal4 * 0.00006103515625);
+	block -> signal3 = block -> core -> Amplitude (block -> amp3) * block -> core -> Sine (block -> time3 + block -> signal4);
+	block -> signal2 = block -> core -> Amplitude (block -> amp2) * block -> core -> Sine (block -> time2 + block -> signal4);
+	block -> signal1 = block -> core -> Amplitude (block -> amp1) * block -> core -> Sine (block -> time1 + block -> signal4);
+	return block -> signal1 + block -> signal2 + block -> signal3;
+}
+double algo7 (lunar_fm4_block * block) {
+	block -> signal4 = block -> core -> Amplitude (block -> amp4) * block -> core -> Sine (block -> time4 + block -> feedback4 * block -> signal4 * 0.00006103515625);
+	block -> signal3 = block -> core -> Amplitude (block -> amp3) * block -> core -> Sine (block -> time3 + block -> signal4);
+	block -> signal2 = block -> core -> Amplitude (block -> amp2) * block -> core -> Sine (block -> time2 + block -> feedback2 * block -> signal2 * 0.00006103515625);
+	block -> signal1 = block -> core -> Amplitude (block -> amp1) * block -> core -> Sine (block -> time1 + block -> feedback1 * block -> signal1 * 0.00006103515625);
+	return block -> signal1 + block -> signal2 + block -> signal3;
+}
+double algo8 (lunar_fm4_block * block) {
+	block -> signal4 = block -> core -> Amplitude (block -> amp4) * block -> core -> Sine (block -> time4 + block -> feedback4 * block -> signal4 * 0.00006103515625);
+	block -> signal3 = block -> core -> Amplitude (block -> amp3) * block -> core -> Sine (block -> time3 + block -> feedback3 * block -> signal3 * 0.00006103515625);
+	block -> signal2 = block -> core -> Amplitude (block -> amp2) * block -> core -> Sine (block -> time2 + block -> feedback2 * block -> signal2 * 0.00006103515625);
+	block -> signal1 = block -> core -> Amplitude (block -> amp1) * block -> core -> Sine (block -> time1 + block -> feedback1 * block -> signal1 * 0.00006103515625);
+	return block -> signal1 + block -> signal2 + block -> signal3 + block -> signal4;
+}
+
+lunar_fm4_block :: lunar_fm4_block (orbiter_core * core) : orbiter (core) {
+	algo = algo1;
+	current_algo = previous_algo = 0.0;
+	key = trigger = slope = 0.0;
+	signal1 = signal2 = signal3 = signal4 = 0.0;
+	time1 = time2 = time3 = time4 = 0.0;
+	freq1 = freq2 = freq3 = freq4 = 0.0;
+	amp1 = amp2 = amp3 = amp4 = 0.0;
+	ratio1 = ratio2 = ratio3 = ratio4 = 1.0;
+	key_ratio1 = key_ratio2 = key_ratio3 = key_ratio4 = 1536.0;
+	sync1 = sync2 = sync3 = sync4 = 0.0;
+	feedback1 = feedback2 = feedback3 = feedback4 = 0.0;
+	initialise (); activate ();
+}

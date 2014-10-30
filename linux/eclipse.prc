@@ -168,12 +168,12 @@ program eclipse [
 ;		] .
 
 end := [
-		[core reactor 330 22050 2048]
+		;[core reactor 330 22050 2048]
 		[var cb_path cb_callback]
-		[CommandCentre commander cb]
 		[build_abakos *abakos_mixer]
 		[moon_base] [phobos_base]
-		[reactor *abakos_mixer]
+		[CommandCentre commander cb]
+		;[reactor *abakos_mixer]
 		[command]
 		] .
 

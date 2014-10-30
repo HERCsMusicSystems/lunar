@@ -129,12 +129,12 @@ program eclipse [
 
 [[phobos_base]
 	[Moonbase phobos phoboscb]
-	[operator *op1]
+	[fm4 *op]
 	[lfo *lfo1]
 	[delay *dl1]
 	[Insert *dl1 phobos delay]
 	[Insert *lfo1 phobos lfo]
-	[Insert *op1 phobos operator]
+	[Insert *op phobos operator]
 	[addcl [[Moons phobos]]]
 ]
 

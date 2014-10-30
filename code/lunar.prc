@@ -11,7 +11,7 @@ program lunar #machine := "prolog.lunar"
 				core moonbase operator parameter_block key_map velocity_map impulse trigger inactive_trigger mixer stereo_mixer gateway lfo adsr eg
 				square_operator fm4 fm6 dx9 dx7 saw_operator noise_operator sampler_operator sensitivity filter delay pan power_pan linear_pan
 				signal freq amp ratio sync attack decay sustain release hold busy portamento porta time speed wave pulse phase poly feedback highdamp
-				mono left right mic mic_left mic_right breakpoint
+				mono left right mic mic_left mic_right breakpoint algo key_ratio
 				keyon keyoff polyaftertouch control programchange aftertouch pitch
 				sysex timingclock START CONTINUE STOP activesensing
 				Lunar Lander Activate Deactivate
@@ -89,6 +89,20 @@ program lunar #machine := "prolog.lunar"
 	[*module *name *pb]
 ]
 
+[[AddParameterBlock *parameters *parameter *name *module *selector *initial *style]
+	[APPEND *selector [*parameter] *selectors]
+	[*parameters *pb : *selectors] /
+	[*module *name *pb]
+	[show *selector *selectors]
+]
+[[AddParameterBlock *parameters *parameter *name *module *selector *initial *style]
+	[parameter_block *pb *style]
+	[*pb *initial]
+	[APPEND *selector [*parameter] *selectors]
+	[addcl [[*parameters *pb : *selectors]]]
+	[*module *name *pb]
+]
+
 [[Insert *operator *base : *selector]
 	[*base *parameters *modules : *]
 	[addcl [[*modules *operator : *selector]]]
@@ -139,6 +153,38 @@ program lunar #machine := "prolog.lunar"
 	[AddParameterBlock *parameters feedback *delay *selector 0 "index"]
 	[AddParameterBlock *parameters time *delay *selector 0 "time"]
 	[AddParameterBlock *parameters highdamp *delay *selector 0 "index"]
+]
+
+[[InsertIO *parameters *op *selector [["ALGO" "KEY" "TRIGGER" "FREQ1" "AMP1" "RATIO1" "KEYRATIO1" "SYNC1" "FEEDBACK1" "FREQ2" "AMP2" "RATIO2" "KEYRATIO2" "SYNC2" "FEEDBACK2" "FREQ3" "AMP3" "RATIO3" "KEYRATIO3" "SYNC3" "FEEDBACK3" "FREQ4" "AMP4" "RATIO4" "KEYRATIO4" "SYNC4" "FEEDBACK4"] ["SIGNAL"]]]
+	[AddParameterBlock *parameters algo *op *selector 0 "index"]
+	[APPEND *selector [1] *selector1]
+	[AddParameterBlock *parameters freq "freq1" *op *selector1 0 "freq"]
+	[AddParameterBlock *parameters amp "amp1" *op *selector1 0 "amp"]
+	[AddParameterBlock *parameters ratio "ratio1" *op *selector1 1 "ratio"]
+	[AddParameterBlock *parameters key_ratio "keyratio1" *op *selector1 1536 "index"]
+	[AddParameterBlock *parameters sync "sync1" *op *selector1 0 "onoff"]
+	[AddParameterBlock *parameters feedback "feedback1" *op *selector1 0 "index"]
+	[APPEND *selector [2] *selector2]
+	[AddParameterBlock *parameters freq "freq2" *op *selector2 0 "freq"]
+	[AddParameterBlock *parameters amp "amp2" *op *selector2 0 "amp"]
+	[AddParameterBlock *parameters ratio "ratio2" *op *selector1 2 "ratio"]
+	[AddParameterBlock *parameters key_ratio "keyratio2" *op *selector2 1536 "index"]
+	[AddParameterBlock *parameters sync "sync2" *op *selector2 0 "onoff"]
+	[AddParameterBlock *parameters feedback "feedback2" *op *selector2 0 "index"]
+	[APPEND *selector [3] *selector3]
+	[AddParameterBlock *parameters freq "freq3" *op *selector3 0 "freq"]
+	[AddParameterBlock *parameters amp "amp3" *op *selector3 0 "amp"]
+	[AddParameterBlock *parameters ratio "ratio3" *op *selector3 1 "ratio"]
+	[AddParameterBlock *parameters key_ratio "keyratio3" *op *selector3 1536 "index"]
+	[AddParameterBlock *parameters sync "sync3" *op *selector3 0 "onoff"]
+	[AddParameterBlock *parameters feedback "feedback3" *op *selector3 0 "index"]
+	[APPEND *selector [4] *selector4]
+	[AddParameterBlock *parameters freq "freq4" *op *selector4 0 "freq"]
+	[AddParameterBlock *parameters amp "amp4" *op *selector4 0 "amp"]
+	[AddParameterBlock *parameters ratio "ratio4" *op *selector4 1 "ratio"]
+	[AddParameterBlock *parameters key_ratio "keyratio4" *op *selector4 1536 "index"]
+	[AddParameterBlock *parameters sync "sync4" *op *selector4 0 "onoff"]
+	[AddParameterBlock *parameters feedback "feedback4" *op *selector4 0 "index"]
 ]
 
 [[InsertIO *parameters *mixer *selector [["ENTER" : *] *]]]

@@ -177,7 +177,21 @@ public:
 };
 
 class lunar_eg : public orbiter {
+private:
+	double level1, level2, level3, level4;
+	double time1, time2, time3, time4;
+	double trigger;
+	double busy;
+	double time;
+	int stage;
 public:
+	virtual int numberOfInputs (void);
+	virtual char * inputName (int ind);
+	virtual double * inputAddress (int ind);
+	virtual int numberOfOutputs (void);
+	virtual char * outputName (int ind);
+	virtual double * outputAddress (int ind);
+	virtual void move (void);
 	lunar_eg (orbiter_core * core);
 };
 

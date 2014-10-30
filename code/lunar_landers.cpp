@@ -434,7 +434,50 @@ lunar_adsr :: lunar_adsr (orbiter_core * core) : orbiter (core) {
 	initialise (); activate ();
 }
 
-lunar_eg :: lunar_eg (orbiter_core * core) : orbiter (core) {initialise (); activate ();}
+int lunar_eg :: numberOfInputs (void) {return 9;}
+char * lunar_eg :: inputName (int ind) {
+	switch (ind) {
+	case 0: return "TRIGGER"; break;
+	case 1: return "LEVEL1"; break;
+	case 2: return "LEVEL2"; break;
+	case 3: return "LEVEL3"; break;
+	case 4: return "LEVEL4"; break;
+	case 5: return "TIME1"; break;
+	case 6: return "TIME2"; break;
+	case 7: return "TIME3"; break;
+	case 8: return "TIME4"; break;
+	default: break;
+	}
+	return orbiter :: inputName (ind);
+}
+double * lunar_eg :: inputAddress (int ind) {
+	switch (ind) {
+	case 0: return & trigger; break;
+	case 1: return & level1; break;
+	case 2: return & level2; break;
+	case 3: return & level3; break;
+	case 4: return & level4; break;
+	case 5: return & time1; break;
+	case 6: return & time2; break;
+	case 7: return & time3; break;
+	case 8: return & time4; break;
+	default: break;
+	}
+	return orbiter :: inputAddress (ind);
+}
+int lunar_eg :: numberOfOutputs (void) {return 2;}
+char * lunar_eg :: outputName (int ind) {if (ind == 1) return "BUSY"; return orbiter :: outputName (ind);}
+double * lunar_eg :: outputAddress (int ind) {if (ind == 1) return & busy; return orbiter :: outputAddress (ind);}
+void lunar_eg :: move (void) {
+}
+lunar_eg :: lunar_eg (orbiter_core * core) : orbiter (core) {
+	level1 = level2 = level3 = 0.0;
+	level4 = -16383.0;
+	time1 = time2 = time3 = time4 = 0.0;
+	signal = -16383.0; time = busy = 0.0;
+	stage = 0;
+	initialise (); activate ();
+}
 
 int lunar_delay :: numberOfInputs (void) {return 4;}
 char * lunar_delay :: inputName (int ind) {

@@ -50,6 +50,7 @@ public:
 	button_active_graphics store, restore;
 	encoder_active_graphics encoder;
 	slider_active_graphics pitch, modulation;
+	cairo_surface_t * command_centre_image;
 	point captured;
 	int programs [10];
 	int current_program;
@@ -241,6 +242,7 @@ public:
 	store (point (1040.0, 110.0), 601, resources, true),
 	restore (point (1080.0, 110.0), 602, resources, true)
 	{
+		command_centre_image = resources != 0 ? resources -> command_centre : 0;
 		pitch . position = 0.5;
 		this -> root = root;
 		this -> directory = directory;
@@ -263,6 +265,10 @@ public:
 
 static gboolean RedrawControlPanel (GtkWidget * viewport, GdkEvent * event, control_panel_action * action) {
 	cairo_t * cr = gdk_cairo_create (gtk_widget_get_window (viewport));
+	if (action -> command_centre_image != 0) {
+		cairo_set_source_surface (cr, action -> command_centre_image, 0, 0);
+		cairo_paint (cr);
+	}
 	action -> ctrl_volume . draw (cr);
 	action -> ctrl_attack . draw (cr);
 	action -> ctrl_decay . draw (cr);
@@ -473,7 +479,10 @@ static gboolean CreateControlPanelIdleCode (control_panel_action * action) {
 	g_signal_connect (G_OBJECT (action -> viewport), "button_press_event", G_CALLBACK (ControlPanelKeyon), action);
 	g_signal_connect (G_OBJECT (action -> viewport), "button_release_event", G_CALLBACK (ControlPanelKeyoff), action);
 	g_signal_connect (G_OBJECT (action -> viewport), "motion_notify_event", G_CALLBACK (ControlPanelMove), action);
-	gtk_window_resize (GTK_WINDOW (action -> viewport), 1300, 420);
+	if (action -> command_centre_image == 0) gtk_window_resize (GTK_WINDOW (action -> viewport), 1300, 420);
+	else gtk_window_resize (GTK_WINDOW (action -> viewport),
+								cairo_image_surface_get_width (action -> command_centre_image),
+								cairo_image_surface_get_height (action -> command_centre_image));
 	gtk_widget_show_all (action -> viewport);
 	return FALSE;
 }

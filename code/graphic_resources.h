@@ -46,6 +46,7 @@ public:
 	cairo_surface_t * encoder_handle;
 	cairo_surface_t * slider_surface;
 	cairo_surface_t * slider_handle;
+	cairo_surface_t * command_centre;
 	GraphicResources (void);
 	~ GraphicResources (void);
 };

@@ -67,6 +67,8 @@ extern char resource_slider_surface_start;
 extern char resource_slider_surface_end;
 extern char resource_slider_handle_start;
 extern char resource_slider_handle_end;
+extern char resource_command_centre_start;
+extern char resource_command_centre_end;
 #endif
 
 class png_closure {
@@ -122,6 +124,7 @@ GraphicResources :: GraphicResources (void) {
 	png_closure encoder_handle_closure (& resource_encoder_handle_start, & resource_encoder_handle_end);
 	png_closure slider_surface_closure (& resource_slider_surface_start, & resource_slider_surface_end);
 	png_closure slider_handle_closure (& resource_slider_handle_start, & resource_slider_handle_end);
+	png_closure command_centre_closure (& resource_command_centre_start, & resource_command_centre_end);
 #endif
 	vector_surface = cairo_image_surface_create_from_png_stream (png_reader, & frame_closure);
 	vector_handle = cairo_image_surface_create_from_png_stream (png_reader, & handle_closure);
@@ -138,6 +141,7 @@ GraphicResources :: GraphicResources (void) {
 	encoder_handle = cairo_image_surface_create_from_png_stream (png_reader, & encoder_handle_closure);
 	slider_surface = cairo_image_surface_create_from_png_stream (png_reader, & slider_surface_closure);
 	slider_handle = cairo_image_surface_create_from_png_stream (png_reader, & slider_handle_closure);
+	command_centre = cairo_image_surface_create_from_png_stream (png_reader, & command_centre_closure);
 }
 
 GraphicResources :: ~ GraphicResources (void) {

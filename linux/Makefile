@@ -193,6 +193,13 @@ slider_handle.o: ../graphics/slider_handle.png
 		../graphics/slider_handle.png slider_handle.o
 	objdump -t slider_handle.o
 
+command_centre.o: ../graphics/command_centre.png
+	objcopy --input binary --output elf64-x86-64 --binary-architecture i386\
+		--redefine-sym _binary____graphics_command_centre_png_start=resource_command_centre_start\
+		--redefine-sym _binary____graphics_command_centre_png_end=resource_command_centre_end\
+		../graphics/command_centre.png command_centre.o
+	objdump -t command_centre.o
+
 lunar_prc.o: ../code/lunar.prc
 	objcopy --input binary --output elf64-x86-64 --binary-architecture i386\
 		--redefine-sym _binary____code_lunar_prc_start=resource_lunar\
@@ -204,7 +211,8 @@ prcgtk.o: ../code/prcgtk.cpp ../code/prolog_lunar.h ../code/lunar.h\
 	g++ -Wno-write-strings -I. -I$(pc) ../code/prcgtk.cpp -c -o prcgtk.o `pkg-config --cflags gtk+-2.0`
 
 graphics = small_keyboard.o keyboard.o big_keyboard.o vector_frame.o vector_handle.o knob.o knob_surface.o\
-	knob_handle.o display.o button_on.o button_off.o encoder_surface.o encoder_handle.o slider_surface.o slider_handle.o
+	knob_handle.o display.o button_on.o button_off.o encoder_surface.o encoder_handle.o slider_surface.o slider_handle.o\
+	command_centre.o
 
 ~/bin/lunar: $(lunar_objects) $(objects) $(graphics) $(prc_resources)
 	g++ $(lunar_objects) $(objects) $(prc_resources) $(graphics) \

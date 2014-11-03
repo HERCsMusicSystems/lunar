@@ -108,6 +108,7 @@ GraphicResources :: GraphicResources (void) {
 	png_closure encoder_handle_closure (GetResource (ENCODER_HANDLE_PNG), ENCODER_HANDLE_SIZE);
 	png_closure slider_surface_closure (GetResource (SLIDER_SURFACE_PNG), SLIDER_SURFACE_SIZE);
 	png_closure slider_handle_closure (GetResource (SLIDER_HANDLE_PNG), SLIDER_HANDLE_SIZE);
+	png_closure command_centre_closure (GetResource (COMMAND_CENTRE_PNG), COMMAND_CENTRE_SIZE);
 #else
 	png_closure frame_closure (& resource_vector_frame_start, & resource_vector_frame_end);
 	png_closure handle_closure (& resource_vector_handle_start, & resource_vector_handle_end);

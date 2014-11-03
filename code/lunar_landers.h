@@ -182,7 +182,6 @@ private:
 	double time1, time2, time3, time4;
 	double trigger;
 	double busy;
-	double delta;
 	int stage;
 public:
 	virtual int numberOfInputs (void);

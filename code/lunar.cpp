@@ -79,7 +79,7 @@ void orbiter_core :: recalculate (void) {
 	delay = sampling_frequency > 0.0 ? 1.0 / sampling_frequency : 1.0;
 	for (int ind = 0; ind < 32768; ind++) sampler_time_deltas [ind] = delay * pow (2.0, ((double) (ind - 16384) / 1536.0));
 	for (int ind = 0; ind < 16384; ind++) control_time_deltas [ind] = delay * pow (2.0, ((double) (ind - 8192) / 768.0));
-	for (int ind = 0; ind < 16384; ind++) waiting_times [ind] = delay * pow (2.0, ((double) (ind - 8192) / -768.0));
+	for (int ind = 0; ind < 16384; ind++) waiting_times_16384 [ind] = 16384.0 * (waiting_times [ind] = delay * pow (2.0, ((double) (ind - 8192) / -768.0)));
 	for (int ind = 0; ind < 16384; ind++) filter_freqs [ind] = 2.0 * sin (M_PI * centre_frequency * pow (2.0, (double) (ind - 8192) / 1536.0) / sampling_frequency);
 	pthread_mutex_unlock (& main_mutex);
 }
@@ -155,6 +155,13 @@ double orbiter_core :: WaitingTime (double time) {
 	if (ind < 0) return * waiting_times;
 	if (ind > 16383) return * (waiting_times + 16383);
 	return waiting_times [ind];
+}
+
+double orbiter_core :: WaitingTime16384 (double time) {
+	int ind = (int) time;
+	if (ind < 0) return * waiting_times_16384;
+	if (ind > 16384) return * (waiting_times_16384 + 16383);
+	return waiting_times_16384 [ind];
 }
 
 double orbiter_core :: MinBlep (int index) {

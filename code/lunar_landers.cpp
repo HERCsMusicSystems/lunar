@@ -471,65 +471,65 @@ double * lunar_eg :: outputAddress (int ind) {if (ind == 1) return & busy; retur
 void lunar_eg :: move (void) {
 	if (trigger == 0.0) {
 		if (stage < 1) return;
-		if (stage < 5) {delta = core -> WaitingTime (time4) * 16384.0; stage = 5;}
+		if (stage < 5) stage = 5;
 		if (level4 < signal) {
-			signal -= delta;
-			if (signal < level4) {signal = level4; delta = 0.0; stage = 0;}
+			signal -= core -> WaitingTime16384 (time4);
+			if (signal < level4) {signal = level4; stage = 0;}
 		} else {
-			signal += delta;
-			if (signal > level4) {signal = level4; delta = 0.0; stage = 0;}
+			signal += core -> WaitingTime16384 (time4);
+			if (signal > level4) {signal = level4; stage = 0;}
 		}
 	} else {
 		switch (stage) {
 		case 0:
 			if (time1 == 0.0) {
 				if (time2 == 0.0) {
-					if (time3 == 0.0) {signal = level3; delta = 0.0; stage = 4;}
-					else {signal = level2; delta = core -> WaitingTime (time3) * 16384.0; stage = 3;}
-				} else {signal = level1; delta = core -> WaitingTime (time2) * 16384.0; stage = 2;}
-			} else {signal = level4; delta = core -> WaitingTime (time1) * 16384.0; stage = 1;}
+					if (time3 == 0.0) {signal = level3; stage = 4;}
+					else {signal = level2; stage = 3;}
+				} else {signal = level1; stage = 2;}
+			} else {signal = level4; stage = 1;}
 			break;
 		case 1:
 			if (level1 > signal) {
-				signal += delta;
+				signal += core -> WaitingTime16384 (time1);
 				if (signal > level1) {
 					if (time2 == 0.0) {
-						if (time3 == 0.0) {signal = level3; delta = 0.0; stage = 4;}
-						else {signal = level2; delta = core -> WaitingTime (time3) * 16384.0; stage = 3;}
-					} else {signal = level1; delta = core -> WaitingTime (time2) * 16384.0; stage = 2;}
+						if (time3 == 0.0) {signal = level3; stage = 4;}
+						else {signal = level2; stage = 3;}
+					} else {signal = level1; stage = 2;}
 				}
 			} else {
-				signal -= delta;
+				signal -= core -> WaitingTime16384 (time1);
 				if (signal < level1) {
 					if (time2 == 0.0) {
-						if (time3 == 0.0) {signal = level3; delta = 0.0; stage = 4;}
-						else {signal = level2; delta = core -> WaitingTime (time3) * 16384.0; stage = 3;}
-					} else {signal = level1; delta = core -> WaitingTime (time2) * 16384.0; stage = 2;}
+						if (time3 == 0.0) {signal = level3; stage = 4;}
+						else {signal = level2; stage = 3;}
+					} else {signal = level1; stage = 2;}
 				}
 			}
 			break;
 		case 2:
 			if (level2 > signal) {
-				signal += delta;
+				signal += core -> WaitingTime16384 (time2);
 				if (signal > level2) {
-					if (time3 == 0.0) {signal = level3; delta = 0.0; stage = 4;}
-					else {signal = level2; delta = core -> WaitingTime (time3) * 16384.0; stage = 3;}
+					if (time3 == 0.0) {signal = level3; stage = 4;}
+					else {signal = level2; stage = 3;}
 				}
 			} else {
-				signal -= delta;
+				signal -= core -> WaitingTime16384 (time2);
 				if (signal < level2) {
-					if (time3 == 0.0) {signal = level3; delta = 0.0; stage = 4;}
-					else {signal = level2; delta = core -> WaitingTime (time3) * 16384.0; stage = 3;}
+					if (time3 == 0.0) {signal = level3; stage = 4;}
+					else {signal = level2; stage = 3;}
 				}
 			}
 			break;
 		case 3:
 			if (level3 > signal) {
-				signal += delta;
-				if (signal > level3) {signal = level3; delta = 0.0; stage = 4;}
+				signal += core -> WaitingTime16384 (time3);
+				if (signal > level3) {signal = level3; stage = 4;}
 			} else {
-				signal -= delta;
-				if (signal < level3) {signal = level3; delta = 0.0; stage = 4;}
+				signal -= core -> WaitingTime16384 (time3);
+				if (signal < level3) {signal = level3; stage = 4;}
 			}
 			break;
 		default: break;
@@ -540,7 +540,7 @@ lunar_eg :: lunar_eg (orbiter_core * core) : orbiter (core) {
 	level1 = level2 = level3 = 0.0;
 	level4 = -16383.0;
 	time1 = time2 = time3 = time4 = 0.0;
-	signal = -16383.0; delta = busy = 0.0;
+	signal = -16383.0; busy = 0.0;
 	stage = 0;
 	initialise (); activate ();
 }

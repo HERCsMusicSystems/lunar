@@ -54,6 +54,7 @@ public:
 	double * amplitude;
 	double sine_wave [16385];
 	double waiting_times [16384];
+	double waiting_times_16384 [16384];
 	double min_blep [16384];
 	double filter_freqs [16384];
 	double * filter_freq;
@@ -75,6 +76,7 @@ public:
 	double Sine (double angle); // 0 .... 1.0 per cycle
 	double SineApproximated (double angle);
 	double WaitingTime (double time);
+	double WaitingTime16384 (double time);
 	double MinBlep (int index);
 	void recalculate (void);
 	void move_modules (void);

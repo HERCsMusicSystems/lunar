@@ -25,6 +25,7 @@ program lunar #machine := "prolog.lunar"
 				Abb Ab A A# Ax
 				Bbb Bb B B# Bx
 				midi
+				MoveModules PropagateSignals MoveCore
 			]
 
 #machine small_keyboard := "small_keyboard"
@@ -67,6 +68,11 @@ program lunar #machine := "prolog.lunar"
 #machine orbiter := "orbiter"
 
 #machine midi := "midi"
+
+#machine MoveModules := "MoveModules"
+#machine PropagateSignals := "PropagateSignals"
+
+[[MoveCore] [MoveModules] [PropagateSignals]]
 
 [[Moonbase *base *distributor]
 	[create_atom *modules] [create_atom *parameters]

@@ -68,6 +68,7 @@ bool PrologNativeOrbiter :: code (PrologElement * parameters, PrologResolution *
 		if (port -> isText ()) {destination_port = module -> inputIndex (port -> getText ()); source_port = module -> outputIndex (port -> getText ());}
 	}
 	if (atom != 0) {
+		if (atom -> getAtom () == this -> atom) {module -> move (); module -> propagate_signals (); return true;}
 		PrologNativeCode * machine = atom -> getAtom () -> getMachine ();
 		if (machine == 0 || ! machine -> isTypeOf (PrologNativeOrbiter :: name ())) return false;
 		source_port = 0;
@@ -208,6 +209,20 @@ public:
 	midi_class (PrologRoot * root, PrologDirectory * directory) {this -> root = root; this -> directory = directory;}
 };
 
+class move_modules_class : public PrologNativeCode {
+public:
+	orbiter_core * core;
+	bool code (PrologElement * parameters, PrologResolution * resolution) {if (core == 0) return false; core -> move_modules (); return true;}
+	move_modules_class (orbiter_core * core) {this -> core = core;}
+};
+
+class propagate_signals_class : public PrologNativeCode {
+public:
+	orbiter_core * core;
+	bool code (PrologElement * parameters, PrologResolution * resolution) {if (core == 0) return false; core -> propagate_signals (); return true;}
+	propagate_signals_class (orbiter_core * core) {this -> core = core;}
+};
+
 void PrologLunarServiceClass :: init (PrologRoot * root, PrologDirectory * directory) {
 	this -> root = root;
 	this -> directory = directory;
@@ -251,6 +266,8 @@ PrologNativeCode * PrologLunarServiceClass :: getNativeCode (char * name) {
 	if (strcmp (name, "moonbase") == 0) return new moonbase_class (directory, & core);
 	if (strcmp (name, "orbiter") == 0) return new orbiter_statistics ();
 	if (strcmp (name, "midi") == 0) return new midi_class (this -> root, directory);
+	if (strcmp (name, "MoveModules") == 0) return new move_modules_class (& core);
+	if (strcmp (name, "PropagateSignals") == 0) return new propagate_signals_class (& core);
 	return 0;
 }
 

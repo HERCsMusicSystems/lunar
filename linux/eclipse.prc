@@ -150,6 +150,7 @@ program eclipse [
 	[operator *op1]
 	[adsr *adsr1]
 	[trigger *trigger] [*cb *trigger]
+	[*trigger "busy" *adsr1 "busy"]
 	[*op1 "freq" *trigger "key"]
 	[*adsr1 "trigger" *trigger "trigger"]
 	[*op1 "amp" *adsr1 "signal"]

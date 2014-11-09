@@ -229,18 +229,18 @@ public:
 	program7 (point (947.0, 156.0), 107, resources, active),
 	program8 (point (987.0, 156.0), 108, resources, active),
 	program9 (point (1027.0, 156.0), 109, resources, active),
-	sub_one (point (1040.0, 140.0), 302, resources, active),
-	add_one (point (1080.0, 140.0), 301, resources, active),
-	delta_1 (point (1020.0, 160.0), 303, resources, active),
-	delta_8 (point (1060.0, 160.0), 304, resources, active),
-	delta_128 (point (1100.0, 160.0), 305, resources, active),
-	encoder (point (944.0, 110.0), 401, resources, active),
+	sub_one (point (1175.0, 140.0), 302, resources, true),
+	add_one (point (1215.0, 140.0), 301, resources, true),
+	delta_1 (point (1155.0, 160.0), 303, resources, true),
+	delta_8 (point (1195.0, 160.0), 304, resources, true),
+	delta_128 (point (1235.0, 160.0), 305, resources, true),
+	encoder (point (1100.0, 100.0), 401, resources, true),
 	pitch (point (42.0, 228.0), 501, true, resources, false),
 	modulation (point (72.0, 228.0), 502, false, resources, true),
 	poly_mono (point (33.0, 175.0), 503, resources, active),
 	porta_on_off (point (73.0, 175.0), 504, resources, active),
-	store (point (1040.0, 110.0), 601, resources, true),
-	restore (point (1080.0, 110.0), 602, resources, true)
+	store (point (1240.0, 110.0), 601, resources, true),
+	restore (point (1280.0, 110.0), 602, resources, true)
 	{
 		command_centre_image = resources != 0 ? resources -> command_centre : 0;
 		pitch . position = 0.5;
@@ -500,7 +500,7 @@ bool control_panel_class :: code (PrologElement * parameters, PrologResolution *
 	if (atom -> isVar ()) atom -> setAtom (new PrologAtom ());
 	if (! atom -> isAtom ()) return false;
 	if (atom -> getAtom () -> getMachine () != 0) return false;
-	control_panel_action * machine = new control_panel_action (resources, root, directory, atom -> getAtom (), command -> getAtom (), true);
+	control_panel_action * machine = new control_panel_action (resources, root, directory, atom -> getAtom (), command -> getAtom (), false);
 	if (! atom -> getAtom () -> setMachine (machine)) {delete machine; return false;}
 	g_idle_add ((GSourceFunc) CreateControlPanelIdleCode, machine);
 	return true;

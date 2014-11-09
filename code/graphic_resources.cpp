@@ -200,6 +200,7 @@ void knob_active_graphics :: draw (cairo_t * cr) {
 		cairo_set_source_surface (cr, knob_handle_png, position . x, position . y);
 		cairo_paint (cr);
 	}
+	if (knob_surface_png == 0) return;
 	char command [16];
 	sprintf (command, "%i", (int) (angle * 128.0 - 64.0));
 	cairo_set_font_size (cr, 10);

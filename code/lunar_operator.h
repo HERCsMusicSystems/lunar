@@ -125,7 +125,6 @@ class lunar_fm4_block : public orbiter {
 private:
 	double current_algo;
 	double previous_algo;
-	double key;
 	double trigger;
 	double slope;
 	double signal1, signal2, signal3, signal4;
@@ -133,7 +132,6 @@ private:
 	double freq1, freq2, freq3, freq4;
 	double amp1, amp2, amp3, amp4;
 	double ratio1, ratio2, ratio3, ratio4;
-	double key_ratio1, key_ratio2, key_ratio3, key_ratio4;
 	double sync1, sync2, sync3, sync4;
 	double feedback1, feedback2, feedback3, feedback4;
 	double (* algo) (lunar_fm4_block * block);

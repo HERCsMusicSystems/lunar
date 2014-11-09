@@ -204,6 +204,7 @@ lunar_prc.o: ../code/lunar.prc
 	objcopy --input binary --output elf64-x86-64 --binary-architecture i386\
 		--redefine-sym _binary____code_lunar_prc_start=resource_lunar\
 		../code/lunar.prc lunar_prc.o
+	objdump -t lunar_prc.o
 
 prcgtk.o: ../code/prcgtk.cpp ../code/prolog_lunar.h ../code/lunar.h\
 	$(pc)prolog.h $(pc)prolog_conductor.h $(pc)prolog_midi.h $(pc)prolog_neural.h $(pc)prolog_xml.h\

@@ -468,6 +468,19 @@ static gint ControlPanelMove (GtkWidget * viewport, GdkEventButton * event, cont
 	if (redraw) gtk_widget_queue_draw (viewport);
 	return TRUE;
 }
+static gboolean dnd_drop (GtkWidget * widget, GdkDragContext * context, gint x, gint y, guint time, gpointer * ptr) {
+	GdkAtom target_type;
+	if (context -> targets) {
+		target_type = GDK_POINTER_TO_ATOM (g_list_nth_data (context -> targets, 0));
+		gtk_drag_get_data (widget, context, target_type, time);
+	} else return FALSE;
+	return TRUE;
+}
+static gboolean dnd_motion (GtkWidget * widget, GdkDragContext * context, gint x, gint y, GtkSelectionData * gsd, guint ttype, guint time, gpointer * ptr) {return TRUE;}
+static void dnd_leave (GtkWidget * widget, GdkDragContext * context, guint time, gpointer * ptr) {}
+static void dnd_receive (GtkWidget * widget, GdkDragContext * context, gint x, gint y, GtkSelectionData * gsd, guint ttype, guint time, gpointer * ptr) {
+	MessageBox (GetActiveWindow (), "I am here", "sonda", 0);
+}
 static gboolean CreateControlPanelIdleCode (control_panel_action * action) {
 	action -> viewport = gtk_window_new (GTK_WINDOW_TOPLEVEL);
 	gtk_window_set_title (GTK_WINDOW (action -> viewport), action -> atom -> name ());
@@ -483,6 +496,12 @@ static gboolean CreateControlPanelIdleCode (control_panel_action * action) {
 	else gtk_window_resize (GTK_WINDOW (action -> viewport),
 								cairo_image_surface_get_width (action -> command_centre_image),
 								cairo_image_surface_get_height (action -> command_centre_image));
+	const GtkTargetEntry targets [2] = {{"text/plain", 0, 0}, {"application/x-rootwindow-drop", 0, 0}};
+	gtk_drag_dest_set (area, GTK_DEST_DEFAULT_ALL, targets, 2, GDK_ACTION_COPY);
+	g_signal_connect (area, "drag-drop", G_CALLBACK (dnd_drop), 0);
+	g_signal_connect (area, "drag-motion", G_CALLBACK (dnd_motion), 0);
+	g_signal_connect (area, "drag-data-received", G_CALLBACK (dnd_receive), 0);
+	g_signal_connect (area, "drag-leave", G_CALLBACK (dnd_leave), 0);
 	gtk_widget_show_all (action -> viewport);
 	return FALSE;
 }

@@ -25,7 +25,7 @@ program lunar #machine := "prolog.lunar"
 				Abb Ab A A# Ax
 				Bbb Bb B B# Bx
 				midi
-				MoveModules PropagateSignals MoveCore
+				MoveModules PropagateSignals MoveCore LunarDrop
 			]
 
 #machine small_keyboard := "small_keyboard"

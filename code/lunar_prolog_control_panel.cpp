@@ -480,6 +480,10 @@ static gboolean dnd_drop (GtkWidget * widget, GdkDragContext * context, gint x, 
 static gboolean dnd_motion (GtkWidget * widget, GdkDragContext * context, gint x, gint y, GtkSelectionData * gsd, guint ttype, guint time, gpointer * ptr) {return TRUE;}
 static void dnd_leave (GtkWidget * widget, GdkDragContext * context, guint time, gpointer * ptr) {}
 static void dnd_receive (GtkWidget * widget, GdkDragContext * context, gint x, gint y, GtkSelectionData * data, guint ttype, guint time, PrologRoot * root) {
+	PrologDirectory * LunarDirectory = root -> searchDirectory ("lunar");
+	if (LunarDirectory == 0) return;
+	PrologAtom * LunarDrop = LunarDirectory -> searchAtom ("LunarDrop");
+	if (LunarDrop == 0) return;
 	gchar * ptr = (char *) data -> data;
 	char command [4096];
 	PrologElement * query = root -> earth ();
@@ -487,13 +491,12 @@ static void dnd_receive (GtkWidget * widget, GdkDragContext * context, gint x, g
 		ptr += 7;
 		char * cp = command;
 		while (* ptr >= ' ') * cp++ = * ptr++; * cp = '\0';
-		printf ("command [%s]\n", command);
 		query = root -> pair (root -> text (command), query);
 		while (* ptr > '\0' && * ptr <= ' ') ptr++;
 	}
 	query = root -> pair (root -> integer ((int) y), query);
 	query = root -> pair (root -> integer ((int) x), query);
-	query = root -> pair (root -> atom ("DragAndDrop"), query);
+	query = root -> pair (root -> atom (LunarDrop), query);
 	query = root -> pair (root -> earth (), root -> pair (query, root -> earth ()));
 	root -> resolution (query);
 	delete query;

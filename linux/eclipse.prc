@@ -11,6 +11,7 @@ program eclipse [
 					reactor
 					kb kbcb
 					AT sub
+					DragAndDrop
 				]
 
 [[AT * *x [*x]]/]
@@ -161,6 +162,8 @@ program eclipse [
 ]
 
 [[kbcb : *command] [show *command]]
+
+[[DragAndDrop : *command] [show *command]]
 
 ;end := [
 ;		[small_keyboard kb kbcb]

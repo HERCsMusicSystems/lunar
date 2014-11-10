@@ -27,6 +27,7 @@
 #include "prolog_lunar.h"
 #include "graphics2d.h"
 #include "graphic_resources.h"
+#include <string.h>
 
 class control_panel_action : public PrologNativeCode {
 public:
@@ -478,8 +479,24 @@ static gboolean dnd_drop (GtkWidget * widget, GdkDragContext * context, gint x, 
 }
 static gboolean dnd_motion (GtkWidget * widget, GdkDragContext * context, gint x, gint y, GtkSelectionData * gsd, guint ttype, guint time, gpointer * ptr) {return TRUE;}
 static void dnd_leave (GtkWidget * widget, GdkDragContext * context, guint time, gpointer * ptr) {}
-static void dnd_receive (GtkWidget * widget, GdkDragContext * context, gint x, gint y, GtkSelectionData * gsd, guint ttype, guint time, gpointer * ptr) {
-	MessageBox (GetActiveWindow (), "I am here", "sonda", 0);
+static void dnd_receive (GtkWidget * widget, GdkDragContext * context, gint x, gint y, GtkSelectionData * data, guint ttype, guint time, PrologRoot * root) {
+	gchar * ptr = (char *) data -> data;
+	char command [4096];
+	PrologElement * query = root -> earth ();
+	while (strncmp (ptr, "file:///", 8) == 0) {
+		ptr += 7;
+		char * cp = command;
+		while (* ptr >= ' ') * cp++ = * ptr++; * cp = '\0';
+		printf ("command [%s]\n", command);
+		query = root -> pair (root -> text (command), query);
+		while (* ptr > '\0' && * ptr <= ' ') ptr++;
+	}
+	query = root -> pair (root -> integer ((int) y), query);
+	query = root -> pair (root -> integer ((int) x), query);
+	query = root -> pair (root -> atom ("DragAndDrop"), query);
+	query = root -> pair (root -> earth (), root -> pair (query, root -> earth ()));
+	root -> resolution (query);
+	delete query;
 }
 static gboolean CreateControlPanelIdleCode (control_panel_action * action) {
 	action -> viewport = gtk_window_new (GTK_WINDOW_TOPLEVEL);
@@ -500,7 +517,7 @@ static gboolean CreateControlPanelIdleCode (control_panel_action * action) {
 	gtk_drag_dest_set (area, GTK_DEST_DEFAULT_ALL, targets, 2, GDK_ACTION_COPY);
 	g_signal_connect (area, "drag-drop", G_CALLBACK (dnd_drop), 0);
 	g_signal_connect (area, "drag-motion", G_CALLBACK (dnd_motion), 0);
-	g_signal_connect (area, "drag-data-received", G_CALLBACK (dnd_receive), 0);
+	g_signal_connect (area, "drag-data-received", G_CALLBACK (dnd_receive), action -> root);
 	g_signal_connect (area, "drag-leave", G_CALLBACK (dnd_leave), 0);
 	gtk_widget_show_all (action -> viewport);
 	return FALSE;

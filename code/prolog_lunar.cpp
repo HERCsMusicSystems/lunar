@@ -260,6 +260,8 @@ PrologNativeCode * PrologLunarServiceClass :: getNativeCode (char * name) {
 	if (strcmp (name, "eg") == 0) return new eg_class (& core);
 	if (strcmp (name, "delay") == 0) return new delay_class (& core);
 	if (strcmp (name, "pan") == 0) return new pan_class (& core, 0);
+	if (strcmp (name, "drywet") == 0) return new drywet_class (& core);
+	if (strcmp (name, "drywet_mono") == 0) return new drywet_mono_class (& core);
 	if (strcmp (name, "power_pan") == 0) return new pan_class (& core, 1);
 	if (strcmp (name, "linear_pan") == 0) return new pan_class (& core, 2);
 	if (strcmp (name, "sensitivity") == 0) return new sensitivity_class (& core);

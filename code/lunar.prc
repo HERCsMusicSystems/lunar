@@ -9,7 +9,7 @@ program lunar #machine := "prolog.lunar"
 				small_keyboard keyboard big_keyboard oscilloscope vector CommandCentre
 				dock undock noise orbiter
 				core moonbase operator parameter_block key_map velocity_map impulse trigger inactive_trigger mixer stereo_mixer gateway lfo adsr eg
-				square_operator fm4 fm6 dx9 dx7 saw_operator noise_operator sampler_operator sensitivity filter delay pan power_pan linear_pan
+				square_operator fm4 fm6 dx9 dx7 saw_operator noise_operator sampler_operator sensitivity filter delay pan power_pan linear_pan drywet drywet_mono
 				signal freq amp ratio sync resonance attack decay sustain release hold busy portamento porta time speed wave pulse phase poly feedback highdamp
 				mono left right mic mic_left mic_right breakpoint algo key_ratio
 				keyon keyoff polyaftertouch control programchange aftertouch pitch
@@ -50,6 +50,8 @@ program lunar #machine := "prolog.lunar"
 #machine eg := "eg"
 #machine delay := "delay"
 #machine pan := "pan"
+#machine drywet := "drywet"
+#machine drywet_mono := "drywet_mono"
 #machine power_pan := "power_pan"
 #machine linear_pan := "linear_pan"
 #machine gateway := "gateway"

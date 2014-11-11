@@ -215,6 +215,16 @@ public:
 	lunar_delay (orbiter_core * core);
 };
 
+class lunar_drywet : public orbiter {
+public:
+	lunar_drywet (orbiter_core * core);
+};
+
+class lunar_drywet_mono : public orbiter {
+public:
+	lunar_drywet_mono (orbiter_core * core);
+};
+
 class lunar_pan : public orbiter {
 protected:
 	double enter;

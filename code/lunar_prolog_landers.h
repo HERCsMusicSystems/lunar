@@ -132,6 +132,18 @@ public:
 	pan_class (orbiter_core * core, int type); // 0 = sine based recommended by MMA, 1 = power, 2 = linear
 };
 
+class drywet_class : public PrologNativeOrbiterCreator {
+public:
+	virtual orbiter * create_orbiter (PrologElement * parameters);
+	drywet_class (orbiter_core * core);
+};
+
+class drywet_mono_class : public PrologNativeOrbiterCreator {
+public:
+	virtual orbiter * create_orbiter (PrologElement * parameters);
+	drywet_mono_class (orbiter_core * core);
+};
+
 class sensitivity_class : public PrologNativeOrbiterCreator {
 public:
 	virtual orbiter * create_orbiter (PrologElement * parameters);

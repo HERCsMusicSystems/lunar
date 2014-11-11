@@ -267,6 +267,11 @@ orbiter * pan_class :: create_orbiter (PrologElement * parameters) {
 }
 pan_class :: pan_class (orbiter_core * core, int type) : PrologNativeOrbiterCreator (core) {this -> type = type;}
 
+orbiter * drywet_class :: create_orbiter (PrologElement * parameters) {return new lunar_drywet (core);}
+drywet_class :: drywet_class (orbiter_core * core) : PrologNativeOrbiterCreator (core) {}
+orbiter * drywet_mono_class :: create_orbiter (PrologElement * parameters) {return new lunar_drywet_mono (core);}
+drywet_mono_class :: drywet_mono_class (orbiter_core * core) : PrologNativeOrbiterCreator (core) {}
+
 orbiter * sensitivity_class :: create_orbiter (PrologElement * parameters) {return new lunar_sensitivity (core);}
 sensitivity_class :: sensitivity_class (orbiter_core * core) : PrologNativeOrbiterCreator (core) {}
 

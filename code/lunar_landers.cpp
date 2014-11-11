@@ -607,6 +607,14 @@ lunar_delay :: lunar_delay (orbiter_core * core) : orbiter (core) {
 	initialise (); activate ();
 }
 
+lunar_drywet :: lunar_drywet (orbiter_core * core) : orbiter (core) {
+	initialise (); activate ();
+}
+
+lunar_drywet_mono :: lunar_drywet_mono (orbiter_core * core) : orbiter (core) {
+	initialise (); activate ();
+}
+
 int lunar_pan :: numberOfInputs (void) {return 2;}
 char * lunar_pan :: inputName (int ind) {
 	switch (ind) {

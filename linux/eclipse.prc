@@ -5,7 +5,8 @@ import studio
 import lunar
 
 program eclipse [
-					commander cb cb_path cb_callback moon_base moon mooncb phobos_base phobos phoboscb
+					commander cb cb_path cb_callback moon_base moon mooncb
+					Phobos PhobosCB BuildPhobos BuildPhobosPart
 					paths modules adjacent next_path previous_path next_module previous_module
 					build_abakos build_abakos_part abakos abakoscb
 					reactor
@@ -127,15 +128,35 @@ program eclipse [
 	[addcl [[Moons moon]]]
 ]
 
-[[phobos_base]
-	[Moonbase phobos phoboscb]
+[[BuildPhobos *Phobos *PhobosCB *mixer]
+	[Moonbase *Phobos *PhobosCB]
+	[pan *pan]
+	[delay *dsp]
+	[mixer *mixer]
+	[BuildPhobosPart *Phobos *PhobosCB *pan]
+	[Insert *pan *Phobos pan]
+	[Insert *dsp *Phobos delay]
+	[addcl [[Moons *Phobos]]]
+]
+
+[[BuildPhobosPart *Phobos *PhobosCB *pan]
+	[trigger *trigger]
 	[fm4 *op]
-	[lfo *lfo1]
-	[delay *dl1]
-	[Insert *dl1 phobos delay]
-	[Insert *lfo1 phobos lfo]
-	[Insert *op phobos operator]
-	[addcl [[Moons phobos]]]
+	[noise_operator *noise]
+	[filter *filter]
+	[adsr *adsr]
+	[gateway *vca]
+	[*adsr "trigger" *trigger "trigger"]
+	[*trigger "busy" *adsr "busy"]
+	[*filter *op]
+	[*filter *noise]
+	[*vca *filter]
+	[*vca "gateway" *adsr]
+	[*pan *vca]
+	[Insert *op *Phobos operator]
+	[Insert *noise *Phobos noise]
+	[Insert *filter *Phobos filter]
+	[Insert *adsr *Phobos adsr]
 ]
 
 [[build_abakos *mixer]
@@ -173,8 +194,9 @@ program eclipse [
 end := [
 		;[core reactor 330 22050 2048]
 		[var cb_path cb_callback]
-		[build_abakos *abakos_mixer]
-		[moon_base] [phobos_base]
+		[BuildPhobos Phobos PhobosCB *phobos_mixer]
+		;[build_abakos *abakos_mixer]
+		;[moon_base]
 		[CommandCentre commander cb]
 		;[reactor *abakos_mixer]
 		[command]

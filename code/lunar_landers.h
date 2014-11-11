@@ -196,11 +196,14 @@ public:
 
 class lunar_delay : public orbiter {
 private:
-	double enter;
+	double enter, enter_right;
+	double filter;
 	double feedback;
 	double time;
 	double high_dump;
 	double signal_right;
+	double line [131072];
+	int index;
 public:
 	virtual int numberOfInputs (void);
 	virtual char * inputName (int ind);

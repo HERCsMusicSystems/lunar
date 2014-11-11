@@ -10,7 +10,7 @@ program lunar #machine := "prolog.lunar"
 				dock undock noise orbiter
 				core moonbase operator parameter_block key_map velocity_map impulse trigger inactive_trigger mixer stereo_mixer gateway lfo adsr eg
 				square_operator fm4 fm6 dx9 dx7 saw_operator noise_operator sampler_operator sensitivity filter delay pan power_pan linear_pan
-				signal freq amp ratio sync attack decay sustain release hold busy portamento porta time speed wave pulse phase poly feedback highdamp
+				signal freq amp ratio sync resonance attack decay sustain release hold busy portamento porta time speed wave pulse phase poly feedback highdamp
 				mono left right mic mic_left mic_right breakpoint algo key_ratio
 				keyon keyoff polyaftertouch control programchange aftertouch pitch
 				sysex timingclock START CONTINUE STOP activesensing
@@ -99,7 +99,6 @@ program lunar #machine := "prolog.lunar"
 	[APPEND *selector [*parameter] *selectors]
 	[*parameters *pb : *selectors] /
 	[*module *name *pb]
-	[show *selector *selectors]
 ]
 [[AddParameterBlock *parameters *parameter *name *module *selector *initial *style]
 	[parameter_block *pb *style]
@@ -149,13 +148,22 @@ program lunar #machine := "prolog.lunar"
 	[AddParameterBlock *parameters sync *lfo *selector 0 "onoff"]
 ]
 
+[[InsertIO *parameters *filter *selector [["ENTER" "FREQ" "RESONANCE" : *] *]]
+	[AddParameterBlock *parameters freq *filter *selector 0 "freq"]
+	[AddParameterBlock *parameters resonance *filter *selector 0 "amp"]
+]
+
 [[InsertIO *parameters *sensitivity *selector [["ENTER" "BREAKPOINT" "LEFT" "RIGHT" : *] *]]
 	[AddParameterBlock *parameters breakpoint *sensitivity *selector 0 "index"]
 	[AddParameterBlock *parameters left *sensitivity *selector -128 "index"]
 	[AddParameterBlock *parameters right *sensitivity *selector 128 "index"]
 ]
 
-[[InsertIO *parameters *delay *selector [["SIGNAL" "FEEDBACK" "TIME" "HIGHDAMP"] ["LEFT" "RIGHT"]]]
+[[InsertIO *parameters *pan *selector [["SIGNAL" "PAN" : *] *]]
+	[AddParameterBlock *parameters pan *pan *selector 0 "index"]
+]
+
+[[InsertIO *parameters *delay *selector [["LEFT" "RIGHT" "FEEDBACK" "TIME" "HIGHDAMP"] ["LEFT" "RIGHT"]]]
 	[AddParameterBlock *parameters feedback *delay *selector 0 "index"]
 	[AddParameterBlock *parameters time *delay *selector 0 "time"]
 	[AddParameterBlock *parameters highdamp *delay *selector 0 "index"]

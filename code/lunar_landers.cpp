@@ -545,13 +545,14 @@ lunar_eg :: lunar_eg (orbiter_core * core) : orbiter (core) {
 	initialise (); activate ();
 }
 
-int lunar_delay :: numberOfInputs (void) {return 4;}
+int lunar_delay :: numberOfInputs (void) {return 5;}
 char * lunar_delay :: inputName (int ind) {
 	switch (ind) {
-	case 0: return "SIGNAL"; break;
-	case 1: return "FEEDBACK"; break;
-	case 2: return "TIME"; break;
-	case 3: return "HIGHDAMP"; break;
+	case 0: return "LEFT"; break;
+	case 1: return "RIGHT"; break;
+	case 2: return "FEEDBACK"; break;
+	case 3: return "TIME"; break;
+	case 4: return "HIGHDAMP"; break;
 	default: break;
 	}
 	return orbiter :: inputName (ind);
@@ -559,9 +560,10 @@ char * lunar_delay :: inputName (int ind) {
 double * lunar_delay :: inputAddress (int ind) {
 	switch (ind) {
 	case 0: return & enter; break;
-	case 1: return & feedback; break;
-	case 2: return & time; break;
-	case 3: return & high_dump; break;
+	case 1: return & enter_right; break;
+	case 2: return & feedback; break;
+	case 3: return & time; break;
+	case 4: return & high_dump; break;
 	default: break;
 	}
 	return orbiter :: inputAddress (ind);
@@ -584,9 +586,24 @@ double * lunar_delay :: outputAddress (int ind) {
 	return orbiter :: outputAddress (ind);
 }
 void lunar_delay :: move (void) {
-	signal = signal_right = enter;
+	if (index >= (int) time) index = 0;
+	double value = line [index];
+	signal = value;
+	value *= feedback;
+	value += enter;
+	line [index] = value;
+	index++; if (index >= (int) time) index = 0;
+	value = line [index];
+	signal_right = value;
+	value *= feedback;
+	value += enter;
+	line [index] = value;
 }
 lunar_delay :: lunar_delay (orbiter_core * core) : orbiter (core) {
+	for (int ind = 0; ind < 131072; ind++) line [ind] = 0.0;
+	index = 0;
+	filter = 0.0;
+	enter = enter_right = signal_right = 0.0;
 	initialise (); activate ();
 }
 

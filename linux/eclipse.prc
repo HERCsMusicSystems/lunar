@@ -159,11 +159,16 @@ program eclipse [
 	[Insert *adsr *Phobos adsr]
 ]
 
-[[build_abakos *mixer]
+[[build_abakos *delay]
 	[Moonbase abakos abakoscb]
-	[mixer *mixer]
-	[build_abakos_part abakos *mixer abakoscb]
-	[build_abakos_part abakos *mixer abakoscb]
+	[pan *pan]
+	[delay *delay]
+	[*delay "left" *pan "left"]
+	[*delay "right" *pan "right"]
+	[Insert *pan abakos reactor]
+	[Insert *delay abakos reactor]
+	[build_abakos_part abakos *pan abakoscb]
+	[build_abakos_part abakos *pan abakoscb]
 	[addcl [[Moons abakos]]]
 ]
 
@@ -181,24 +186,17 @@ program eclipse [
 	[Insert *trigger *abakos portamento]
 ]
 
-[[kbcb : *command] [show *command]]
-
 [[@ lunar . LunarDrop : *command] [show *command]]
 
-;end := [
-;		[small_keyboard kb kbcb]
-;		[kb 1000 1000]
-;		[command]
-;		] .
-
 end := [
-		;[core reactor 330 22050 2048]
+		[core reactor 330 22050 2048]
 		[var cb_path cb_callback]
+		[build_abakos *abakos_mixer]
 		[BuildPhobos Phobos PhobosCB *phobos_mixer]
-		;[build_abakos *abakos_mixer]
 		;[moon_base]
 		[CommandCentre commander cb]
-		;[reactor *abakos_mixer]
+		[reactor "left" *abakos_mixer "left"]
+		[reactor "right" *abakos_mixer "right"]
 		[command]
 		] .
 

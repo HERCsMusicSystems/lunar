@@ -651,21 +651,21 @@ double * lunar_pan :: outputAddress (int ind) {
 }
 void lunar_pan :: move (void) {
 	int ind = (int) pan;
-	if (ind > 8192) ind = 8192; if (ind < -8192) ind = 8192;
+	if (ind > 8192) ind = 8192; if (ind < -8192) ind = -8192;
 	signal = * (core -> pan - ind) * enter;
 	right = * (core -> pan + ind) * enter;
 }
 lunar_pan :: lunar_pan (orbiter_core * core) : orbiter (core) {initialise (); activate ();}
 void lunar_power_pan :: move (void) {
 	int ind = (int) pan;
-	if (ind > 8192) ind = 8192; if (ind < -8192) ind = 8192;
+	if (ind > 8192) ind = 8192; if (ind < -8192) ind = -8192;
 	signal = * (core -> power_pan - ind) * enter;
 	right = * (core -> power_pan + ind) * enter;
 }
 lunar_power_pan :: lunar_power_pan (orbiter_core * core) : lunar_pan (core) {}
 void lunar_linear_pan :: move (void) {
 	int ind = (int) pan;
-	if (ind > 8192) ind = 8192; if (ind < -8192) ind = 8192;
+	if (ind > 8192) ind = 8192; if (ind < -8192) ind = -8192;
 	signal = * (core -> linear_pan - ind) * enter;
 	right = * (core -> linear_pan + ind) * enter;
 }

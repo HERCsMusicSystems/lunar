@@ -9,7 +9,8 @@ program lunar #machine := "prolog.lunar"
 				small_keyboard keyboard big_keyboard oscilloscope vector CommandCentre
 				dock undock noise orbiter
 				core moonbase operator parameter_block key_map velocity_map impulse trigger inactive_trigger mixer stereo_mixer gateway amplifier lfo adsr eg
-				square_operator fm4 fm6 dx9 dx7 saw_operator noise_operator sampler_operator sensitivity filter delay pan power_pan linear_pan drywet drywet_mono
+				square_operator fm4 fm6 dx9 dx7 saw_operator noise_operator sampler_operator sensitivity filter delay pan power_pan linear_pan
+				drywet drywet_mono balance
 				signal freq amp ratio sync resonance attack decay sustain release hold busy portamento porta time speed wave pulse phase poly feedback highdamp
 				mono left right mic mic_left mic_right breakpoint algo key_ratio
 				keyon keyoff polyaftertouch control programchange aftertouch pitch
@@ -183,6 +184,11 @@ program lunar #machine := "prolog.lunar"
 	[AddParameterBlock *parameters feedback *delay *selector 0 "index"]
 	[AddParameterBlock *parameters time *delay *selector 0 "time"]
 	[AddParameterBlock *parameters highdamp *delay *selector 0 "index"]
+]
+
+[[InsertIO *parameters *drywet *selector [["DRYLEFT" "DRYRIGHT" "WETLEFT" "WETRIGHT" "BALANCE" : *] *]]
+	[show "I am here!"]
+	[AddParameterBlock *parameters balance *drywet *selector 0 "index"]
 ]
 
 [[InsertIO *parameters *op *selector [["ALGO" "TRIGGER" "FREQ1" "AMP1" "RATIO1" "SYNC1" "FEEDBACK1" "FREQ2" "AMP2" "RATIO2" "SYNC2" "FEEDBACK2" "FREQ3" "AMP3" "RATIO3" "SYNC3" "FEEDBACK3" "FREQ4" "AMP4" "RATIO4" "SYNC4" "FEEDBACK4"] ["SIGNAL"]]]

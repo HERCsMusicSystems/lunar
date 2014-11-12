@@ -9,7 +9,7 @@ program eclipse [
 					Phobos PhobosCB BuildPhobos BuildPhobosPart
 					paths modules adjacent next_path previous_path next_module previous_module
 					build_abakos build_abakos_part abakos abakoscb
-					reactor
+					reactor left right
 					kb kbcb
 					AT sub
 				]
@@ -159,13 +159,18 @@ program eclipse [
 	[Insert *adsr *Phobos adsr]
 ]
 
-[[build_abakos *delay]
+[[build_abakos *drywet]
 	[Moonbase abakos abakoscb]
 	[pan *pan]
 	[delay *delay]
-	[*delay "left" *pan "left"]
-	[*delay "right" *pan "right"]
+	[drywet *drywet]
+	[ConnectStereo *delay *pan]
+	[*drywet "dryleft" *pan "left"]
+	[*drywet "dryright" *pan "right"]
+	[*drywet "wetleft" *delay "left"]
+	[*drywet "wetright" *delay "right"]
 	[Insert *pan abakos reactor]
+	[Insert *drywet abakos reactor]
 	[Insert *delay abakos reactor]
 	[build_abakos_part abakos *pan abakoscb]
 	[build_abakos_part abakos *pan abakoscb]
@@ -195,7 +200,13 @@ end := [
 		[BuildPhobos Phobos PhobosCB *phobos_mixer]
 		;[moon_base]
 		[CommandCentre commander cb]
-		[ConnectStereo reactor *abakos_mixer]
+		;[ConnectStereo reactor *abakos_mixer]
+		[reactor "left" *abakos_mixer "left"]
+		[reactor "right" *abakos_mixer "right"]
+		[oscilloscope left] [oscilloscope right] [right 1000 10]
+		[left "signal" *abakos_mixer "left"]
+		[right "signal" *abakos_mixer "right"]
+		[*abakos_mixer : *x] [show *x]
 		[command]
 		] .
 

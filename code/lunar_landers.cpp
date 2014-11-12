@@ -592,18 +592,21 @@ double * lunar_delay :: outputAddress (int ind) {
 #define DIV_16384 0.00006103515625
 void lunar_delay :: move (void) {
 	double feed = feedback * DIV_16384;
-	if (index >= (int) time) index = 0;
+	int sentinel = (int) time;
+	sentinel |= 1;
+	if (sentinel > 131071) sentinel = 131071;
+	if (index >= sentinel) index = 0;
 	double value = line [index];
 	signal = value;
 	value *= feed;
 	value += enter;
-	line [index] = value;
-	index++; if (index >= (int) time) index = 0;
+	line [index++] = value;
+	if (index >= sentinel) index = 0;
 	value = line [index];
 	signal_right = value;
 	value *= feed;
-	value += enter;
-	line [index] = value;
+	value += enter_right;
+	line [index++] = value;
 }
 lunar_delay :: lunar_delay (orbiter_core * core) : orbiter (core) {
 	for (int ind = 0; ind < 131072; ind++) line [ind] = 0.0;

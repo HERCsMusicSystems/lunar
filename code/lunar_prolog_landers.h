@@ -101,6 +101,12 @@ public:
 	gateway_class (orbiter_core * core);
 };
 
+class amplifier_class : public PrologNativeOrbiterCreator {
+public:
+	virtual orbiter * create_orbiter (PrologElement * parameters);
+	amplifier_class (orbiter_core * core);
+};
+
 class lfo_class : public PrologNativeOrbiterCreator {
 public:
 	virtual orbiter * create_orbiter (PrologElement * parameters);

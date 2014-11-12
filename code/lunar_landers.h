@@ -71,7 +71,7 @@ public:
 };
 
 class lunar_gateway : public orbiter {
-private:
+protected:
 	double enter;
 	double gateway;
 public:
@@ -80,6 +80,12 @@ public:
 	virtual double * inputAddress (int ind);
 	virtual void move (void);
 	lunar_gateway (orbiter_core * core);
+};
+
+class lunar_amplifier : public lunar_gateway {
+public:
+	virtual void move (void);
+	lunar_amplifier (orbiter_core * core);
 };
 
 class lunar_map : public orbiter {
@@ -216,12 +222,31 @@ public:
 };
 
 class lunar_drywet : public orbiter {
+private:
+	double dry_left, dry_right;
+	double wet_left, wet_right;
+	double signal_right;
+	double balance;
 public:
+	virtual int numberOfInputs (void);
+	virtual char * inputName (int ind);
+	virtual double * inputAddress (int ind);
+	virtual int numberOfOutputs (void);
+	virtual char * outputName (int ind);
+	virtual double * outputAddress (int ind);
+	virtual void move (void);
 	lunar_drywet (orbiter_core * core);
 };
 
 class lunar_drywet_mono : public orbiter {
+private:
+	double dry, wet;
+	double balance;
 public:
+	virtual int numberOfInputs (void);
+	virtual char * inputName (int ind);
+	virtual double * inputAddress (int ind);
+	virtual void move (void);
 	lunar_drywet_mono (orbiter_core * core);
 };
 
@@ -271,9 +296,11 @@ private:
 	double high_pass_signal;
 	double band_pass_signal;
 	double band_reject_signal;
+	double running_signal;
 	double enter;
 	double freq;
 	double resonance;
+	double amp;
 public:
 	virtual int numberOfInputs (void);
 	virtual char * inputName (int ind);

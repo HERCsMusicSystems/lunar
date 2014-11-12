@@ -255,6 +255,7 @@ PrologNativeCode * PrologLunarServiceClass :: getNativeCode (char * name) {
 	if (strcmp (name, "mixer") == 0) return new mixer_class (& core);
 	if (strcmp (name, "stereo_mixer") == 0) return new stereo_mixer_class (& core);
 	if (strcmp (name, "gateway") == 0) return new gateway_class (& core);
+	if (strcmp (name, "amplifier") == 0) return new amplifier_class (& core);
 	if (strcmp (name, "lfo") == 0) return new lfo_class (& core);
 	if (strcmp (name, "adsr") == 0) return new adsr_class (& core);
 	if (strcmp (name, "eg") == 0) return new eg_class (& core);

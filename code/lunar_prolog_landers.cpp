@@ -245,6 +245,9 @@ stereo_mixer_class :: stereo_mixer_class (orbiter_core * core) : PrologNativeOrb
 orbiter * gateway_class :: create_orbiter (PrologElement * parameters) {return new lunar_gateway (core);}
 gateway_class :: gateway_class (orbiter_core * core) : PrologNativeOrbiterCreator (core) {}
 
+orbiter * amplifier_class :: create_orbiter (PrologElement * parameters) {return new lunar_amplifier (core);}
+amplifier_class :: amplifier_class (orbiter_core * core) : PrologNativeOrbiterCreator (core) {}
+
 orbiter * lfo_class :: create_orbiter (PrologElement * parameters) {return new lunar_lfo (core);}
 lfo_class :: lfo_class (orbiter_core * core) : PrologNativeOrbiterCreator (core) {}
 

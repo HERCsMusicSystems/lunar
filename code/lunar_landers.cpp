@@ -26,6 +26,9 @@
 
 #include "lunar_landers.h"
 
+#define DIV_16384 0.00006103515625
+#define DIV_8192  0.0001220703125
+
 int lunar_parameter_block :: numberOfInputs (void) {return 1;}
 char * lunar_parameter_block :: inputName (int ind) {if (ind == 0) return "SIGNAL"; else return  orbiter :: inputName (ind);}
 double * lunar_parameter_block :: inputAddress (int ind) {return ind != 0 ? orbiter :: inputAddress (ind) : active ? & enter : orbiter :: outputAddress (ind);}
@@ -76,10 +79,11 @@ lunar_stereo_mixer :: lunar_stereo_mixer (orbiter_core * core) : orbiter (core) 
 int lunar_gateway :: numberOfInputs (void) {return 2;}
 char * lunar_gateway :: inputName (int ind) {if (ind == 0) return "ENTER"; if (ind == 1) return "GATEWAY"; return orbiter :: inputName (ind);}
 double * lunar_gateway :: inputAddress (int ind) {if (ind == 0) return & enter; if (ind == 1) return & gateway; return orbiter :: inputAddress (ind);}
-void lunar_gateway :: move (void) {
-	signal = enter * gateway;
-}
+void lunar_gateway :: move (void) {signal = enter * gateway * DIV_16384;}
 lunar_gateway :: lunar_gateway (orbiter_core * core) : orbiter (core) {enter = 0.0; gateway = 1.0; initialise (); activate ();}
+
+void lunar_amplifier :: move (void) {signal = enter * core -> Amplitude (gateway);}
+lunar_amplifier :: lunar_amplifier (orbiter_core * core) : lunar_gateway (core) {gateway = 0.0;}
 
 int lunar_map :: numberOfOutputs (void) {return 0;}
 lunar_map :: lunar_map (orbiter_core * core, int initial) : orbiter (core) {
@@ -585,17 +589,19 @@ double * lunar_delay :: outputAddress (int ind) {
 	}
 	return orbiter :: outputAddress (ind);
 }
+#define DIV_16384 0.00006103515625
 void lunar_delay :: move (void) {
+	double feed = feedback * DIV_16384;
 	if (index >= (int) time) index = 0;
 	double value = line [index];
 	signal = value;
-	value *= feedback;
+	value *= feed;
 	value += enter;
 	line [index] = value;
 	index++; if (index >= (int) time) index = 0;
 	value = line [index];
 	signal_right = value;
-	value *= feedback;
+	value *= feed;
 	value += enter;
 	line [index] = value;
 }
@@ -607,11 +613,89 @@ lunar_delay :: lunar_delay (orbiter_core * core) : orbiter (core) {
 	initialise (); activate ();
 }
 
+int lunar_drywet :: numberOfInputs (void) {return 5;}
+char * lunar_drywet :: inputName (int ind) {
+	switch (ind) {
+	case 0: return "DRYLEFT"; break;
+	case 1: return "DRYRIGHT"; break;
+	case 2: return "WETLEFT"; break;
+	case 3: return "WETRIGHT"; break;
+	case 4: return "BALANCE"; break;
+	default: break;
+	}
+	return orbiter :: inputName (ind);
+}
+double * lunar_drywet :: inputAddress (int ind) {
+	switch (ind) {
+	case 0: return & dry_left; break;
+	case 1: return & dry_right; break;
+	case 2: return & wet_left; break;
+	case 3: return & wet_right; break;
+	case 4: return & balance; break;
+	default: break;
+	}
+	return orbiter :: inputAddress (ind);
+}
+int lunar_drywet :: numberOfOutputs (void) {return 2;}
+char * lunar_drywet :: outputName (int ind) {
+	switch (ind) {
+	case 0: return "LEFT"; break;
+	case 1: return "RIGHT"; break;
+	default: break;
+	}
+	return orbiter :: outputName (ind);
+}
+double * lunar_drywet :: outputAddress (int ind) {
+	switch (ind) {
+	case 0: return & signal; break;
+	case 1: return & signal_right; break;
+	default: break;
+	}
+	return orbiter :: outputAddress (ind);
+}
+void lunar_drywet :: move (void) {
+	double dry_balance = 1.0;
+	double wet_balance = 1.0;
+	if (balance < 0.0) wet_balance = balance <= -8192 ? 0.0 : 1 + balance * DIV_8192;
+	else if (balance > 0.0) dry_balance = balance >= 8192 ? 0.0 : 1 - balance * DIV_8192;
+	signal = dry_left * dry_balance + wet_left * wet_balance;
+	signal_right = dry_right * dry_balance + wet_right * wet_balance;
+}
 lunar_drywet :: lunar_drywet (orbiter_core * core) : orbiter (core) {
+	dry_left = dry_right = wet_left = wet_right = 0.0;
+	signal_right = 0.0;
+	balance = 0.0;
 	initialise (); activate ();
 }
 
+int lunar_drywet_mono :: numberOfInputs (void) {return 3;}
+char * lunar_drywet_mono :: inputName (int ind) {
+	switch (ind) {
+	case 0: return "DRY"; break;
+	case 1: return "WET"; break;
+	case 2: return "BALANCE"; break;
+	default: break;
+	}
+	return orbiter :: inputName (ind);
+}
+double * lunar_drywet_mono :: inputAddress (int ind) {
+	switch (ind) {
+	case 0: return & dry; break;
+	case 1: return & wet; break;
+	case 2: return & balance; break;
+	default: break;
+	}
+	return orbiter :: inputAddress (ind);
+}
+void lunar_drywet_mono :: move (void) {
+	double dry_balance = 1.0;
+	double wet_balance = 1.0;
+	if (balance < 0.0) wet_balance = balance <= -8192 ? 0.0 : 1 + balance * DIV_8192;
+	else if (balance > 0.0) dry_balance = balance >= 8192 ? 0.0 : 1 - balance * DIV_8192;
+	signal = dry * dry_balance + wet * wet_balance;
+}
 lunar_drywet_mono :: lunar_drywet_mono (orbiter_core * core) : orbiter (core) {
+	dry = wet = balance = 0.0;
 	initialise (); activate ();
 }
 
@@ -706,12 +790,13 @@ lunar_sensitivity :: lunar_sensitivity (orbiter_core * core) : orbiter (core) {
 	initialise (); activate ();
 }
 
-int lunar_filter :: numberOfInputs (void) {return 3;}
+int lunar_filter :: numberOfInputs (void) {return 4;}
 char * lunar_filter :: inputName (int ind) {
 	switch (ind) {
 	case 0: return "ENTER"; break;
 	case 1: return "FREQ"; break;
 	case 2: return "RESONANCE"; break;
+	case 3: return "AMP"; break;
 	default: break;
 	}
 	return orbiter :: inputName (ind);
@@ -721,6 +806,7 @@ double * lunar_filter :: inputAddress (int ind) {
 	case 0: return & enter; break;
 	case 1: return & freq; break;
 	case 2: return & resonance; break;
+	case 3: return & amp; break;
 	default: break;
 	}
 	return orbiter :: inputAddress (ind);
@@ -748,17 +834,18 @@ double * lunar_filter :: outputAddress (int ind) {
 void lunar_filter :: move (void) {
 	double F = core -> FilterFreq (freq);
 	double Q = 2.0 - resonance * 0.0001220703125;
-	signal += band_pass_signal * F;
-	high_pass_signal = enter - signal - band_pass_signal * Q;
+	running_signal += band_pass_signal * F;
+	high_pass_signal = enter - running_signal - band_pass_signal * Q;
 	band_pass_signal += high_pass_signal * F;
-	signal += band_pass_signal * F;
-	high_pass_signal = enter - signal - band_pass_signal * Q;
+	running_signal += band_pass_signal * F;
+	high_pass_signal = enter - running_signal - band_pass_signal * Q;
 	band_pass_signal += high_pass_signal * F;
-	band_reject_signal = high_pass_signal + signal;
+	band_reject_signal = high_pass_signal + running_signal;
+	signal = running_signal * core -> Amplitude (amp);
 }
 lunar_filter :: lunar_filter (orbiter_core * core) : orbiter (core) {
-	high_pass_signal = band_pass_signal = band_reject_signal = 0.0;
-	freq = 0.0; resonance = 8192.0;
+	high_pass_signal = band_pass_signal = band_reject_signal = running_signal = 0.0;
+	freq = amp = 0.0; resonance = 8192.0;
 	enter = 0.0;
 	initialise (); activate ();
 }

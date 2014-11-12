@@ -355,10 +355,9 @@ lunar_fm4_block :: lunar_fm4_block (orbiter_core * core) : orbiter (core) {
 	signal1 = signal2 = signal3 = signal4 = 0.0;
 	time1 = time2 = time3 = time4 = 0.0;
 	freq1 = freq2 = freq3 = freq4 = 0.0;
-	amp1 = amp2 = amp3 = amp4 = 0.0;
+	amp1 = 0.0; amp2 = amp3 = amp4 = -16383.0;
 	ratio1 = ratio2 = ratio3 = ratio4 = 1.0;
 	sync1 = sync2 = sync3 = sync4 = 0.0;
 	feedback1 = feedback2 = feedback3 = feedback4 = 0.0;
 	initialise (); activate ();
 }
-

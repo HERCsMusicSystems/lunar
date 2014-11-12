@@ -195,8 +195,7 @@ end := [
 		[BuildPhobos Phobos PhobosCB *phobos_mixer]
 		;[moon_base]
 		[CommandCentre commander cb]
-		[reactor "left" *abakos_mixer "left"]
-		[reactor "right" *abakos_mixer "right"]
+		[ConnectStereo reactor *abakos_mixer]
 		[command]
 		] .
 

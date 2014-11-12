@@ -221,6 +221,19 @@ bool orbiter :: connect (int destination_port, orbiter * source, int source_port
 	connectors [destination_port] = new dock (source, source_port, source -> outputAddress (source_port), connectors [destination_port]);
 	return true;
 }
+void orbiter :: disconnect (void) {
+	for (int ind = 0; ind < number_of_connections; ind++) {
+		if (connectors [ind] != 0) delete connectors [ind];
+		connectors [ind] = 0;
+	}
+}
+bool orbiter :: disconnect (int destination_port) {
+	if (destination_port < 0) return false;
+	if (destination_port >= number_of_connections) return false;
+	if (connectors [destination_port] != 0) delete connectors [destination_port];
+	connectors [destination_port] = 0;
+	return true;
+}
 bool orbiter :: disconnect (int destination_port, orbiter * source, int source_port) {
 	if (destination_port < 0) return false;
 	if (destination_port >= number_of_connections) return false;

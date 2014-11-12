@@ -115,6 +115,8 @@ public:
 	void hold (void);
 	virtual bool release (void);
 	bool connect (int destination_port, orbiter * source, int source_port);
+	void disconnect (void);
+	bool disconnect (int destination_port);
 	bool disconnect (int destination_port, orbiter * source, int source_port);
 public:
 	void initialise (void);

@@ -163,9 +163,10 @@ program lunar #machine := "prolog.lunar"
 	[AddParameterBlock *parameters sync *lfo *selector 0 "onoff"]
 ]
 
-[[InsertIO *parameters *filter *selector [["ENTER" "FREQ" "RESONANCE" : *] *]]
+[[InsertIO *parameters *filter *selector [["ENTER" "FREQ" "RESONANCE" "AMP" : *] *]]
 	[AddParameterBlock *parameters freq *filter *selector 0 "freq"]
 	[AddParameterBlock *parameters resonance *filter *selector 0 "amp"]
+	[AddParameterBlock *parameters amp *filter *selector 0 "amp"]
 ]
 
 [[InsertIO *parameters *sensitivity *selector [["ENTER" "BREAKPOINT" "LEFT" "RIGHT" : *] *]]

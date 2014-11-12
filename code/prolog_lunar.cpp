@@ -78,6 +78,12 @@ bool PrologNativeOrbiter :: code (PrologElement * parameters, PrologResolution *
 		}
 		if (disconnector == 0) return module -> connect (destination_port, ((PrologNativeOrbiter *) machine) -> module, source_port);
 		return module -> disconnect (destination_port, ((PrologNativeOrbiter *) machine) -> module, source_port);
+	} else {
+		if (disconnector != 0) {
+			if (port != 0) return module -> disconnect (destination_port);
+			module -> disconnect ();
+			return true;
+		}
 	}
 	if (ret != 0) {double * adres = module -> outputAddress (source_port); if (adres == 0) return false; ret -> setDouble (* adres); return true;}
 	if (value != 0) {
@@ -175,6 +181,7 @@ public:
 class orbiter_statistics : public PrologNativeCode {
 public:
 	bool code (PrologElement * parameters, PrologResolution * resolution) {
+		if (parameters -> isEarth ()) {printf ("Number of Orbiters = [%i]\n", orbiter_count); return true;}
 		if (parameters -> isPair ()) parameters = parameters -> getLeft ();
 		parameters -> setInteger (orbiter_count);
 		return true;

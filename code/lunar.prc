@@ -236,9 +236,17 @@ program lunar #machine := "prolog.lunar"
 
 [[Lunar *v *moonbase : *selector] [*moonbase *parameters : *] [*parameters *base : *selector] [*base 0 *v]]
 
+[[Store *moonbase *program]
+	[is_integer *program] /
+	[*moonbase * * * *type : *]
+	[add *file_name *type "/" *program ".txt"]
+	[Store *moonbase *file_name]
+]
+
 [[Store *moonbase *file_name]
-	[*moonbase *parameters *modules *cb : *]
+	[*moonbase *parameters *modules *cb *type : *]
 	[file_writer *tc *file_name]
+	[*tc [*type] "\n"]
 	[*cb control : *mono] [*tc [*mono] "\n"] [show *mono]
 	[TRY
 		[*parameters *orbiter : *selector]
@@ -250,9 +258,17 @@ program lunar #machine := "prolog.lunar"
 	[*tc]
 ]
 
+[[Restore *moonbase *program]
+	[is_integer *program] /
+	[*moonbase * * * *type : *]
+	[add *file_name *type "/" *program ".txt"]
+	[Restore *moonbase *file_name]
+]
+
 [[Restore *moonbase *file_name]
 	[file_reader *fr *file_name]
-	[*moonbase * * *cb : *]
+	[*moonbase * * *cb *type : *]
+	[*fr *type]
 	[*fr *mono] [*cb *mono] [show [*cb *mono]]
 	[SubRestore *moonbase *fr]
 	[*fr]

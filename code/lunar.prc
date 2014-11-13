@@ -90,10 +90,20 @@ program lunar #machine := "prolog.lunar"
 	[*to "RIGHT" *from "RIGHT" []]
 ]
 
-[[Moonbase *base *distributor]
+[[Moonbase *base *distributor *type]
 	[create_atom *modules] [create_atom *parameters]
 	[moonbase *distributor]
-	[addcl [[*base *parameters *modules *distributor]]]
+	[addcl [[*base *parameters *modules *distributor *type]]]
+]
+
+[[Moonbase *base]
+	[*base *parameters *modules *callback : *]
+	[delallcl *base]
+	[*callback]
+	[TRY [*parameters *parameter : *selector] [*parameter] fail]
+	[TRY [*modules *module : *selector] [*module []] [*module] fail]
+	[delallcl *parameters]
+	[delallcl *modules]
 ]
 
 [[AddParameterBlock *parameters *parameter *module *selector *initial *style]
@@ -187,7 +197,6 @@ program lunar #machine := "prolog.lunar"
 ]
 
 [[InsertIO *parameters *drywet *selector [["DRYLEFT" "DRYRIGHT" "WETLEFT" "WETRIGHT" "BALANCE" : *] *]]
-	[show "I am here!"]
 	[AddParameterBlock *parameters balance *drywet *selector 0 "index"]
 ]
 

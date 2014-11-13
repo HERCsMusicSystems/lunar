@@ -69,7 +69,6 @@ program eclipse [
 [[cb *ret 11 *v] [add *ret "Sustain = " *v]]
 [[cb *ret 16 *x *y] [add *ret "Vector = [" *x " / " *y "]"]]
 
-;[[cb cb *1 *2 *3 *4 *5 : *] [show "I am here!"]]
 [[cb cb *poly : *x]
 	[is_var *poly]
 	[cb_callback : *cb]
@@ -101,14 +100,14 @@ program eclipse [
 	[*parameters *pb : *path] [*pb : *v]
 	[add *program *pather " = " *v]
 	[cb_path [*moon : *path]]
-	[*moon * * *moon_callback]
+	[*moon * * *moon_callback : *]
 	[cb_callback *moon_callback]
 	[show "Moon => " *moon_callback]
 ]
 
 
 [[moon_base]
-	[Moonbase moon mooncb]
+	[Moonbase moon mooncb moon]
 	[adsr *adsr1]
 	[operator *op1]
 	[adsr *adsr2]
@@ -129,13 +128,14 @@ program eclipse [
 ]
 
 [[BuildPhobos *Phobos *PhobosCB *mixer]
-	[Moonbase *Phobos *PhobosCB]
+	[Moonbase *Phobos *PhobosCB Phobos]
 	[pan *pan]
 	[delay *dsp]
 	[mixer *mixer]
 	[BuildPhobosPart *Phobos *PhobosCB *pan]
 	[Insert *pan *Phobos pan]
 	[Insert *dsp *Phobos delay]
+	[Insert *mixer *Phobos mixer]
 	[addcl [[Moons *Phobos]]]
 ]
 
@@ -160,7 +160,7 @@ program eclipse [
 ]
 
 [[build_abakos *drywet]
-	[Moonbase abakos abakoscb]
+	[Moonbase abakos abakoscb abakos]
 	[pan *pan]
 	[delay *delay]
 	[drywet *drywet]
@@ -200,13 +200,13 @@ end := [
 		[BuildPhobos Phobos PhobosCB *phobos_mixer]
 		;[moon_base]
 		[CommandCentre commander cb]
-		;[ConnectStereo reactor *abakos_mixer]
-		[reactor "left" *abakos_mixer "left"]
-		[reactor "right" *abakos_mixer "right"]
+		[ConnectStereo reactor *abakos_mixer]
 		[oscilloscope left] [oscilloscope right] [right 1000 10]
 		[left "signal" *abakos_mixer "left"]
 		[right "signal" *abakos_mixer "right"]
-		[*abakos_mixer : *x] [show *x]
+		/
 		[command]
+		[Moonbase Phobos]
+		[Moonbase abakos]
 		] .
 

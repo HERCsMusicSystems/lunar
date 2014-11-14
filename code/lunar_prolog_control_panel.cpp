@@ -143,32 +143,32 @@ public:
 		}
 		delete query;
 	}
-	void action (int ind, double value, char * area) {
+	void action (int ind, double value) {
 		PrologElement * query = root -> pair (root -> atom (command),
 								root -> pair (root -> var (0),
 								root -> pair (root -> integer (ind),
-								root -> pair (root -> Double (value),
+								root -> pair (root -> integer ((int) (value * 128.0) - 64),
 								root -> earth ()))));
 		query = root -> pair (root -> var (0), root -> pair (query, root -> earth ()));
 		if (root -> resolution (query) == 1) {
 			PrologElement * el = query;
 			if (el -> isPair ()) el = el -> getLeft ();
-			if (el -> isText ()) area_cat (area, 0, el -> getText ());
+			if (el -> isText ()) area_cat (display . area, 0, el -> getText ());
 		}
 		delete query;
 	}
-	void action (int ind, double x, double y, char * area) {
+	void action (int ind, double x, double y) {
 		PrologElement * query = root -> pair (root -> atom (command),
 								root -> pair (root -> var (0),
 								root -> pair (root -> integer (ind),
-								root -> pair (root -> Double (x),
-								root -> pair (root -> Double (y),
+								root -> pair (root -> integer ((int) (x * 64.0)),
+								root -> pair (root -> integer ((int) (y * 64.0)),
 								root -> earth ())))));
 		query = root -> pair (root -> var (0), root -> pair (query, root -> earth ()));
 		if (root -> resolution (query) == 1) {
 			PrologElement * el = query;
 			if (el -> isPair ()) el = el -> getLeft ();
-			if (el -> isText ()) area_cat (area, 0, el -> getText ());
+			if (el -> isText ()) area_cat (display . area, 0, el -> getText ());
 		}
 		delete query;
 	}
@@ -195,20 +195,42 @@ public:
 		root -> resolution (query);
 		delete query;
 	}
+	void preset_action (char * action, char * file_name) {
+		PrologAtom * atom = root -> search (action);
+		if (atom == 0) return;
+		PrologElement * query = root -> pair (root -> atom (command),
+								root -> pair (root -> var (0),
+								root -> pair (root -> atom (atom),
+								root -> pair (root -> text (file_name),
+								root -> earth ()))));
+		query = root -> pair (root -> var (0), root -> pair (query, root -> earth ()));
+		if (root -> resolution (query) == 1) {
+			PrologElement * el = query;
+			if (el -> isPair ()) el = el -> getLeft ();
+			if (el -> isText ()) area_cat (display . area, 0, el -> getText ());
+		}
+		delete query;
+	}
 	bool remove (bool remove_gtk = true) {
 		if (remove_gtk) g_idle_add ((GSourceFunc) RemoveViewportIdleCode, viewport);
 		delete this;
 		return true;
 	}
 	bool code (PrologElement * parameters, PrologResolution * resolution);
-	control_panel_action (GraphicResources * resources, PrologRoot * root, PrologDirectory * directory, PrologAtom * atom, PrologAtom * command, bool active)
-	: ctrl_volume (point (186.0, 5.0), 11, resources, active),
-	ctrl_attack (point (268.0, 5.0), 1, resources, active), ctrl_decay (point (338.0, 5.0), 2, resources, active),
-	ctrl_sustain (point (408.0, 5.0), 3, resources, active), ctrl_release (point (478.0, 5.0), 4, resources, active),
-	ctrl_freq (point (218.0, 90.0), 5, resources, active), ctrl_drywet (point (288.0, 90.0), 6, resources, active),
-	ctrl_pan (point (358.0, 90.0), 7, resources, active), ctrl_porta (point (442.0, 90.0), 8, resources, active),
-	ctrl_speed (point (512.0, 90.0), 9, resources, active), ctrl_vibrato (point (582.0, 90.0), 10, resources, active),
-	vector (point (12.0, -2.0), 16, resources, active), keyboard (point (114.0, 194.0), 2, 6, resources, active),
+	control_panel_action (GraphicResources * resources, PrologRoot * root, PrologDirectory * directory, PrologAtom * atom, PrologAtom * command, bool active) :
+	ctrl_volume (point (186.0, 5.0), 7, resources, active),
+	ctrl_attack (point (268.0, 5.0), 73, resources, active),
+	ctrl_decay (point (338.0, 5.0), 75, resources, active),
+	ctrl_sustain (point (408.0, 5.0), 79, resources, active),
+	ctrl_release (point (478.0, 5.0), 72, resources, active),
+	ctrl_freq (point (218.0, 90.0), 74, resources, active),
+	ctrl_drywet (point (288.0, 90.0), 91, resources, active),
+	ctrl_pan (point (358.0, 90.0), 10, resources, active),
+	ctrl_porta (point (442.0, 90.0), 5, resources, active),
+	ctrl_speed (point (512.0, 90.0), 76, resources, active),
+	ctrl_vibrato (point (582.0, 90.0), 77, resources, active),
+	vector (point (12.0, -2.0), 16, resources, active),
+	keyboard (point (114.0, 194.0), 2, 6, resources, active),
 	display (point (576.0, -7.0), 7, resources, active),
 	selector0 (point (667.0, 112.0), 200, resources, active),
 	selector1 (point (707.0, 112.0), 201, resources, active),
@@ -236,10 +258,10 @@ public:
 	delta_8 (point (1195.0, 150.0), 304, resources, true),
 	delta_128 (point (1235.0, 150.0), 305, resources, true),
 	encoder (point (1088.0, 97.0), 401, resources, true),
-	pitch (point (42.0, 228.0), 501, true, resources, false),
-	modulation (point (72.0, 228.0), 502, false, resources, true),
+	pitch (point (42.0, 228.0), 128, true, resources, false),
+	modulation (point (72.0, 228.0), 1, false, resources, true),
 	poly_mono (point (33.0, 175.0), 503, resources, active),
-	porta_on_off (point (73.0, 175.0), 504, resources, active),
+	porta_on_off (point (73.0, 175.0), 65, resources, active),
 	store (point (1240.0, 110.0), 601, resources, true),
 	restore (point (1280.0, 110.0), 602, resources, true)
 	{
@@ -405,12 +427,24 @@ static gint ControlPanelKeyon (GtkWidget * viewport, GdkEventButton * event, con
 	if (action -> add_one . keyon (location)) {action -> value_change_action (1); action -> add_one . engaged = true; redraw = true;}
 	if (action -> sub_one . keyon (location)) {action -> value_change_action (-1); action -> sub_one . engaged = true; redraw = true;}
 	if (action -> store . keyon (location)) {
-		GtkWidget * dialog = gtk_file_chooser_dialog_new ("Open File", GTK_WINDOW (viewport),
+		GtkWidget * dialog = gtk_file_chooser_dialog_new ("Save File", GTK_WINDOW (viewport),
+											GTK_FILE_CHOOSER_ACTION_SAVE, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT, NULL);
+		if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT) {
+			char * file_name = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (dialog));
+			action -> preset_action ("Store", file_name);
+			g_free (file_name);
+			redraw = true;
+		}
+		gtk_widget_destroy (dialog);
+	}
+	if (action -> restore . keyon (location)) {
+		GtkWidget * dialog = gtk_file_chooser_dialog_new ("Save File", GTK_WINDOW (viewport),
 											GTK_FILE_CHOOSER_ACTION_OPEN, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT, NULL);
 		if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT) {
 			char * file_name = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (dialog));
-			printf ("opening <%s>\n", file_name);
+			action -> preset_action ("Restore", file_name);
 			g_free (file_name);
+			redraw = true;
 		}
 		gtk_widget_destroy (dialog);
 	}
@@ -448,19 +482,19 @@ static gint ControlPanelMove (GtkWidget * viewport, GdkEventButton * event, cont
 	point delta = location - action -> captured;
 	action -> captured = location;
 	bool redraw = false;
-	if (action -> ctrl_volume . move (delta)) {action -> action (action -> ctrl_vibrato . id, action -> ctrl_vibrato . angle, action -> display . area); redraw = true;}
-	if (action -> ctrl_attack . move (delta)) {action -> action (action -> ctrl_attack . id, action -> ctrl_attack . angle, action -> display . area); redraw = true;}
-	if (action -> ctrl_decay . move (delta)) {action -> action (action -> ctrl_decay . id, action -> ctrl_decay . angle, action -> display . area); redraw = true;}
-	if (action -> ctrl_sustain . move (delta)) {action -> action (action -> ctrl_sustain . id, action -> ctrl_sustain . angle, action -> display . area); redraw = true;}
-	if (action -> ctrl_release . move (delta)) {action -> action (action -> ctrl_release . id, action -> ctrl_release . angle, action -> display . area); redraw = true;}
-	if (action -> ctrl_freq . move (delta)) {action -> action (action -> ctrl_freq . id, action -> ctrl_freq . angle, action -> display . area); redraw = true;}
-	if (action -> ctrl_drywet . move (delta)) {action -> action (action -> ctrl_drywet . id, action -> ctrl_drywet . angle, action -> display . area); redraw = true;}
-	if (action -> ctrl_pan . move (delta)) {action -> action (action -> ctrl_pan . id, action -> ctrl_pan . angle, action -> display . area); redraw = true;}
-	if (action -> ctrl_porta . move (delta)) {action -> action (action -> ctrl_porta . id, action -> ctrl_porta . angle, action -> display . area); redraw = true;}
-	if (action -> ctrl_speed . move (delta)) {action -> action (action -> ctrl_speed . id, action -> ctrl_speed . angle, action -> display . area); redraw = true;}
-	if (action -> ctrl_vibrato . move (delta)) {action -> action (action -> ctrl_vibrato . id, action -> ctrl_vibrato . angle, action -> display . area); redraw = true;}
+	if (action -> ctrl_volume . move (delta)) {action -> action (action -> ctrl_volume . id, action -> ctrl_vibrato . angle); redraw = true;}
+	if (action -> ctrl_attack . move (delta)) {action -> action (action -> ctrl_attack . id, action -> ctrl_attack . angle); redraw = true;}
+	if (action -> ctrl_decay . move (delta)) {action -> action (action -> ctrl_decay . id, action -> ctrl_decay . angle); redraw = true;}
+	if (action -> ctrl_sustain . move (delta)) {action -> action (action -> ctrl_sustain . id, action -> ctrl_sustain . angle); redraw = true;}
+	if (action -> ctrl_release . move (delta)) {action -> action (action -> ctrl_release . id, action -> ctrl_release . angle); redraw = true;}
+	if (action -> ctrl_freq . move (delta)) {action -> action (action -> ctrl_freq . id, action -> ctrl_freq . angle); redraw = true;}
+	if (action -> ctrl_drywet . move (delta)) {action -> action (action -> ctrl_drywet . id, action -> ctrl_drywet . angle); redraw = true;}
+	if (action -> ctrl_pan . move (delta)) {action -> action (action -> ctrl_pan . id, action -> ctrl_pan . angle); redraw = true;}
+	if (action -> ctrl_porta . move (delta)) {action -> action (action -> ctrl_porta . id, action -> ctrl_porta . angle); redraw = true;}
+	if (action -> ctrl_speed . move (delta)) {action -> action (action -> ctrl_speed . id, action -> ctrl_speed . angle); redraw = true;}
+	if (action -> ctrl_vibrato . move (delta)) {action -> action (action -> ctrl_vibrato . id, action -> ctrl_vibrato . angle); redraw = true;}
 	if (action -> vector . move (delta)) {
-		action -> action (action -> vector . id, action -> vector . position . x, action -> vector . position . y, action -> display . area);
+		action -> action (action -> vector . id, action -> vector . position . x, action -> vector . position . y);
 		redraw = true;
 	}
 	if (action -> encoder . move (delta)) {action -> value_change_action ((int) action -> encoder . increment); redraw = true;}

@@ -346,7 +346,7 @@ lunar_lfo :: lunar_lfo (orbiter_core * core) : orbiter (core) {
 	initialise (); activate ();
 }
 
-int lunar_adsr :: numberOfInputs (void) {return 5;}
+int lunar_adsr :: numberOfInputs (void) {return 6;}
 char * lunar_adsr :: inputName (int ind) {
 	switch (ind) {
 	case 0: return "TRIGGER"; break;
@@ -354,6 +354,7 @@ char * lunar_adsr :: inputName (int ind) {
 	case 2: return "DECAY"; break;
 	case 3: return "SUSTAIN"; break;
 	case 4: return "RELEASE"; break;
+	case 5: return "SYNC"; break;
 	default: break;
 	}
 	return orbiter :: inputName (ind);
@@ -365,6 +366,7 @@ double * lunar_adsr :: inputAddress (int ind) {
 	case 2: return & decay; break;
 	case 3: return & sustain; break;
 	case 4: return & release; break;
+	case 5: return & sync; break;
 	default: break;
 	}
 	return orbiter :: inputAddress (ind);
@@ -379,6 +381,7 @@ void lunar_adsr :: move (void) {
 			if (time < 1.0) {signal = time * -16383.0; time += core -> WaitingTime (release); return;}
 			time = 0.0; signal = -16383.0; stage = 0; busy = 0.0; return;
 		}
+		if (release == 0.0) {time = 0.0; signal = -16383; stage = 0; busy = 0.0; return;}
 		if (time < 1.0) {
 			if (stage == 1) signal = time * 16383.0 - 16383.0;
 			if (stage == 2) signal = time * -16383.0;
@@ -423,7 +426,9 @@ void lunar_adsr :: move (void) {
 				signal = 0.0; stage = 2; time += core -> WaitingTime (decay);
 				return;
 			}
-			time = 1 + signal / 16383.0; stage = 1;
+			if (sync == 0) time = 1 + signal / 16383.0;
+			else {time = 0.0; signal = -16383;}
+			stage = 1;
 			time += core -> WaitingTime (attack);
 			return;
 			break;
@@ -435,10 +440,11 @@ lunar_adsr :: lunar_adsr (orbiter_core * core) : orbiter (core) {
 	attack = decay = sustain = release = trigger = busy = 0.0;
 	signal = -16383.0; time = busy = 0.0;
 	stage = 0;
+	sync = 0.0;
 	initialise (); activate ();
 }
 
-int lunar_eg :: numberOfInputs (void) {return 9;}
+int lunar_eg :: numberOfInputs (void) {return 10;}
 char * lunar_eg :: inputName (int ind) {
 	switch (ind) {
 	case 0: return "TRIGGER"; break;
@@ -450,6 +456,7 @@ char * lunar_eg :: inputName (int ind) {
 	case 6: return "TIME2"; break;
 	case 7: return "TIME3"; break;
 	case 8: return "TIME4"; break;
+	case 9: return "SYNC"; break;
 	default: break;
 	}
 	return orbiter :: inputName (ind);
@@ -465,6 +472,7 @@ double * lunar_eg :: inputAddress (int ind) {
 	case 6: return & time2; break;
 	case 7: return & time3; break;
 	case 8: return & time4; break;
+	case 9: return & sync; break;
 	default: break;
 	}
 	return orbiter :: inputAddress (ind);
@@ -475,6 +483,7 @@ double * lunar_eg :: outputAddress (int ind) {if (ind == 1) return & busy; retur
 void lunar_eg :: move (void) {
 	if (trigger == 0.0) {
 		if (stage < 1) return;
+		if (time4 == 0.0) {signal = level4; stage = 0; return;}
 		if (stage < 5) stage = 5;
 		if (level4 < signal) {
 			signal -= core -> WaitingTime16384 (time4);
@@ -485,13 +494,13 @@ void lunar_eg :: move (void) {
 		}
 	} else {
 		switch (stage) {
-		case 0:
+		case 0: case 5:
 			if (time1 == 0.0) {
 				if (time2 == 0.0) {
 					if (time3 == 0.0) {signal = level3; stage = 4;}
 					else {signal = level2; stage = 3;}
 				} else {signal = level1; stage = 2;}
-			} else {signal = level4; stage = 1;}
+			} else {if (stage == 0 || sync != 0.0) signal = level4; stage = 1;}
 			break;
 		case 1:
 			if (level1 > signal) {
@@ -546,6 +555,7 @@ lunar_eg :: lunar_eg (orbiter_core * core) : orbiter (core) {
 	time1 = time2 = time3 = time4 = 0.0;
 	signal = -16383.0; busy = 0.0;
 	stage = 0;
+	sync = 0.0;
 	initialise (); activate ();
 }
 

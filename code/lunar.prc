@@ -11,7 +11,8 @@ program lunar #machine := "prolog.lunar"
 				core moonbase operator parameter_block key_map velocity_map impulse trigger inactive_trigger mixer stereo_mixer gateway amplifier lfo adsr eg
 				square_operator fm4 fm6 dx9 dx7 saw_operator noise_operator sampler_operator sensitivity filter delay pan power_pan linear_pan
 				drywet drywet_mono balance
-				signal freq amp ratio sync resonance attack decay sustain release hold busy portamento porta time speed wave pulse phase poly feedback highdamp
+				level1 level2 level3 level4 time1 time2 time3 time4 attack decay sustain release
+				signal freq amp ratio sync resonance hold busy portamento porta time speed wave pulse phase poly feedback highdamp
 				mono left right mic mic_left mic_right breakpoint algo key_ratio
 				keyon keyoff polyaftertouch control programchange aftertouch pitch
 				sysex timingclock START CONTINUE STOP activesensing
@@ -152,11 +153,24 @@ program lunar #machine := "prolog.lunar"
 	[AddParameterBlock *parameters amp *noise *selector 0 "amp"]
 ]
 
-[[InsertIO *parameters *adsr *selector [["TRIGGER" "ATTACK" "DECAY" "SUSTAIN" "RELEASE" : *] *]]
+[[InsertIO *parameters *adsr *selector [["TRIGGER" "ATTACK" "DECAY" "SUSTAIN" "RELEASE" "SYNC" : *] *]]
 	[AddParameterBlock *parameters attack *adsr *selector 0 "time"]
 	[AddParameterBlock *parameters decay *adsr *selector 0 "time"]
 	[AddParameterBlock *parameters sustain *adsr *selector 0 "amp"]
 	[AddParameterBlock *parameters release *adsr *selector 0 "time"]
+	[AddParameterBlock *parameters sync *adsr *selector 0 "onoff"]
+]
+
+[[InsertIO *parameters *adsr *selector [["TRIGGER" "LEVEL1" "LEVEL2" "LEVEL3" "LEVEL4" "TIME1" "TIME2" "TIME3" "TIME4" "SYNC" : *] *]]
+	[AddParameterBlock *parameters level1 *adsr *selector 0 "index"]
+	[AddParameterBlock *parameters level2 *adsr *selector 0 "index"]
+	[AddParameterBlock *parameters level3 *adsr *selector 0 "index"]
+	[AddParameterBlock *parameters level4 *adsr *selector 0 "index"]
+	[AddParameterBlock *parameters time1 *adsr *selector 0 "time"]
+	[AddParameterBlock *parameters time2 *adsr *selector 0 "time"]
+	[AddParameterBlock *parameters time3 *adsr *selector 0 "time"]
+	[AddParameterBlock *parameters time4 *adsr *selector 0 "time"]
+	[AddParameterBlock *parameters sync *adsr *selector 0 "onoff"]
 ]
 
 [[InsertIO *parameters *trigger *selector [["BUSY" "HOLD" "PORTA" "TIME" "CONTROL" : *] *]]

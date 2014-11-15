@@ -27,7 +27,7 @@
 #include "lunar_moonbase.h"
 #include <stdio.h>
 
-int moonbase :: numberOfOutputs (void) {return 0;}
+char * moonbase :: outputName (int ind) {if (ind == 0) return "POLY"; return orbiter :: outputName (ind);}
 void moonbase :: set_map (lunar_map * map) {
 	if (this -> map != 0) this -> map -> release ();
 	this -> map = map;
@@ -98,8 +98,8 @@ void moonbase :: keyoff (int key, int velocity) {
 	if (trigger != 0) trigger -> keyoff ();
 	pthread_mutex_unlock (& critical);
 }
-void moonbase :: mono (void) {mono_mode = true; keyoff ();}
-void moonbase :: poly (void) {mono_mode = false; keyoff ();}
+void moonbase :: mono (void) {mono_mode = true; signal = 0.0; keyoff ();}
+void moonbase :: poly (void) {mono_mode = false; signal = 1.0; keyoff ();}
 bool moonbase :: isMonoMode (void) {return mono_mode;}
 void moonbase :: control (int ctrl, int value) {
 	if (ctrl < 0 || ctrl > 128) return;
@@ -132,7 +132,7 @@ bool moonbase :: release (void) {
 }
 moonbase :: moonbase (orbiter_core * core) : orbiter (core) {
 	pthread_mutex_init (& critical, 0);
-	map = 0; choice = triggers = 0; mono_mode = false;
+	map = 0; choice = triggers = 0; mono_mode = false; signal = 1.0;
 	for (int ind = 0; ind < 129; ind++) {controllers [ind] = 0; ctrl_lsbs [ind] = 0;}
 	initialise ();
 }

@@ -438,7 +438,7 @@ static gint ControlPanelKeyon (GtkWidget * viewport, GdkEventButton * event, con
 		gtk_widget_destroy (dialog);
 	}
 	if (action -> restore . keyon (location)) {
-		GtkWidget * dialog = gtk_file_chooser_dialog_new ("Save File", GTK_WINDOW (viewport),
+		GtkWidget * dialog = gtk_file_chooser_dialog_new ("Load File", GTK_WINDOW (viewport),
 											GTK_FILE_CHOOSER_ACTION_OPEN, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT, NULL);
 		if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT) {
 			char * file_name = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (dialog));

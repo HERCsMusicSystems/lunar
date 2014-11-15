@@ -42,7 +42,7 @@ private:
 	bool mono_mode;
 	pthread_mutex_t critical;
 public:
-	virtual int numberOfOutputs (void);
+	virtual char * outputName (int ind);
 	virtual bool release (void);
 	void set_map (lunar_map * map);
 	void insert_trigger (lunar_trigger * trigger);

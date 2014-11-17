@@ -167,7 +167,6 @@ private:
 	double decay;
 	double sustain;
 	double release;
-	double sync;
 	double trigger;
 	double busy;
 	double time;
@@ -187,7 +186,6 @@ class lunar_eg : public orbiter {
 private:
 	double level1, level2, level3, level4;
 	double time1, time2, time3, time4;
-	double sync;
 	double trigger;
 	double busy;
 	int stage;

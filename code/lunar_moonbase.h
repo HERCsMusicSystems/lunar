@@ -44,7 +44,7 @@ private:
 	int previous_key;
 	pthread_mutex_t critical;
 public:
-	virtual char * outputName (int ind);
+	virtual int numberOfOutputs (void);
 	virtual bool release (void);
 	void set_map (lunar_map * map);
 	void insert_trigger (lunar_trigger * trigger);

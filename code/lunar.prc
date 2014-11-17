@@ -153,15 +153,14 @@ program lunar #machine := "prolog.lunar"
 	[AddParameterBlock *parameters amp *noise *selector 0 "amp"]
 ]
 
-[[InsertIO *parameters *adsr *selector [["TRIGGER" "ATTACK" "DECAY" "SUSTAIN" "RELEASE" "SYNC" : *] *]]
+[[InsertIO *parameters *adsr *selector [["TRIGGER" "ATTACK" "DECAY" "SUSTAIN" "RELEASE" : *] *]]
 	[AddParameterBlock *parameters attack *adsr *selector 0 "time"]
 	[AddParameterBlock *parameters decay *adsr *selector 0 "time"]
 	[AddParameterBlock *parameters sustain *adsr *selector 0 "amp"]
 	[AddParameterBlock *parameters release *adsr *selector 0 "time"]
-	[AddParameterBlock *parameters sync *adsr *selector 0 "onoff"]
 ]
 
-[[InsertIO *parameters *adsr *selector [["TRIGGER" "LEVEL1" "LEVEL2" "LEVEL3" "LEVEL4" "TIME1" "TIME2" "TIME3" "TIME4" "SYNC" : *] *]]
+[[InsertIO *parameters *adsr *selector [["TRIGGER" "LEVEL1" "LEVEL2" "LEVEL3" "LEVEL4" "TIME1" "TIME2" "TIME3" "TIME4" : *] *]]
 	[AddParameterBlock *parameters level1 *adsr *selector 0 "index"]
 	[AddParameterBlock *parameters level2 *adsr *selector 0 "index"]
 	[AddParameterBlock *parameters level3 *adsr *selector 0 "index"]
@@ -170,7 +169,6 @@ program lunar #machine := "prolog.lunar"
 	[AddParameterBlock *parameters time2 *adsr *selector 0 "time"]
 	[AddParameterBlock *parameters time3 *adsr *selector 0 "time"]
 	[AddParameterBlock *parameters time4 *adsr *selector 0 "time"]
-	[AddParameterBlock *parameters sync *adsr *selector 0 "onoff"]
 ]
 
 [[InsertIO *parameters *trigger *selector [["BUSY" "HOLD" "PORTA" "TIME" "CONTROL" : *] *]]

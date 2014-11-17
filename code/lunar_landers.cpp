@@ -346,7 +346,7 @@ lunar_lfo :: lunar_lfo (orbiter_core * core) : orbiter (core) {
 	initialise (); activate ();
 }
 
-int lunar_adsr :: numberOfInputs (void) {return 6;}
+int lunar_adsr :: numberOfInputs (void) {return 5;}
 char * lunar_adsr :: inputName (int ind) {
 	switch (ind) {
 	case 0: return "TRIGGER"; break;
@@ -354,7 +354,6 @@ char * lunar_adsr :: inputName (int ind) {
 	case 2: return "DECAY"; break;
 	case 3: return "SUSTAIN"; break;
 	case 4: return "RELEASE"; break;
-	case 5: return "SYNC"; break;
 	default: break;
 	}
 	return orbiter :: inputName (ind);
@@ -366,7 +365,6 @@ double * lunar_adsr :: inputAddress (int ind) {
 	case 2: return & decay; break;
 	case 3: return & sustain; break;
 	case 4: return & release; break;
-	case 5: return & sync; break;
 	default: break;
 	}
 	return orbiter :: inputAddress (ind);
@@ -375,6 +373,13 @@ int lunar_adsr :: numberOfOutputs (void) {return 2;}
 char * lunar_adsr :: outputName (int ind) {if (ind == 1) return "BUSY"; return orbiter :: outputName (ind);}
 double * lunar_adsr :: outputAddress (int ind) {if (ind == 1) return & busy; return orbiter :: outputAddress (ind);}
 void lunar_adsr :: move (void) {
+	if (trigger >= 16384.0) {
+		if (attack == 0.0) {
+			if (decay == 0.0) {signal = sustain; stage = 3; return;}
+			signal = 0.0; stage = 2; time = core -> WaitingTime (decay); return;
+		}
+		signal = -16383.0; stage = 1; time = core -> WaitingTime (attack); return;
+	}
 	if (trigger == 0.0) {
 		if (stage == 0) return;
 		if (stage == 4) {
@@ -426,8 +431,7 @@ void lunar_adsr :: move (void) {
 				signal = 0.0; stage = 2; time += core -> WaitingTime (decay);
 				return;
 			}
-			if (sync == 0) time = 1 + signal / 16383.0;
-			else {time = 0.0; signal = -16383;}
+			time = 1 + signal / 16383.0;
 			stage = 1;
 			time += core -> WaitingTime (attack);
 			return;
@@ -440,11 +444,10 @@ lunar_adsr :: lunar_adsr (orbiter_core * core) : orbiter (core) {
 	attack = decay = sustain = release = trigger = busy = 0.0;
 	signal = -16383.0; time = busy = 0.0;
 	stage = 0;
-	sync = 0.0;
 	initialise (); activate ();
 }
 
-int lunar_eg :: numberOfInputs (void) {return 10;}
+int lunar_eg :: numberOfInputs (void) {return 9;}
 char * lunar_eg :: inputName (int ind) {
 	switch (ind) {
 	case 0: return "TRIGGER"; break;
@@ -456,7 +459,6 @@ char * lunar_eg :: inputName (int ind) {
 	case 6: return "TIME2"; break;
 	case 7: return "TIME3"; break;
 	case 8: return "TIME4"; break;
-	case 9: return "SYNC"; break;
 	default: break;
 	}
 	return orbiter :: inputName (ind);
@@ -472,7 +474,6 @@ double * lunar_eg :: inputAddress (int ind) {
 	case 6: return & time2; break;
 	case 7: return & time3; break;
 	case 8: return & time4; break;
-	case 9: return & sync; break;
 	default: break;
 	}
 	return orbiter :: inputAddress (ind);
@@ -481,6 +482,16 @@ int lunar_eg :: numberOfOutputs (void) {return 2;}
 char * lunar_eg :: outputName (int ind) {if (ind == 1) return "BUSY"; return orbiter :: outputName (ind);}
 double * lunar_eg :: outputAddress (int ind) {if (ind == 1) return & busy; return orbiter :: outputAddress (ind);}
 void lunar_eg :: move (void) {
+	if (trigger >= 16384.0) {
+		if (time1 == 0.0) {
+			if (time2 == 0.0) {
+				if (time3 == 0) {signal = level3; stage = 4; return;}
+				signal = level2; stage = 3; return;
+			}
+			signal = level1; stage = 2; return;
+		}
+		signal = level4; stage = 1; return;
+	}
 	if (trigger == 0.0) {
 		if (stage < 1) return;
 		if (time4 == 0.0) {signal = level4; stage = 0; return;}
@@ -500,7 +511,7 @@ void lunar_eg :: move (void) {
 					if (time3 == 0.0) {signal = level3; stage = 4;}
 					else {signal = level2; stage = 3;}
 				} else {signal = level1; stage = 2;}
-			} else {if (stage == 0 || sync != 0.0) signal = level4; stage = 1;}
+			} else {if (stage == 0) signal = level4; stage = 1;}
 			break;
 		case 1:
 			if (level1 > signal) {
@@ -555,7 +566,6 @@ lunar_eg :: lunar_eg (orbiter_core * core) : orbiter (core) {
 	time1 = time2 = time3 = time4 = 0.0;
 	signal = -16383.0; busy = 0.0;
 	stage = 0;
-	sync = 0.0;
 	initialise (); activate ();
 }
 

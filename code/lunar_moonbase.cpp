@@ -27,7 +27,7 @@
 #include "lunar_moonbase.h"
 #include <stdio.h>
 
-char * moonbase :: outputName (int ind) {if (ind == 0) return "POLY"; return orbiter :: outputName (ind);}
+int moonbase :: numberOfOutputs (void) {return 0;}
 void moonbase :: set_map (lunar_map * map) {
 	if (this -> map != 0) this -> map -> release ();
 	this -> map = map;

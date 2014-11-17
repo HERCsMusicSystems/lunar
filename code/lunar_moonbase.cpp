@@ -76,6 +76,7 @@ void moonbase :: keyon (int key) {
 	pthread_mutex_lock (& critical);
 	lunar_trigger * trigger = select ();
 	if (trigger != 0) trigger -> keyon (key);
+	previous_key = key;
 	pthread_mutex_unlock (& critical);
 }
 void moonbase :: keyon (int key, int velocity) {
@@ -83,6 +84,7 @@ void moonbase :: keyon (int key, int velocity) {
 	pthread_mutex_lock (& critical);
 	lunar_trigger * trigger = select ();
 	if (trigger != 0) trigger -> keyon (key, velocity);
+	previous_key = key;
 	pthread_mutex_unlock (& critical);
 }
 void moonbase :: keyoff (void) {
@@ -98,9 +100,12 @@ void moonbase :: keyoff (int key, int velocity) {
 	if (trigger != 0) trigger -> keyoff ();
 	pthread_mutex_unlock (& critical);
 }
-void moonbase :: mono (void) {mono_mode = true; signal = 0.0; keyoff ();}
-void moonbase :: poly (void) {mono_mode = false; signal = 1.0; keyoff ();}
+void moonbase :: mono (void) {mono_mode = true; signal = 0.0; keyoff (); previous_key = -1;}
+void moonbase :: poly (void) {mono_mode = false; signal = 1.0; keyoff (); previous_key = -1;}
 bool moonbase :: isMonoMode (void) {return mono_mode;}
+void moonbase :: portamento (void) {legato_mode = false; previous_key = -1;}
+void moonbase :: legato (void) {legato_mode = true; previous_key = -1;}
+bool moonbase :: isLegatoMode (void) {return legato_mode;}
 void moonbase :: control (int ctrl, int value) {
 	if (ctrl < 0 || ctrl > 128) return;
 	if (controllers [ctrl] != 0) {
@@ -132,7 +137,7 @@ bool moonbase :: release (void) {
 }
 moonbase :: moonbase (orbiter_core * core) : orbiter (core) {
 	pthread_mutex_init (& critical, 0);
-	map = 0; choice = triggers = 0; mono_mode = false; signal = 1.0;
+	map = 0; choice = triggers = 0; mono_mode = false; legato_mode = true; signal = 1.0; previous_key = -1;
 	for (int ind = 0; ind < 129; ind++) {controllers [ind] = 0; ctrl_lsbs [ind] = 0;}
 	initialise ();
 }

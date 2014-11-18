@@ -77,17 +77,17 @@ void moonbase :: keyon (int key) {
 	lunar_trigger * trigger = select ();
 	if (trigger != 0) trigger -> keyon (key);
 	previous_key = key;
-	if (key_counter++ == 0) base_key = previous_key = key;
+	if (key_counter++ == 0) base_key = key;
 	pthread_mutex_unlock (& critical);
 }
 void moonbase :: keyon (int key, int velocity) {
 	if (velocity == 0) {keyoff (key, 0); return;}
 	pthread_mutex_lock (& critical);
 	lunar_trigger * trigger = select ();
-	if (key_counter++ == 0) base_key = previous_key = key;
+	if (key_counter++ == 0) base_key = key;
 	if (trigger != 0) {
 		if (mono_mode) trigger -> keyon (key, velocity);
-		else trigger -> ground (key, velocity, base_key, previous_key);
+		else trigger -> ground (key, velocity, base_key, previous_key >= 0 ? previous_key : key);
 	}
 	previous_key = key;
 	pthread_mutex_unlock (& critical);
@@ -107,8 +107,8 @@ void moonbase :: keyoff (int key, int velocity) {
 	key_counter--;
 	pthread_mutex_unlock (& critical);
 }
-void moonbase :: mono (void) {mono_mode = true; signal = 0.0; keyoff (); base_key = previous_key = 64;}
-void moonbase :: poly (void) {mono_mode = false; signal = 1.0; keyoff (); base_key = previous_key = 64;}
+void moonbase :: mono (void) {mono_mode = true; signal = 0.0; keyoff (); base_key = 64; previous_key = -1;}
+void moonbase :: poly (void) {mono_mode = false; signal = 1.0; keyoff (); base_key = 64; previous_key = -1;}
 bool moonbase :: isMonoMode (void) {return mono_mode;}
 void moonbase :: control (int ctrl, int value) {
 	if (ctrl < 0 || ctrl > 128) return;
@@ -141,7 +141,7 @@ bool moonbase :: release (void) {
 }
 moonbase :: moonbase (orbiter_core * core) : orbiter (core) {
 	pthread_mutex_init (& critical, 0);
-	map = 0; choice = triggers = 0; mono_mode = false; signal = 1.0; base_key = previous_key = 64; key_counter = 0;
+	map = 0; choice = triggers = 0; mono_mode = false; signal = 1.0; base_key = 64; previous_key = -1; key_counter = 0;
 	for (int ind = 0; ind < 129; ind++) {controllers [ind] = 0; ctrl_lsbs [ind] = 0;}
 	initialise ();
 }

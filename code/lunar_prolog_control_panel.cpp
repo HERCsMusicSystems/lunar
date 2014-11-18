@@ -373,7 +373,7 @@ static gboolean ControlPanelDeleteEvent (GtkWidget * viewport, GdkEvent * event,
 static gint ControlPanelKeyon (GtkWidget * viewport, GdkEventButton * event, control_panel_action * action) {
 	point location (event -> x, event -> y);
 	action -> captured = location;
-	if (action -> keyboard . keyon (location)) {action -> key_action (action -> keyboard . key, 100); return TRUE;}
+	if (action -> keyboard . keyon (location)) {action -> key_action (action -> keyboard . key, event -> button == 1 ? 100 : 0); return TRUE;}
 	action -> ctrl_volume . keyon (location);
 	action -> ctrl_attack . keyon (location);
 	action -> ctrl_decay . keyon (location);
@@ -453,7 +453,7 @@ static gint ControlPanelKeyon (GtkWidget * viewport, GdkEventButton * event, con
 }
 static gint ControlPanelKeyoff (GtkWidget * viewport, GdkEventButton * event, control_panel_action * action) {
 	point location (event -> x, event -> y);
-	if (action -> keyboard . keyoff (location)) {action -> key_action (action -> keyboard . key, 0); return TRUE;}
+	if (action -> keyboard . keyoff (location)) {action -> key_action (action -> keyboard . key, 0);}
 	action -> ctrl_volume . keyoff (location);
 	action -> ctrl_attack . keyoff (location);
 	action -> ctrl_decay . keyoff (location);

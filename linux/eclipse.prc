@@ -198,6 +198,10 @@ program eclipse [
 	[Insert *delay abakos reactor]
 	[build_abakos_part abakos *pan abakoscb]
 	[build_abakos_part abakos *pan abakoscb]
+	[build_abakos_part abakos *pan abakoscb]
+	[build_abakos_part abakos *pan abakoscb]
+	[build_abakos_part abakos *pan abakoscb]
+	[build_abakos_part abakos *pan abakoscb]
 	[addcl [[Moons abakos]]]
 ]
 

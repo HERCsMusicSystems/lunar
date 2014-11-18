@@ -189,17 +189,19 @@ void lunar_trigger :: keyon (int key, int velocity) {
 void lunar_trigger :: ground (int key, int velocity, int base, int previous) {
 	if (velocity < 1) {keyoff (key); return;}
 	pthread_mutex_lock (& critical);
+	pthread_mutex_lock (& core -> main_mutex);
 	sub_velocity (velocity);
 	if (key < 0) key = 0; if (key > 127) key = 127;
 	target = key_map == 0 ? (double) (key - 64) * 128.0 : key_map -> map [key];
 	this -> key = key; trigger = 16384.0; time = 0.0;
 	if (! active || porta_switch == 0.0 || porta_time == 0.0) this -> signal = target;
 	else {
-		if (porta_control != 0.0) base = previous;
-		origin = key_map == 0 ? (double) (base - 64) * 128.0 : key_map -> map [base];
+		if (porta_control == 0.0) base = previous;
+		this -> signal = origin = key_map == 0 ? (double) (base - 64) * 128.0 : key_map -> map [base];
 		delta = target - origin;
 	}
 	keystack_pointer = 0; add_stack (key);
+	pthread_mutex_unlock (& core -> main_mutex);
 	pthread_mutex_unlock (& critical);
 }
 void lunar_trigger :: keyoff (int key) {

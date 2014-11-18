@@ -280,7 +280,7 @@ sensitivity_class :: sensitivity_class (orbiter_core * core) : PrologNativeOrbit
 
 class native_moonbase : public PrologNativeOrbiter {
 private:
-	PrologAtom * keyon, * keyoff, * control, * mono, * poly, * porta, * portamento, * legato;
+	PrologAtom * keyon, * keyoff, * control, * mono, * poly;
 	PrologAtom * cbb, * cb, * c, * cx, * cxx;
 	PrologAtom * dbb, * db, * d, * dx, * dxx;
 	PrologAtom * ebb, * eb, * e, * ex, * exx;
@@ -367,12 +367,6 @@ public:
 				}
 				if (a == mono) {trigger -> mono (); return true;}
 				if (a == poly) {trigger -> poly (); return true;}
-				if (a == porta || a == portamento) {
-					if (var == 0) trigger -> portamento ();
-					else var -> setAtom (trigger -> isLegatoMode () ? legato : portamento);
-					return true;
-				}
-				if (a == legato) {trigger -> legato (); return true;}
 				PrologNativeCode * machine = a -> getMachine ();
 				if (machine == 0) return false;
 				if (machine -> isTypeOf (key_map_native_orbiter :: name ())) {
@@ -391,7 +385,7 @@ public:
 		return PrologNativeOrbiter :: code (parameters, resolution);
 	}
 	native_moonbase (PrologDirectory * dir, PrologAtom * atom, orbiter_core * core, orbiter * module) : PrologNativeOrbiter (atom, core, module) {
-		keyon = keyoff = control = mono = poly = porta = portamento = legato = 0;
+		keyon = keyoff = control = mono = poly = 0;
 		cbb = cb = c = cx = cxx = 0;
 		dbb = db = d = dx = dxx = 0;
 		ebb = eb = e = ex = exx = 0;
@@ -405,9 +399,6 @@ public:
 		control = dir -> searchAtom ("control");
 		mono = dir -> searchAtom ("mono");
 		poly = dir -> searchAtom ("poly");
-		porta = dir -> searchAtom ("porta");
-		portamento = dir -> searchAtom ("portamento");
-		legato = dir -> searchAtom ("legato");
 		c = dir -> searchAtom ("C"); cb = dir -> searchAtom ("Cb"); cbb = dir -> searchAtom ("Cbb"); cx = dir -> searchAtom ("C#"); cxx = dir -> searchAtom ("Cx");
 		d = dir -> searchAtom ("D"); db = dir -> searchAtom ("Db"); dbb = dir -> searchAtom ("Dbb"); dx = dir -> searchAtom ("D#"); dxx = dir -> searchAtom ("Dx");
 		e = dir -> searchAtom ("E"); eb = dir -> searchAtom ("Eb"); ebb = dir -> searchAtom ("Ebb"); ex = dir -> searchAtom ("E#"); exx = dir -> searchAtom ("Ex");

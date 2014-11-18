@@ -40,8 +40,9 @@ private:
 	orbiter * controllers [129];
 	int ctrl_lsbs [129];
 	bool mono_mode;
-	bool legato_mode;
 	int previous_key;
+	int base_key;
+	int key_counter;
 	pthread_mutex_t critical;
 public:
 	virtual int numberOfOutputs (void);
@@ -56,9 +57,6 @@ public:
 	void mono (void);
 	void poly (void);
 	bool isMonoMode (void);
-	void portamento (void);
-	void legato (void);
-	bool isLegatoMode (void);
 	void control (int ctrl, int value);
 	double getControl (int ctrl);
 	moonbase (orbiter_core * core);

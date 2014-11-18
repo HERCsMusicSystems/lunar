@@ -171,10 +171,10 @@ program lunar #machine := "prolog.lunar"
 	[AddParameterBlock *parameters time4 *adsr *selector 0 "time"]
 ]
 
-[[InsertIO *parameters *trigger *selector [["BUSY" "HOLD" "PORTA" "TIME" "CONTROL" : *] *]]
+[[InsertIO *parameters *trigger *selector [["BUSY" "HOLD" "PORTA" "TIME" "LEGATO" : *] *]]
 	[AddParameterBlock *parameters porta *trigger *selector 0 "onoff"]
 	[AddParameterBlock *parameters time *trigger *selector 0 "time"]
-	[AddParameterBlock *parameters control *trigger *selector 0 "index"]
+	[AddParameterBlock *parameters legato *trigger *selector 0 "onoff"]
 	[AddParameterBlock *parameters hold *trigger *selector 0 "onoff"]
 ]
 

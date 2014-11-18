@@ -98,7 +98,7 @@ char * lunar_trigger :: inputName (int ind) {
 	case 1: return "HOLD"; break;
 	case 2: return "PORTA"; break;
 	case 3: return "TIME"; break;
-	case 4: return "CONTROL"; break;
+	case 4: return "LEGATO"; break;
 	default: break;
 	}
 	return orbiter :: inputName (ind);
@@ -170,6 +170,10 @@ void lunar_trigger :: sub_keyon (int key) {
 	trigger = 1.0;
 	add_stack (key);
 }
+void lunar_trigger :: sub_velocity (int velocity) {
+	if (velocity < 0) velocity = 0; if (velocity > 127) velocity = 127;
+	this -> velocity = velocity_map == 0 ? (double) velocity * 128.0 : velocity_map -> map [velocity];
+}
 void lunar_trigger :: keyon (int key) {
 	pthread_mutex_lock (& critical);
 	sub_keyon (key);
@@ -178,12 +182,24 @@ void lunar_trigger :: keyon (int key) {
 void lunar_trigger :: keyon (int key, int velocity) {
 	if (velocity < 1) {keyoff (key); return;}
 	pthread_mutex_lock (& critical);
-	if (trigger < 1.0) {
-		if (velocity < 0) velocity = 0;
-		if (velocity > 127) velocity = 127;
-		this -> velocity = velocity_map == 0 ? (double) velocity * 128.0 : velocity_map -> map [velocity];
-	}
+	if (keystack_pointer < 1) sub_velocity (velocity);
 	sub_keyon (key);
+	pthread_mutex_unlock (& critical);
+}
+void lunar_trigger :: ground (int key, int velocity, int base, int previous) {
+	if (velocity < 1) {keyoff (key); return;}
+	pthread_mutex_lock (& critical);
+	sub_velocity (velocity);
+	if (key < 0) key = 0; if (key > 127) key = 127;
+	target = key_map == 0 ? (double) (key - 64) * 128.0 : key_map -> map [key];
+	this -> key = key; trigger = 16384.0; time = 0.0;
+	if (! active || porta_switch == 0.0 || porta_time == 0.0) this -> signal = target;
+	else {
+		if (porta_control != 0.0) base = previous;
+		origin = key_map == 0 ? (double) (base - 64) * 128.0 : key_map -> map [base];
+		delta = target - origin;
+	}
+	keystack_pointer = 0; add_stack (key);
 	pthread_mutex_unlock (& critical);
 }
 void lunar_trigger :: keyoff (int key) {
@@ -210,8 +226,14 @@ bool lunar_trigger :: release (void) {
 }
 void lunar_trigger :: move (void) {
 	if (trigger != 0.0 && keystack_pointer == 0 && hold_ctrl == 0.0) trigger = 0.0;
-	if (signal == target) return;
-	if (time >= 1.0) {signal = target; return;}
+	if (signal == target) {
+		if (trigger >= 16384.0) {if (time > 0.0) trigger = 1.0; else time += 1.0;}
+		return;
+	}
+	if (time > 0.0) {
+		if (trigger >= 16384.0) trigger = 1.0;
+		if (time >= 1.0) {signal = target; return;}
+	}
 	signal = origin + delta * time;
 	time += core -> WaitingTime (porta_time);
 }

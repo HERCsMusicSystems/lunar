@@ -107,6 +107,7 @@ private:
 	void add_stack (int key);
 	void drop_stack (int key);
 	void sub_keyon (int key);
+	void sub_velocity (int velocity);
 	pthread_mutex_t critical;
 public:
 	double busy;
@@ -122,6 +123,7 @@ public:
 	void set_velocity_map (lunar_map * map);
 	void keyon (int key);
 	void keyon (int key, int velocity);
+	void ground (int key, int velocity, int base, int previous);
 	void keyoff (int key);
 	void keyoff (void);
 	virtual bool release (void);

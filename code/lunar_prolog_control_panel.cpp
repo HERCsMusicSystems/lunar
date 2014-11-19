@@ -357,11 +357,8 @@ bool control_panel_action :: code (PrologElement * parameters, PrologResolution 
 		parameters = parameters -> getRight ();
 	}
 	if (x == 0 || y == 0) return true;
-	if (x -> isInteger () && y -> isInteger ()) {
-		location = point (x -> getNumber (), y -> getNumber ());
-		g_idle_add ((GSourceFunc) RepositionControlPanel, this);
-		return true;
-	}
+	location = point (x -> getNumber (), y -> getNumber ());
+	g_idle_add ((GSourceFunc) RepositionControlPanel, this);
 	return true;
 }
 

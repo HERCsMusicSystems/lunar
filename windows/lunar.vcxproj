@@ -52,6 +52,7 @@
     <ClCompile Include="..\code\lunar_prolog_moonbase.cpp" />
     <ClCompile Include="..\code\lunar_prolog_operator.cpp" />
     <ClCompile Include="..\code\lunar_prolog_oscilloscope.cpp" />
+    <ClCompile Include="..\code\lunar_prolog_parameter_block_panel.cpp" />
     <ClCompile Include="..\code\lunar_prolog_vector.cpp" />
     <ClCompile Include="..\code\lunar_wave.cpp" />
     <ClCompile Include="..\code\multiplatform_audio.cpp" />

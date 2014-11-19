@@ -156,6 +156,9 @@
     <ClCompile Include="..\code\lunar_linux_midi.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\code\lunar_prolog_parameter_block_panel.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\..\prolog\windows\studio.rc">

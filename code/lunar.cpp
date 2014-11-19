@@ -29,6 +29,7 @@
 #include <string.h>
 #define _USE_MATH_DEFINES
 #include <math.h>
+#include <omp.h>
 
 int orbiter_count = 0;
 
@@ -98,17 +99,19 @@ void orbiter_core :: recalculate (void) {
 
 void orbiter_core :: move_modules (void) {
 	noise24b = (noise24b * 0x5599d1 + 1) & 0xffffff;
-	if (root == 0) return;
-	root -> move ();
-	orbiter * orp = root -> next;
-	while (orp != root) {orp -> move (); orp = orp -> next;}
+	#pragma omp parallel for
+	for (int ind = 0; ind < active_pointer; ind++) {
+		//printf ("<%i %i %i> ", ind, omp_get_thread_num (), omp_get_num_threads ());
+		actives [ind] -> move ();
+	}
 }
 
 void orbiter_core :: propagate_signals (void) {
-	if (root == 0) return;
-	root -> propagate_signals ();
-	orbiter * orp = root -> next;
-	while (orp != root) {orp -> propagate_signals (); orp = orp -> next;}
+	#pragma omp parallel for
+	for (int ind = 0; ind < active_pointer; ind++) {
+		//printf ("<%i %i %i> ", ind, omp_get_thread_num (), omp_get_num_threads ());
+		actives [ind] -> propagate_signals ();
+	}
 }
 
 double orbiter_core :: TimeDelta (double index) {

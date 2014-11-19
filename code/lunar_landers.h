@@ -108,7 +108,6 @@ private:
 	void drop_stack (int key);
 	void sub_keyon (int key);
 	void sub_velocity (int velocity);
-	pthread_mutex_t critical;
 public:
 	double busy;
 	int key;
@@ -129,7 +128,6 @@ public:
 	virtual bool release (void);
 	virtual void move (void);
 	lunar_trigger (orbiter_core * core, bool active, lunar_trigger * next);
-	~ lunar_trigger (void);
 };
 
 class lunar_impulse : public orbiter {

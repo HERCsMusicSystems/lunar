@@ -34,9 +34,10 @@ int orbiter_count = 0;
 
 orbiter_core :: orbiter_core (void) {
 	pthread_mutex_init (& main_mutex, 0);
-	pthread_mutex_init (& maintenance_mutex, 0);
 	noise24b = 0;
 	root = 0;
+	requested_active_size = 131072;
+	active_pointer = 0; actives = 0; active_limit = 0;
 	this -> centre_frequency = 330.0;
 	this -> sampling_frequency = 48000.0;
 	this -> latency_block_size = 128;
@@ -65,13 +66,24 @@ orbiter_core :: orbiter_core (void) {
 	recalculate ();
 }
 
-orbiter_core :: ~ orbiter_core (void) {
-	pthread_mutex_destroy (& main_mutex);
-	pthread_mutex_destroy (& maintenance_mutex);
-}
+orbiter_core :: ~ orbiter_core (void) {pthread_mutex_destroy (& main_mutex); if (actives != 0) delete [] actives; actives = 0;}
 
 void orbiter_core :: recalculate (void) {
 	pthread_mutex_lock (& main_mutex);
+	// ACTIVES ....
+	if (requested_active_size < 16) requested_active_size = 16;
+	if (active_limit != requested_active_size) {
+		if (actives != 0) delete [] actives;
+		active_limit = requested_active_size;
+		actives = new orbiter_pointer [active_limit];
+		active_pointer = 0;
+		if (root != 0) {
+			actives [active_pointer++] = root;
+			orbiter * orp = root -> next;
+			while (orp != root) {actives [active_pointer++] = orp; orp = orp -> next;}
+		}
+	}
+	// .... ACTIVES
 	gate_gap = sampling_frequency / 2048.0;
 	gate_delay = 48000.0 / sampling_frequency;
 	double delay = sampling_frequency > 0.0 ? centre_frequency  / sampling_frequency : centre_frequency;
@@ -170,8 +182,12 @@ double orbiter_core :: MinBlep (int index) {
 	return min_blep [index];
 }
 
-void orbiter_core :: activate (orbiter * module) {}
-void orbiter_core :: deactivate (orbiter * module) {}
+void orbiter_core :: activate (orbiter * module) {if (active_pointer >= active_limit) return; actives [active_pointer++] = module;}
+void orbiter_core :: deactivate (orbiter * module) {
+	for (int ind = 0; ind < active_pointer; ind++) {
+		if (actives [ind] == module) {actives [ind] = actives [--active_pointer]; return;}
+	}
+}
 
 int orbiter :: numberOfInputs (void) {return 0;}
 int orbiter :: numberOfOutputs (void) {return 1;}

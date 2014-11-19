@@ -121,7 +121,6 @@ void alpha_callback (int frames, AudioBuffers * data, void * source) {
 	double * moon = base -> module -> inputAddress (0);
 	double * left_moon = base -> module -> inputAddress (1);
 	double * right_moon = base -> module -> inputAddress (2);
-	pthread_mutex_lock (& core -> maintenance_mutex);
 	pthread_mutex_lock (& core -> main_mutex);
 	for (int ind = 0; ind < frames; ind++) {
 		core -> move_modules ();
@@ -129,44 +128,44 @@ void alpha_callback (int frames, AudioBuffers * data, void * source) {
 		data -> insertStereo (((* moon) + (* left_moon)) * 0.2, ((* moon) + (* right_moon)) * 0.2);
 	}
 	pthread_mutex_unlock (& core -> main_mutex);
-	pthread_mutex_unlock (& core -> maintenance_mutex);
 }
 
 void beta_callback (int frames, AudioBuffers * data, void * source) {
 	core_action * base = (core_action *) source;
 	orbiter_core * core = base -> core;
 	lunar_core * moon = (lunar_core *) base -> module;
-	pthread_mutex_lock (& core -> maintenance_mutex);
 	pthread_mutex_lock (& core -> main_mutex);
 	for (int ind = 0; ind < frames; ind++) {
 		moon -> line [moon -> line_write++] = data -> getMono ();
 		if (moon -> line_write >= 16384) moon -> line_write = 0;
 	}
 	pthread_mutex_unlock (& core -> main_mutex);
-	pthread_mutex_unlock (& core -> maintenance_mutex);
 }
 
 bool core_class :: code (PrologElement * parameters, PrologResolution * resolution) {
 	if (cores > 0) return false;
 	PrologElement * atom = 0;
 	double centre_frequency = -1;
-	int sampling_frequency = -1;
+	double sampling_frequency = -1;
 	int latency_block_size = -1;
+	int requested_number_of_actives = -1;
 	while (parameters -> isPair ()) {
 		PrologElement * el = parameters -> getLeft ();
 		if (el -> isAtom ()) atom = el;
 		if (el -> isVar ()) atom = el;
 		if (el -> isInteger ()) {
 			if (centre_frequency < 0.0) centre_frequency = (double) el -> getInteger ();
-			else if (sampling_frequency < 0.0) sampling_frequency = el -> getInteger ();
-			else latency_block_size = el -> getInteger ();
+			else if (sampling_frequency < 0.0) sampling_frequency = (double) el -> getInteger ();
+			else if (latency_block_size < 0) latency_block_size = el -> getInteger ();
+			else requested_number_of_actives = el -> getInteger ();
 		}
 		if (el -> isDouble ()) centre_frequency = el -> getDouble ();
 		parameters = parameters -> getRight ();
 	}
-	if (centre_frequency < 0.0) centre_frequency = 330.0;
-	if (sampling_frequency < 0.0) sampling_frequency = 44100;
-	if (latency_block_size < 16) latency_block_size = 512;
+	if (centre_frequency < 0.0) centre_frequency = core -> centre_frequency;
+	if (sampling_frequency < 0.0) sampling_frequency = core -> sampling_frequency;
+	if (latency_block_size < 16) latency_block_size = core -> latency_block_size;
+	if (requested_number_of_actives < 0) requested_number_of_actives = core -> requested_active_size;
 	if (atom == 0) return false;
 	if (atom -> isVar ()) atom -> setAtom (new PrologAtom ());
 	if (! atom -> isAtom ()) return false;
@@ -174,6 +173,7 @@ bool core_class :: code (PrologElement * parameters, PrologResolution * resoluti
 	core -> centre_frequency = centre_frequency;
 	core -> sampling_frequency = (double) sampling_frequency;
 	core -> latency_block_size = latency_block_size;
+	core -> requested_active_size = requested_number_of_actives;
 	core -> recalculate ();
 	core_action * machine = new core_action (atom -> getAtom (), core);
 	if (atom -> getAtom () -> setMachine (machine)) return true;

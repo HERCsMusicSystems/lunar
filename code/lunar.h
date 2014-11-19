@@ -33,6 +33,7 @@ class orbiter;
 class dock;
 typedef dock * dock_pointer;
 typedef double * connection_address;
+typedef orbiter * orbiter_pointer;
 class orbiter_core;
 
 extern int orbiter_count;
@@ -42,6 +43,7 @@ public:
 	double centre_frequency;
 	double sampling_frequency;
 	int latency_block_size;
+	int requested_active_size;
 	double gate_gap;
 	double gate_delay;
 	double time_deltas [32768];
@@ -66,8 +68,10 @@ public:
 	double * linear_pan;
 	int noise24b;
 	pthread_mutex_t main_mutex;
-	pthread_mutex_t maintenance_mutex;
 	orbiter * root;
+	orbiter * * actives;
+	int active_pointer;
+	int active_limit;
 	double TimeDelta (double index);
 	double FilterFreq (double index);
 	double SamplerTimeDelta (double index);

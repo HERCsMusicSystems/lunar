@@ -425,6 +425,7 @@ char * lunar_adsr :: outputName (int ind) {if (ind == 1) return "BUSY"; return o
 double * lunar_adsr :: outputAddress (int ind) {if (ind == 1) return & busy; return orbiter :: outputAddress (ind);}
 void lunar_adsr :: move (void) {
 	if (trigger >= 16384.0) {
+		busy = 1.0;
 		if (attack == 0.0) {
 			if (decay == 0.0) {signal = sustain; stage = 3; return;}
 			signal = 0.0; stage = 2; time = core -> WaitingTime (decay); return;
@@ -534,6 +535,7 @@ char * lunar_eg :: outputName (int ind) {if (ind == 1) return "BUSY"; return orb
 double * lunar_eg :: outputAddress (int ind) {if (ind == 1) return & busy; return orbiter :: outputAddress (ind);}
 void lunar_eg :: move (void) {
 	if (trigger >= 16384.0) {
+		busy = 1.0;
 		if (time1 == 0.0) {
 			if (time2 == 0.0) {
 				if (time3 == 0) {signal = level3; stage = 4; return;}

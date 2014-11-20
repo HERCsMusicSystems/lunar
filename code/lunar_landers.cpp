@@ -881,17 +881,21 @@ double * lunar_filter :: outputAddress (int ind) {
 void lunar_filter :: move (void) {
 	double F = core -> FilterFreq (freq);
 	double Q = 2.0 - resonance * 0.0001220703125;
-	running_signal += band_pass_signal * F;
-	high_pass_signal = enter - running_signal - band_pass_signal * Q;
-	band_pass_signal += high_pass_signal * F;
-	running_signal += band_pass_signal * F;
-	high_pass_signal = enter - running_signal - band_pass_signal * Q;
-	band_pass_signal += high_pass_signal * F;
-	band_reject_signal = high_pass_signal + running_signal;
-	signal = running_signal * core -> Amplitude (amp);
+	running_signal += running_band_pass_signal * F;
+	running_high_pass_signal = enter - running_signal - running_band_pass_signal * Q;
+	running_band_pass_signal += running_high_pass_signal * F;
+	running_signal += running_band_pass_signal * F;
+	running_high_pass_signal = enter - running_signal - running_band_pass_signal * Q;
+	running_band_pass_signal += running_high_pass_signal * F;
+	double amplitude = core -> Amplitude (amp);
+	signal = running_signal * amplitude;
+	high_pass_signal = running_high_pass_signal * amplitude;
+	band_pass_signal = running_band_pass_signal * amplitude;
+	band_reject_signal = high_pass_signal + signal;
 }
 lunar_filter :: lunar_filter (orbiter_core * core) : orbiter (core) {
 	high_pass_signal = band_pass_signal = band_reject_signal = running_signal = 0.0;
+	running_high_pass_signal = running_band_pass_signal = 0.0;
 	freq = amp = 0.0; resonance = 8192.0;
 	enter = 0.0;
 	initialise (); activate ();

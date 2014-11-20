@@ -295,10 +295,12 @@ public:
 
 class lunar_filter : public orbiter {
 private:
+	double running_high_pass_signal;
+	double running_band_pass_signal;
+	double running_signal;
 	double high_pass_signal;
 	double band_pass_signal;
 	double band_reject_signal;
-	double running_signal;
 	double enter;
 	double freq;
 	double resonance;

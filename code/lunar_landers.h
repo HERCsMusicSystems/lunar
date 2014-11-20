@@ -109,7 +109,13 @@ private:
 	void sub_keyon (int key);
 	void sub_velocity (int velocity);
 	pthread_mutex_t critical;
+	int request_key, request_velocity, request_base, request_previous;
+	void keyon_velocity_request (void);
+	void ground_request (void);
+	void keyoff_request (void);
+	void keyoff_all_request (void);
 public:
+	int request; // 0 = none, 1 = keyoff (key), 2 = keyoff (), 3 = keyon (key), 4 = keyon (key, vel), 5 = ground (key, vel, base, prev);
 	double busy;
 	int key;
 	lunar_trigger * next;

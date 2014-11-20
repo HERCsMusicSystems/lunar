@@ -176,41 +176,57 @@ void lunar_trigger :: sub_velocity (int velocity) {
 }
 void lunar_trigger :: keyon (int key) {
 	pthread_mutex_lock (& critical);
-	sub_keyon (key);
+	request_key = key; request = 3;
+	if (! active) sub_keyon (key);
 	pthread_mutex_unlock (& critical);
 }
 void lunar_trigger :: keyon (int key, int velocity) {
 	if (velocity < 1) {keyoff (key); return;}
 	pthread_mutex_lock (& critical);
-	if (keystack_pointer < 1) sub_velocity (velocity);
-	sub_keyon (key);
+	request_key = key; request_velocity = velocity; request = 4;
+	if (! active) keyon_velocity_request ();
 	pthread_mutex_unlock (& critical);
 }
 void lunar_trigger :: ground (int key, int velocity, int base, int previous) {
 	if (velocity < 1) {keyoff (key); return;}
 	pthread_mutex_lock (& critical);
-	sub_velocity (velocity);
-	if (key < 0) key = 0; if (key > 127) key = 127;
-	target = key_map == 0 ? (double) (key - 64) * 128.0 : key_map -> map [key];
-	this -> key = key; trigger = 16384.0; time = 0.0;
+	request_key = key; request_velocity = velocity; request_base = base; request_previous = previous; request = 5;
+	if (! active) ground_request ();
+	pthread_mutex_unlock (& critical);
+}
+void lunar_trigger :: ground_request (void) {
+	sub_velocity (request_velocity);
+	if (request_key < 0) request_key = 0; if (request_key > 127) request_key = 127;
+	target = key_map == 0 ? (double) (request_key - 64) * 128.0 : key_map -> map [request_key];
+	this -> key = request_key; trigger = 16384.0; time = 0.0;
 	if (! active || porta_switch == 0.0 || porta_time == 0.0) this -> signal = target;
 	else {
-		if (porta_control == 0.0) base = previous;
-		this -> signal = origin = key_map == 0 ? (double) (base - 64) * 128.0 : key_map -> map [base];
+		if (porta_control == 0.0) request_base = request_previous;
+		this -> signal = origin = key_map == 0 ? (double) (request_base - 64) * 128.0 : key_map -> map [request_base];
 		delta = target - origin;
 	}
-	keystack_pointer = 0; add_stack (key);
-	pthread_mutex_unlock (& critical);
+	keystack_pointer = 0; add_stack (request_key);
 }
 void lunar_trigger :: keyoff (int key) {
 	pthread_mutex_lock (& critical);
-	this -> key = -1; drop_stack (key); if (keystack_pointer == 0 && hold_ctrl == 0.0) trigger = 0.0;
+	request_key = key; request = 1;
+	if (! active) keyoff_request ();
 	pthread_mutex_unlock (& critical);
 }
 void lunar_trigger :: keyoff (void) {
 	pthread_mutex_lock (& critical);
-	this -> key = -1; keystack_pointer = 0; trigger = 0.0;
+	request = 2;
+	if (! active) keyoff_all_request ();
 	pthread_mutex_unlock (& critical);
+}
+void lunar_trigger :: keyon_velocity_request (void) {
+	if (keystack_pointer < 1) sub_velocity (request_velocity); sub_keyon (request_key);
+}
+void lunar_trigger :: keyoff_request (void) {
+	this -> key = -1; drop_stack (key); if (keystack_pointer == 0 && hold_ctrl == 0.0) trigger = 0.0;
+}
+void lunar_trigger :: keyoff_all_request (void) {
+	this -> key = -1; keystack_pointer = 0; trigger = 0;
 }
 bool lunar_trigger :: release (void) {
 	lunar_map * to_delete_key_map = key_map;
@@ -226,6 +242,17 @@ bool lunar_trigger :: release (void) {
 }
 void lunar_trigger :: move (void) {
 	pthread_mutex_lock (& critical);
+	if (request != 0) {
+		switch (request) {
+		case 5: ground_request (); break;
+		case 4: keyon_velocity_request (); break;
+		case 1: keyoff_request (); break;
+		case 2: keyoff_all_request (); break;
+		case 3: sub_keyon (request_key); break;
+		default: break;
+		}
+		request = 0;
+	}
 	if (trigger != 0.0 && keystack_pointer == 0 && hold_ctrl == 0.0) trigger = 0.0;
 	if (signal == target) {
 		if (trigger >= 16384.0) {if (time > 0.0) trigger = 1.0; else time += 1.0;}

@@ -42,6 +42,7 @@ class orbiter_core {
 public:
 	double centre_frequency;
 	double sampling_frequency;
+	double sample_duration;
 	int latency_block_size;
 	int requested_active_size;
 	double gate_gap;

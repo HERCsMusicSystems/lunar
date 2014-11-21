@@ -47,6 +47,74 @@ lunar_parameter_block :: lunar_parameter_block (orbiter_core * core, int style, 
 	if (active) activate ();
 }
 
+auto_frame :: auto_frame (double value, double time) {this -> value = value; this -> time = time; next = 0;}
+auto_frame :: ~ auto_frame (void) {if (next != 0) delete next;}
+
+int lunar_auto_parameter_block :: numberOfInputs (void) {return 2;}
+char * lunar_auto_parameter_block :: inputName (int ind) {
+	switch (ind) {
+	case 0: return "SIGNAL"; break;
+	case 1: return "TRIGGER"; break;
+	default: break;
+	}
+	return orbiter :: inputName (ind);
+}
+double * lunar_auto_parameter_block :: inputAddress (int ind) {
+	switch (ind) {
+	case 0: return & enter; break;
+	case 1: return & trigger; break;
+	default: break;
+	}
+	return orbiter :: inputAddress (ind);
+}
+void lunar_auto_parameter_block :: move (void) {
+	if (trigger != record) {
+		if (trigger == 2.0) {
+			// START RECORDING
+			if (frames != 0) delete frames;
+			frames = current_frame = new auto_frame (enter);
+		} else {
+			// START PLAYBACK
+			current_frame = frames;
+			if (current_frame != 0)
+				enter = current_frame -> value;
+		}
+		time = core -> sample_duration;
+		record = trigger;
+	} else if (trigger != 0.0) {
+		if (trigger == 2.0) {
+			// KEEP RECORDING
+			if (current_frame != 0 && current_frame -> value != enter) current_frame = current_frame -> next = new auto_frame (enter, time);
+		} else {
+			// KEEP PLAYBACK
+			while (current_frame != 0 && time >= current_frame -> time) current_frame = current_frame -> next;
+			if (current_frame != 0) enter = current_frame -> value;
+		}
+		time += core -> sample_duration;
+	}
+	if (maximum_change == 0.0) {signal = enter; return;}
+	if (enter == signal) return;
+	if (enter > signal) {signal += maximum_change * core -> gate_delay; if (signal > enter) signal = enter;}
+	signal -= maximum_change * core -> gate_delay;
+	if (signal < enter) signal = enter;
+}
+auto_frame * lunar_auto_parameter_block :: insert_frame (double value, double time) {
+	if (frames == 0) return frames = current_frame = new auto_frame (value, time);
+	if (current_frame == 0) current_frame = frames;
+	while (current_frame -> next != 0) current_frame = current_frame -> next;
+	return current_frame = current_frame -> next = new auto_frame (value, time);
+}
+void lunar_auto_parameter_block :: clear_frames (void) {if (frames != 0) delete frames; frames = current_frame = 0;}
+lunar_auto_parameter_block :: lunar_auto_parameter_block (orbiter_core * core, int style, double maximum_change) : orbiter (core) {
+	this -> style = style;
+	this -> trigger = this -> record = this -> time = 0.0;
+	this -> maximum_change = maximum_change >= 0.0 ? maximum_change : 0.0;
+	frames = current_frame = 0;
+	initialise ();
+	activate ();
+}
+lunar_auto_parameter_block :: ~ lunar_auto_parameter_block (void) {if (frames != 0) delete frames;}
+
 int lunar_mixer :: numberOfInputs (void) {return 1;}
 char * lunar_mixer :: inputName (int ind) {if (ind == 0) return "ENTER"; else return orbiter :: inputName (ind);}
 double * lunar_mixer :: inputAddress (int ind) {return ind == 0 ? & enter : orbiter :: inputAddress (ind);}

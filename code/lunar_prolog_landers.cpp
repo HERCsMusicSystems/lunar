@@ -57,14 +57,24 @@ public:
 	pb_native_orbiter (PrologAtom * atom, orbiter_core * core, orbiter * module) : PrologNativeOrbiter (atom, core, module) {}
 };
 
+static int toStyle (char * name) {
+	if (name == 0) return 0;
+	if (strcasecmp (name, "index") == 0) return 1;
+	if (strcasecmp (name, "freq") == 0) return 2;
+	if (strcasecmp (name, "amp") == 0) return 3;
+	if (strcasecmp (name, "time") == 0) return 4;
+	if (strcasecmp (name, "onoff") == 0) return 5;
+	if (strcasecmp (name, "wave") == 0) return 6;
+	return 0;
+}
+
 orbiter * parameter_block_class :: create_orbiter (PrologElement * parameters) {
 	PrologElement * activity = 0;
 	PrologElement * style_selector = 0;
 	while (parameters -> isPair ()) {
 		PrologElement * el = parameters -> getLeft ();
 		if (el -> isNumber ()) activity = el;
-		if (el -> isAtom ()) style_selector = el;
-		if (el -> isText ()) style_selector = el;
+		if (el -> isAtom () || el -> isText ()) style_selector = el;
 		parameters = parameters -> getRight ();
 	}
 	char * style_name = 0;
@@ -72,19 +82,91 @@ orbiter * parameter_block_class :: create_orbiter (PrologElement * parameters) {
 		if (style_selector -> isText ()) style_name = style_selector -> getText ();
 		if (style_selector -> isAtom ()) style_name = style_selector -> getAtom () -> name ();
 	}
-	int style = 0;
-	if (style_name != 0) {
-		if (strcasecmp (style_name, "index") == 0) style = 1;
-		if (strcasecmp (style_name, "freq") == 0) style = 2;
-		if (strcasecmp (style_name, "amp") == 0) style = 3;
-		if (strcasecmp (style_name, "time") == 0) style = 4;
-		if (strcasecmp (style_name, "onoff") == 0) style = 5;
-		if (strcasecmp (style_name, "wave") == 0) style = 6;
-	}
-	return new lunar_parameter_block (core, style, activity != 0, activity != 0 ? activity -> getNumber () : 0.0);
+	return new lunar_parameter_block (core, toStyle (style_name), activity != 0, activity != 0 ? activity -> getNumber () : 0.0);
 }
 PrologNativeOrbiter * parameter_block_class :: create_native_orbiter (PrologAtom * atom, orbiter * module) {return new pb_native_orbiter (atom, core, module);}
 parameter_block_class :: parameter_block_class (orbiter_core * core) : PrologNativeOrbiterCreator (core) {}
+
+class ap_native_orbiter : public PrologNativeOrbiter {
+public:
+	bool code (PrologElement * parameters, PrologResolution * resolution) {
+		lunar_auto_parameter_block * apb = (lunar_auto_parameter_block *) module;
+		if (parameters -> isPair ()) {
+			PrologElement * el = parameters -> getLeft ();
+			if (el -> isEarth ()) {apb -> clear_frames (); return true;}
+			if (el -> isPair ()) {
+				apb -> clear_frames ();
+				while (el -> isPair ()) {
+					PrologElement * value = el -> getLeft ();
+					if (! value -> isNumber ()) return false;
+					el = el -> getRight (); if (! el -> isPair ()) return false;
+					PrologElement * time = el -> getLeft ();
+					if (! time -> isNumber ()) return false;
+					apb -> insert_frame (value -> getNumber (), time -> getNumber ());
+					parameters = parameters -> getRight ();
+					if (! parameters -> isPair ()) return true;
+					el = parameters -> getLeft ();
+				}
+				return true;
+			}
+		}
+		if (apb -> style != 0 && parameters -> isVar ()) {
+			char command [128];
+			switch (apb -> style) {
+			case 1: sprintf (command, "%i", (int) apb -> signal); break;
+			case 2: sprintf (command, "%i Hz", (int) apb -> signal); break;
+			case 3: sprintf (command, "%i Db", (int) apb -> signal); break;
+			case 4: sprintf (command, "%i sec.", (int) apb -> signal); break;
+			case 5: if (apb -> signal == 0) sprintf (command, "off"); else sprintf (command, "on"); break;
+			case 6: sprintf (command, "wave [%i]", (int) apb -> signal); break;
+			default: sprintf (command, "??"); break;
+			}
+			parameters -> setText (command);
+			return true;
+		}
+		if (parameters -> isVar ()) {
+			if (PrologNativeOrbiter :: code (parameters, resolution)) {
+				while (parameters -> isPair ()) parameters = parameters -> getRight ();
+				parameters -> setPair ();
+				parameters = parameters -> getLeft ();
+				auto_frame * afp = apb -> frames;
+				while (afp != 0) {
+					parameters -> setPair ();
+					PrologElement * el = parameters -> getLeft ();
+					el -> setPair ();
+					el -> getLeft () -> setDouble (afp -> value);
+					el = el -> getRight ();
+					el -> setPair ();
+					el -> getLeft () -> setDouble (afp -> time);
+					parameters = parameters -> getRight ();
+					afp = afp -> next;
+				}
+				return true;
+			}
+			return false;
+		}
+		return PrologNativeOrbiter :: code (parameters, resolution);
+	}
+	ap_native_orbiter (PrologAtom * atom, orbiter_core * core, orbiter * module) : PrologNativeOrbiter (atom, core, module) {}
+};
+orbiter * auto_parameter_block_class :: create_orbiter (PrologElement * parameters) {
+	PrologElement * activity = 0;
+	PrologElement * style_selector = 0;
+	while (parameters -> isPair ()) {
+		PrologElement * el = parameters -> getLeft ();
+		if (el -> isNumber ()) activity = el;
+		if (el -> isAtom () || el -> isText ()) style_selector = el;
+		parameters = parameters -> getRight ();
+	}
+	char * style_name = 0;
+	if (style_selector != 0) {
+		if (style_selector -> isText ()) style_name = style_selector -> getText ();
+		if (style_selector -> isAtom ()) style_name = style_selector -> getAtom () -> name ();
+	}
+	return new lunar_auto_parameter_block (core, toStyle (style_name), activity != 0 ? activity -> getNumber () : 0.0);
+}
+PrologNativeOrbiter * auto_parameter_block_class :: create_native_orbiter (PrologAtom * atom, orbiter * module) {return new ap_native_orbiter (atom, core, module);}
+auto_parameter_block_class :: auto_parameter_block_class (orbiter_core * core) : PrologNativeOrbiterCreator (core) {}
 
 static char * key_orbiter_action_code = "Lunar Map Action";
 char * PrologNativeKeyOrbiter :: name (void) {return key_orbiter_action_code;}

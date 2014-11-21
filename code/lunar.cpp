@@ -89,7 +89,7 @@ void orbiter_core :: recalculate (void) {
 	gate_delay = 48000.0 / sampling_frequency;
 	double delay = sampling_frequency > 0.0 ? centre_frequency  / sampling_frequency : centre_frequency;
 	for (int ind = 0; ind < 32768; ind++) time_deltas [ind] = delay * pow (2.0, ((double) (ind - 16384) / 1536.0));
-	delay = sampling_frequency > 0.0 ? 1.0 / sampling_frequency : 1.0;
+	sample_duration = delay = sampling_frequency > 0.0 ? 1.0 / sampling_frequency : 1.0;
 	for (int ind = 0; ind < 32768; ind++) sampler_time_deltas [ind] = delay * pow (2.0, ((double) (ind - 16384) / 1536.0));
 	for (int ind = 0; ind < 16384; ind++) control_time_deltas [ind] = delay * pow (2.0, ((double) (ind - 8192) / 768.0));
 	for (int ind = 0; ind < 16384; ind++) waiting_times_16384 [ind] = 16384.0 * (waiting_times [ind] = delay * pow (2.0, ((double) (ind - 8192) / -768.0)));

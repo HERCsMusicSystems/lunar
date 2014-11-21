@@ -253,6 +253,7 @@ PrologNativeCode * PrologLunarServiceClass :: getNativeCode (char * name) {
 	if (strcmp (name, "fm4") == 0) return new fm4_operator_class (& core);
 	if (strcmp (name, "filter") == 0) return new filter_class (& core);
 	if (strcmp (name, "parameter_block") == 0) return new parameter_block_class (& core);
+	if (strcmp (name, "auto") == 0) return new auto_parameter_block_class (& core);
 	if (strcmp (name, "key_map") == 0) return new key_map_class (& core);
 	if (strcmp (name, "wave") == 0) return new wave_class (& core);
 	if (strcmp (name, "velocity_map") == 0) return new key_map_class (& core, 0);

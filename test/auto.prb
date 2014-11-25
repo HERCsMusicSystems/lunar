@@ -1,0 +1,73 @@
+
+[auto_atoms]
+
+[AutoData ad]
+
+[res [div 1.0 48000.0 *x] [CONSTANT step *x]]
+
+[ad 127] [ad "control" 16] [ad "trigger" 1]
+[TestEq "Initial data is empty" [] *x [ad *x]]
+[MoveCore]
+[TestEq "First frame with ZERO time" [[127.0 0.0]] *x [ad *x]]
+[MoveCore] [MoveCore]
+[TestEq "Nothing changes if value doesn't change" [[127.0 0.0]] *x [ad *x]]
+[ad "trigger" 0] [MoveCore]
+[TestEq "Writes duration on resetting the trigger" [[127.0 *f]] *x [step : *s] [times *s 3 *f] [ad *x]]
+
+[ad "trigger" 1] [MoveCore]
+[TestEq "First frame with ZERO time on second test" [[127.0 0.0]] *x [ad *x]]
+[ad 128] [MoveCore]
+[TestEq "Change in value inserts a new frame" [[127.0 *s] [128.0 *s]] *x [step : *s] [ad *x]]
+[MoveCore] [MoveCore] [MoveCore]
+[ad "trigger" 0] [MoveCore]
+[TestEq "Writes duration on resetting the trigger on second test" [[127.0 *s] [128.0 *l]] *x [step : *s] [mult *s 5 *l] [ad *x]]
+
+[ad "trigger" 1] [MoveCore] [MoveCore] [ad 127] [MoveCore] [ad "control" 0] [MoveCore] [MoveCore] [MoveCore] [MoveCore]
+[TestEq "On resetting record...." [[128.0 *s2] [127.0 *s2]] *x [step : *s] [mult *s 2 *s2] [ad *x]]
+[ad "control" 16] [MoveCore] [MoveCore] [ad "trigger" 0] [MoveCore] [ad "control" 0] [MoveCore]
+[TestEq ".... and on continue recording and stopping the trigger."
+	[[128.0 *s2] [127.0 *s5]] *x [step : *s] [mult *s 2 *s2] [mult *s 5 *s5] [ad *x]]
+
+
+[TestFails "Auto without data" [Auto au]]
+[TestFails "Auto with free atom" [Auto au au]]
+[TestFails "Auto with atom, which is not auto data" [Auto au list]]
+[TestWorks "Auto with data" [Auto au ad]]
+
+[ad 7] [MoveCore]
+[TestEq "Inactive playback copies input to the auto data (1)" 7.0 *x [au *x]]
+[au "trigger" 1] [MoveCore]
+[TestEq "Inactive playback copies input to the auto data (2)" 7.0 *x [au *x]]
+[ad "control" 1]
+[TestEq "Playback (1)" 128.0 *x [MoveCore] [au *x]]
+[TestEq "Playback (2)" 128.0 *x [MoveCore] [au *x]]
+[TestEq "Playback (3)" 127.0 *x [MoveCore] [au *x]]
+[TestEq "Playback (4)" 127.0 *x [MoveCore] [au *x]]
+[TestEq "Playback (5)" 127.0 *x [MoveCore] [au *x]]
+[TestEq "Playback (6)" 127.0 *x [MoveCore] [au *x]]
+
+[ad "control" 2] [au "trigger" 0] [MoveCore]
+[TestEq "Again, inactive playback copies the input." 7.0 *x [au *x]]
+[au "trigger" 1]
+[TestEq "Loop (1)" 128.0 *x [MoveCore] [au *x]]
+[TestEq "Loop (2)" 128.0 *x [MoveCore] [au *x]]
+[TestEq "Loop (3)" 127.0 *x [MoveCore] [au *x]]
+[TestEq "Loop (4)" 127.0 *x [MoveCore] [au *x]]
+[TestEq "Loop (5)" 127.0 *x [MoveCore] [au *x]]
+[TestEq "Loop (6)" 128.0 *x [MoveCore] [au *x]]
+[TestEq "Loop (7)" 128.0 *x [MoveCore] [au *x]]
+[TestEq "Loop (8)" 127.0 *x [MoveCore] [au *x]]
+[TestEq "Loop (9)" 127.0 *x [MoveCore] [au *x]]
+[TestEq "Loop (10)" 127.0 *x [MoveCore] [au *x]]
+[TestEq "Loop (11)" 128.0 *x [MoveCore] [au *x]]
+
+
+[nl]
+[TestSummary]
+[nl]
+;[FailedTestSummary]
+;[nl]
+[foreground 0xffff00]
+
+
+

@@ -48,8 +48,51 @@ public:
 	double value;
 	double time;
 	auto_frame * next;
-	auto_frame (double value, double time = 0.0);
+	auto_frame * previous;
+	auto_frame (double value, double time = 0.0, auto_frame * previous = 0);
 	~ auto_frame (void);
+};
+
+class auto_data : public orbiter {
+private:
+	double trigger; // 0 = inactive, 1 = record
+	double record;
+	double control; // 0 = no playback, 1 = one way, 2 = repeat, 3 = forward and backward, 16 <= record
+	double time;
+	pthread_mutex_t critical;
+	auto_frame * current_frame;
+public:
+	auto_frame * frames;
+	void clear_frames (void);
+	auto_frame * insert_frame (double value, double time);
+	virtual int numberOfInputs (void);
+	virtual char * inputName (int ind);
+	virtual double * inputAddress (int ind);
+	virtual int numberOfOutputs (void);
+	virtual void move (void);
+	auto_data (orbiter_core * core);
+	~ auto_data (void);
+	friend class auto_player;
+};
+
+class auto_player : public orbiter {
+private:
+	double trigger;
+	bool active_playback;
+	double time;
+	bool returning;
+	auto_data * data;
+	auto_frame * frames;
+	auto_frame * current_frame;
+	double maximum_change;
+	void filter (double enter);
+public:
+	virtual int numberOfInputs (void);
+	virtual char * inputName (int ind);
+	virtual double * inputAddress (int ind);
+	virtual void move (void);
+	virtual bool release (void);
+	auto_player (orbiter_core * core, auto_data * data, double maximum_change);
 };
 
 class lunar_auto_parameter_block : public orbiter {

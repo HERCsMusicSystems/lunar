@@ -41,8 +41,12 @@ bool PrologNativeOrbiter :: code (PrologElement * parameters, PrologResolution *
 		parameters -> setPair ();
 		PrologElement * inputs = parameters -> getLeft ();
 		PrologElement * outputs = parameters -> getRight (); outputs -> setPair (); outputs = outputs -> getLeft ();
-		for (int ind = 0; ind < module -> numberOfInputs (); ind++) {inputs -> setPair (); inputs -> getLeft () -> setText (module -> inputName (ind)); inputs = inputs -> getRight ();}
-		for (int ind = 0; ind < module -> numberOfOutputs (); ind++) {outputs -> setPair (); outputs -> getLeft () -> setText (module -> outputName (ind)); outputs = outputs -> getRight ();}
+		for (int ind = 0; ind < module -> numberOfInputs (); ind++) {
+			inputs -> setPair (); inputs -> getLeft () -> setText (module -> inputName (ind)); inputs = inputs -> getRight ();
+		}
+		for (int ind = 0; ind < module -> numberOfOutputs (); ind++) {
+			outputs -> setPair (); outputs -> getLeft () -> setText (module -> outputName (ind)); outputs = outputs -> getRight ();
+		}
 		return true;
 	}
 	PrologElement * atom = 0;
@@ -85,7 +89,12 @@ bool PrologNativeOrbiter :: code (PrologElement * parameters, PrologResolution *
 			return true;
 		}
 	}
-	if (ret != 0) {double * adres = module -> outputAddress (source_port); if (adres == 0) return false; ret -> setDouble (* adres); return true;}
+	if (ret != 0) {
+		if (module -> numberOfOutputs () <= source_port) return false;
+		double * adres = module -> outputAddress (source_port);
+		if (adres == 0) return false; ret -> setDouble (* adres);
+		return true;
+	}
 	if (value != 0) {
 		double * adres = module -> inputAddress (destination_port);
 		if (adres == 0) return false;
@@ -254,6 +263,8 @@ PrologNativeCode * PrologLunarServiceClass :: getNativeCode (char * name) {
 	if (strcmp (name, "filter") == 0) return new filter_class (& core);
 	if (strcmp (name, "parameter_block") == 0) return new parameter_block_class (& core);
 	if (strcmp (name, "auto") == 0) return new auto_parameter_block_class (& core);
+	if (strcmp (name, "AutoData") == 0) return new auto_data_class (& core);
+	if (strcmp (name, "Auto") == 0) return new auto_class (& core);
 	if (strcmp (name, "key_map") == 0) return new key_map_class (& core);
 	if (strcmp (name, "wave") == 0) return new wave_class (& core);
 	if (strcmp (name, "velocity_map") == 0) return new key_map_class (& core, 0);

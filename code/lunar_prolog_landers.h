@@ -37,6 +37,19 @@ public:
 	parameter_block_class (orbiter_core * core);
 };
 
+class auto_data_class : public PrologNativeOrbiterCreator {
+public:
+	virtual orbiter * create_orbiter (PrologElement * parameters);
+	virtual PrologNativeOrbiter * create_native_orbiter (PrologAtom * atom, orbiter * module);
+	auto_data_class (orbiter_core * core);
+};
+
+class auto_class : public PrologNativeOrbiterCreator {
+public:
+	virtual orbiter * create_orbiter (PrologElement * parameters);
+	auto_class (orbiter_core * core);
+};
+
 class auto_parameter_block_class : public PrologNativeOrbiterCreator {
 public:
 	virtual orbiter * create_orbiter (PrologElement * parameters);

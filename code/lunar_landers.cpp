@@ -35,7 +35,7 @@ double * lunar_parameter_block :: inputAddress (int ind) {return ind != 0 ? orbi
 void lunar_parameter_block :: move (void) {
 	if (maximum_change == 0.0) {signal = enter; return;}
 	if (enter == signal) return;
-	if (enter > signal) {signal += maximum_change * core -> gate_delay; if (signal > enter) signal = enter;}
+	if (enter > signal) {signal += maximum_change * core -> gate_delay; if (signal > enter) signal = enter; return;}
 	signal -= maximum_change * core -> gate_delay;
 	if (signal < enter) signal = enter;
 }
@@ -47,8 +47,131 @@ lunar_parameter_block :: lunar_parameter_block (orbiter_core * core, int style, 
 	if (active) activate ();
 }
 
-auto_frame :: auto_frame (double value, double time) {this -> value = value; this -> time = time; next = 0;}
+auto_frame :: auto_frame (double value, double time, auto_frame * prevoius) {this -> value = value; this -> time = time; this -> previous = previous; next = 0;}
 auto_frame :: ~ auto_frame (void) {if (next != 0) delete next;}
+
+int auto_data :: numberOfInputs (void) {return 3;}
+char * auto_data :: inputName (int ind) {
+	switch (ind) {
+	case 0: return "ENTER"; break;
+	case 1: return "TRIGGER"; break;
+	case 2: return "CONTROL"; break;
+	default: break;
+	}
+	return orbiter :: inputName (ind);
+}
+double * auto_data :: inputAddress (int ind) {
+	switch (ind) {
+	case 0: return & signal; break;
+	case 1: return & trigger; break;
+	case 2: return & control; break;
+	default: break;
+	}
+	return orbiter :: inputAddress (ind);
+}
+int auto_data :: numberOfOutputs (void) {return 0;}
+void auto_data :: move (void) {
+	if (control < 16) return; // OPTIMISATION = RETURN MOST OF THE TIME
+	pthread_mutex_lock (& critical);
+	if (trigger > 0.0) {
+		if (record == 0.0) {
+			// START RECORDING (AND MAKE SURE THAT THE NEW FRAMES POINTS TO A DIFFERENT LOCATION)
+			auto_frame * ptr = frames;
+			frames = current_frame = new auto_frame (signal);
+			if (ptr != 0) delete ptr;
+			time = core -> sample_duration;
+			record = trigger;
+		} else {
+			// KEEP RECORDING
+			if (current_frame != 0 && current_frame -> value != signal) {
+				current_frame -> time = time;
+				current_frame = current_frame -> next = new auto_frame (signal, time, current_frame);
+			}
+			time += core -> sample_duration;
+		}
+	} else {
+		// STOP RECORDING, MARK THE TIME
+		if (record != 0.0) {record = 0.0; if (current_frame != 0) current_frame -> time = time;}
+	}
+	pthread_mutex_unlock (& critical);
+}
+void auto_data :: clear_frames (void) {
+	pthread_mutex_lock (& critical);
+	if (frames != 0) delete frames; frames = current_frame = 0;
+	pthread_mutex_unlock (& critical);
+}
+auto_frame * auto_data :: insert_frame (double value, double time) {
+	pthread_mutex_lock (& critical);
+	if (frames == 0) {frames = current_frame = new auto_frame (value, time); pthread_mutex_unlock (& critical); return frames;}
+	if (current_frame == 0) current_frame = frames;
+	while (current_frame -> next != 0) current_frame = current_frame -> next;
+	current_frame = current_frame -> next = new auto_frame (value, time);
+	pthread_mutex_unlock (& critical);
+	return current_frame;
+}
+auto_data :: auto_data (orbiter_core * core) : orbiter (core) {
+	frames = current_frame = 0;
+	trigger = record = time = 0.0;
+	pthread_mutex_init (& critical, 0);
+	initialise (); activate ();
+}
+auto_data :: ~ auto_data (void) {if (frames != 0) delete frames; frames = 0; pthread_mutex_destroy (& critical);}
+
+int auto_player :: numberOfInputs (void) {return 1;}
+char * auto_player :: inputName (int ind) {if (ind == 0) return "TRIGGER"; return orbiter :: inputName (ind);}
+double * auto_player :: inputAddress (int ind) {if (ind == 0) return & trigger; return orbiter :: inputAddress (ind);}
+void auto_player :: filter (double enter) {
+	if (maximum_change == 0.0) {signal = enter; return;}
+	if (enter == signal) return;
+	if (enter > signal) {signal += maximum_change * core -> gate_delay; if (signal > enter) signal = enter; return;}
+	signal -= maximum_change * core -> gate_delay;
+	if (signal < enter) signal = enter;
+}
+void auto_player :: move (void) {
+	if (trigger == 0.0 || data -> control < 1.0 || data -> control >= 16.0) {filter (data -> signal); active_playback = false; return;}
+	if (trigger > 0.0) {
+		if (active_playback) {
+			// KEEP PLAYING
+			pthread_mutex_lock (& data -> critical);
+			if (data -> frames != frames) {pthread_mutex_unlock (& data -> critical); filter (data -> signal); return;}
+			while (current_frame != 0 && time >= current_frame -> time) current_frame = current_frame -> next;
+			if (current_frame != 0) filter (current_frame -> value);
+			else {
+				if (data -> control == 2.0) {
+					current_frame = frames;
+					if (current_frame != 0) filter (current_frame -> value); else active_playback = false;
+					time = 0.0;
+				}
+			}
+			pthread_mutex_unlock (& data -> critical);
+			time += core -> sample_duration;
+		} else {
+			// START PLAYBACK
+			pthread_mutex_lock (& data -> critical);
+			active_playback = true;
+			frames = current_frame = data -> frames;
+			if (frames == 0) {pthread_mutex_unlock (& data -> critical); filter (data -> signal); return;}
+			filter (frames -> value);
+			pthread_mutex_unlock (& data -> critical);
+			time = core -> sample_duration;
+		}
+	}
+}
+bool auto_player :: release (void) {
+	auto_data * data_to_delete = this -> data;
+	bool ret = orbiter :: release ();
+	if (ret) {if (data_to_delete != 0) data_to_delete -> release ();}
+	return ret;
+}
+auto_player :: auto_player (orbiter_core * core, auto_data * data, double maximum_change) : orbiter (core) {
+	if (data != 0) data -> hold ();
+	this -> data = data;
+	this -> maximum_change = maximum_change;
+	frames = current_frame = 0;
+	trigger = time = 0.0; active_playback = returning = false;
+	initialise ();
+	if (data != 0) activate ();
+}
 
 int lunar_auto_parameter_block :: numberOfInputs (void) {return 2;}
 char * lunar_auto_parameter_block :: inputName (int ind) {

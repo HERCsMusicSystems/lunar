@@ -87,6 +87,69 @@ orbiter * parameter_block_class :: create_orbiter (PrologElement * parameters) {
 PrologNativeOrbiter * parameter_block_class :: create_native_orbiter (PrologAtom * atom, orbiter * module) {return new pb_native_orbiter (atom, core, module);}
 parameter_block_class :: parameter_block_class (orbiter_core * core) : PrologNativeOrbiterCreator (core) {}
 
+static char * auto_data_action_code = "Lunar Auto Data Action";
+class auto_data_native_orbiter : public PrologNativeOrbiter {
+public:
+	static char * name (void) {return auto_data_action_code;}
+	bool isTypeOf (char * code_name) {return auto_data_action_code == code_name ? true : PrologNativeOrbiter :: isTypeOf (code_name);}
+	char * codeName (void) {return name ();}
+	bool code (PrologElement * parameters, PrologResolution * resolution) {
+		auto_data * ad = (auto_data *) module;
+		if (parameters -> isPair ()) {
+			PrologElement * el = parameters -> getLeft ();
+			if (el -> isEarth ()) {ad -> clear_frames (); return true;}
+			if (el -> isPair ()) {
+				ad -> clear_frames ();
+				while (el -> isPair ()) {
+					PrologElement * value = el -> getLeft (); if (! value -> isNumber ()) return false;
+					el = el -> getRight (); if (! el -> isPair ()) return false;
+					PrologElement * time = el -> getLeft (); if (! time -> isNumber ()) return false;
+					ad -> insert_frame (value -> getNumber (), time -> getNumber ());
+					parameters = parameters -> getRight (); if (! parameters -> isPair ()) return true;
+					el = parameters -> getLeft ();
+				}
+				return false;
+			}
+			if (el -> isVar ()) {
+				el -> setEarth ();
+				parameters = el;
+				auto_frame * af = ad -> frames;
+				while (af != 0) {
+					parameters -> setPair ();
+					PrologElement * el = parameters -> getLeft ();
+					el -> setPair (); el -> getLeft () -> setDouble (af -> value); el = el -> getRight ();
+					el -> setPair (); el -> getLeft () -> setDouble (af -> time);
+					af = af -> next; parameters = parameters -> getRight ();
+				}
+				return true;
+			}
+		}
+		return PrologNativeOrbiter :: code (parameters, resolution);
+	}
+	auto_data_native_orbiter (PrologAtom * atom, orbiter_core * core, orbiter * module) : PrologNativeOrbiter (atom, core, module) {}
+};
+orbiter * auto_data_class :: create_orbiter (PrologElement * parameters) {return new auto_data (core);}
+PrologNativeOrbiter * auto_data_class :: create_native_orbiter (PrologAtom * atom, orbiter * module) {return new auto_data_native_orbiter (atom, core, module);}
+auto_data_class :: auto_data_class (orbiter_core * core) : PrologNativeOrbiterCreator (core) {}
+
+orbiter * auto_class :: create_orbiter (PrologElement * parameters) {
+	PrologElement * activity = 0;
+	PrologElement * data = 0;
+	while (parameters -> isPair ()) {
+		PrologElement * el = parameters -> getLeft ();
+		if (el -> isNumber ()) activity = el;
+		if (el -> isAtom ()) data = el;
+		parameters = parameters -> getRight ();
+	}
+	if (data == 0) return 0;
+	if (! data -> isAtom ()) return 0;
+	PrologNativeCode * machine = data -> getAtom () -> getMachine ();
+	if (machine == 0) return 0;
+	if (! machine -> isTypeOf (auto_data_native_orbiter :: name ())) return 0;
+	return new auto_player (core, ((auto_data *) ((auto_data_native_orbiter *) machine) -> module), activity != 0 ? activity -> getNumber () : 0.0);
+}
+auto_class :: auto_class (orbiter_core * core) : PrologNativeOrbiterCreator (core) {}
+
 class ap_native_orbiter : public PrologNativeOrbiter {
 public:
 	bool code (PrologElement * parameters, PrologResolution * resolution) {
@@ -97,14 +160,11 @@ public:
 			if (el -> isPair ()) {
 				apb -> clear_frames ();
 				while (el -> isPair ()) {
-					PrologElement * value = el -> getLeft ();
-					if (! value -> isNumber ()) return false;
+					PrologElement * value = el -> getLeft (); if (! value -> isNumber ()) return false;
 					el = el -> getRight (); if (! el -> isPair ()) return false;
-					PrologElement * time = el -> getLeft ();
-					if (! time -> isNumber ()) return false;
+					PrologElement * time = el -> getLeft (); if (! time -> isNumber ()) return false;
 					apb -> insert_frame (value -> getNumber (), time -> getNumber ());
-					parameters = parameters -> getRight ();
-					if (! parameters -> isPair ()) return true;
+					parameters = parameters -> getRight (); if (! parameters -> isPair ()) return true;
 					el = parameters -> getLeft ();
 				}
 				return true;
@@ -302,7 +362,10 @@ public:
 				}
 				PrologNativeCode * machine = a -> getMachine ();
 				if (machine == 0) return false;
-				if (machine -> isTypeOf (key_map_native_orbiter :: name ())) {trigger -> set_key_map ((lunar_map *) ((key_map_native_orbiter *) machine) -> module); return true;}
+				if (machine -> isTypeOf (key_map_native_orbiter :: name ())) {
+					trigger -> set_key_map ((lunar_map *) ((key_map_native_orbiter *) machine) -> module);
+					return true;
+				}
 			}
 		}
 		return PrologNativeOrbiter :: code (parameters, resolution);

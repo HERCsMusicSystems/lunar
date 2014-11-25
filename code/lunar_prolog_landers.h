@@ -50,13 +50,6 @@ public:
 	auto_class (orbiter_core * core);
 };
 
-class auto_parameter_block_class : public PrologNativeOrbiterCreator {
-public:
-	virtual orbiter * create_orbiter (PrologElement * parameters);
-	virtual PrologNativeOrbiter * create_native_orbiter (PrologAtom * atom, orbiter * module);
-	auto_parameter_block_class (orbiter_core * core);
-};
-
 class PrologNativeKeyOrbiter : public PrologNativeOrbiter {
 public:
 	static char * name (void);

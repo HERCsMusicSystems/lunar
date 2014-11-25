@@ -1,7 +1,7 @@
 
 [auto_atoms]
 
-[AutoData ad]
+[auto_data ad]
 
 [res [div 1.0 48000.0 *x] [CONSTANT step *x]]
 
@@ -29,10 +29,10 @@
 	[[128.0 *s2] [127.0 *s5]] *x [step : *s] [mult *s 2 *s2] [mult *s 5 *s5] [ad *x]]
 
 
-[TestFails "Auto without data" [Auto au]]
-[TestFails "Auto with free atom" [Auto au au]]
-[TestFails "Auto with atom, which is not auto data" [Auto au list]]
-[TestWorks "Auto with data" [Auto au ad]]
+[TestFails "Auto without data" [auto au]]
+[TestFails "Auto with free atom" [auto au au]]
+[TestFails "Auto with atom, which is not auto data" [auto au list]]
+[TestWorks "Auto with data" [auto au ad]]
 
 [ad 7] [MoveCore]
 [TestEq "Inactive playback copies input to the auto data (1)" 7.0 *x [au *x]]

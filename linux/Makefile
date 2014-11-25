@@ -73,7 +73,7 @@ lunar_prolog_parameter_block_panel.o: ../code/lunar_prolog_parameter_block_panel
 			$(pc)graphics2d.h ../code/graphic_resources.h
 	g++ -Wno-write-strings -I. -I$(pc) ../code/lunar_prolog_parameter_block_panel.cpp -c -o lunar_prolog_parameter_block_panel.o `pkg-config --cflags gtk+-2.0`
 
-prolog_lunar.o: ../code/prolog_lunar.h ../code/prolog_lunar.cpp ../code/lunar.h $(pc)prolog.h ../code/lunar_linux_midi.h
+prolog_lunar.o: ../code/prolog_lunar.h ../code/prolog_lunar.cpp ../code/lunar.h $(pc)prolog.h ../code/lunar_linux_midi.h ../code/lunar_prolog_landers.h
 	g++ -Wno-write-strings -I. -I$(pc) ../code/prolog_lunar.cpp -c -o prolog_lunar.o
 
 lunar_linux_midi.o: ../code/lunar_linux_midi.h ../code/lunar_linux_midi.cpp $(pc)prolog.h

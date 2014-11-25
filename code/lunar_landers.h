@@ -95,27 +95,6 @@ public:
 	auto_player (orbiter_core * core, auto_data * data, double maximum_change);
 };
 
-class lunar_auto_parameter_block : public orbiter {
-private:
-	double enter;
-	double maximum_change;
-	double trigger;
-	double record;
-	double time;
-public:
-	auto_frame * frames;
-	auto_frame * current_frame;
-	int style; // 0 = none, 1 = index, 2 = freq, 3 = amp, 4 = time, 5 = on/off, 6 = wave
-	virtual int numberOfInputs (void);
-	virtual char * inputName (int ind);
-	virtual double * inputAddress (int ind);
-	virtual void move (void);
-	auto_frame * insert_frame (double value, double time);
-	void clear_frames (void);
-	lunar_auto_parameter_block (orbiter_core * core, int style, double maximum_change);
-	~ lunar_auto_parameter_block (void);
-};
-
 class lunar_mixer : public orbiter {
 private:
 	double enter;

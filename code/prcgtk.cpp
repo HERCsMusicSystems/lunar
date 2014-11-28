@@ -133,22 +133,35 @@ public:
 	}
 } service_class_loader;
 
+static int ARGS;
+static char * * ARGV;
+
 void * studio_runner (void * parameter) {
 	PrologRoot * root = new PrologRoot ();
 	root -> get_search_directories_from_environment ("STUDIO_HOME");
+	#ifdef INTERNAL_RESOURCES
 	root -> setResourceLoader (& resource_loader);
 	root -> setServiceClassLoader (& service_class_loader);
+	#endif
 	root -> set_uap32_captions ();
+	PROLOG_STRING name; strcpy (name, "");
+	for (int ind = 1; ind < ARGS; ind++) {
+		if (strlen (name) < 1) strcpy (name, ARGV [ind]);
+		else root -> addArg (ARGV [ind]);
+	}
 	root -> auto_atoms = true;
-#ifdef LINUX_OPERATING_SYSTEM
+	#ifdef LINUX_OPERATING_SYSTEM
 	PrologCommand * command = new PrologLinuxConsole ();
-#endif
-#ifdef WINDOWS_OPERATING_SYSTEM
+	#endif
+	#ifdef WINDOWS_OPERATING_SYSTEM
 	PrologCommand * command = new PrologWindowsConsole ();
-#endif
+	#endif
 	root -> insertCommander (command);
-	if (parameter == 0) root -> resolution ();
-	else root -> resolution ((char *) parameter);
+	if (strlen (name) == 0) {root -> auto_atoms = true; root -> resolution ();}
+	else {
+		if (strstr (name, ".prc") == NULL && strstr (name, ".prb") == NULL) strcat (name, ".prc");
+		root -> resolution (name);
+	}
 	delete root;
 	delete command;
 	drop_object_counter ();
@@ -158,7 +171,8 @@ void * studio_runner (void * parameter) {
 
 int main (int args, char * * argv) {
 	gtk_init (& args, & argv);
-	pthread_t thread; pthread_create (& thread, 0, studio_runner, args > 1 ? argv [1] : 0); pthread_detach (thread);
+	ARGS = args; ARGV = argv;
+	pthread_t thread; pthread_create (& thread, 0, studio_runner, 0); pthread_detach (thread);
 	gtk_main ();
 	#ifdef WIN32
 	getchar ();

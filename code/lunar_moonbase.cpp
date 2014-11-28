@@ -148,3 +148,15 @@ moonbase :: moonbase (orbiter_core * core) : orbiter (core) {
 
 moonbase :: ~ moonbase (void) {pthread_mutex_destroy (& critical);}
 
+bool arpeggiator :: release (void) {
+	moonbase * base_to_delete = base;
+	bool ret = orbiter :: release ();
+	if (ret && base_to_delete != 0) base_to_delete -> release ();
+	return ret;
+}
+
+arpeggiator :: arpeggiator (orbiter_core * core, moonbase * base) : orbiter (core) {
+	this -> base = base; if (base != 0) base -> hold ();
+	initialise (); activate ();
+}
+

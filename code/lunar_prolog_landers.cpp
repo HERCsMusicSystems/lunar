@@ -345,6 +345,7 @@ drywet_mono_class :: drywet_mono_class (orbiter_core * core) : PrologNativeOrbit
 orbiter * sensitivity_class :: create_orbiter (PrologElement * parameters) {return new lunar_sensitivity (core);}
 sensitivity_class :: sensitivity_class (orbiter_core * core) : PrologNativeOrbiterCreator (core) {}
 
+static char * moonbase_action_code = "Moonbase Action";
 class native_moonbase : public PrologNativeOrbiter {
 private:
 	PrologAtom * keyon, * keyoff, * control, * mono, * poly;
@@ -375,6 +376,9 @@ private:
 		return 0;
 	}
 public:
+	static char * name (void) {return moonbase_action_code;}
+	bool isTypeOf (char * code_name) {return moonbase_action_code == code_name ? true : PrologNativeOrbiter :: isTypeOf (code_name);}
+	char * codeName (void) {return name ();}
 	virtual bool code (PrologElement * parameters, PrologResolution * resolution) {
 		PrologElement * atom = 0;
 		PrologElement * key = 0;
@@ -478,4 +482,19 @@ public:
 orbiter * moonbase_class :: create_orbiter (PrologElement * parameters) {return new moonbase (core);}
 PrologNativeOrbiter * moonbase_class :: create_native_orbiter (PrologAtom * atom, orbiter * module) {return new native_moonbase (dir, atom, core, module);}
 moonbase_class :: moonbase_class (PrologDirectory * dir, orbiter_core * core) : PrologNativeOrbiterCreator (core) {this -> dir = dir;}
+
+orbiter * arpeggiator_class :: create_orbiter (PrologElement * parameters) {
+	PrologElement * base = 0;
+	while (parameters -> isPair ()) {
+		PrologElement * el = parameters -> getLeft ();
+		if (el -> isAtom ()) base = el;
+		parameters = parameters -> getRight ();
+	}
+	if (base == 0) return 0;
+	PrologNativeCode * machine = base -> getAtom () -> getMachine ();
+	if (machine == 0) return 0;
+	if (! machine -> isTypeOf (native_moonbase :: name ())) return 0;
+	return new arpeggiator (core, ((moonbase *) ((native_moonbase *) machine) -> module));
+}
+arpeggiator_class :: arpeggiator_class (orbiter_core * core) : PrologNativeOrbiterCreator (core) {}
 

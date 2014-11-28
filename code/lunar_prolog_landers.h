@@ -178,5 +178,11 @@ public:
 	moonbase_class (PrologDirectory * dir, orbiter_core * core);
 };
 
+class arpeggiator_class : public PrologNativeOrbiterCreator {
+public:
+	virtual orbiter * create_orbiter (PrologElement * parameters);
+	arpeggiator_class (orbiter_core * core);
+};
+
 #endif
 

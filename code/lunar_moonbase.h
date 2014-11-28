@@ -63,5 +63,13 @@ public:
 	~ moonbase (void);
 };
 
+class arpeggiator : public orbiter {
+private:
+	moonbase * base;
+public:
+	virtual bool release (void);
+	arpeggiator (orbiter_core * core, moonbase * base);
+};
+
 #endif
 

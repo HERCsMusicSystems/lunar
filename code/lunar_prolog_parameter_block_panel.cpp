@@ -139,11 +139,14 @@ bool parameter_block_panel_action :: code (PrologElement * parameters, PrologRes
 	if (parameters -> isEarth ()) return remove ();
 	PrologElement * x = 0;
 	PrologElement * y = 0;
+	PrologElement * refresher = 0;
 	while (parameters -> isPair ()) {
 		PrologElement * el = parameters -> getLeft ();
 		if (el -> isNumber ()) if (x == 0) x = el; else y = el;
+		if (el -> isEarth ()) refresher = el;
 		parameters = parameters -> getRight ();
 	}
+	if (refresher != 0) {feedback (); gtk_widget_queue_draw (viewport); return true;}
 	if (x == 0 || y == 0) return true;
 	location = point (x -> getNumber (), y -> getNumber ());
 	g_idle_add ((GSourceFunc) RepositionParameterBlockPanel, this);

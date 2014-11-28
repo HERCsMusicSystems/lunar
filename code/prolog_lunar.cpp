@@ -288,7 +288,7 @@ PrologNativeCode * PrologLunarServiceClass :: getNativeCode (char * name) {
 	if (strcmp (name, "orbiter") == 0) return new orbiter_statistics ();
 	if (strcmp (name, "midi") == 0) return new midi_class (this -> root, directory);
 	if (strcmp (name, "ParameterBlockPanel") == 0) return new parameter_block_panel_class (this);
-	if (strcmp (name, "ADSRPanel") == 0) return new parameter_block_panel_class (this);
+	if (strcmp (name, "AdsrPanel") == 0) return new adsr_panel_class (this);
 	if (strcmp (name, "MoveModules") == 0) return new move_modules_class (& core);
 	if (strcmp (name, "PropagateSignals") == 0) return new propagate_signals_class (& core);
 	return 0;

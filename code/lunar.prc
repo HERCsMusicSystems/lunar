@@ -29,7 +29,7 @@ program lunar #machine := "prolog.lunar"
 				Abb Ab A A# Ax
 				Bbb Bb B B# Bx
 				midi
-				ParameterBlockPanel ADSRPanel
+				ParameterBlockPanel AdsrPanel
 				MoveModules PropagateSignals MoveCore LunarDrop
 			]
 
@@ -80,7 +80,7 @@ program lunar #machine := "prolog.lunar"
 #machine midi := "midi"
 
 #machine ParameterBlockPanel := "ParameterBlockPanel"
-#machine ADSRPanel := "ADSRPanel"
+#machine AdsrPanel := "AdsrPanel"
 
 #machine MoveModules := "MoveModules"
 #machine PropagateSignals := "PropagateSignals"

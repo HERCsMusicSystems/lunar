@@ -285,7 +285,7 @@ PrologNativeCode * PrologLunarServiceClass :: getNativeCode (char * name) {
 	if (strcmp (name, "linear_pan") == 0) return new pan_class (& core, 2);
 	if (strcmp (name, "sensitivity") == 0) return new sensitivity_class (& core);
 	if (strcmp (name, "moonbase") == 0) return new moonbase_class (directory, & core);
-	if (strcmp (name, "arpeggiator") == 0) return new arpeggiator_class (& core);
+	if (strcmp (name, "arpeggiator") == 0) return new arpeggiator_class (directory, & core);
 	if (strcmp (name, "orbiter") == 0) return new orbiter_statistics ();
 	if (strcmp (name, "midi") == 0) return new midi_class (this -> root, directory);
 	if (strcmp (name, "ParameterBlockPanel") == 0) return new parameter_block_panel_class (this);

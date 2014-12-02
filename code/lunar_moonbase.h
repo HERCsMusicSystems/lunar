@@ -30,7 +30,24 @@
 #include "lunar.h"
 #include "lunar_landers.h"
 
-class moonbase : public orbiter {
+class CommandModule : public orbiter {
+public:
+	virtual bool set_map (lunar_map * map) = 0;
+	virtual bool insert_trigger (lunar_trigger * trigger) = 0;
+	virtual bool insert_controller (orbiter * controller, int location) = 0;
+	virtual void keyon (int key) = 0;
+	virtual void keyon (int key, int velocity) = 0;
+	virtual void keyoff (void) = 0;
+	virtual void keyoff (int key, int velocity = 0) = 0;
+	virtual void mono (void) = 0;
+	virtual void poly (void) = 0;
+	virtual bool isMonoMode (void) = 0;
+	virtual void control (int ctrl, int value) = 0;
+	virtual double getControl (int ctrl) = 0;
+	CommandModule (orbiter_core * core);
+};
+
+class moonbase : public CommandModule {
 private:
 	lunar_map * map;
 	lunar_trigger * triggers;
@@ -47,8 +64,8 @@ private:
 public:
 	virtual int numberOfOutputs (void);
 	virtual bool release (void);
-	void set_map (lunar_map * map);
-	void insert_trigger (lunar_trigger * trigger);
+	bool set_map (lunar_map * map);
+	bool insert_trigger (lunar_trigger * trigger);
 	bool insert_controller (orbiter * controller, int location);
 	void keyon (int key);
 	void keyon (int key, int velocity);
@@ -63,7 +80,7 @@ public:
 	~ moonbase (void);
 };
 
-class arpeggiator : public orbiter {
+class arpeggiator : public CommandModule {
 private:
 	double tempo;
 	double time;
@@ -77,6 +94,19 @@ public:
 	virtual double * inputAddress (int ind);
 	virtual int numberOfOutputs (void);
 	virtual bool release (void);
+public:
+	bool set_map (lunar_map * map);
+	bool insert_trigger (lunar_trigger * trigger);
+	bool insert_controller (orbiter * controller, int location);
+	void keyon (int key);
+	void keyon (int key, int velocity);
+	void keyoff (void);
+	void keyoff (int key, int velocity = 0);
+	void mono (void);
+	void poly (void);
+	bool isMonoMode (void);
+	void control (int ctrl, int value);
+	double getControl (int ctrl);
 	arpeggiator (orbiter_core * core, moonbase * base);
 };
 

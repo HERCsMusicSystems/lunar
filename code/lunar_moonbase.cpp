@@ -27,17 +27,21 @@
 #include "lunar_moonbase.h"
 #include <stdio.h>
 
+CommandModule :: CommandModule (orbiter_core * core) : orbiter (core) {}
+
 int moonbase :: numberOfOutputs (void) {return 0;}
-void moonbase :: set_map (lunar_map * map) {
+bool moonbase :: set_map (lunar_map * map) {
 	if (this -> map != 0) this -> map -> release ();
 	this -> map = map;
 	if (map != 0) map -> hold ();
+	return true;
 }
-void moonbase :: insert_trigger (lunar_trigger * trigger) {
-	if (trigger == 0) return;
+bool moonbase :: insert_trigger (lunar_trigger * trigger) {
+	if (trigger == 0) return false;
 	trigger -> next = triggers;
 	choice = triggers = trigger;
 	trigger -> hold ();
+	return true;
 }
 bool moonbase :: insert_controller (orbiter * controller, int location) {
 	if (location < 0 || location > 128) return false;
@@ -139,7 +143,7 @@ bool moonbase :: release (void) {
 	}
 	return ret;
 }
-moonbase :: moonbase (orbiter_core * core) : orbiter (core) {
+moonbase :: moonbase (orbiter_core * core) : CommandModule (core) {
 	pthread_mutex_init (& critical, 0);
 	map = 0; choice = triggers = 0; mono_mode = false; signal = 1.0; base_key = 64; previous_key = -1; key_counter = 0;
 	for (int ind = 0; ind < 129; ind++) {controllers [ind] = 0; ctrl_lsbs [ind] = 0;}
@@ -174,7 +178,48 @@ bool arpeggiator :: release (void) {
 	return ret;
 }
 
-arpeggiator :: arpeggiator (orbiter_core * core, moonbase * base) : orbiter (core) {
+bool arpeggiator :: set_map (lunar_map * map) {return false;}
+bool arpeggiator :: insert_trigger (lunar_trigger * trigger) {return false;}
+bool arpeggiator :: insert_controller (orbiter * controller, int location) {return false;}
+void arpeggiator :: keyon (int key) {
+	if (base != 0) base -> keyon (key);
+}
+
+void arpeggiator :: keyon (int key, int velocity) {
+	if (base != 0) base -> keyon (key, velocity);
+}
+
+void arpeggiator :: keyoff (void) {
+	if (base != 0) base -> keyoff ();
+}
+
+void arpeggiator :: keyoff (int key, int velocity) {
+	if (base != 0) base -> keyoff (key, velocity);
+}
+
+void arpeggiator :: mono (void) {
+	if (base != 0) base -> mono ();
+}
+
+void arpeggiator :: poly (void) {
+	if (base != 0) base -> poly ();
+}
+
+bool arpeggiator :: isMonoMode (void) {
+	if (base != 0) return base -> isMonoMode ();
+	return false;
+}
+
+void arpeggiator :: control (int ctrl, int value) {
+	if (base != 0) base -> control (ctrl, value);
+}
+
+double arpeggiator :: getControl (int ctrl) {
+	if (base != 0) return base -> getControl (ctrl);
+	return 0.0;
+}
+
+arpeggiator :: arpeggiator (orbiter_core * core, moonbase * base) : CommandModule (core) {
 	active_key_pointer = 0;
 	tempo = 140.0; time = 0.0;
 	this -> base = base; if (base != 0) base -> hold ();

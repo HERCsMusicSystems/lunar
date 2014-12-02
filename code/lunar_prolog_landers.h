@@ -179,9 +179,12 @@ public:
 };
 
 class arpeggiator_class : public PrologNativeOrbiterCreator {
+private:
+	PrologDirectory * dir;
 public:
 	virtual orbiter * create_orbiter (PrologElement * parameters);
-	arpeggiator_class (orbiter_core * core);
+	virtual PrologNativeOrbiter * create_native_orbiter (PrologAtom * atom, orbiter * module);
+	arpeggiator_class (PrologDirectory * dir, orbiter_core * core);
 };
 
 #endif

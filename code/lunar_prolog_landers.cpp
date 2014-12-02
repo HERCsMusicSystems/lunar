@@ -403,12 +403,11 @@ public:
 			pp = pp -> getRight ();
 		}
 		if (pp -> isVar ()) var = pp;
-		moonbase * trigger = (moonbase *) module;
+		CommandModule * trigger = (CommandModule *) module;
 		if (atom != 0) {
 			if (atom -> isEarth ()) {
 				if (key != 0) return trigger -> insert_controller (0, key -> getInteger ());
-				trigger -> set_map (0);
-				return true;
+				return trigger -> set_map (0);
 			}
 			if (atom -> isAtom ()) {
 				PrologAtom * a = atom -> getAtom ();
@@ -441,12 +440,10 @@ public:
 				PrologNativeCode * machine = a -> getMachine ();
 				if (machine == 0) return false;
 				if (machine -> isTypeOf (key_map_native_orbiter :: name ())) {
-					trigger -> set_map ((lunar_map *) ((key_map_native_orbiter *) machine) -> module);
-					return true;
+					return trigger -> set_map ((lunar_map *) ((key_map_native_orbiter *) machine) -> module);
 				}
 				if (machine -> isTypeOf (trigger_native_orbiter :: name ())) {
-					trigger -> insert_trigger ((lunar_trigger *) ((trigger_native_orbiter *) machine) -> module);
-					return true;
+					return trigger -> insert_trigger ((lunar_trigger *) ((trigger_native_orbiter *) machine) -> module);
 				}
 				if (machine -> isTypeOf (PrologNativeOrbiter :: name ()) && key != 0) {
 					return trigger -> insert_controller ((orbiter *) ((PrologNativeOrbiter *) machine) -> module, key -> getInteger ());
@@ -496,5 +493,6 @@ orbiter * arpeggiator_class :: create_orbiter (PrologElement * parameters) {
 	if (! machine -> isTypeOf (native_moonbase :: name ())) return 0;
 	return new arpeggiator (core, ((moonbase *) ((native_moonbase *) machine) -> module));
 }
-arpeggiator_class :: arpeggiator_class (orbiter_core * core) : PrologNativeOrbiterCreator (core) {}
+PrologNativeOrbiter * arpeggiator_class :: create_native_orbiter (PrologAtom * atom, orbiter * module) {return new native_moonbase (dir, atom, core, module);}
+arpeggiator_class :: arpeggiator_class (PrologDirectory * dir, orbiter_core * core) : PrologNativeOrbiterCreator (core) {this -> dir = dir;}
 

@@ -148,6 +148,25 @@ moonbase :: moonbase (orbiter_core * core) : orbiter (core) {
 
 moonbase :: ~ moonbase (void) {pthread_mutex_destroy (& critical);}
 
+int arpeggiator :: numberOfInputs (void) {return 1;}
+char * arpeggiator :: inputName (int ind) {
+	switch (ind) {
+	case 0: return "TEMPO"; break;
+	case 1: return "ACTIVE"; break;
+	default: break;
+	}
+	return orbiter :: inputName (ind);
+}
+double * arpeggiator :: inputAddress (int ind) {
+	switch (ind) {
+	case 0: return & tempo; break;
+	case 1: return & active; break;
+	default: break;
+	}
+	return orbiter :: inputAddress (ind);
+}
+int arpeggiator :: numberOfOutputs (void) {return 0;}
+
 bool arpeggiator :: release (void) {
 	moonbase * base_to_delete = base;
 	bool ret = orbiter :: release ();
@@ -156,6 +175,8 @@ bool arpeggiator :: release (void) {
 }
 
 arpeggiator :: arpeggiator (orbiter_core * core, moonbase * base) : orbiter (core) {
+	active_key_pointer = 0;
+	tempo = 140.0; time = 0.0;
 	this -> base = base; if (base != 0) base -> hold ();
 	initialise (); activate ();
 }

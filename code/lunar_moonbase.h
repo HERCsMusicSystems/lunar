@@ -65,8 +65,17 @@ public:
 
 class arpeggiator : public orbiter {
 private:
+	double tempo;
+	double time;
+	double active;
+	int active_keys [128];
+	int active_key_pointer;
 	moonbase * base;
 public:
+	virtual int numberOfInputs (void);
+	virtual char * inputName (int ind);
+	virtual double * inputAddress (int ind);
+	virtual int numberOfOutputs (void);
 	virtual bool release (void);
 	arpeggiator (orbiter_core * core, moonbase * base);
 };

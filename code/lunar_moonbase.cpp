@@ -152,6 +152,33 @@ moonbase :: moonbase (orbiter_core * core) : CommandModule (core) {
 
 moonbase :: ~ moonbase (void) {pthread_mutex_destroy (& critical);}
 
+void up1 (arpeggiator * arp) {
+	if (arp -> index >= arp -> active_key_pointer) arp -> index = 0;
+	if (arp -> base != 0) arp -> base -> keyon (arp -> active_keys [arp -> index], 100);
+	arp -> index++;
+}
+
+void up2 (arpeggiator * arp) {
+	if (arp -> index >= arp -> active_key_pointer) {arp -> index = 0; arp -> octave++;}
+	if (arp -> octave > 1) arp -> octave = 0;
+	if (arp -> base != 0) arp -> base -> keyon (arp -> active_keys [arp -> index] + 12 * arp -> octave, 100);
+	arp -> index++;
+}
+
+void up3 (arpeggiator * arp) {
+	if (arp -> index >= arp -> active_key_pointer) {arp -> index = 0; arp -> octave++;}
+	if (arp -> octave > 2) arp -> octave = 0;
+	if (arp -> base != 0) arp -> base -> keyon (arp -> active_keys [arp -> index] + 12 * arp -> octave, 100);
+	arp -> index++;
+}
+
+void up4 (arpeggiator * arp) {
+	if (arp -> index >= arp -> active_key_pointer) {arp -> index = 0; arp -> octave++;}
+	if (arp -> octave > 3) arp -> octave = 0;
+	if (arp -> base != 0) arp -> base -> keyon (arp -> active_keys [arp -> index] + 12 * arp -> octave, 100);
+	arp -> index++;
+}
+
 int arpeggiator :: numberOfInputs (void) {return 4;}
 char * arpeggiator :: inputName (int ind) {
 	switch (ind) {
@@ -291,29 +318,3 @@ arpeggiator :: arpeggiator (orbiter_core * core, moonbase * base) : CommandModul
 	initialise (); activate ();
 }
 
-void up1 (arpeggiator * arp) {
-	if (arp -> index >= arp -> active_key_pointer) arp -> index = 0;
-	if (arp -> base != 0) arp -> base -> keyon (arp -> active_keys [arp -> index], 100);
-	arp -> index++;
-}
-
-void up2 (arpeggiator * arp) {
-	if (arp -> index >= arp -> active_key_pointer) {arp -> index = 0; arp -> octave++;}
-	if (arp -> octave > 1) arp -> octave = 0;
-	if (arp -> base != 0) arp -> base -> keyon (arp -> active_keys [arp -> index] + 12 * arp -> octave, 100);
-	arp -> index++;
-}
-
-void up3 (arpeggiator * arp) {
-	if (arp -> index >= arp -> active_key_pointer) {arp -> index = 0; arp -> octave++;}
-	if (arp -> octave > 2) arp -> octave = 0;
-	if (arp -> base != 0) arp -> base -> keyon (arp -> active_keys [arp -> index] + 12 * arp -> octave, 100);
-	arp -> index++;
-}
-
-void up4 (arpeggiator * arp) {
-	if (arp -> index >= arp -> active_key_pointer) {arp -> index = 0; arp -> octave++;}
-	if (arp -> octave > 3) arp -> octave = 0;
-	if (arp -> base != 0) arp -> base -> keyon (arp -> active_keys [arp -> index] + 12 * arp -> octave, 100);
-	arp -> index++;
-}

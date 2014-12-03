@@ -83,17 +83,27 @@ public:
 class arpeggiator : public CommandModule {
 private:
 	double tempo;
+	double division;
+	double tick;
 	double time;
 	double active;
+	double previous_activity;
+	bool should_keyoff;
 	int active_keys [128];
 	int active_key_pointer;
+	int index;
+	int octave;
+	double current_algo, previous_algo;
+	void (* algo) (arpeggiator * arp);
 	moonbase * base;
-public:
-	virtual int numberOfInputs (void);
-	virtual char * inputName (int ind);
-	virtual double * inputAddress (int ind);
-	virtual int numberOfOutputs (void);
-	virtual bool release (void);
+	friend void up1 (arpeggiator * arp);
+	friend void up2 (arpeggiator * arp);
+	friend void up3 (arpeggiator * arp);
+	friend void up4 (arpeggiator * arp);
+private:
+	void insert_key (int key);
+	void remove_key (int key);
+	void ground (void);
 public:
 	bool set_map (lunar_map * map);
 	bool insert_trigger (lunar_trigger * trigger);
@@ -107,6 +117,14 @@ public:
 	bool isMonoMode (void);
 	void control (int ctrl, int value);
 	double getControl (int ctrl);
+public:
+	virtual int numberOfInputs (void);
+	virtual char * inputName (int ind);
+	virtual double * inputAddress (int ind);
+	virtual int numberOfOutputs (void);
+	virtual bool release (void);
+	virtual void propagate_signals (void);
+	void signal (void);
 	arpeggiator (orbiter_core * core, moonbase * base);
 };
 

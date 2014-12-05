@@ -182,7 +182,7 @@ void up4 (arpeggiator * arp) {
 int arpeggiator :: numberOfInputs (void) {return 4;}
 char * arpeggiator :: inputName (int ind) {
 	switch (ind) {
-	case 0: return "TEMPO"; break;
+	case 0: return "SPEED"; break;
 	case 1: return "DIVISION"; break;
 	case 2: return "ACTIVE"; break;
 	case 3: return "ALGO"; break;

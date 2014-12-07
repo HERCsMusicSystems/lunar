@@ -77,6 +77,7 @@ lunar_trigger * moonbase :: select (int key) {
 	return 0;
 }
 void moonbase :: keyon (int key) {
+	printf ("moonbase :: keyon (%i);\n", key);
 	pthread_mutex_lock (& critical);
 	lunar_trigger * trigger = select ();
 	if (trigger != 0) trigger -> keyon (key);
@@ -86,6 +87,7 @@ void moonbase :: keyon (int key) {
 }
 void moonbase :: keyon (int key, int velocity) {
 	if (velocity == 0) {keyoff (key, 0); return;}
+	printf ("moonbase :: keyon (%i, %i);\n", key, velocity);
 	pthread_mutex_lock (& critical);
 	lunar_trigger * trigger = select ();
 	if (key_counter++ == 0) base_key = key;
@@ -97,6 +99,7 @@ void moonbase :: keyon (int key, int velocity) {
 	pthread_mutex_unlock (& critical);
 }
 void moonbase :: keyoff (void) {
+	printf ("moonbase :: keyoff ();\n");
 	pthread_mutex_lock (& critical);
 	lunar_trigger * trigger = triggers;
 	while (trigger != 0) {trigger -> keyoff (); trigger = trigger -> next;}
@@ -105,6 +108,7 @@ void moonbase :: keyoff (void) {
 	pthread_mutex_unlock (& critical);
 }
 void moonbase :: keyoff (int key, int velocity) {
+	printf ("moonbase :: keyoff (%i, %i);\n", key, velocity);
 	pthread_mutex_lock (& critical);
 	lunar_trigger * trigger = select (key);
 	if (trigger != 0) trigger -> keyoff ();
@@ -130,6 +134,7 @@ double moonbase :: getControl (int ctrl) {
 	if (ctrl == 127) return mono_mode ? 0.0 : 1.0;
 	return 0.0;
 }
+void moonbase :: timing_clock (void) {}
 bool moonbase :: release (void) {
 	lunar_map * map_to_delete = map;
 	lunar_trigger * triggers_to_delete = triggers;
@@ -209,7 +214,9 @@ bool arpeggiator :: release (void) {
 	return ret;
 }
 
-void arpeggiator :: signal (void) {
+void arpeggiator :: private_signal (void) {
+	if (active_key_pointer < 1 && ! should_keyoff) return;
+	if (division < 1.0) division = 1.0;
 	if (should_keyoff && tick >= division * 0.5) {if (base != 0) base -> keyoff (); should_keyoff = false;}
 	while (tick >= division) {
 		tick -= division;
@@ -217,6 +224,12 @@ void arpeggiator :: signal (void) {
 		should_keyoff = true;
 	}
 	tick += 1.0;
+}
+
+void arpeggiator :: timing_clock (void) {
+	pthread_mutex_lock (& critical);
+	private_signal ();
+	pthread_mutex_unlock (& critical);
 }
 
 void arpeggiator :: propagate_signals (void) {
@@ -228,12 +241,12 @@ void arpeggiator :: propagate_signals (void) {
 		case 0: algo = up1; break;
 		case 1: algo = up2; break;
 		case 2: algo = up3; break;
-		case 4: algo = up4; break;
+		case 3: algo = up4; break;
 		default: algo = up1; break;
 		}
 		previous_algo = current_algo;
 	}
-	while (time >= 1.0) {time -= 1.0; signal ();}
+	while (time >= 1.0) {time -= 1.0; private_signal ();}
 	time += core -> sample_duration * tempo * 0.4;
 }
 
@@ -242,7 +255,7 @@ void arpeggiator :: insert_key (int key) {
 	if (active_key_pointer >= 128) return;
 	while (location < active_key_pointer && active_keys [location] < key) location++;
 	if (location >= 128) return;
-	if (location >= active_key_pointer) {active_keys [location] = key; active_key_pointer = location + 1; return;}
+	if (location >= active_key_pointer) {active_keys [location] = key; active_key_pointer = location + 1; if (location == 0) ground (); return;}
 	if (active_keys [location] == key) return;
 	for (int ind = active_key_pointer; ind > location; ind--) active_keys [ind] = active_keys [ind - 1];
 	active_keys [location] = key; active_key_pointer++;
@@ -260,23 +273,36 @@ bool arpeggiator :: set_map (lunar_map * map) {return false;}
 bool arpeggiator :: insert_trigger (lunar_trigger * trigger) {return false;}
 bool arpeggiator :: insert_controller (orbiter * controller, int location) {return false;}
 void arpeggiator :: keyon (int key) {
+	printf ("arpeggiator :: keyon (%i);\n", key);
 	if (active == 0.0 && base != 0) base -> keyon (key);
+	pthread_mutex_lock (& critical);
 	insert_key (key);
+	pthread_mutex_unlock (& critical);
 }
 
 void arpeggiator :: keyon (int key, int velocity) {
+	if (velocity < 1) {keyoff (key, 0); return;}
+	printf ("arpeggiator :: keyon (%i, %i);\n", key, velocity);
 	if (active == 0.0 && base != 0) base -> keyon (key, velocity);
+	pthread_mutex_lock (& critical);
 	insert_key (key);
+	pthread_mutex_unlock (& critical);
 }
 
 void arpeggiator :: keyoff (void) {
+	printf ("arpeggiator :: keyoff ();\n");
 	if (active == 0.0 && base != 0) base -> keyoff ();
+	pthread_mutex_lock (& critical);
 	active_key_pointer = 0;
+	pthread_mutex_unlock (& critical);
 }
 
 void arpeggiator :: keyoff (int key, int velocity) {
+	printf ("arpeggiator :: keyoff (%i, %i);\n", key, velocity);
 	if (active == 0.0 && base != 0) base -> keyoff (key, velocity);
+	pthread_mutex_lock (& critical);
 	remove_key (key);
+	pthread_mutex_unlock (& critical);
 }
 
 void arpeggiator :: mono (void) {
@@ -302,6 +328,7 @@ double arpeggiator :: getControl (int ctrl) {
 }
 
 void arpeggiator :: ground (void) {
+	printf ("arpeggiator :: ground ();\n");
 	time = 1.0;
 	tick = division;
 	should_keyoff = false;
@@ -309,6 +336,7 @@ void arpeggiator :: ground (void) {
 }
 
 arpeggiator :: arpeggiator (orbiter_core * core, moonbase * base) : CommandModule (core) {
+	pthread_mutex_init (& critical, 0);
 	active_key_pointer = 0;
 	tempo = 140.0; division = 24.0;
 	algo = up1; current_algo = previous_algo = 0.0;
@@ -317,4 +345,6 @@ arpeggiator :: arpeggiator (orbiter_core * core, moonbase * base) : CommandModul
 	this -> base = base; if (base != 0) base -> hold ();
 	initialise (); activate ();
 }
+
+arpeggiator :: ~ arpeggiator (void) {pthread_mutex_destroy (& critical);}
 

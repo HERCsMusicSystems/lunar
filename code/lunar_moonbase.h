@@ -44,6 +44,7 @@ public:
 	virtual bool isMonoMode (void) = 0;
 	virtual void control (int ctrl, int value) = 0;
 	virtual double getControl (int ctrl) = 0;
+	virtual void timing_clock (void) = 0;
 	CommandModule (orbiter_core * core);
 };
 
@@ -76,6 +77,7 @@ public:
 	bool isMonoMode (void);
 	void control (int ctrl, int value);
 	double getControl (int ctrl);
+	void timing_clock (void);
 	moonbase (orbiter_core * core);
 	~ moonbase (void);
 };
@@ -96,6 +98,7 @@ private:
 	double current_algo, previous_algo;
 	void (* algo) (arpeggiator * arp);
 	moonbase * base;
+	pthread_mutex_t critical;
 	friend void up1 (arpeggiator * arp);
 	friend void up2 (arpeggiator * arp);
 	friend void up3 (arpeggiator * arp);
@@ -104,6 +107,7 @@ private:
 	void insert_key (int key);
 	void remove_key (int key);
 	void ground (void);
+	void private_signal (void);
 public:
 	bool set_map (lunar_map * map);
 	bool insert_trigger (lunar_trigger * trigger);
@@ -117,6 +121,7 @@ public:
 	bool isMonoMode (void);
 	void control (int ctrl, int value);
 	double getControl (int ctrl);
+	void timing_clock (void);
 public:
 	virtual int numberOfInputs (void);
 	virtual char * inputName (int ind);
@@ -124,8 +129,8 @@ public:
 	virtual int numberOfOutputs (void);
 	virtual bool release (void);
 	virtual void propagate_signals (void);
-	void signal (void);
 	arpeggiator (orbiter_core * core, moonbase * base);
+	~ arpeggiator (void);
 };
 
 #endif

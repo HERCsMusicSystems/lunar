@@ -1055,3 +1055,4 @@ lunar_filter :: lunar_filter (orbiter_core * core) : orbiter (core) {
 	enter = 0.0;
 	initialise (); activate ();
 }
+

@@ -97,6 +97,7 @@ private:
 	int number_of_keys;
 	int index;
 	int octave;
+	bool up_direction;
 	double current_algo, previous_algo;
 	void (* algo) (arpeggiator * arp);
 	moonbase * base;
@@ -105,6 +106,26 @@ private:
 	friend void up2 (arpeggiator * arp);
 	friend void up3 (arpeggiator * arp);
 	friend void up4 (arpeggiator * arp);
+	friend void down1 (arpeggiator * arp);
+	friend void down2 (arpeggiator * arp);
+	friend void down3 (arpeggiator * arp);
+	friend void down4 (arpeggiator * arp);
+	friend void updown1 (arpeggiator * arp);
+	friend void updown2 (arpeggiator * arp);
+	friend void updown3 (arpeggiator * arp);
+	friend void updown4 (arpeggiator * arp);
+	friend void updowndup1 (arpeggiator * arp);
+	friend void updowndup2 (arpeggiator * arp);
+	friend void updowndup3 (arpeggiator * arp);
+	friend void updowndup4 (arpeggiator * arp);
+	friend void randomdup1 (arpeggiator * arp);
+	friend void randomdup2 (arpeggiator * arp);
+	friend void randomdup3 (arpeggiator * arp);
+	friend void randomdup4 (arpeggiator * arp);
+	friend void random1 (arpeggiator * arp);
+	friend void random2 (arpeggiator * arp);
+	friend void random3 (arpeggiator * arp);
+	friend void random4 (arpeggiator * arp);
 private:
 	void insert_key (int key);
 	void remove_key (int key);

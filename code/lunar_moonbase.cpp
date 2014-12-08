@@ -158,12 +158,14 @@ moonbase :: moonbase (orbiter_core * core) : CommandModule (core) {
 moonbase :: ~ moonbase (void) {pthread_mutex_destroy (& critical);}
 
 void up1 (arpeggiator * arp) {
+	if (arp -> index < 0) arp -> index = 0;
 	if (arp -> index >= arp -> active_key_pointer) arp -> index = 0;
 	if (arp -> base != 0) arp -> base -> keyon (arp -> active_keys [arp -> index], 100);
 	arp -> index++;
 }
 
 void up2 (arpeggiator * arp) {
+	if (arp -> index < 0) arp -> index = 0;
 	if (arp -> index >= arp -> active_key_pointer) {arp -> index = 0; arp -> octave++;}
 	if (arp -> octave > 1) arp -> octave = 0;
 	if (arp -> base != 0) arp -> base -> keyon (arp -> active_keys [arp -> index] + 12 * arp -> octave, 100);
@@ -171,6 +173,7 @@ void up2 (arpeggiator * arp) {
 }
 
 void up3 (arpeggiator * arp) {
+	if (arp -> index < 0) arp -> index = 0;
 	if (arp -> index >= arp -> active_key_pointer) {arp -> index = 0; arp -> octave++;}
 	if (arp -> octave > 2) arp -> octave = 0;
 	if (arp -> base != 0) arp -> base -> keyon (arp -> active_keys [arp -> index] + 12 * arp -> octave, 100);
@@ -178,11 +181,33 @@ void up3 (arpeggiator * arp) {
 }
 
 void up4 (arpeggiator * arp) {
+	if (arp -> index < 0) arp -> index = 0;
 	if (arp -> index >= arp -> active_key_pointer) {arp -> index = 0; arp -> octave++;}
 	if (arp -> octave > 3) arp -> octave = 0;
 	if (arp -> base != 0) arp -> base -> keyon (arp -> active_keys [arp -> index] + 12 * arp -> octave, 100);
 	arp -> index++;
 }
+
+void down1 (arpeggiator * arp) {}
+void down2 (arpeggiator * arp) {}
+void down3 (arpeggiator * arp) {}
+void down4 (arpeggiator * arp) {}
+void updown1 (arpeggiator * arp) {}
+void updown2 (arpeggiator * arp) {}
+void updown3 (arpeggiator * arp) {}
+void updown4 (arpeggiator * arp) {}
+void updowndup1 (arpeggiator * arp) {}
+void updowndup2 (arpeggiator * arp) {}
+void updowndup3 (arpeggiator * arp) {}
+void updowndup4 (arpeggiator * arp) {}
+void randomdup1 (arpeggiator * arp) {}
+void randomdup2 (arpeggiator * arp) {}
+void randomdup3 (arpeggiator * arp) {}
+void randomdup4 (arpeggiator * arp) {}
+void random1 (arpeggiator * arp) {}
+void random2 (arpeggiator * arp) {}
+void random3 (arpeggiator * arp) {}
+void random4 (arpeggiator * arp) {}
 
 int arpeggiator :: numberOfInputs (void) {return 5;}
 char * arpeggiator :: inputName (int ind) {
@@ -217,10 +242,10 @@ bool arpeggiator :: release (void) {
 }
 
 void arpeggiator :: private_signal (void) {
-	if (active_key_pointer < 1 && ! should_keyoff) return;
 	if (number_of_keys < 1 && active_key_pointer > 0 && hold == 0.0) active_key_pointer = 0;
 	double div = division < 1.0 ? 1.0 : division;
-	if (should_keyoff && tick >= division * 0.5) {if (base != 0) base -> keyoff (); should_keyoff = false;}
+	if (should_keyoff && tick >= div * 0.5) {if (base != 0) base -> keyoff (); should_keyoff = false;}
+	if (active_key_pointer < 1) return;
 	while (tick >= div) {
 		tick -= div;
 		if (algo != 0) algo (this);
@@ -245,11 +270,31 @@ void arpeggiator :: propagate_signals (void) {
 		case 1: algo = up2; break;
 		case 2: algo = up3; break;
 		case 3: algo = up4; break;
+		case 4: algo = down1; break;
+		case 5: algo = down2; break;
+		case 6: algo = down3; break;
+		case 7: algo = down4; break;
+		case 8: algo = updown1; break;
+		case 9: algo = updown2; break;
+		case 10: algo = updown3; break;
+		case 11: algo = updown4; break;
+		case 12: algo = updowndup1; break;
+		case 13: algo = updowndup2; break;
+		case 14: algo = updowndup3; break;
+		case 15: algo = updowndup4; break;
+		case 16: algo = randomdup1; break;
+		case 17: algo = randomdup2; break;
+		case 18: algo = randomdup3; break;
+		case 19: algo = randomdup4; break;
+		case 20: algo = random1; break;
+		case 21: algo = random2; break;
+		case 22: algo = random3; break;
+		case 23: algo = random4; break;
 		default: algo = up1; break;
 		}
 		previous_algo = current_algo;
 	}
-	while (time >= 1.0) {time -= 1.0; private_signal ();}
+	while (time >= 1.0) {time -= 1.0; pthread_mutex_lock (& critical); private_signal (); pthread_mutex_unlock (& critical);}
 	time += core -> sample_duration * tempo * 0.4;
 }
 
@@ -267,9 +312,13 @@ void arpeggiator :: insert_key (int key) {
 	if (active_keys [location] == key) {
 		active_key_pointer--;
 		for (int ind = location; ind < active_key_pointer; ind++) active_keys [ind] = active_keys [ind + 1];
+		if (location <= index) index--;
+		number_of_keys--;
+		return;
 	}
 	for (int ind = active_key_pointer; ind > location; ind--) active_keys [ind] = active_keys [ind - 1];
 	active_keys [location] = key; active_key_pointer++; number_of_keys++;
+	if (location < index) index++;
 }
 
 void arpeggiator :: remove_key (int key) {
@@ -279,6 +328,7 @@ void arpeggiator :: remove_key (int key) {
 	if (location >= active_key_pointer) return;
 	active_key_pointer--; number_of_keys--;
 	for (int ind = location; ind < active_key_pointer; ind++) active_keys [ind] = active_keys [ind + 1];
+	if (location <= index) index--;
 }
 
 bool arpeggiator :: set_map (lunar_map * map) {return false;}
@@ -345,6 +395,7 @@ void arpeggiator :: ground (void) {
 	tick = division;
 	should_keyoff = false;
 	index = octave = 0;
+	up_direction = true;
 }
 
 arpeggiator :: arpeggiator (orbiter_core * core, moonbase * base) : CommandModule (core) {

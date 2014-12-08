@@ -406,6 +406,7 @@ lunar_trigger :: lunar_trigger (orbiter_core * core, bool active, lunar_trigger 
 	velocity_map = 0;
 	for (int ind = 0; ind < 16; ind++) keystack [ind] = 0; keystack_pointer = 0;
 	this -> active = active;
+	request = 0;
 	pthread_mutex_init (& critical, 0);
 	initialise ();
 	if (active) activate ();

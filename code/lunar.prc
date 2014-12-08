@@ -161,11 +161,12 @@ program lunar #machine := "prolog.lunar"
 	[AddParameterBlock *parameters amp *noise *selector 0 "amp"]
 ]
 
-[[InsertIO *parameters *arpeggiator *selector [["SPEED" "DIVISION" "ACTIVE" "ALGO" : *] *]]
+[[InsertIO *parameters *arpeggiator *selector [["SPEED" "DIVISION" "ACTIVE" "ALGO" "HOLD" : *] *]]
 	[AddParameterBlock *parameters speed *arpeggiator *selector 140 "index"]
 	[AddParameterBlock *parameters division *arpeggiator *selector 24 "index"]
 	[AddParameterBlock *parameters active *arpeggiator *selector 0 "onoff"]
 	[AddParameterBlock *parameters algo *arpeggiator *selector 0 "index"]
+	[AddParameterBlock *parameters hold *arpeggiator *selector 0 "onoff"]
 ]
 
 [[InsertIO *parameters *adsr *selector [["TRIGGER" "ATTACK" "DECAY" "SUSTAIN" "RELEASE" : *] *]]

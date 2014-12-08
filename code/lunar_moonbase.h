@@ -90,9 +90,11 @@ private:
 	double time;
 	double active;
 	double previous_activity;
+	double hold;
 	bool should_keyoff;
 	int active_keys [128];
 	int active_key_pointer;
+	int number_of_keys;
 	int index;
 	int octave;
 	double current_algo, previous_algo;

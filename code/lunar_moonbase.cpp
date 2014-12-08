@@ -184,13 +184,14 @@ void up4 (arpeggiator * arp) {
 	arp -> index++;
 }
 
-int arpeggiator :: numberOfInputs (void) {return 4;}
+int arpeggiator :: numberOfInputs (void) {return 5;}
 char * arpeggiator :: inputName (int ind) {
 	switch (ind) {
 	case 0: return "SPEED"; break;
 	case 1: return "DIVISION"; break;
 	case 2: return "ACTIVE"; break;
 	case 3: return "ALGO"; break;
+	case 4: return "HOLD"; break;
 	default: break;
 	}
 	return orbiter :: inputName (ind);
@@ -201,6 +202,7 @@ double * arpeggiator :: inputAddress (int ind) {
 	case 1: return & division; break;
 	case 2: return & active; break;
 	case 3: return & current_algo; break;
+	case 4: return & hold; break;
 	default: break;
 	}
 	return orbiter :: inputAddress (ind);
@@ -216,10 +218,11 @@ bool arpeggiator :: release (void) {
 
 void arpeggiator :: private_signal (void) {
 	if (active_key_pointer < 1 && ! should_keyoff) return;
-	if (division < 1.0) division = 1.0;
+	if (number_of_keys < 1 && active_key_pointer > 0 && hold == 0.0) active_key_pointer = 0;
+	double div = division < 1.0 ? 1.0 : division;
 	if (should_keyoff && tick >= division * 0.5) {if (base != 0) base -> keyoff (); should_keyoff = false;}
-	while (tick >= division) {
-		tick -= division;
+	while (tick >= div) {
+		tick -= div;
 		if (algo != 0) algo (this);
 		should_keyoff = true;
 	}
@@ -235,7 +238,7 @@ void arpeggiator :: timing_clock (void) {
 void arpeggiator :: propagate_signals (void) {
 	orbiter :: propagate_signals ();
 	if (active == 0.0) {if (previous_activity != 0.0) {if (base != 0) base -> keyoff (); previous_activity = 0.0;} return;}
-	if (active != previous_activity) {previous_activity = active; ground ();}
+	if (active != previous_activity) previous_activity = active;
 	if (current_algo != previous_algo) {
 		switch ((int) current_algo) {
 		case 0: algo = up1; break;
@@ -255,17 +258,26 @@ void arpeggiator :: insert_key (int key) {
 	if (active_key_pointer >= 128) return;
 	while (location < active_key_pointer && active_keys [location] < key) location++;
 	if (location >= 128) return;
-	if (location >= active_key_pointer) {active_keys [location] = key; active_key_pointer = location + 1; if (location == 0) ground (); return;}
-	if (active_keys [location] == key) return;
+	if (location >= active_key_pointer) {
+		active_keys [location] = key; active_key_pointer = location + 1;
+		if (location == 0) {number_of_keys = 1; if (hold == 0.0) ground ();}
+		else number_of_keys++;
+		return;
+	}
+	if (active_keys [location] == key) {
+		active_key_pointer--;
+		for (int ind = location; ind < active_key_pointer; ind++) active_keys [ind] = active_keys [ind + 1];
+	}
 	for (int ind = active_key_pointer; ind > location; ind--) active_keys [ind] = active_keys [ind - 1];
-	active_keys [location] = key; active_key_pointer++;
+	active_keys [location] = key; active_key_pointer++; number_of_keys++;
 }
 
 void arpeggiator :: remove_key (int key) {
+	if (hold != 0.0) {if (number_of_keys > 0) number_of_keys--; return;}
 	int location = 0;
 	while (location < active_key_pointer && active_keys [location] != key) location++;
 	if (location >= active_key_pointer) return;
-	active_key_pointer--;
+	active_key_pointer--; number_of_keys--;
 	for (int ind = location; ind < active_key_pointer; ind++) active_keys [ind] = active_keys [ind + 1];
 }
 
@@ -293,7 +305,7 @@ void arpeggiator :: keyoff (void) {
 	printf ("arpeggiator :: keyoff ();\n");
 	if (active == 0.0 && base != 0) base -> keyoff ();
 	pthread_mutex_lock (& critical);
-	active_key_pointer = 0;
+	active_key_pointer = number_of_keys = 0;
 	pthread_mutex_unlock (& critical);
 }
 
@@ -337,11 +349,12 @@ void arpeggiator :: ground (void) {
 
 arpeggiator :: arpeggiator (orbiter_core * core, moonbase * base) : CommandModule (core) {
 	pthread_mutex_init (& critical, 0);
-	active_key_pointer = 0;
+	active_key_pointer = number_of_keys = 0;
 	tempo = 140.0; division = 24.0;
 	algo = up1; current_algo = previous_algo = 0.0;
 	ground ();
 	active = previous_activity = 0.0;
+	hold = 0.0;
 	this -> base = base; if (base != 0) base -> hold ();
 	initialise (); activate ();
 }

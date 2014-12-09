@@ -93,6 +93,7 @@ private:
 	double hold;
 	bool should_keyoff;
 	int active_keys [128];
+	int active_velocities [128];
 	int active_key_pointer;
 	int number_of_keys;
 	int index;
@@ -127,7 +128,7 @@ private:
 	friend void random3 (arpeggiator * arp);
 	friend void random4 (arpeggiator * arp);
 private:
-	void insert_key (int key);
+	void insert_key (int key, int velocity);
 	void remove_key (int key);
 	void ground (void);
 	void private_signal (void);

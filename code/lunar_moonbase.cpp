@@ -160,7 +160,7 @@ moonbase :: ~ moonbase (void) {pthread_mutex_destroy (& critical);}
 void up1 (arpeggiator * arp) {
 	if (arp -> index < 0) arp -> index = 0;
 	if (arp -> index >= arp -> active_key_pointer) arp -> index = 0;
-	if (arp -> base != 0) arp -> base -> keyon (arp -> active_keys [arp -> index], 100);
+	if (arp -> base != 0) arp -> base -> keyon (arp -> active_keys [arp -> index], arp -> active_velocities [arp -> index]);
 	arp -> index++;
 }
 
@@ -168,7 +168,7 @@ void up2 (arpeggiator * arp) {
 	if (arp -> index < 0) arp -> index = 0;
 	if (arp -> index >= arp -> active_key_pointer) {arp -> index = 0; arp -> octave++;}
 	if (arp -> octave > 1) arp -> octave = 0;
-	if (arp -> base != 0) arp -> base -> keyon (arp -> active_keys [arp -> index] + 12 * arp -> octave, 100);
+	if (arp -> base != 0) arp -> base -> keyon (arp -> active_keys [arp -> index] + 12 * arp -> octave, arp -> active_velocities [arp -> index]);
 	arp -> index++;
 }
 
@@ -176,7 +176,7 @@ void up3 (arpeggiator * arp) {
 	if (arp -> index < 0) arp -> index = 0;
 	if (arp -> index >= arp -> active_key_pointer) {arp -> index = 0; arp -> octave++;}
 	if (arp -> octave > 2) arp -> octave = 0;
-	if (arp -> base != 0) arp -> base -> keyon (arp -> active_keys [arp -> index] + 12 * arp -> octave, 100);
+	if (arp -> base != 0) arp -> base -> keyon (arp -> active_keys [arp -> index] + 12 * arp -> octave, arp -> active_velocities [arp -> index]);
 	arp -> index++;
 }
 
@@ -184,18 +184,118 @@ void up4 (arpeggiator * arp) {
 	if (arp -> index < 0) arp -> index = 0;
 	if (arp -> index >= arp -> active_key_pointer) {arp -> index = 0; arp -> octave++;}
 	if (arp -> octave > 3) arp -> octave = 0;
-	if (arp -> base != 0) arp -> base -> keyon (arp -> active_keys [arp -> index] + 12 * arp -> octave, 100);
+	if (arp -> base != 0) arp -> base -> keyon (arp -> active_keys [arp -> index] + 12 * arp -> octave, arp -> active_velocities [arp -> index]);
 	arp -> index++;
 }
 
-void down1 (arpeggiator * arp) {}
-void down2 (arpeggiator * arp) {}
-void down3 (arpeggiator * arp) {}
-void down4 (arpeggiator * arp) {}
-void updown1 (arpeggiator * arp) {}
-void updown2 (arpeggiator * arp) {}
-void updown3 (arpeggiator * arp) {}
-void updown4 (arpeggiator * arp) {}
+void down1 (arpeggiator * arp) {
+	if (--arp -> index < 0) arp -> index = arp -> active_key_pointer - 1;
+	if (arp -> index < 0) arp -> index = 0;
+	if (arp -> base != 0) arp -> base -> keyon (arp -> active_keys [arp -> index], arp -> active_velocities [arp -> index]);
+}
+
+void down2 (arpeggiator * arp) {
+	if (--arp -> index < 0) {arp -> index = arp -> active_key_pointer - 1; if (--arp -> octave < 0) arp -> octave = 1;}
+	if (arp -> index < 0) arp -> index = 0;
+	if (arp -> base != 0) arp -> base -> keyon (arp -> active_keys [arp -> index] + 12 * arp -> octave, arp -> active_velocities [arp -> index]);
+}
+
+void down3 (arpeggiator * arp) {
+	if (--arp -> index < 0) {arp -> index = arp -> active_key_pointer - 1; if (--arp -> octave < 0) arp -> octave = 2;}
+	if (arp -> index < 0) arp -> index = 0;
+	if (arp -> base != 0) arp -> base -> keyon (arp -> active_keys [arp -> index] + 12 * arp -> octave, arp -> active_velocities [arp -> index]);
+}
+
+void down4 (arpeggiator * arp) {
+	if (--arp -> index < 0) {arp -> index = arp -> active_key_pointer - 1; if (--arp -> octave < 0) arp -> octave = 3;}
+	if (arp -> index < 0) arp -> index = 0;
+	if (arp -> base != 0) arp -> base -> keyon (arp -> active_keys [arp -> index] + 12 * arp -> octave, arp -> active_velocities [arp -> index]);
+}
+
+void updown1 (arpeggiator * arp) {
+	if (arp -> up_direction) {
+		if (arp -> index >= arp -> active_key_pointer) {arp -> index = arp -> active_key_pointer - 2; arp -> up_direction = false;}
+		if (arp -> index < 0) {arp -> index = 0; arp -> up_direction = true;}
+	} else {
+		if (arp -> index < 0) {arp -> index = 1; arp -> up_direction = true;}
+		if (arp -> index >= arp -> active_key_pointer) {arp -> index = 0; arp -> up_direction = false;}
+	}
+	if (arp -> base != 0) arp -> base -> keyon (arp -> active_keys [arp -> index], arp -> active_velocities [arp -> index]);
+	if (arp -> up_direction) arp -> index++; else arp -> index--;
+}
+
+void updown2 (arpeggiator * arp) {
+	if (arp -> up_direction) {
+		if (arp -> index >= arp -> active_key_pointer) {
+			if (arp -> octave < 1) {arp -> index = 0; arp -> octave++;}
+			else {
+				arp -> index = arp -> active_key_pointer - 2; arp -> up_direction = false;
+				if (arp -> index < 0) {arp -> index = arp -> active_key_pointer - 1; arp -> octave = 0;}
+			}
+		}
+		if (arp -> index < 0) {arp -> index = 0; arp -> up_direction = true;}
+	} else {
+		if (arp -> index < 0) {
+			if (arp -> octave > 0) {
+				arp -> index = arp -> active_key_pointer - 1;
+				arp -> octave--;
+				if (arp -> index < 0) arp -> index = 0;
+			} else {arp -> index = 1; arp -> up_direction = true;}
+		}
+		if (arp -> index >= arp -> active_key_pointer) {arp -> index = 0; arp -> up_direction = false;}
+	}
+	if (arp -> base != 0) arp -> base -> keyon (arp -> active_keys [arp -> index], arp -> active_velocities [arp -> index]);
+	if (arp -> up_direction) arp -> index++; else arp -> index--;
+}
+
+void updown3 (arpeggiator * arp) {
+	if (arp -> up_direction) {
+		if (arp -> index >= arp -> active_key_pointer) {
+			if (arp -> octave < 2) {arp -> index = 0; arp -> octave++;}
+			else {
+				arp -> index = arp -> active_key_pointer - 2; arp -> up_direction = false;
+				if (arp -> index < 0) {arp -> index = arp -> active_key_pointer - 1; arp -> octave = 1;}
+			}
+		}
+		if (arp -> index < 0) {arp -> index = 0; arp -> up_direction = true;}
+	} else {
+		if (arp -> index < 0) {
+			if (arp -> octave > 0) {
+				arp -> index = arp -> active_key_pointer - 1;
+				arp -> octave--;
+				if (arp -> index < 0) arp -> index = 0;
+			} else {arp -> index = 1; arp -> up_direction = true;}
+		}
+		if (arp -> index >= arp -> active_key_pointer) {arp -> index = 0; arp -> up_direction = false;}
+	}
+	if (arp -> base != 0) arp -> base -> keyon (arp -> active_keys [arp -> index], arp -> active_velocities [arp -> index]);
+	if (arp -> up_direction) arp -> index++; else arp -> index--;
+}
+
+void updown4 (arpeggiator * arp) {
+	if (arp -> up_direction) {
+		if (arp -> index >= arp -> active_key_pointer) {
+			if (arp -> octave < 3) {arp -> index = 0; arp -> octave++;}
+			else {
+				arp -> index = arp -> active_key_pointer - 2; arp -> up_direction = false;
+				if (arp -> index < 0) {arp -> index = arp -> active_key_pointer - 1; arp -> octave = 2;}
+			}
+		}
+		if (arp -> index < 0) {arp -> index = 0; arp -> up_direction = true;}
+	} else {
+		if (arp -> index < 0) {
+			if (arp -> octave > 0) {
+				arp -> index = arp -> active_key_pointer - 1;
+				arp -> octave--;
+				if (arp -> index < 0) arp -> index = 0;
+			} else {arp -> index = 1; arp -> up_direction = true;}
+		}
+		if (arp -> index >= arp -> active_key_pointer) {arp -> index = 0; arp -> up_direction = false;}
+	}
+	if (arp -> base != 0) arp -> base -> keyon (arp -> active_keys [arp -> index], arp -> active_velocities [arp -> index]);
+	if (arp -> up_direction) arp -> index++; else arp -> index--;
+}
+
 void updowndup1 (arpeggiator * arp) {}
 void updowndup2 (arpeggiator * arp) {}
 void updowndup3 (arpeggiator * arp) {}
@@ -298,26 +398,33 @@ void arpeggiator :: propagate_signals (void) {
 	time += core -> sample_duration * tempo * 0.4;
 }
 
-void arpeggiator :: insert_key (int key) {
+void arpeggiator :: insert_key (int key, int velocity) {
+	if (number_of_keys < 1 && active_key_pointer > 0) number_of_keys = active_key_pointer = 0;
 	int location = 0;
 	if (active_key_pointer >= 128) return;
 	while (location < active_key_pointer && active_keys [location] < key) location++;
 	if (location >= 128) return;
 	if (location >= active_key_pointer) {
-		active_keys [location] = key; active_key_pointer = location + 1;
+		active_keys [location] = key; active_velocities [location] = velocity; active_key_pointer = location + 1;
 		if (location == 0) {number_of_keys = 1; if (hold == 0.0) ground ();}
 		else number_of_keys++;
 		return;
 	}
 	if (active_keys [location] == key) {
 		active_key_pointer--;
-		for (int ind = location; ind < active_key_pointer; ind++) active_keys [ind] = active_keys [ind + 1];
+		for (int ind = location; ind < active_key_pointer; ind++) {
+			active_keys [ind] = active_keys [ind + 1];
+			active_velocities [ind] = active_velocities [ind + 1];
+		}
 		if (location <= index) index--;
 		number_of_keys--;
 		return;
 	}
-	for (int ind = active_key_pointer; ind > location; ind--) active_keys [ind] = active_keys [ind - 1];
-	active_keys [location] = key; active_key_pointer++; number_of_keys++;
+	for (int ind = active_key_pointer; ind > location; ind--) {
+		active_keys [ind] = active_keys [ind - 1];
+		active_velocities [ind] = active_velocities [ind - 1];
+	}
+	active_keys [location] = key; active_velocities [location] = velocity; active_key_pointer++; number_of_keys++;
 	if (location < index) index++;
 }
 
@@ -327,7 +434,10 @@ void arpeggiator :: remove_key (int key) {
 	while (location < active_key_pointer && active_keys [location] != key) location++;
 	if (location >= active_key_pointer) return;
 	active_key_pointer--; number_of_keys--;
-	for (int ind = location; ind < active_key_pointer; ind++) active_keys [ind] = active_keys [ind + 1];
+	for (int ind = location; ind < active_key_pointer; ind++) {
+		active_keys [ind] = active_keys [ind + 1];
+		active_velocities [ind] = active_velocities [ind + 1];
+	}
 	if (location <= index) index--;
 }
 
@@ -338,7 +448,7 @@ void arpeggiator :: keyon (int key) {
 	printf ("arpeggiator :: keyon (%i);\n", key);
 	if (active == 0.0 && base != 0) base -> keyon (key);
 	pthread_mutex_lock (& critical);
-	insert_key (key);
+	insert_key (key, 100);
 	pthread_mutex_unlock (& critical);
 }
 
@@ -347,7 +457,7 @@ void arpeggiator :: keyon (int key, int velocity) {
 	printf ("arpeggiator :: keyon (%i, %i);\n", key, velocity);
 	if (active == 0.0 && base != 0) base -> keyon (key, velocity);
 	pthread_mutex_lock (& critical);
-	insert_key (key);
+	insert_key (key, velocity);
 	pthread_mutex_unlock (& critical);
 }
 
@@ -355,7 +465,8 @@ void arpeggiator :: keyoff (void) {
 	printf ("arpeggiator :: keyoff ();\n");
 	if (active == 0.0 && base != 0) base -> keyoff ();
 	pthread_mutex_lock (& critical);
-	active_key_pointer = number_of_keys = 0;
+	number_of_keys = 0;
+	if (hold == 0.0) active_key_pointer = 0;
 	pthread_mutex_unlock (& critical);
 }
 

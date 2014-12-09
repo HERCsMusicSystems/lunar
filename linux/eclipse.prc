@@ -156,6 +156,7 @@ program eclipse [
 	[delay *dsp]
 	[mixer *mixer]
 	[BuildPhobosPart *Phobos *PhobosCB *pan]
+	[Insert *PhobosCB Phobos]
 	[Insert *pan *Phobos pan]
 	[Insert *dsp *Phobos delay]
 	[Insert *mixer *Phobos mixer]

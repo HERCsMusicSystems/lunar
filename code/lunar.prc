@@ -108,7 +108,6 @@ program lunar #machine := "prolog.lunar"
 [[Moonbase *base]
 	[*base *parameters *modules *callback : *]
 	[delallcl *base]
-	[*callback]
 	[TRY [*parameters *parameter : *selector] [*parameter] fail]
 	[TRY [*modules *module : *selector] [*module []] [*module] fail]
 	[delallcl *parameters]
@@ -257,6 +256,8 @@ program lunar #machine := "prolog.lunar"
 ]
 
 [[InsertIO *parameters *mixer *selector [["ENTER" : *] *]]]
+
+[[InsertIO *parameters *moonbase *selector [[] []]]]
 
 [[InsertIO *parameters *operator *selector [*i *o]] [show "Failed inserting IO at " [*parameters *operator *i *o]]]
 

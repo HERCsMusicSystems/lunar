@@ -11,7 +11,7 @@ program eclipse [
 					build_abakos build_abakos_part abakos abakoscb
 					reactor left right
 					kb kbcb
-					AT sub
+					AT sub mdi mdicb
 				]
 
 [[AT * *x [*x]]/]
@@ -226,19 +226,28 @@ program eclipse [
 
 [[@ lunar . LunarDrop : *command] [show *command]]
 
+[[mdicb *command * : *t]
+	[show [abakoscb *command : *t]]
+	[abakoscb *command : *t]
+]
+
 end := [
-		[core reactor 330 22050 2048]
 		[var cb_path cb_callback]
 		[build_abakos *abakos_mixer]
 		[BuildPhobos Phobos PhobosCB *phobos_mixer]
 		;[moon_base]
 		[CommandCentre commander cb]
-		[ConnectStereo reactor *abakos_mixer]
+		[Lunar 4000 abakos adsr attack]
+		[Lunar 4000 abakos adsr release]
+		[Lunar 1 abakos arpeggiator active]
+		;[Lunar 1 abakos arpeggiator hold]
+		[Lunar 9 abakos arpeggiator algo]
 		[oscilloscope left] [oscilloscope right] [right 1000 10]
 		[left "signal" *abakos_mixer "left"]
 		[right "signal" *abakos_mixer "right"]
-		/
-		[command]
+		[core reactor 330 22050 2048]
+		[ConnectStereo reactor *abakos_mixer]
+		/ [command] /
 		[Moonbase Phobos]
 		[Moonbase abakos]
 		] .

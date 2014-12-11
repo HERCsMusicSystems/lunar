@@ -291,10 +291,89 @@ void updown4 (arpeggiator * arp) {
 	if (arp -> up_direction) arp -> index++; else arp -> index--;
 }
 
-void updowndup1 (arpeggiator * arp) {}
-void updowndup2 (arpeggiator * arp) {}
-void updowndup3 (arpeggiator * arp) {}
-void updowndup4 (arpeggiator * arp) {}
+void updowndup1 (arpeggiator * arp) {
+	if (arp -> up_direction) {
+		if (arp -> index >= arp -> active_key_pointer) {arp -> index = arp -> active_key_pointer - 1; arp -> up_direction = false;}
+		if (arp -> index < 0) {arp -> index = 0; arp -> up_direction = true;}
+	} else {
+		if (arp -> index < 0) {arp -> index = 0; arp -> up_direction = true;}
+	}
+	if (arp -> base != 0) arp -> base -> keyon (arp -> active_keys [arp -> index], arp -> active_velocities [arp -> index]);
+	if (arp -> up_direction) arp -> index++; else arp -> index--;
+}
+
+void updowndup2 (arpeggiator * arp) {
+	if (arp -> up_direction) {
+		if (arp -> index >= arp -> active_key_pointer) {
+			if (arp -> octave < 1) {arp -> index = 0; arp -> octave++;}
+			else {
+				arp -> index = arp -> active_key_pointer - 1; arp -> up_direction = false;
+				if (arp -> index < 0) {arp -> index = arp -> active_key_pointer - 1; arp -> octave = 0;}
+			}
+		}
+		if (arp -> index < 0) {arp -> index = 0; arp -> up_direction = true;}
+	} else {
+		if (arp -> index < 0) {
+			if (arp -> octave > 0) {
+				arp -> index = arp -> active_key_pointer - 1;
+				arp -> octave--;
+				if (arp -> index < 0) arp -> index = 0;
+			} else {arp -> index = 0; arp -> up_direction = true;}
+		}
+		if (arp -> index >= arp -> active_key_pointer) {arp -> index = 0; arp -> octave = 1;}
+	}
+	if (arp -> base != 0) arp -> base -> keyon (arp -> active_keys [arp -> index] + 12 * arp -> octave, arp -> active_velocities [arp -> index]);
+	if (arp -> up_direction) arp -> index++; else arp -> index--;
+}
+
+void updowndup3 (arpeggiator * arp) {
+	if (arp -> up_direction) {
+		if (arp -> index >= arp -> active_key_pointer) {
+			if (arp -> octave < 2) {arp -> index = 0; arp -> octave++;}
+			else {
+				arp -> index = arp -> active_key_pointer - 1; arp -> up_direction = false;
+				if (arp -> index < 0) {arp -> index = arp -> active_key_pointer - 1; arp -> octave = 1;}
+			}
+		}
+		if (arp -> index < 0) {arp -> index = 0; arp -> up_direction = true;}
+	} else {
+		if (arp -> index < 0) {
+			if (arp -> octave > 0) {
+				arp -> index = arp -> active_key_pointer - 1;
+				arp -> octave--;
+				if (arp -> index < 0) arp -> index = 0;
+			} else {arp -> index = 0; arp -> up_direction = true;}
+		}
+		if (arp -> index >= arp -> active_key_pointer) {arp -> index = 0; arp -> octave = 1;}
+	}
+	if (arp -> base != 0) arp -> base -> keyon (arp -> active_keys [arp -> index] + 12 * arp -> octave, arp -> active_velocities [arp -> index]);
+	if (arp -> up_direction) arp -> index++; else arp -> index--;
+}
+
+void updowndup4 (arpeggiator * arp) {
+	if (arp -> up_direction) {
+		if (arp -> index >= arp -> active_key_pointer) {
+			if (arp -> octave < 3) {arp -> index = 0; arp -> octave++;}
+			else {
+				arp -> index = arp -> active_key_pointer - 1; arp -> up_direction = false;
+				if (arp -> index < 0) {arp -> index = arp -> active_key_pointer - 1; arp -> octave = 2;}
+			}
+		}
+		if (arp -> index < 0) {arp -> index = 0; arp -> up_direction = true;}
+	} else {
+		if (arp -> index < 0) {
+			if (arp -> octave > 0) {
+				arp -> index = arp -> active_key_pointer - 1;
+				arp -> octave--;
+				if (arp -> index < 0) arp -> index = 0;
+			} else {arp -> index = 0; arp -> up_direction = true;}
+		}
+		if (arp -> index >= arp -> active_key_pointer) {arp -> index = 0; arp -> octave = 1;}
+	}
+	if (arp -> base != 0) arp -> base -> keyon (arp -> active_keys [arp -> index] + 12 * arp -> octave, arp -> active_velocities [arp -> index]);
+	if (arp -> up_direction) arp -> index++; else arp -> index--;
+}
+
 void randomdup1 (arpeggiator * arp) {}
 void randomdup2 (arpeggiator * arp) {}
 void randomdup3 (arpeggiator * arp) {}

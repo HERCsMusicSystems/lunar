@@ -591,9 +591,18 @@ void arpeggiator :: remove_key (int key) {
 	if (location <= index) index--;
 }
 
-bool arpeggiator :: set_map (lunar_map * map) {return false;}
-bool arpeggiator :: insert_trigger (lunar_trigger * trigger) {return false;}
-bool arpeggiator :: insert_controller (orbiter * controller, int location) {return false;}
+bool arpeggiator :: set_map (lunar_map * map) {
+	if (base != 0) return base -> set_map (map);
+	return false;
+}
+bool arpeggiator :: insert_trigger (lunar_trigger * trigger) {
+	if (base != 0) return base -> insert_trigger (trigger);
+	return false;
+}
+bool arpeggiator :: insert_controller (orbiter * controller, int location) {
+	if (base != 0) return base -> insert_controller (controller, location);
+	return false;
+}
 void arpeggiator :: keyon (int key) {
 	if (active == 0.0 && base != 0) base -> keyon (key);
 	pthread_mutex_lock (& critical);

@@ -76,7 +76,19 @@ public:
 		PrologElement * var = query;
 		if (var -> isPair ()) var = var -> getLeft ();
 		PrologElement * el;
-		if (var -> isPair ()) {el = var -> getLeft (); if (el -> isDouble ()) poly_mono . engaged = el -> getDouble () != 0.0; var = var -> getRight ();}
+		if (! var -> isPair ()) {delete query; return;}
+		el = var -> getLeft (); if (el -> isDouble ()) poly_mono . engaged = el -> getDouble () != 0.0; var = var -> getRight ();
+		if (! var -> isPair ()) {delete query; return;}
+		el = var -> getLeft (); if (el -> isDouble ()) porta_on_off . engaged = el -> getDouble () != 0.0; var = var -> getRight ();
+		if (! var -> isPair ()) {delete query; return;}
+		el = var -> getLeft (); if (el -> isDouble ()) pitch . position = el -> getDouble (); var = var -> getRight ();
+		if (! var -> isPair ()) {delete query; return;}
+		el = var -> getLeft (); if (el -> isDouble ()) modulation . position = el -> getDouble (); var = var -> getRight ();
+		if (! var -> isPair ()) {delete query; return;}
+		el = var -> getLeft (); if (el -> isDouble ()) vector . position . x = el -> getDouble (); var = var -> getRight ();
+		if (! var -> isPair ()) {delete query; return;}
+		el = var -> getLeft (); if (el -> isDouble ()) vector . position . y = el -> getDouble (); var = var -> getRight ();
+		if (! var -> isPair ()) {delete query; return;}
 		delete query;
 	}
 	void reset_buttons (int id) {
@@ -441,6 +453,7 @@ static gint ControlPanelKeyon (GtkWidget * viewport, GdkEventButton * event, con
 			char * file_name = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (dialog));
 			action -> preset_action ("Restore", file_name);
 			g_free (file_name);
+			action -> feedback_on_controllers ();
 			redraw = true;
 		}
 		gtk_widget_destroy (dialog);
@@ -468,7 +481,7 @@ static gint ControlPanelKeyoff (GtkWidget * viewport, GdkEventButton * event, co
 	action -> poly_mono . keyoff (location);
 	action -> porta_on_off . keyoff (location);
 	bool redraw = false;
-	if (action -> pitch . keyoff (location)) {redraw = true;}
+	if (action -> pitch . keyoff (location)) {action -> action (action -> pitch . id, action -> pitch . position); redraw = true;}
 	if (action -> add_one . keyoff (location)) {action -> add_one . engaged = false; redraw = true;}
 	if (action -> sub_one . keyoff (location)) {action -> sub_one . engaged = false; redraw = true;}
 	if (redraw) gtk_widget_queue_draw (viewport);
@@ -479,7 +492,7 @@ static gint ControlPanelMove (GtkWidget * viewport, GdkEventButton * event, cont
 	point delta = location - action -> captured;
 	action -> captured = location;
 	bool redraw = false;
-	if (action -> ctrl_volume . move (delta)) {action -> action (action -> ctrl_volume . id, action -> ctrl_vibrato . angle); redraw = true;}
+	if (action -> ctrl_volume . move (delta)) {action -> action (action -> ctrl_volume . id, 0.5 + action -> ctrl_volume . angle); redraw = true;}
 	if (action -> ctrl_attack . move (delta)) {action -> action (action -> ctrl_attack . id, action -> ctrl_attack . angle); redraw = true;}
 	if (action -> ctrl_decay . move (delta)) {action -> action (action -> ctrl_decay . id, action -> ctrl_decay . angle); redraw = true;}
 	if (action -> ctrl_sustain . move (delta)) {action -> action (action -> ctrl_sustain . id, action -> ctrl_sustain . angle); redraw = true;}
@@ -495,8 +508,8 @@ static gint ControlPanelMove (GtkWidget * viewport, GdkEventButton * event, cont
 		redraw = true;
 	}
 	if (action -> encoder . move (delta)) {action -> value_change_action ((int) action -> encoder . increment); redraw = true;}
-	if (action -> pitch . move (delta)) {redraw = true;}
-	if (action -> modulation . move (delta)) {redraw = true;}
+	if (action -> pitch . move (delta)) {action -> action (action -> pitch . id, action -> pitch . position); redraw = true;}
+	if (action -> modulation . move (delta)) {action -> action (action -> modulation . id, 0.5 + action -> modulation . position); redraw = true;}
 	if (redraw) gtk_widget_queue_draw (viewport);
 	return TRUE;
 }

@@ -75,7 +75,7 @@ program eclipse [
 	[add *ret "Vector = [" *x " / " *y "]"]
 ]
 
-[[cb cb *poly *porta *pitch *modulation *x *y : *]
+[[cb cb *poly *porta *pitch *modulation *x *y *volume : *]
 	[is_var *poly]
 	[cb_callback : *cb]
 	[show *cb]
@@ -85,6 +85,7 @@ program eclipse [
 	[*cb control 1 : *modulation]
 	[*cb control 16 : *x]
 	[*cb control 17 : *y]
+	[*cb control 7 : *volume]
 	[show *poly]
 ]
 

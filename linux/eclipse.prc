@@ -172,7 +172,7 @@ program eclipse [
 	[Insert *dsp *Phobos moonbase]
 	[Insert *mixer *Phobos moonbase]
 
-	[BuildPhobosPart *Phobos *PhobosCB *pan]
+	[BuildPhobosPart *Phobos *moonbase *pan]
 
 	[addcl [[Moons *Phobos]]]
 ]
@@ -183,12 +183,14 @@ program eclipse [
 	[adsr *adsr]
 	[amplifier *dca]
 
+	[*PhobosCB *trigger]
 	[*adsr "trigger" *trigger "trigger"]
 	[*trigger "busy" *adsr "busy"]
 	[*op "trigger" *trigger "trigger"]
+	[*op "freq1" *trigger "key"]
 
 	[*dca *op]
-	[*dca "gateway" *adsr]
+	[*dca "gateway" *adsr "signal"]
 	[*mixer *dca]
 
 	[Insert *trigger *Phobos portamento]
@@ -281,8 +283,11 @@ end := [
 		[oscilloscope left] [oscilloscope right] [right 1000 10]
 		[left "signal" *abakos_mixer "left"]
 		[right "signal" *abakos_mixer "right"]
+		[left "signal" *phobos_mixer "left"]
+		[right "signal" *phobos_mixer "right"]
 		[core reactor 330 22050 2048]
 		[ConnectStereo reactor *abakos_mixer]
+		[ConnectStereo reactor *phobos_mixer]
 		/ [command] /
 		[Moonbase Phobos]
 		[Moonbase abakos]

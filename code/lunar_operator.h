@@ -35,10 +35,8 @@ protected:
 	double time;
 	double freq;
 	double ratio;
-	double sync;
 	double trigger;
 	double amp;
-	double slope;
 	virtual int numberOfInputs (void);
 	virtual char * inputName (int ind);
 	virtual double * inputAddress (int ind);
@@ -105,7 +103,6 @@ private:
 	double amp;
 	double index;
 	double trigger;
-	double slope;
 	double signal_right;
 	lunar_wave * wave;
 public:
@@ -126,13 +123,11 @@ private:
 	double current_algo;
 	double previous_algo;
 	double trigger;
-	double slope;
 	double signal1, signal2, signal3, signal4;
 	double time1, time2, time3, time4;
 	double freq1, freq2, freq3, freq4;
 	double amp1, amp2, amp3, amp4;
 	double ratio1, ratio2, ratio3, ratio4;
-	double sync1, sync2, sync3, sync4;
 	double feedback1, feedback2, feedback3, feedback4;
 	double (* algo) (lunar_fm4_block * block);
 public:

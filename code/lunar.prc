@@ -19,7 +19,7 @@ program lunar #machine := "prolog.lunar"
 				sysex timingclock START CONTINUE STOP activesensing
 				division active
 				Lunar Lander Activate Deactivate
-				Connect ConnectStereo Disconnect DisconnectStereo
+				Connect ConnectStereo ConnectDryWet Disconnect DisconnectStereo DisconnectDryWet
 				AddParameterBlock
 				Moonbase Insert InsertController InsertIO Store Restore SubRestore Moons
 				Cbb Cb C C# Cx
@@ -94,10 +94,22 @@ program lunar #machine := "prolog.lunar"
 	[*to "LEFT" *from "LEFT"]
 	[*to "RIGHT" *from "RIGHT"]
 ]
+[[ConnectDryWet *to *dry *wet]
+	[*to "DRYLEFT" *dry "LEFT"]
+	[*to "DRYRIGHT" *dry "RIGHT"]
+	[*to "WETLEFT" *wet "LEFT"]
+	[*to "WETRIGHT" *wet "RIGHT"]
+]
 [[Disconnect *to : *command] [*to [] : *command]]
 [[DisconnectStereo *to *from]
 	[*to "LEFT" *from "LEFT" []]
 	[*to "RIGHT" *from "RIGHT" []]
+]
+[[DisconnectDryWet *to *dry *wet]
+	[*to "DRYLEFT" *dry "LEFT" []]
+	[*to "DRYRIGHT" *dry "RIGHT" []]
+	[*to "WETLEFT" *wet "LEFT" []]
+	[*to "WETRIGHT" *wet "RIGHT" []]
 ]
 
 [[Moonbase *base *distributor *type]
@@ -149,11 +161,10 @@ program lunar #machine := "prolog.lunar"
 	[InsertIO *parameters *operator *selector *io]
 ]
 
-[[InsertIO *parameters *operator *selector [["FREQ" "AMP" "RATIO" "SYNC" : *] *o]]
+[[InsertIO *parameters *operator *selector [["FREQ" "AMP" "RATIO" : *] *o]]
 	[AddParameterBlock *parameters freq *operator *selector 0 "freq"]
 	[AddParameterBlock *parameters amp *operator *selector 0 "amp"]
 	[AddParameterBlock *parameters ratio *operator *selector 1 "ratio"]
-	[AddParameterBlock *parameters sync *operator *selector 0 "onoff"]
 ]
 
 [[InsertIO *parameters *noise *selector [["AMP"] ["SIGNAL"]]]
@@ -227,31 +238,27 @@ program lunar #machine := "prolog.lunar"
 	[AddParameterBlock *parameters balance *drywet *selector 0 "index"]
 ]
 
-[[InsertIO *parameters *op *selector [["ALGO" "TRIGGER" "FREQ1" "AMP1" "RATIO1" "SYNC1" "FEEDBACK1" "FREQ2" "AMP2" "RATIO2" "SYNC2" "FEEDBACK2" "FREQ3" "AMP3" "RATIO3" "SYNC3" "FEEDBACK3" "FREQ4" "AMP4" "RATIO4" "SYNC4" "FEEDBACK4"] ["SIGNAL"]]]
+[[InsertIO *parameters *op *selector [["ALGO" "TRIGGER" "FREQ1" "AMP1" "RATIO1" "FEEDBACK1" "FREQ2" "AMP2" "RATIO2" "FEEDBACK2" "FREQ3" "AMP3" "RATIO3" "FEEDBACK3" "FREQ4" "AMP4" "RATIO4" "FEEDBACK4"] ["SIGNAL"]]]
 	[AddParameterBlock *parameters algo *op *selector 0 "index"]
 	[APPEND *selector [1] *selector1]
 	[AddParameterBlock *parameters freq "freq1" *op *selector1 0 "freq"]
 	[AddParameterBlock *parameters amp "amp1" *op *selector1 0 "amp"]
 	[AddParameterBlock *parameters ratio "ratio1" *op *selector1 1 "ratio"]
-	[AddParameterBlock *parameters sync "sync1" *op *selector1 0 "onoff"]
 	[AddParameterBlock *parameters feedback "feedback1" *op *selector1 0 "index"]
 	[APPEND *selector [2] *selector2]
 	[AddParameterBlock *parameters freq "freq2" *op *selector2 0 "freq"]
 	[AddParameterBlock *parameters amp "amp2" *op *selector2 0 "amp"]
 	[AddParameterBlock *parameters ratio "ratio2" *op *selector1 2 "ratio"]
-	[AddParameterBlock *parameters sync "sync2" *op *selector2 0 "onoff"]
 	[AddParameterBlock *parameters feedback "feedback2" *op *selector2 0 "index"]
 	[APPEND *selector [3] *selector3]
 	[AddParameterBlock *parameters freq "freq3" *op *selector3 0 "freq"]
 	[AddParameterBlock *parameters amp "amp3" *op *selector3 0 "amp"]
 	[AddParameterBlock *parameters ratio "ratio3" *op *selector3 1 "ratio"]
-	[AddParameterBlock *parameters sync "sync3" *op *selector3 0 "onoff"]
 	[AddParameterBlock *parameters feedback "feedback3" *op *selector3 0 "index"]
 	[APPEND *selector [4] *selector4]
 	[AddParameterBlock *parameters freq "freq4" *op *selector4 0 "freq"]
 	[AddParameterBlock *parameters amp "amp4" *op *selector4 0 "amp"]
 	[AddParameterBlock *parameters ratio "ratio4" *op *selector4 1 "ratio"]
-	[AddParameterBlock *parameters sync "sync4" *op *selector4 0 "onoff"]
 	[AddParameterBlock *parameters feedback "feedback4" *op *selector4 0 "index"]
 ]
 

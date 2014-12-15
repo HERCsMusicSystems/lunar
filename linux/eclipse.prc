@@ -158,17 +158,30 @@ program eclipse [
 ]
 
 [[BuildPhobos *Phobos *PhobosCB *mixer]
-	[moonbase *PhobosCB]
+	[moonbase *moonbase]
+	[arpeggiator *PhobosCB *moonbase]
 	[Moonbase *Phobos *PhobosCB Phobos]
 	[pan *pan]
 	[delay *dsp]
-	[mixer *mixer]
+	[drywet *mixer]
+	[ConnectStereo *dsp *pan]
+	[ConnectDryWet *mixer *pan *dsp]
+	[Insert *moonbase *Phobos]
+	[Insert *PhobosCB *Phobos arpeggiator]
+	[Insert *pan *Phobos moonbase]
+	[Insert *dsp *Phobos moonbase]
+	[Insert *mixer *Phobos moonbase]
+
 	[BuildPhobosPart *Phobos *PhobosCB *pan]
-	[Insert *PhobosCB Phobos]
-	[Insert *pan *Phobos pan]
-	[Insert *dsp *Phobos delay]
-	[Insert *mixer *Phobos mixer]
+
 	[addcl [[Moons *Phobos]]]
+]
+
+[[BuildPhobosPart *Phobos *PhobosCB *mixer]
+	[trigger *trigger]
+	[fm4 *op]
+	[Insert *trigger *Phobos portamento]
+	[Insert *op *Phobos operator]
 ]
 
 [[BuildPhobosPart *Phobos *PhobosCB *pan]
@@ -243,8 +256,8 @@ program eclipse [
 
 end := [
 		[var cb_path cb_callback]
-		[build_abakos *abakos_mixer]
 		[BuildPhobos Phobos PhobosCB *phobos_mixer]
+		[build_abakos *abakos_mixer]
 		;[moon_base]
 		[CommandCentre commander cb]
 		[Lunar 4000 abakos adsr attack]

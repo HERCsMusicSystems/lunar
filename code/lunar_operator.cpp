@@ -30,14 +30,13 @@
 // LUNAR OSCILLATOR //
 //////////////////////
 
-int lunar_oscillator :: numberOfInputs (void) {return 5;}
+int lunar_oscillator :: numberOfInputs (void) {return 4;}
 char * lunar_oscillator :: inputName (int ind) {
 	switch (ind) {
 	case 0: return "FREQ"; break;
 	case 1: return "AMP"; break;
 	case 2: return "RATIO"; break;
-	case 3: return "SYNC"; break;
-	case 4: return "TRIGGER"; break;
+	case 3: return "TRIGGER"; break;
 	default: break;
 	}
 	return orbiter :: inputName (ind);
@@ -47,14 +46,13 @@ double * lunar_oscillator :: inputAddress (int ind) {
 	case 0: return & freq; break;
 	case 1: return & amp; break;
 	case 2: return & ratio; break;
-	case 3: return & sync; break;
-	case 4: return & trigger; break;
+	case 3: return & trigger; break;
 	default: break;
 	}
 	return 0;
 }
 lunar_oscillator :: lunar_oscillator (orbiter_core * core) : orbiter (core) {
-	freq = amp = sync = trigger = slope = time = 0.0;
+	freq = amp = trigger = time = 0.0;
 	ratio = 1.0;
 	initialise (); activate ();
 }
@@ -63,11 +61,11 @@ lunar_oscillator :: lunar_oscillator (orbiter_core * core) : orbiter (core) {
 // LUNAR OPERATOR FM //
 ///////////////////////
 
-int lunar_operator :: numberOfInputs (void) {return 6;}
-char * lunar_operator :: inputName (int ind) {if (ind == 5) return "SHIFT"; return lunar_oscillator :: inputName (ind);}
-double * lunar_operator :: inputAddress (int ind) {if (ind == 5) return & shift; return lunar_oscillator :: inputAddress (ind);}
+int lunar_operator :: numberOfInputs (void) {return 5;}
+char * lunar_operator :: inputName (int ind) {if (ind == 4) return "SHIFT"; return lunar_oscillator :: inputName (ind);}
+double * lunar_operator :: inputAddress (int ind) {if (ind == 4) return & shift; return lunar_oscillator :: inputAddress (ind);}
 void lunar_operator :: move (void) {
-	RETRIGGER_OSCILLATOR;
+	if (trigger >= 16384.0) time = 0.0;
 	this -> signal = core -> Amplitude (amp) * core -> Sine (time + shift);
 	time += core -> TimeDelta (freq) * ratio;
 	while (time >= 1.0) time -= 1.0;
@@ -79,7 +77,7 @@ lunar_operator :: lunar_operator (orbiter_core * core) : lunar_oscillator (core)
 ///////////////
 
 void lunar_aliased_saw_operator :: move (void) {
-	RETRIGGER_OSCILLATOR;
+	if (trigger >= 16384.0) time = 0.0;
 	signal = 1.0 - 2.0 * time;
 	signal *= core -> Amplitude (amp);
 	time += core -> TimeDelta (freq) * ratio;
@@ -87,7 +85,7 @@ void lunar_aliased_saw_operator :: move (void) {
 }
 lunar_aliased_saw_operator :: lunar_aliased_saw_operator (orbiter_core * core) : lunar_oscillator (core) {}
 void lunar_saw_operator :: move (void) {
-	RETRIGGER_OSCILLATOR;
+	if (trigger >= 16384.0) time = 0.0;
 	double delta = core -> TimeDelta (freq) * ratio;
 	signal = core -> MinBlep (blep_index) - 1.0 - 2.0 * time;
 	signal *= core -> Amplitude (amp);
@@ -102,7 +100,7 @@ lunar_saw_operator :: lunar_saw_operator (orbiter_core * core) : lunar_oscillato
 //////////////////
 
 void lunar_aliased_square_operator :: move (void) {
-	RETRIGGER_OSCILLATOR;
+	if (trigger >= 16384.0) time = 0.0;
 	if (time < 0.5) signal = core -> Amplitude (amp);
 	else signal = - core -> Amplitude (amp);
 	time += core -> TimeDelta (freq) * ratio;
@@ -110,7 +108,7 @@ void lunar_aliased_square_operator :: move (void) {
 }
 lunar_aliased_square_operator :: lunar_aliased_square_operator (orbiter_core * core) : lunar_oscillator (core) {}
 void lunar_square_operator :: move (void) {
-	RETRIGGER_OSCILLATOR;
+	if (trigger >= 16384.0) time = 0.0;
 	double delta = core -> TimeDelta (freq) * ratio;
 	if (stage) signal = core -> MinBlep (blep_index) - 1.0;
 	else signal = 1.0 - core -> MinBlep (blep_index);
@@ -174,7 +172,7 @@ bool lunar_sampler_operator :: release (void) {
 	return ret;
 }
 void lunar_sampler_operator :: move (void) {
-	if (slope != trigger) if (trigger != 0) time = 0.0; slope = trigger;
+	if (trigger >= 16384.0) time = 0.0;
 	if (time < 0.0) return;
 	if (wave == 0) {signal = signal_right = 0.0; time = -1.0; return;}
 	int ind = (int) index;
@@ -191,7 +189,7 @@ void lunar_sampler_operator :: move (void) {
 }
 lunar_sampler_operator :: lunar_sampler_operator (orbiter_core * core) : orbiter (core) {
 	time = -1.0;
-	freq = amp = index = trigger = slope = 0.0;
+	freq = amp = index = trigger = 0.0;
 	ratio = 1.0; signal_right = signal;
 	wave = 0;
 	initialise (); activate ();
@@ -201,7 +199,7 @@ lunar_sampler_operator :: lunar_sampler_operator (orbiter_core * core) : orbiter
 // FM 4 //
 //////////
 
-int lunar_fm4_block :: numberOfInputs (void) {return 22;}
+int lunar_fm4_block :: numberOfInputs (void) {return 18;}
 char * lunar_fm4_block :: inputName (int ind) {
 	switch (ind) {
 	case 0: return "ALGO"; break;
@@ -209,23 +207,19 @@ char * lunar_fm4_block :: inputName (int ind) {
 	case 2: return "FREQ1"; break;
 	case 3: return "AMP1"; break;
 	case 4: return "RATIO1"; break;
-	case 5: return "SYNC1"; break;
-	case 6: return "FEEDBACK1"; break;
-	case 7: return "FREQ2"; break;
-	case 8: return "AMP2"; break;
-	case 9: return "RATIO2"; break;
-	case 10: return "SYNC2"; break;
-	case 11: return "FEEDBACK2"; break;
-	case 12: return "FREQ3"; break;
-	case 13: return "AMP3"; break;
-	case 14: return "RATIO3"; break;
-	case 15: return "SYNC3"; break;
-	case 16: return "FEEDBACK3"; break;
-	case 17: return "FREQ4"; break;
-	case 18: return "AMP4"; break;
-	case 19: return "RATIO4"; break;
-	case 20: return "SYNC4"; break;
-	case 21: return "FEEDBACK4"; break;
+	case 5: return "FEEDBACK1"; break;
+	case 6: return "FREQ2"; break;
+	case 7: return "AMP2"; break;
+	case 8: return "RATIO2"; break;
+	case 9: return "FEEDBACK2"; break;
+	case 10: return "FREQ3"; break;
+	case 11: return "AMP3"; break;
+	case 12: return "RATIO3"; break;
+	case 13: return "FEEDBACK3"; break;
+	case 14: return "FREQ4"; break;
+	case 15: return "AMP4"; break;
+	case 16: return "RATIO4"; break;
+	case 17: return "FEEDBACK4"; break;
 	default: break;
 	}
 	return orbiter :: inputName (ind);
@@ -237,23 +231,19 @@ double * lunar_fm4_block :: inputAddress (int ind) {
 	case 2: return & freq1; break;
 	case 3: return & amp1; break;
 	case 4: return & ratio1; break;
-	case 5: return & sync1; break;
-	case 6: return & feedback1; break;
-	case 7: return & freq2; break;
-	case 8: return & amp2; break;
-	case 9: return & ratio2; break;
-	case 10: return & sync2; break;
-	case 11: return & feedback2; break;
-	case 12: return & freq3; break;
-	case 13: return & amp3; break;
-	case 14: return & ratio3; break;
-	case 15: return & sync3; break;
-	case 16: return & feedback3; break;
-	case 17: return & freq4; break;
-	case 18: return & amp4; break;
-	case 19: return & ratio4; break;
-	case 20: return & sync4; break;
-	case 21: return & feedback4; break;
+	case 5: return & feedback1; break;
+	case 6: return & freq2; break;
+	case 7: return & amp2; break;
+	case 8: return & ratio2; break;
+	case 9: return & feedback2; break;
+	case 10: return & freq3; break;
+	case 11: return & amp3; break;
+	case 12: return & ratio3; break;
+	case 13: return & feedback3; break;
+	case 14: return & freq4; break;
+	case 15: return & amp4; break;
+	case 16: return & ratio4; break;
+	case 17: return & feedback4; break;
 	default: break;
 	}
 	return orbiter :: inputAddress (ind);
@@ -328,15 +318,7 @@ void lunar_fm4_block :: move (void) {
 		}
 		previous_algo = current_algo;
 	}
-	if (slope != trigger) {
-		if (trigger > 0.0) {
-			if (sync1 != 0.0) time1 = 0.0;
-			if (sync2 != 0.0) time2 = 0.0;
-			if (sync3 != 0.0) time3 = 0.0;
-			if (sync4 != 0.0) time4 = 0.0;
-		}
-		slope = trigger;
-	}
+	if (trigger >= 16384.0) time1 = time2 = time3 = time4 = 0.0;
 	signal = algo (this);
 	time1 += core -> TimeDelta (freq1) * ratio1;
 	time2 += core -> TimeDelta (freq2) * ratio2;
@@ -351,13 +333,12 @@ void lunar_fm4_block :: move (void) {
 lunar_fm4_block :: lunar_fm4_block (orbiter_core * core) : orbiter (core) {
 	algo = algo1;
 	current_algo = previous_algo = 0.0;
-	trigger = slope = 0.0;
+	trigger = 0.0;
 	signal1 = signal2 = signal3 = signal4 = 0.0;
 	time1 = time2 = time3 = time4 = 0.0;
 	freq1 = freq2 = freq3 = freq4 = 0.0;
 	amp1 = 0.0; amp2 = amp3 = amp4 = -16383.0;
 	ratio1 = ratio2 = ratio3 = ratio4 = 1.0;
-	sync1 = sync2 = sync3 = sync4 = 0.0;
 	feedback1 = feedback2 = feedback3 = feedback4 = 0.0;
 	initialise (); activate ();
 }

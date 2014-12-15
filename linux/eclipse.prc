@@ -180,8 +180,21 @@ program eclipse [
 [[BuildPhobosPart *Phobos *PhobosCB *mixer]
 	[trigger *trigger]
 	[fm4 *op]
+	[adsr *adsr]
+	[amplifier *dca]
+
+	[*adsr "trigger" *trigger "trigger"]
+	[*trigger "busy" *adsr "busy"]
+	[*op "trigger" *trigger "trigger"]
+
+	[*dca *op]
+	[*dca "gateway" *adsr]
+	[*mixer *dca]
+
 	[Insert *trigger *Phobos portamento]
 	[Insert *op *Phobos operator]
+	[Insert *adsr *Phobos adsr]
+	[Insert *dca *Phobos adsr]
 ]
 
 [[BuildPhobosPart *Phobos *PhobosCB *pan]

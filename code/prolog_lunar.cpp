@@ -148,45 +148,6 @@ bool PrologNativeOrbiterCreator :: code (PrologElement * parameters, PrologResol
 
 PrologNativeOrbiterCreator :: PrologNativeOrbiterCreator (orbiter_core * core) {this -> core = core;}
 
-class dock_class : public PrologNativeCode {
-public:
-	bool code (PrologElement * parameters, PrologResolution * resolution) {
-		PrologElement * source_module = 0;
-		PrologElement * source_port = 0;
-		PrologElement * destination_module = 0;
-		PrologElement * destination_port = 0;
-		while (parameters -> isPair ()) {
-			PrologElement * el = parameters -> getLeft ();
-			if (el -> isAtom ()) if (destination_module == 0) destination_module = el; else source_module = el;
-			if (el -> isInteger ()) if (destination_port == 0) destination_port = el; else source_port = el;
-			if (el -> isText ()) if (destination_port == 0) destination_port = el; else source_port = el;
-			parameters = parameters -> getRight ();
-		}
-		if (destination_module == 0 || source_module == 0) return false;
-		PrologNativeCode * destination_machine = destination_module -> getAtom () -> getMachine ();
-		if (destination_machine == 0) return false;
-		if (! destination_machine -> isTypeOf (PrologNativeOrbiter :: name ())) return false;
-		PrologNativeCode * source_machine = source_module -> getAtom () -> getMachine ();
-		if (source_machine == 0) return false;
-		if (! source_machine -> isTypeOf (PrologNativeOrbiter :: name ())) return false;
-		int destination_port_index = 0;
-		if (destination_port != 0) {
-			if (destination_port -> isInteger ()) destination_port_index = destination_port -> getInteger ();
-			if (destination_port -> isText ()) destination_port_index = ((PrologNativeOrbiter *) destination_machine) -> module -> inputIndex (destination_port -> getText ());
-		}
-		int source_port_index = 0;
-		if (source_port != 0) {
-			if (source_port -> isInteger ()) source_port_index = source_port -> getInteger ();
-			if (source_port -> isText ()) source_port_index = ((PrologNativeOrbiter *) source_machine) -> module -> outputIndex (source_port -> getText ());
-		}
-		return ((PrologNativeOrbiter *) destination_machine) -> module -> connect (destination_port_index, ((PrologNativeOrbiter *) source_machine) -> module, source_port_index);
-	}
-};
-
-class undock_class : public PrologNativeCode {
-public:
-};
-
 class orbiter_statistics : public PrologNativeCode {
 public:
 	bool code (PrologElement * parameters, PrologResolution * resolution) {
@@ -245,8 +206,6 @@ void PrologLunarServiceClass :: init (PrologRoot * root, PrologDirectory * direc
 }
 
 PrologNativeCode * PrologLunarServiceClass :: getNativeCode (char * name) {
-	if (strcmp (name, "dock") == 0) return new dock_class ();
-	if (strcmp (name, "undock") == 0) return new undock_class ();
 	if (strcmp (name, "small_keyboard") == 0) return new keyboard_class (this, 1);
 	if (strcmp (name, "keyboard") == 0) return new keyboard_class (this, 2);
 	if (strcmp (name, "big_keyboard") == 0) return new keyboard_class (this, 3);

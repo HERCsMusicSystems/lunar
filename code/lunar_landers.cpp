@@ -208,8 +208,61 @@ double * lunar_gateway :: inputAddress (int ind) {if (ind == 0) return & enter; 
 void lunar_gateway :: move (void) {signal = enter * gateway * DIV_16384;}
 lunar_gateway :: lunar_gateway (orbiter_core * core) : orbiter (core) {enter = 0.0; gateway = 1.0; initialise (); activate ();}
 
+int lunar_stereo_gateway :: numberOfInputs (void) {return 3;}
+char * lunar_stereo_gateway :: inputName (int ind) {
+	switch (ind) {
+	case 0: return "LEFT"; break;
+	case 1: return "RIGHT"; break;
+	case 2: return "GATEWAY"; break;
+	default: break;
+	}
+	return orbiter :: inputName (ind);
+}
+double * lunar_stereo_gateway :: inputAddress (int ind) {
+	switch (ind) {
+	case 0: return & enter; break;
+	case 1: return & enter_right; break;
+	case 2: return & gateway; break;
+	default: break;
+	}
+	return orbiter :: inputAddress (ind);
+}
+int lunar_stereo_gateway :: numberOfOutputs (void) {return 2;}
+char * lunar_stereo_gateway :: outputName (int ind) {
+	switch (ind) {
+	case 0: return "LEFT"; break;
+	case 1: return "RIGHT"; break;
+	default: break;
+	}
+	return orbiter :: outputName (ind);
+}
+double * lunar_stereo_gateway :: outputAddress (int ind) {
+	switch (ind) {
+	case 0: return & signal; break;
+	case 1: return & signal_right; break;
+	default: break;
+	}
+	return orbiter :: outputAddress (ind);
+}
+void lunar_stereo_gateway :: move (void) {double dv = gateway * DIV_16384; signal = enter * dv; signal_right = enter_right * dv;}
+lunar_stereo_gateway :: lunar_stereo_gateway (orbiter_core * core) : orbiter (core) {
+	enter = enter_right = signal_right = 0.0; gateway = 1.0;
+	initialise (); activate ();
+}
+
 void lunar_amplifier :: move (void) {signal = enter * core -> Amplitude (gateway);}
 lunar_amplifier :: lunar_amplifier (orbiter_core * core) : lunar_gateway (core) {gateway = 0.0;}
+
+void lunar_stereo_amplifier :: move (void) {double dv = core -> Amplitude (gateway); signal = enter * dv; signal_right = enter_right * dv;}
+lunar_stereo_amplifier :: lunar_stereo_amplifier (orbiter_core * core) : lunar_stereo_gateway (core) {gateway = 0.0;}
+
+char * lunar_mono_volume :: inputName (int ind) {if (ind == 1) return "VOLUME"; return lunar_gateway :: inputName (ind);}
+void lunar_mono_volume :: move (void) {signal = enter * gateway * core -> Volume (gateway);}
+lunar_mono_volume :: lunar_mono_volume (orbiter_core * core) : lunar_gateway (core) {gateway = 1280.0;}
+
+char * lunar_volume :: inputName (int ind) {if (ind == 2) return "VOLUME"; return lunar_stereo_gateway :: inputName (ind);}
+void lunar_volume :: move (void) {double dv = core -> Volume (gateway); signal = enter * dv; signal_right = enter_right * dv;}
+lunar_volume :: lunar_volume (orbiter_core * core) : lunar_stereo_gateway (core) {gateway = 12800.0;}
 
 int lunar_map :: numberOfOutputs (void) {return 0;}
 lunar_map :: lunar_map (orbiter_core * core, int initial) : orbiter (core) {

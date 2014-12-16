@@ -134,10 +134,47 @@ public:
 	lunar_gateway (orbiter_core * core);
 };
 
+class lunar_stereo_gateway : public orbiter {
+protected:
+	double signal_right;
+	double enter;
+	double enter_right;
+	double gateway;
+public:
+	virtual int numberOfInputs (void);
+	virtual char * inputName (int ind);
+	virtual double * inputAddress (int ind);
+	virtual int numberOfOutputs (void);
+	virtual char * outputName (int ind);
+	virtual double * outputAddress (int ind);
+	virtual void move (void);
+	lunar_stereo_gateway (orbiter_core * core);
+};
+
 class lunar_amplifier : public lunar_gateway {
 public:
 	virtual void move (void);
 	lunar_amplifier (orbiter_core * core);
+};
+
+class lunar_stereo_amplifier : public lunar_stereo_gateway {
+public:
+	virtual void move (void);
+	lunar_stereo_amplifier (orbiter_core * core);
+};
+
+class lunar_mono_volume : public lunar_gateway {
+public:
+	virtual char * inputName (int ind);
+	virtual void move (void);
+	lunar_mono_volume (orbiter_core * core);
+};
+
+class lunar_volume : public lunar_stereo_gateway {
+public:
+	virtual char * inputName (int ind);
+	virtual void move (void);
+	lunar_volume (orbiter_core * core);
 };
 
 class lunar_map : public orbiter {

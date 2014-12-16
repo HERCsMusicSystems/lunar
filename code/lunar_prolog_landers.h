@@ -114,10 +114,34 @@ public:
 	gateway_class (orbiter_core * core);
 };
 
+class stereo_gateway_class : public PrologNativeOrbiterCreator {
+public:
+	virtual orbiter * create_orbiter (PrologElement * parameters);
+	stereo_gateway_class (orbiter_core * core);
+};
+
 class amplifier_class : public PrologNativeOrbiterCreator {
 public:
 	virtual orbiter * create_orbiter (PrologElement * parameters);
 	amplifier_class (orbiter_core * core);
+};
+
+class stereo_amplifier_class : public PrologNativeOrbiterCreator {
+public:
+	virtual orbiter * create_orbiter (PrologElement * parameters);
+	stereo_amplifier_class (orbiter_core * core);
+};
+
+class volume_class : public PrologNativeOrbiterCreator {
+public:
+	virtual orbiter * create_orbiter (PrologElement * parameters);
+	volume_class (orbiter_core * core);
+};
+
+class mono_volume_class : public PrologNativeOrbiterCreator {
+public:
+	virtual orbiter * create_orbiter (PrologElement * parameters);
+	mono_volume_class (orbiter_core * core);
 };
 
 class lfo_class : public PrologNativeOrbiterCreator {

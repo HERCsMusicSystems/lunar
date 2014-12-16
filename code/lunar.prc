@@ -9,7 +9,7 @@ program lunar #machine := "prolog.lunar"
 				small_keyboard keyboard big_keyboard oscilloscope vector CommandCentre
 				noise orbiter
 				core moonbase arpeggiator operator parameter_block auto auto_data key_map velocity_map impulse
-				trigger inactive_trigger mixer stereo_mixer gateway amplifier lfo adsr eg
+				trigger inactive_trigger mixer stereo_mixer gateway stereo_gateway amplifier stereo_amplifier volume mono_volume lfo adsr eg
 				square_operator fm4 fm6 dx9 dx7 saw_operator noise_operator sampler_operator sensitivity filter delay pan power_pan linear_pan
 				drywet drywet_mono balance
 				level1 level2 level3 level4 time1 time2 time3 time4 attack decay sustain release
@@ -51,6 +51,12 @@ program lunar #machine := "prolog.lunar"
 #machine inactive_trigger := "inactive_trigger"
 #machine mixer := "mixer"
 #machine stereo_mixer := "stereo_mixer"
+#machine gateway := "gateway"
+#machine stereo_gateway := "stereo_gateway"
+#machine amplifier := "amplifier"
+#machine stereo_amplifier := "stereo_amplifier"
+#machine volume := "volume"
+#machine mono_volume := "mono_volume"
 #machine lfo := "lfo"
 #machine adsr := "adsr"
 #machine eg := "eg"
@@ -60,8 +66,6 @@ program lunar #machine := "prolog.lunar"
 #machine drywet_mono := "drywet_mono"
 #machine power_pan := "power_pan"
 #machine linear_pan := "linear_pan"
-#machine gateway := "gateway"
-#machine amplifier := "amplifier"
 #machine sensitivity := "sensitivity"
 #machine moonbase := "moonbase"
 #machine arpeggiator := "arpeggiator"
@@ -230,6 +234,10 @@ program lunar #machine := "prolog.lunar"
 	[AddParameterBlock *parameters feedback *delay *selector 0 "index"]
 	[AddParameterBlock *parameters time *delay *selector 0 "time"]
 	[AddParameterBlock *parameters highdamp *delay *selector 0 "index"]
+]
+
+[[InsertIO *parameters *volume *selector [["LEFT" "RIGHT" "VOLUME"] ["LEFT" "RIGHT"]]]
+	[AddParameterBlock *parameters volume *volume *selector 12800 "index"]
 ]
 
 [[InsertIO *parameters *drywet *selector [["DRYLEFT" "DRYRIGHT" "WETLEFT" "WETRIGHT" "BALANCE" : *] *]]

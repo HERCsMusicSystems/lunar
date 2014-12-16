@@ -55,6 +55,7 @@ public:
 	double * control_time_delta;
 	double amplitudes [16384];
 	double * amplitude;
+	double volumes [16384];
 	double sine_wave [16385];
 	double waiting_times [16384];
 	double waiting_times_16384 [16384];
@@ -78,6 +79,7 @@ public:
 	double SamplerTimeDelta (double index);
 	double ControlTimeDelta (double index);
 	double Amplitude (double index);
+	double Volume (double index);
 	double Sine (double angle); // 0 .... 1.0 per cycle
 	double SineApproximated (double angle);
 	double WaitingTime (double time);

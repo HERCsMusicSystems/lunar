@@ -157,22 +157,27 @@ program eclipse [
 	[addcl [[Moons moon]]]
 ]
 
-[[BuildPhobos *Phobos *PhobosCB *mixer]
+[[BuildPhobos *Phobos *PhobosCB *volume]
 	[moonbase *moonbase]
 	[arpeggiator *PhobosCB *moonbase]
 	[Moonbase *Phobos *PhobosCB Phobos]
 	[pan *pan]
 	[delay *dsp]
 	[drywet *mixer]
+	[volume *volume]
 	[ConnectStereo *dsp *pan]
 	[ConnectDryWet *mixer *pan *dsp]
+	[ConnectStereo *volume *mixer]
 	[Insert *moonbase *Phobos]
 	[Insert *PhobosCB *Phobos arpeggiator]
 	[Insert *pan *Phobos moonbase]
 	[Insert *dsp *Phobos moonbase]
 	[Insert *mixer *Phobos moonbase]
+	[Insert *volume *Phobos moonbase]
 
 	[BuildPhobosPart *Phobos *moonbase *pan]
+
+	[InsertController 7 *Phobos moonbase volume]
 
 	[addcl [[Moons *Phobos]]]
 ]

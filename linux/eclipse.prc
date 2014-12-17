@@ -5,7 +5,7 @@ import studio
 import lunar
 
 program eclipse [
-					commander cb cb_path cb_callback moon_base moon mooncb
+					commander cb cb_path cb_callback moon mooncb
 					Phobos PhobosCB BuildPhobos BuildPhobosPart
 					paths modules adjacent next_path previous_path next_module previous_module
 					build_abakos build_abakos_part abakos abakoscb
@@ -136,27 +136,6 @@ program eclipse [
 ]
 
 
-[[moon_base]
-	[Moonbase moon mooncb moon]
-	[adsr *adsr1]
-	[operator *op1]
-	[adsr *adsr2]
-	[operator *op2]
-	[lfo *lfo1]
-	[lfo *lfo2]
-	[noise_operator *noise]
-	[filter *fir]
-	[Insert *op1 moon operator 1]
-	[Insert *op2 moon operator 2]
-	[Insert *noise moon noise]
-	[Insert *adsr1 moon adsr 1]
-	[Insert *adsr2 moon adsr 2]
-	[Insert *lfo1 moon lfo 1]
-	[Insert *lfo2 moon lfo 2]
-	[Insert *fir moon filter]
-	[addcl [[Moons moon]]]
-]
-
 [[BuildPhobos *Phobos *PhobosCB *volume]
 	[moonbase *moonbase]
 	[arpeggiator *PhobosCB *moonbase]
@@ -187,12 +166,27 @@ program eclipse [
 	[fm4 *op]
 	[adsr *adsr]
 	[amplifier *dca]
+	[parameter_block *trigger_delay 0]
+	[sensitivity *freq1]
+	[sensitivity *freq2]
+	[sensitivity *freq3]
+	[sensitivity *freq4]
 
 	[*PhobosCB *trigger]
-	[*adsr "trigger" *trigger "trigger"]
+	[*trigger_delay "signal" *trigger "trigger"]
+	[*adsr "trigger" *trigger_delay]
 	[*trigger "busy" *adsr "busy"]
-	[*op "trigger" *trigger "trigger"]
-	[*op "freq1" *trigger "key"]
+
+	[*freq1 "signal" *trigger "key"]
+	[*freq2 "signal" *trigger "key"]
+	[*freq3 "signal" *trigger "key"]
+	[*freq4 "signal" *trigger "key"]
+
+	[*op "trigger" *trigger_delay]
+	[*op "freq1" *freq1]
+	[*op "freq2" *freq2]
+	[*op "freq3" *freq3]
+	[*op "freq4" *freq4]
 
 	[*dca *op]
 	[*dca "gateway" *adsr "signal"]
@@ -202,28 +196,11 @@ program eclipse [
 	[Insert *op *Phobos operator]
 	[Insert *adsr *Phobos adsr]
 	[Insert *dca *Phobos adsr]
-]
-
-[[BuildPhobosPart *Phobos *PhobosCB *pan]
-	[trigger *trigger]
-	[fm4 *op]
-	[noise_operator *noise]
-	[eg *eg1]
-	[filter *filter]
-	[adsr *adsr]
-	[gateway *vca]
-	[*adsr "trigger" *trigger "trigger"]
-	[*trigger "busy" *adsr "busy"]
-	[*filter *op]
-	[*filter *noise]
-	[*vca *filter]
-	[*vca "gateway" *adsr]
-	[*pan *vca]
-	[Insert *op *Phobos operator]
-	[Insert *noise *Phobos noise]
-	[Insert *eg1 *Phobos eg]
-	[Insert *filter *Phobos filter]
-	[Insert *adsr *Phobos adsr]
+	[Insert *trigger_delay *Phobos]
+	[Insert *freq1 *Phobos sensitivity freq 1]
+	[Insert *freq2 *Phobos sensitivity freq 2]
+	[Insert *freq3 *Phobos sensitivity freq 3]
+	[Insert *freq4 *Phobos sensitivity freq 4]
 ]
 
 [[build_abakos *drywet]
@@ -270,30 +247,31 @@ program eclipse [
 [[@ lunar . LunarDrop : *command] [show *command]]
 
 [[mdicb *command * : *t]
-	[show [abakoscb *command : *t]]
-	[abakoscb *command : *t]
+	[show [PhobosCB *command : *t]]
+	[PhobosCB *command : *t]
 ]
 
 end := [
 		[var cb_path cb_callback]
 		[BuildPhobos Phobos PhobosCB *phobos_mixer]
 		[build_abakos *abakos_mixer]
-		;[moon_base]
-		[CommandCentre commander cb]
+		[CommandCentre commander cb] ;[commander 3000 1060]
 		[Lunar 4000 abakos adsr attack]
 		[Lunar 4000 abakos adsr release]
 		[Lunar 1 abakos arpeggiator active]
 		;[Lunar 1 abakos arpeggiator hold]
 		[Lunar 9 abakos arpeggiator algo]
-		[oscilloscope left] [oscilloscope right] [right 1000 10]
+		[oscilloscope left] [oscilloscope right] [right 2700 1000] [left 2300 1000]
 		[left "signal" *abakos_mixer "left"]
 		[right "signal" *abakos_mixer "right"]
 		[left "signal" *phobos_mixer "left"]
 		[right "signal" *phobos_mixer "right"]
+		[midi mdi mdicb]
 		[core reactor 330 22050 2048]
 		[ConnectStereo reactor *abakos_mixer]
 		[ConnectStereo reactor *phobos_mixer]
 		/ [command] /
+		;[mdi]
 		[Moonbase Phobos]
 		[Moonbase abakos]
 		] .

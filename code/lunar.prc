@@ -244,6 +244,14 @@ program lunar #machine := "prolog.lunar"
 	[AddParameterBlock *parameters balance *drywet *selector 0 "index"]
 ]
 
+[[InsertIO *parameters *sensitivity *selector [["SIGNAL" "BREAKPOINT" "LEFT" "RIGHT"] ["SIGNAL"]]]
+	[AddParameterBlock *parameters breakpoint *sensitivity *selector 0 "index"]
+	[AddParameterBlock *parameters left *sensitivity *selector -128 "index"]
+	[AddParameterBlock *parameters right *sensitivity *selector 128 "index"]
+]
+
+[[InsertIO *parameters *pb *selector [["SIGNAL"] ["SIGNAL"]]]]
+
 [[InsertIO *parameters *op *selector [["ALGO" "TRIGGER" "FREQ1" "AMP1" "RATIO1" "FEEDBACK1" "FREQ2" "AMP2" "RATIO2" "FEEDBACK2" "FREQ3" "AMP3" "RATIO3" "FEEDBACK3" "FREQ4" "AMP4" "RATIO4" "FEEDBACK4"] ["SIGNAL"]]]
 	[AddParameterBlock *parameters algo *op *selector 0 "index"]
 	[APPEND *selector [1] *selector1]

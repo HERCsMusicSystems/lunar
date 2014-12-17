@@ -610,27 +610,27 @@ void lunar_adsr :: move (void) {
 			if (decay == 0.0) {signal = sustain; stage = 3; return;}
 			signal = 0.0; stage = 2; time = core -> WaitingTime (decay); return;
 		}
-		signal = -16383.0; stage = 1; time = core -> WaitingTime (attack); return;
+		signal = -16384.0; stage = 1; time = core -> WaitingTime (attack); return;
 	}
 	if (trigger == 0.0) {
 		if (stage == 0) return;
 		if (stage == 4) {
-			if (time < 1.0) {signal = time * -16383.0; time += core -> WaitingTime (release); return;}
-			time = 0.0; signal = -16383.0; stage = 0; busy = 0.0; return;
+			if (time < 1.0) {signal = time * -16384.0; time += core -> WaitingTime (release); return;}
+			time = 0.0; signal = -16384.0; stage = 0; busy = 0.0; return;
 		}
-		if (release == 0.0) {time = 0.0; signal = -16383; stage = 0; busy = 0.0; return;}
+		if (release == 0.0) {time = 0.0; signal = -16384; stage = 0; busy = 0.0; return;}
 		if (time < 1.0) {
-			if (stage == 1) signal = time * 16383.0 - 16383.0;
-			if (stage == 2) signal = time * -16383.0;
+			if (stage == 1) signal = time * 16384.0 - 16384.0;
+			if (stage == 2) signal = time * -16384.0;
 		}
-		time = signal / -16383.0;
+		time = signal / -16384.0;
 		time += core -> WaitingTime (release);
 		stage = 4;
 		return;
 	} else {
 		switch (stage) {
 		case 0:
-			time = 0.0; signal = -16383; busy = 1.0;
+			time = 0.0; signal = -16384; busy = 1.0;
 			if (attack == 0.0) {
 				if (decay == 0.0) {signal = sustain; stage = 3; return;}
 				signal = 0.0;
@@ -642,7 +642,7 @@ void lunar_adsr :: move (void) {
 			time += core -> WaitingTime (attack);
 			return;
 		case 1:
-			if (time < 1.0) {signal = time * 16383.0 - 16383.0; time += core -> WaitingTime (attack); return;}
+			if (time < 1.0) {signal = time * 16384.0 - 16384.0; time += core -> WaitingTime (attack); return;}
 			time = 0.0;
 			if (decay == 0.0) {signal = sustain; stage = 3; return;}
 			signal = 0.0;
@@ -651,7 +651,7 @@ void lunar_adsr :: move (void) {
 			return;
 			break;
 		case 2:
-			if (time < 1.0) signal = time * -16383.0;
+			if (time < 1.0) signal = time * -16384.0;
 			if (signal <= sustain) {time = 0.0; signal = sustain; stage = 3; return;}
 			time += core -> WaitingTime (decay);
 			return;
@@ -663,7 +663,7 @@ void lunar_adsr :: move (void) {
 				signal = 0.0; stage = 2; time += core -> WaitingTime (decay);
 				return;
 			}
-			time = 1 + signal / 16383.0;
+			time = 1 + signal / 16384.0;
 			stage = 1;
 			time += core -> WaitingTime (attack);
 			return;
@@ -674,7 +674,7 @@ void lunar_adsr :: move (void) {
 }
 lunar_adsr :: lunar_adsr (orbiter_core * core) : orbiter (core) {
 	attack = decay = sustain = release = trigger = busy = 0.0;
-	signal = -16383.0; time = busy = 0.0;
+	signal = -16384.0; time = busy = 0.0;
 	stage = 0;
 	initialise (); activate ();
 }
@@ -795,9 +795,9 @@ void lunar_eg :: move (void) {
 }
 lunar_eg :: lunar_eg (orbiter_core * core) : orbiter (core) {
 	level1 = level2 = level3 = 0.0;
-	level4 = -16383.0;
+	level4 = -16384.0;
 	time1 = time2 = time3 = time4 = 0.0;
-	signal = -16383.0; busy = 0.0;
+	signal = -16384.0; busy = 0.0;
 	stage = 0;
 	initialise (); activate ();
 }

@@ -75,7 +75,7 @@ program eclipse [
 	[add *ret "Vector = [" *x " / " *y "]"]
 ]
 
-[[cb cb *poly *porta *pitch *modulation *x *y *volume : *]
+[[cb cb *poly *porta *pitch *modulation *x *y *volume *attack *decay *sustain *release : *]
 	[is_var *poly]
 	[cb_callback : *cb]
 	[show *cb]
@@ -86,6 +86,10 @@ program eclipse [
 	[*cb control 16 : *x]
 	[*cb control 17 : *y]
 	[*cb control 7 : *volume]
+	[*cb control 73 : *attack]
+	[*cb control 75 : *decay]
+	[*cb control 79 : *sustain]
+	[*cb control 72 : *release]
 	[show *poly]
 ]
 
@@ -157,6 +161,10 @@ program eclipse [
 	[BuildPhobosPart *Phobos *moonbase *pan]
 
 	[InsertController 7 *Phobos moonbase volume]
+	[InsertController 73 *Phobos adsr attack]
+	[InsertController 75 *Phobos adsr decay]
+	[InsertController 79 *Phobos adsr sustain]
+	[InsertController 72 *Phobos adsr release]
 
 	[addcl [[Moons *Phobos]]]
 ]

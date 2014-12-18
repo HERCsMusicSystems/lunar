@@ -29,6 +29,14 @@
 #include "graphic_resources.h"
 #include <string.h>
 
+#ifdef WIN32
+#include <direct.h>
+#define cwd _getcwd
+#else
+#include <unistd.h>
+#define cwd getcwd
+#endif
+
 class control_panel_action : public PrologNativeCode {
 public:
 	PrologRoot * root;
@@ -56,6 +64,7 @@ public:
 	int programs [10];
 	int current_program;
 	int current_delta;
+	AREA area;
 	void feedback_on_controllers (void) {
 		PrologElement * query = root -> earth ();
 		query = root -> pair (root -> var (12), query);
@@ -91,6 +100,14 @@ public:
 		if (el -> isDouble ()) {x = el -> getDouble () / 8192.0; if (x < -1.0) x = -1.0; if (x > 1.0) x = 1.0; vector . position . y = x;}
 		var = var -> getRight (); if (! var -> isPair ()) {delete query; return;} el = var -> getLeft ();
 		if (el -> isDouble ()) {x = el -> getDouble () / 16384.0; if (x < -1.0) x = -1.0; if (x > 1.0) x = 1.0; ctrl_volume . angle = x;}
+		var = var -> getRight (); if (! var -> isPair ()) {delete query; return;} el = var -> getLeft ();
+		if (el -> isDouble ()) {x = el -> getDouble () / 16384.0; if (x < 0.0) x = 0.0; if (x > 1.0) x = 1.0; ctrl_attack . angle = x;}
+		var = var -> getRight (); if (! var -> isPair ()) {delete query; return;} el = var -> getLeft ();
+		if (el -> isDouble ()) {x = el -> getDouble () / 16384.0; if (x < 0.0) x = 0.0; if (x > 1.0) x = 1.0; ctrl_decay . angle = x;}
+		var = var -> getRight (); if (! var -> isPair ()) {delete query; return;} el = var -> getLeft ();
+		if (el -> isDouble ()) {x = el -> getDouble () / 16384.0; if (x < 0.0) x = 0.0; if (x > 1.0) x = 1.0; ctrl_sustain . angle = x;}
+		var = var -> getRight (); if (! var -> isPair ()) {delete query; return;} el = var -> getLeft ();
+		if (el -> isDouble ()) {x = el -> getDouble () / 16384.0; if (x < 0.0) x = 0.0; if (x > 1.0) x = 1.0; ctrl_release . angle = x;}
 		var = var -> getRight (); if (! var -> isPair ()) {delete query; return;} el = var -> getLeft ();
 		delete query;
 	}
@@ -280,6 +297,7 @@ public:
 	store (point (1240.0, 110.0), 601, resources, true),
 	restore (point (1280.0, 110.0), 602, resources, true)
 	{
+		cwd (area, sizeof (AREA));
 		command_centre_image = resources != 0 ? resources -> command_centre : 0;
 		pitch . position = 0.5;
 		this -> root = root;
@@ -441,8 +459,12 @@ static gint ControlPanelKeyon (GtkWidget * viewport, GdkEventButton * event, con
 	if (action -> store . keyon (location)) {
 		GtkWidget * dialog = gtk_file_chooser_dialog_new ("Save File", GTK_WINDOW (viewport),
 											GTK_FILE_CHOOSER_ACTION_SAVE, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT, NULL);
+		gtk_file_chooser_set_current_folder (GTK_FILE_CHOOSER (dialog), action -> area);
 		if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT) {
 			char * file_name = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (dialog));
+			area_cat (action -> area, 0, file_name);
+			char * cp = action -> area + strlen (action -> area);
+			while (cp > action -> area && * cp != '/' && * cp != '\\') * cp-- = '\0'; * cp = '\0';
 			action -> preset_action ("Store", file_name);
 			g_free (file_name);
 			redraw = true;
@@ -452,8 +474,12 @@ static gint ControlPanelKeyon (GtkWidget * viewport, GdkEventButton * event, con
 	if (action -> restore . keyon (location)) {
 		GtkWidget * dialog = gtk_file_chooser_dialog_new ("Load File", GTK_WINDOW (viewport),
 											GTK_FILE_CHOOSER_ACTION_OPEN, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT, NULL);
+		gtk_file_chooser_set_current_folder (GTK_FILE_CHOOSER (dialog), action -> area);
 		if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT) {
 			char * file_name = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (dialog));
+			area_cat (action -> area, 0, file_name);
+			char * cp = action -> area + strlen (action -> area);
+			while (cp > action -> area && * cp != '/' && * cp != '\\') * cp-- = '\0'; * cp = '\0';
 			action -> preset_action ("Restore", file_name);
 			g_free (file_name);
 			action -> feedback_on_controllers ();

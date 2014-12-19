@@ -50,8 +50,8 @@ orbiter_core :: orbiter_core (void) {
 	pan = pans + 8192;
 	power_pan = power_pans + 8192;
 	linear_pan = linear_pans + 8192;
-	//for (int ind = 0; ind > -16384; ind--) * (amplitude + ind) = pow (2.0, (double) ind / 1536.0); * amplitudes = 0.0;
-	for (int ind = 0; ind > -16384; ind--) * (amplitude + ind) = pow (2.0, (double) ind / 4608.0) * (1.0 + (double) ind / 16384.0);
+	for (int ind = 0; ind > -16384; ind--) * (amplitude + ind) = pow (2.0, (double) ind / 1536.0); * amplitudes = 0.0;
+	//for (int ind = 0; ind > -16384; ind--) * (amplitude + ind) = pow (2.0, (double) ind / 4608.0) * (1.0 + (double) ind / 16384.0);
 	for (int ind = 0; ind <= 16384; ind++) sine_wave [ind] = sin ((double) ind * M_PI * 2.0 / 16384.0);
 	for (int ind = 0; ind < 16384; ind++) volumes [ind] = pow (2.0, (double) (ind - 12800) / 12800.0) * (double) ind / 12800.0;
 	double blep = 0.0;

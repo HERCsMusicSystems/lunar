@@ -67,6 +67,11 @@ public:
 	AREA area;
 	void feedback_on_controllers (void) {
 		PrologElement * query = root -> earth ();
+		query = root -> pair (root -> var (17), query);
+		query = root -> pair (root -> var (16), query);
+		query = root -> pair (root -> var (15), query);
+		query = root -> pair (root -> var (14), query);
+		query = root -> pair (root -> var (13), query);
 		query = root -> pair (root -> var (12), query);
 		query = root -> pair (root -> var (11), query);
 		query = root -> pair (root -> var (10), query);
@@ -91,7 +96,7 @@ public:
 		if (! var -> isPair ()) {delete query; return;}
 		el = var -> getLeft (); if (el -> isDouble ()) porta_on_off . engaged = el -> getDouble () != 0.0; var = var -> getRight ();
 		if (! var -> isPair ()) {delete query; return;} el = var -> getLeft ();
-		if (el -> isDouble ()) {x = el -> getDouble () / 8192.0 + 0.5; if (x < 0.0) x = 0.0; if (x > 1.0) x = 1.0; pitch . position = x;}
+		if (el -> isDouble ()) {x = el -> getDouble () / 16384.0 + 0.5; if (x < 0.0) x = 0.0; if (x > 1.0) x = 1.0; pitch . position = x;}
 		var = var -> getRight (); if (! var -> isPair ()) {delete query; return;} el = var -> getLeft ();
 		if (el -> isDouble ()) {x = el -> getDouble () / 16384.0; if (x < 0.0) x = 0.0; if (x > 1.0) x = 1.0; modulation . position = x;}
 		var = var -> getRight (); if (! var -> isPair ()) {delete query; return;} el = var -> getLeft ();
@@ -109,6 +114,17 @@ public:
 		var = var -> getRight (); if (! var -> isPair ()) {delete query; return;} el = var -> getLeft ();
 		if (el -> isDouble ()) {x = el -> getDouble () / 16384.0; if (x < 0.0) x = 0.0; if (x > 1.0) x = 1.0; ctrl_release . angle = x;}
 		var = var -> getRight (); if (! var -> isPair ()) {delete query; return;} el = var -> getLeft ();
+		if (el -> isDouble ()) {x = el -> getDouble () / 16384.0; if (x < 0.0) x = 0.0; if (x > 1.0) x = 1.0; ctrl_freq . angle = x;}
+		var = var -> getRight (); if (! var -> isPair ()) {delete query; return;} el = var -> getLeft ();
+		if (el -> isDouble ()) {x = el -> getDouble () / 16384.0 + 0.5; if (x < 0.0) x = 0.0; if (x > 1.0) x = 1.0; ctrl_drywet . angle = x;}
+		var = var -> getRight (); if (! var -> isPair ()) {delete query; return;} el = var -> getLeft ();
+		if (el -> isDouble ()) {x = el -> getDouble () / 16384.0 + 0.5; if (x < 0.0) x = 0.0; if (x > 1.0) x = 1.0; ctrl_pan . angle = x;}
+		var = var -> getRight (); if (! var -> isPair ()) {delete query; return;} el = var -> getLeft ();
+		if (el -> isDouble ()) {x = el -> getDouble () / 16384.0; if (x < 0.0) x = 0.0; if (x > 1.0) x = 1.0; ctrl_porta . angle = x;}
+		var = var -> getRight (); if (! var -> isPair ()) {delete query; return;} el = var -> getLeft ();
+		if (el -> isDouble ()) {x = el -> getDouble () / 16384.0; if (x < 0.0) x = 0.0; if (x > 1.0) x = 1.0; ctrl_speed . angle = x;}
+		var = var -> getRight (); if (! var -> isPair ()) {delete query; return;} el = var -> getLeft ();
+		if (el -> isDouble ()) {x = el -> getDouble () / 16384.0; if (x < 0.0) x = 0.0; if (x > 1.0) x = 1.0; ctrl_vibrato . angle = x;}
 		delete query;
 	}
 	void reset_buttons (int id) {
@@ -252,16 +268,16 @@ public:
 	control_panel_action (GraphicResources * resources, PrologRoot * root, PrologDirectory * directory, PrologAtom * atom, PrologAtom * command, bool active) :
 	ctrl_volume (point (186.0, 5.0), 7, resources, active),
 	ctrl_attack (point (268.0, 5.0), 73, resources, active),
-	ctrl_decay (point (338.0, 5.0), 75, resources, active),
-	ctrl_sustain (point (408.0, 5.0), 79, resources, active),
+	ctrl_decay (point (338.0, 5.0), 93, resources, active),
+	ctrl_sustain (point (408.0, 5.0), 94, resources, active),
 	ctrl_release (point (478.0, 5.0), 72, resources, active),
 	ctrl_freq (point (218.0, 90.0), 74, resources, active),
 	ctrl_drywet (point (288.0, 90.0), 91, resources, active),
 	ctrl_pan (point (358.0, 90.0), 10, resources, active),
-	ctrl_porta (point (442.0, 90.0), 5, resources, active),
-	ctrl_speed (point (512.0, 90.0), 76, resources, active),
-	ctrl_vibrato (point (582.0, 90.0), 77, resources, active),
-	vector (point (12.0, -2.0), 16, resources, active),
+	ctrl_porta (point (442.0, 90.0), 11, resources, active),
+	ctrl_speed (point (512.0, 90.0), 95, resources, active),
+	ctrl_vibrato (point (582.0, 90.0), 71, resources, active),
+	vector (point (12.0, -2.0), 12, resources, active),
 	keyboard (point (114.0, 194.0), 2, 6, resources, active),
 	display (point (576.0, -7.0), 7, resources, active),
 	selector0 (point (667.0, 112.0), 200, resources, active),
@@ -309,6 +325,7 @@ public:
 		current_program = 0;
 		for (int ind = 0; ind < 10; ind++) programs [ind] = 0;
 		current_delta = 128;
+		delta_128 . engaged = true;
 		program_action (& selector0, display . area);
 		feedback_on_controllers ();
 	}
@@ -400,6 +417,78 @@ static gboolean ControlPanelDeleteEvent (GtkWidget * viewport, GdkEvent * event,
 	machine -> remove (false);
 	return FALSE;
 }
+static bool file_action (char * command, char * title, GtkWidget * viewport, control_panel_action * action) {
+	bool redraw = false;
+	GtkWidget * dialog = gtk_file_chooser_dialog_new (title, GTK_WINDOW (viewport),
+										GTK_FILE_CHOOSER_ACTION_SAVE, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT, NULL);
+	gtk_file_chooser_set_current_folder (GTK_FILE_CHOOSER (dialog), action -> area);
+	if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT) {
+		char * file_name = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (dialog));
+		area_cat (action -> area, 0, file_name);
+		char * cp = action -> area + strlen (action -> area);
+		while (cp > action -> area && * cp != '/' && * cp != '\\') * cp-- = '\0'; * cp = '\0';
+		action -> preset_action (command, file_name);
+		g_free (file_name);
+		redraw = true;
+	}
+	gtk_widget_destroy (dialog);
+	return redraw;
+}
+static gboolean ControlPanelButtonOn (GtkWidget * viewport, GdkEventKey * event, control_panel_action * action) {
+	bool redraw = false;
+	int key = (int) event -> keyval;
+	switch (key) {
+	case 65470: action -> program_action (& action -> selector0, action -> display . area); redraw = true; break;
+	case 65471: action -> program_action (& action -> selector1, action -> display . area); redraw = true; break;
+	case 65472: action -> program_action (& action -> selector2, action -> display . area); redraw = true; break;
+	case 65473: action -> program_action (& action -> selector3, action -> display . area); redraw = true; break;
+	case 65474: action -> program_action (& action -> selector4, action -> display . area); redraw = true; break;
+	case 65475: action -> program_action (& action -> selector5, action -> display . area); redraw = true; break;
+	case 65476: action -> program_action (& action -> selector6, action -> display . area); redraw = true; break;
+	case 65477: action -> program_action (& action -> selector7, action -> display . area); redraw = true; break;
+	case 65478: action -> program_action (& action -> selector8, action -> display . area); redraw = true; break;
+	case 65479: action -> program_action (& action -> selector9, action -> display . area); redraw = true; break;
+	case 49: action -> program_action (& action -> program0, action -> display . area); redraw = true; break;
+	case 50: action -> program_action (& action -> program1, action -> display . area); redraw = true; break;
+	case 51: action -> program_action (& action -> program2, action -> display . area); redraw = true; break;
+	case 52: action -> program_action (& action -> program3, action -> display . area); redraw = true; break;
+	case 53: action -> program_action (& action -> program4, action -> display . area); redraw = true; break;
+	case 54: action -> program_action (& action -> program5, action -> display . area); redraw = true; break;
+	case 55: action -> program_action (& action -> program6, action -> display . area); redraw = true; break;
+	case 56: action -> program_action (& action -> program7, action -> display . area); redraw = true; break;
+	case 57: action -> program_action (& action -> program8, action -> display . area); redraw = true; break;
+	case 48: action -> program_action (& action -> program9, action -> display . area); redraw = true; break;
+	case 122:
+		action -> delta_1 . engaged = true;
+		action -> delta_8 . engaged = action -> delta_128 . engaged = false;
+		action -> current_delta = 1;
+		redraw = true;
+		break;
+	case 120:
+		action -> delta_8 . engaged = true;
+		action -> delta_1 . engaged = action -> delta_128 . engaged = false;
+		action -> current_delta = 8;
+		redraw = true;
+		break;
+	case 99:
+		action -> delta_128 . engaged = true;
+		action -> delta_1 . engaged = action -> delta_8 . engaged = false;
+		action -> current_delta = 128;
+		redraw = true;
+		break;
+	case 65361: action -> value_change_action (-1); redraw = true; break;
+	case 65362: action -> value_change_action (4); redraw = true; break;
+	case 65363: action -> value_change_action (1); redraw = true; break;
+	case 65364: action -> value_change_action (-4); redraw = true; break;
+	case 91: redraw = file_action ("Store", "Save File", viewport, action); break;
+	case 93: redraw = file_action ("Restore", "Load File", viewport, action); action -> feedback_on_controllers (); break;
+	case 44: action -> poly_mono . engaged = ! action -> poly_mono . engaged; redraw = true; break;
+	case 46: action -> porta_on_off . engaged = ! action -> porta_on_off . engaged; redraw = true; break;
+	default: return FALSE;
+	}
+	if (redraw) gtk_widget_queue_draw (viewport);
+	return FALSE;
+}
 static gint ControlPanelKeyon (GtkWidget * viewport, GdkEventButton * event, control_panel_action * action) {
 	point location (event -> x, event -> y);
 	action -> captured = location;
@@ -456,37 +545,8 @@ static gint ControlPanelKeyon (GtkWidget * viewport, GdkEventButton * event, con
 	}
 	if (action -> add_one . keyon (location)) {action -> value_change_action (1); action -> add_one . engaged = true; redraw = true;}
 	if (action -> sub_one . keyon (location)) {action -> value_change_action (-1); action -> sub_one . engaged = true; redraw = true;}
-	if (action -> store . keyon (location)) {
-		GtkWidget * dialog = gtk_file_chooser_dialog_new ("Save File", GTK_WINDOW (viewport),
-											GTK_FILE_CHOOSER_ACTION_SAVE, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT, NULL);
-		gtk_file_chooser_set_current_folder (GTK_FILE_CHOOSER (dialog), action -> area);
-		if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT) {
-			char * file_name = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (dialog));
-			area_cat (action -> area, 0, file_name);
-			char * cp = action -> area + strlen (action -> area);
-			while (cp > action -> area && * cp != '/' && * cp != '\\') * cp-- = '\0'; * cp = '\0';
-			action -> preset_action ("Store", file_name);
-			g_free (file_name);
-			redraw = true;
-		}
-		gtk_widget_destroy (dialog);
-	}
-	if (action -> restore . keyon (location)) {
-		GtkWidget * dialog = gtk_file_chooser_dialog_new ("Load File", GTK_WINDOW (viewport),
-											GTK_FILE_CHOOSER_ACTION_OPEN, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT, NULL);
-		gtk_file_chooser_set_current_folder (GTK_FILE_CHOOSER (dialog), action -> area);
-		if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT) {
-			char * file_name = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (dialog));
-			area_cat (action -> area, 0, file_name);
-			char * cp = action -> area + strlen (action -> area);
-			while (cp > action -> area && * cp != '/' && * cp != '\\') * cp-- = '\0'; * cp = '\0';
-			action -> preset_action ("Restore", file_name);
-			g_free (file_name);
-			action -> feedback_on_controllers ();
-			redraw = true;
-		}
-		gtk_widget_destroy (dialog);
-	}
+	if (action -> store . keyon (location)) redraw = file_action ("Store", "Save File", viewport, action);
+	if (action -> restore . keyon (location)) {redraw = file_action ("Restore", "Load File", viewport, action); action -> feedback_on_controllers ();}
 	if (redraw) gtk_widget_queue_draw (viewport);
 	return TRUE;
 }
@@ -527,8 +587,8 @@ static gint ControlPanelMove (GtkWidget * viewport, GdkEventButton * event, cont
 	if (action -> ctrl_sustain . move (delta)) {action -> action (action -> ctrl_sustain . id, action -> ctrl_sustain . angle); redraw = true;}
 	if (action -> ctrl_release . move (delta)) {action -> action (action -> ctrl_release . id, action -> ctrl_release . angle); redraw = true;}
 	if (action -> ctrl_freq . move (delta)) {action -> action (action -> ctrl_freq . id, action -> ctrl_freq . angle); redraw = true;}
-	if (action -> ctrl_drywet . move (delta)) {action -> action (action -> ctrl_drywet . id, action -> ctrl_drywet . angle); redraw = true;}
-	if (action -> ctrl_pan . move (delta)) {action -> action (action -> ctrl_pan . id, action -> ctrl_pan . angle); redraw = true;}
+	if (action -> ctrl_drywet . move (delta)) {action -> action (action -> ctrl_drywet . id, action -> ctrl_drywet . angle - 0.5); redraw = true;}
+	if (action -> ctrl_pan . move (delta)) {action -> action (action -> ctrl_pan . id, action -> ctrl_pan . angle - 0.5); redraw = true;}
 	if (action -> ctrl_porta . move (delta)) {action -> action (action -> ctrl_porta . id, action -> ctrl_porta . angle); redraw = true;}
 	if (action -> ctrl_speed . move (delta)) {action -> action (action -> ctrl_speed . id, action -> ctrl_speed . angle); redraw = true;}
 	if (action -> ctrl_vibrato . move (delta)) {action -> action (action -> ctrl_vibrato . id, action -> ctrl_vibrato . angle); redraw = true;}
@@ -585,6 +645,7 @@ static gboolean CreateControlPanelIdleCode (control_panel_action * action) {
 	g_signal_connect (G_OBJECT (action -> viewport), "button_press_event", G_CALLBACK (ControlPanelKeyon), action);
 	g_signal_connect (G_OBJECT (action -> viewport), "button_release_event", G_CALLBACK (ControlPanelKeyoff), action);
 	g_signal_connect (G_OBJECT (action -> viewport), "motion_notify_event", G_CALLBACK (ControlPanelMove), action);
+	g_signal_connect (G_OBJECT (action -> viewport), "key-press-event", G_CALLBACK (ControlPanelButtonOn), action);
 	if (action -> command_centre_image == 0) gtk_window_resize (GTK_WINDOW (action -> viewport), 1300, 420);
 	else gtk_window_resize (GTK_WINDOW (action -> viewport),
 								cairo_image_surface_get_width (action -> command_centre_image),

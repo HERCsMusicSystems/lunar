@@ -9,7 +9,7 @@ program eclipse [
 					Phobos PhobosCB BuildPhobos BuildPhobosPart
 					paths modules adjacent next_path previous_path next_module previous_module
 					build_abakos build_abakos_part abakos abakoscb
-					reactor left right
+					reactor left right radar
 					kb kbcb
 					AT sub mdi mdicb
 				]
@@ -147,10 +147,11 @@ program eclipse [
 ]
 
 
-[[BuildPhobos *Phobos *PhobosCB *volume]
+[[BuildPhobos *Phobos *PhobosCB *volume *pan]
 	[moonbase *moonbase]
 	[arpeggiator *PhobosCB *moonbase]
 	[Moonbase *Phobos *PhobosCB Phobos]
+	[lfo *lfo] [control *lfo_freq] [*lfo_freq *lfo]
 	[pan *pan]
 	[delay *dsp]
 	[drywet *mixer]
@@ -164,8 +165,9 @@ program eclipse [
 	[Insert *dsp *Phobos moonbase]
 	[Insert *mixer *Phobos moonbase]
 	[Insert *volume *Phobos moonbase]
+	[Insert *lfo *Phobos lfo] [Insert *lfo_freq *Phobos lfo freq]
 
-	[BuildPhobosPart *Phobos *moonbase *pan]
+	[BuildPhobosPart *Phobos *moonbase *pan *lfo_freq]
 
 	[InsertController 7 *Phobos moonbase volume]
 	[InsertController 10 *Phobos moonbase pan]
@@ -178,7 +180,7 @@ program eclipse [
 	[addcl [[Moons *Phobos]]]
 ]
 
-[[BuildPhobosPart *Phobos *PhobosCB *mixer]
+[[BuildPhobosPart *Phobos *PhobosCB *mixer *lfo_freq]
 	[trigger *trigger]
 	[fm4 *op]
 	[adsr *adsr]
@@ -200,7 +202,7 @@ program eclipse [
 	[*freq4 "signal" *trigger "key"]
 
 	[*op "trigger" *trigger_delay]
-	[*op "freq1" *freq1]
+	[*op "freq1" *freq1] [*op "freq1" *lfo_freq]
 	[*op "freq2" *freq2]
 	[*op "freq3" *freq3]
 	[*op "freq4" *freq4]
@@ -212,7 +214,7 @@ program eclipse [
 	[Insert *trigger *Phobos portamento]
 	[Insert *op *Phobos operator]
 	[Insert *adsr *Phobos adsr]
-	[Insert *dca *Phobos adsr]
+	[AddModule *dca *Phobos adsr]
 	[AddModule *trigger_delay *Phobos]
 	[Insert *freq1 *Phobos sensitivity freq 1]
 	[Insert *freq2 *Phobos sensitivity freq 2]
@@ -270,7 +272,7 @@ program eclipse [
 
 end := [
 		[var cb_path cb_callback]
-		[BuildPhobos Phobos PhobosCB *phobos_mixer]
+		[BuildPhobos Phobos PhobosCB *phobos_mixer *feed]
 		[build_abakos *abakos_mixer]
 		[CommandCentre commander cb] ;[commander 3000 1060]
 		[Lunar 4000 abakos adsr attack]
@@ -278,17 +280,14 @@ end := [
 		[Lunar 1 abakos arpeggiator active]
 		;[Lunar 1 abakos arpeggiator hold]
 		[Lunar 9 abakos arpeggiator algo]
-		[oscilloscope left] [oscilloscope right] [right 2700 1000] [left 2300 1000]
-		[left "signal" *abakos_mixer "left"]
-		[right "signal" *abakos_mixer "right"]
-		[left "signal" *phobos_mixer "left"]
-		[right "signal" *phobos_mixer "right"]
-		[midi mdi mdicb]
+		[TRY [midi mdi mdicb]]
 		[core reactor 330 22050 2048]
 		[ConnectStereo reactor *abakos_mixer]
 		[ConnectStereo reactor *phobos_mixer]
+		[oscilloscope radar]
+		[radar *feed]
 		/ [command] /
-		;[mdi]
+		[TRY [mdi]]
 		[Moonbase Phobos]
 		[Moonbase abakos]
 		] .

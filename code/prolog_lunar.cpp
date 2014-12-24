@@ -178,10 +178,14 @@ public:
 		char * midi_location;
 		if (location != 0) midi_location = location -> getText ();
 		else midi_location = "/dev/snd/midiC2D0";
+#ifdef WIN32
+		return false;
+#else
 		midi_code * mc = new midi_code (root, directory, atom -> getAtom (), callback -> getAtom (), midi_location);
 		if (atom -> getAtom () -> setMachine (mc)) return true;
 		delete mc;
 		return false;
+#endif
 	}
 	midi_class (PrologRoot * root, PrologDirectory * directory) {this -> root = root; this -> directory = directory;}
 };
@@ -231,6 +235,7 @@ PrologNativeCode * PrologLunarServiceClass :: getNativeCode (char * name) {
 	if (strcmp (name, "inactive_trigger") == 0) return new trigger_class (directory, false, & core);
 	if (strcmp (name, "mixer") == 0) return new mixer_class (& core);
 	if (strcmp (name, "stereo_mixer") == 0) return new stereo_mixer_class (& core);
+	if (strcmp (name, "control") == 0) return new control_class (& core);
 	if (strcmp (name, "gateway") == 0) return new gateway_class (& core);
 	if (strcmp (name, "stereo_gateway") == 0) return new stereo_gateway_class (& core);
 	if (strcmp (name, "amplifier") == 0) return new amplifier_class (& core);

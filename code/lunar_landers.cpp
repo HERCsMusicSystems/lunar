@@ -264,6 +264,9 @@ char * lunar_volume :: inputName (int ind) {if (ind == 2) return "VOLUME"; retur
 void lunar_volume :: move (void) {double dv = core -> Volume (gateway); signal = enter * dv; signal_right = enter_right * dv;}
 lunar_volume :: lunar_volume (orbiter_core * core) : lunar_stereo_gateway (core) {gateway = 12800.0;}
 
+void lunar_control :: move (void) {signal = enter * gateway;}
+lunar_control :: lunar_control (orbiter_core * core) : lunar_gateway (core) {gateway = 0.0;}
+
 int lunar_map :: numberOfOutputs (void) {return 0;}
 lunar_map :: lunar_map (orbiter_core * core, int initial) : orbiter (core) {
 	for (int ind = 0; ind < 128; ind++) map [ind] = (double) (initial++) * 128.0;

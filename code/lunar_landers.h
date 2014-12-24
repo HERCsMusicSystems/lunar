@@ -177,6 +177,12 @@ public:
 	lunar_volume (orbiter_core * core);
 };
 
+class lunar_control : public lunar_gateway {
+public:
+	virtual void move (void);
+	lunar_control (orbiter_core * core);
+};
+
 class lunar_map : public orbiter {
 public:
 	double map [128];

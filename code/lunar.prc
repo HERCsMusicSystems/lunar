@@ -20,7 +20,7 @@ program lunar #machine := "prolog.lunar"
 				division active
 				Lunar Lander Activate Deactivate
 				Connect ConnectStereo ConnectDryWet Disconnect DisconnectStereo DisconnectDryWet
-				AddParameterBlock
+				AddParameterBlock AddNamedParameterBlock
 				Moonbase AddModule Insert InsertController InsertIO Store Restore SubRestore Moons
 				Cbb Cb C C# Cx
 				Dbb Db D D# Dx
@@ -51,6 +51,7 @@ program lunar #machine := "prolog.lunar"
 #machine inactive_trigger := "inactive_trigger"
 #machine mixer := "mixer"
 #machine stereo_mixer := "stereo_mixer"
+#machine control := "control"
 #machine gateway := "gateway"
 #machine stereo_gateway := "stereo_gateway"
 #machine amplifier := "amplifier"
@@ -128,15 +129,15 @@ program lunar #machine := "prolog.lunar"
 	[delallcl *modules]
 ]
 
-[[AddParameterBlock *parameters *module *selector *initial *style]
+[[AddNamedParameterBlock *parameters *module *name *selector *initial *style]
 	[*parameters *pb : *selector] /
-	[*module "SIGNAL" *pb]
+	[*module *name *pb]
 ]
-[[AddParameterBlock *parameters *module *selector *initial *style]
+[[AddNamedParameterBlock *parameters *module *name *selector *initial *style]
 	[parameter_block *pb *style]
 	[*pb *initial]
 	[addcl [[*parameters *pb : *selector]]]
-	[*module "SIGNAL" *pb]
+	[*module *name *pb]
 ]
 
 [[AddParameterBlock *parameters *parameter *module *selector *initial *style]
@@ -264,6 +265,10 @@ program lunar #machine := "prolog.lunar"
 	[AddParameterBlock *parameters breakpoint *sensitivity *selector 0 "index"]
 	[AddParameterBlock *parameters left *sensitivity *selector -128 "index"]
 	[AddParameterBlock *parameters right *sensitivity *selector 128 "index"]
+]
+
+[[InsertIO *parameters *gate *selector [["ENTER" "GATEWAY"] ["SIGNAL"]]]
+	[AddNamedParameterBlock *parameters *gate "GATEWAY" *selector 0 "index"]
 ]
 
 [[InsertIO *parameters *pb *selector [["SIGNAL"] ["SIGNAL"]]]

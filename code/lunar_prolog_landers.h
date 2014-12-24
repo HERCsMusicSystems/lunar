@@ -108,6 +108,12 @@ public:
 	stereo_mixer_class (orbiter_core * core);
 };
 
+class control_class : public PrologNativeOrbiterCreator {
+public:
+	virtual orbiter * create_orbiter (PrologElement * parameters);
+	control_class (orbiter_core * core);
+};
+
 class gateway_class : public PrologNativeOrbiterCreator {
 public:
 	virtual orbiter * create_orbiter (PrologElement * parmaeters);

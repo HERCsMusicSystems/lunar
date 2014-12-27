@@ -7,7 +7,7 @@ import studio
 program lunar #machine := "prolog.lunar"
 			[
 				small_keyboard keyboard big_keyboard oscilloscope vector CommandCentre
-				noise orbiter
+				noise orbiter X Y modulation vibrato tremolo wahwah
 				core moonbase arpeggiator operator parameter_block auto auto_data key_map velocity_map impulse
 				trigger inactive_trigger mixer stereo_mixer gateway stereo_gateway amplifier stereo_amplifier volume mono_volume lfo adsr eg
 				square_operator fm4 fm6 dx9 dx7 saw_operator noise_operator sampler_operator sensitivity filter delay pan power_pan linear_pan
@@ -21,7 +21,7 @@ program lunar #machine := "prolog.lunar"
 				Lunar Lander Activate Deactivate
 				Connect ConnectStereo ConnectDryWet Disconnect DisconnectStereo DisconnectDryWet
 				AddParameterBlock AddNamedParameterBlock
-				Moonbase AddModule Insert InsertController InsertIO Store Restore SubRestore Moons
+				Moonbase AddModule Insert InsertPB InsertController InsertIO Store Restore SubRestore Moons
 				Cbb Cb C C# Cx
 				Dbb Db D D# Dx
 				Ebb Eb E E# Ex
@@ -173,6 +173,12 @@ program lunar #machine := "prolog.lunar"
 	[addcl [[*modules *operator : *selector]]]
 ]
 
+[[InsertPB *pb *base : *selector]
+	[*base *parameters *modules : *]
+	[addcl [[*modules *pb : *selector]]]
+	[addcl [[*parameters *pb : *selector]]]
+]
+
 [[Insert *operator *base : *selector]
 	[*base *parameters *modules : *]
 	[addcl [[*modules *operator : *selector]]]
@@ -272,7 +278,7 @@ program lunar #machine := "prolog.lunar"
 ]
 
 [[InsertIO *parameters *pb *selector [["SIGNAL"] ["SIGNAL"]]]
-	[AddParameterBlock *parameters *pb *selector 0 "index"]
+	[addcl [[*parameters *pb : *selector]]]
 ]
 
 [[InsertIO *parameters *op *selector [["ALGO" "TRIGGER" "FREQ1" "AMP1" "RATIO1" "FEEDBACK1" "FREQ2" "AMP2" "RATIO2" "FEEDBACK2" "FREQ3" "AMP3" "RATIO3" "FEEDBACK3" "FREQ4" "AMP4" "RATIO4" "FEEDBACK4"] ["SIGNAL"]]]

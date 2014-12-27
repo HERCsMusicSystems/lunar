@@ -151,7 +151,7 @@ public:
 		program8 . engaged = false;
 		program9 . engaged = false;
 	}
-	void program_action (button_active_graphics * button, char * area) {
+	void program_action (button_active_graphics * button) {
 		reset_buttons (button -> id);
 		if (selector0 . id <= button -> id && button -> id <= selector9 . id) {
 			current_program = button -> id - selector0 . id;
@@ -172,6 +172,7 @@ public:
 		button -> engaged = true;
 		PrologElement * query = root -> pair (root -> atom (command),
 								root -> pair (root -> var (0),
+								root -> pair (root -> integer (current_program),
 								root -> pair (root -> integer (programs [0]),
 								root -> pair (root -> integer (programs [1]),
 								root -> pair (root -> integer (programs [2]),
@@ -182,14 +183,21 @@ public:
 								root -> pair (root -> integer (programs [7]),
 								root -> pair (root -> integer (programs [8]),
 								root -> pair (root -> integer (programs [9]),
-								root -> earth ()))))))))))));
+								root -> earth ())))))))))))));
 		query = root -> pair (root -> var (0), root -> pair (query, root -> earth ()));
 		if (root -> resolution (query) == 1) {
 			PrologElement * el = query;
 			if (el -> isPair ()) el = el -> getLeft ();
-			if (el -> isText ()) area_cat (area, 0, el -> getText ());
+			if (el -> isText ()) {
+				area_cat (display . area, 0, el -> getText ());
+				if (current_program == 0) {
+					cwd (area, sizeof (area)); area_cat (area, area_cat (area, "/"), el -> getText ());
+					printf ("setting instrument to: [%s]\n", area);
+				}
+			}
 		}
 		delete query;
+		if (current_program == 0) feedback_on_controllers ();
 	}
 	void action (int ind, double value) {
 		PrologElement * query = root -> pair (root -> atom (command),
@@ -233,6 +241,7 @@ public:
 			if (el -> isText ()) area_cat (display . area, 0, el -> getText ());
 		}
 		delete query;
+		feedback_on_controllers ();
 	}
 	void key_action (int key, int velocity) {
 		PrologElement * query = root -> pair (root -> atom (command),
@@ -326,7 +335,7 @@ public:
 		for (int ind = 0; ind < 10; ind++) programs [ind] = 0;
 		current_delta = 128;
 		delta_128 . engaged = true;
-		program_action (& selector0, display . area);
+		program_action (& selector0);
 		feedback_on_controllers ();
 	}
 	~ control_panel_action (void) {
@@ -438,26 +447,26 @@ static gboolean ControlPanelButtonOn (GtkWidget * viewport, GdkEventKey * event,
 	bool redraw = false;
 	int key = (int) event -> keyval;
 	switch (key) {
-	case 65470: action -> program_action (& action -> selector0, action -> display . area); redraw = true; break;
-	case 65471: action -> program_action (& action -> selector1, action -> display . area); redraw = true; break;
-	case 65472: action -> program_action (& action -> selector2, action -> display . area); redraw = true; break;
-	case 65473: action -> program_action (& action -> selector3, action -> display . area); redraw = true; break;
-	case 65474: action -> program_action (& action -> selector4, action -> display . area); redraw = true; break;
-	case 65475: action -> program_action (& action -> selector5, action -> display . area); redraw = true; break;
-	case 65476: action -> program_action (& action -> selector6, action -> display . area); redraw = true; break;
-	case 65477: action -> program_action (& action -> selector7, action -> display . area); redraw = true; break;
-	case 65478: action -> program_action (& action -> selector8, action -> display . area); redraw = true; break;
-	case 65479: action -> program_action (& action -> selector9, action -> display . area); redraw = true; break;
-	case 49: action -> program_action (& action -> program0, action -> display . area); redraw = true; break;
-	case 50: action -> program_action (& action -> program1, action -> display . area); redraw = true; break;
-	case 51: action -> program_action (& action -> program2, action -> display . area); redraw = true; break;
-	case 52: action -> program_action (& action -> program3, action -> display . area); redraw = true; break;
-	case 53: action -> program_action (& action -> program4, action -> display . area); redraw = true; break;
-	case 54: action -> program_action (& action -> program5, action -> display . area); redraw = true; break;
-	case 55: action -> program_action (& action -> program6, action -> display . area); redraw = true; break;
-	case 56: action -> program_action (& action -> program7, action -> display . area); redraw = true; break;
-	case 57: action -> program_action (& action -> program8, action -> display . area); redraw = true; break;
-	case 48: action -> program_action (& action -> program9, action -> display . area); redraw = true; break;
+	case 65470: action -> program_action (& action -> selector0); redraw = true; break;
+	case 65471: action -> program_action (& action -> selector1); redraw = true; break;
+	case 65472: action -> program_action (& action -> selector2); redraw = true; break;
+	case 65473: action -> program_action (& action -> selector3); redraw = true; break;
+	case 65474: action -> program_action (& action -> selector4); redraw = true; break;
+	case 65475: action -> program_action (& action -> selector5); redraw = true; break;
+	case 65476: action -> program_action (& action -> selector6); redraw = true; break;
+	case 65477: action -> program_action (& action -> selector7); redraw = true; break;
+	case 65478: action -> program_action (& action -> selector8); redraw = true; break;
+	case 65479: action -> program_action (& action -> selector9); redraw = true; break;
+	case 49: action -> program_action (& action -> program0); redraw = true; break;
+	case 50: action -> program_action (& action -> program1); redraw = true; break;
+	case 51: action -> program_action (& action -> program2); redraw = true; break;
+	case 52: action -> program_action (& action -> program3); redraw = true; break;
+	case 53: action -> program_action (& action -> program4); redraw = true; break;
+	case 54: action -> program_action (& action -> program5); redraw = true; break;
+	case 55: action -> program_action (& action -> program6); redraw = true; break;
+	case 56: action -> program_action (& action -> program7); redraw = true; break;
+	case 57: action -> program_action (& action -> program8); redraw = true; break;
+	case 48: action -> program_action (& action -> program9); redraw = true; break;
 	case 122:
 		action -> delta_1 . engaged = true;
 		action -> delta_8 . engaged = action -> delta_128 . engaged = false;
@@ -482,8 +491,16 @@ static gboolean ControlPanelButtonOn (GtkWidget * viewport, GdkEventKey * event,
 	case 65364: action -> value_change_action (-4); redraw = true; break;
 	case 91: redraw = file_action ("Store", "Save File", viewport, action); break;
 	case 93: redraw = file_action ("Restore", "Load File", viewport, action); action -> feedback_on_controllers (); break;
-	case 44: action -> poly_mono . engaged = ! action -> poly_mono . engaged; redraw = true; break;
-	case 46: action -> porta_on_off . engaged = ! action -> porta_on_off . engaged; redraw = true; break;
+	case 44:
+		action -> poly_mono . engaged = ! action -> poly_mono . engaged;
+		action -> action (action -> poly_mono . engaged ? 127 : 126, 0.0);
+		redraw = true;
+		break;
+	case 46:
+		action -> porta_on_off . engaged = ! action -> porta_on_off . engaged;
+		action -> action (65, action -> porta_on_off . engaged ? 1.0 : 0.0);
+		redraw = true;
+		break;
 	default: return FALSE;
 	}
 	if (redraw) gtk_widget_queue_draw (viewport);
@@ -509,28 +526,36 @@ static gint ControlPanelKeyon (GtkWidget * viewport, GdkEventButton * event, con
 	action -> pitch . keyon (location);
 	action -> modulation . keyon (location);
 	bool redraw = false;
-	if (action -> poly_mono . keyon (location)) {action -> poly_mono . engaged = ! action -> poly_mono . engaged; redraw = true;}
-	if (action -> porta_on_off . keyon (location)) {action -> porta_on_off . engaged = ! action -> porta_on_off . engaged; redraw = true;}
-	if (action -> selector0 . keyon (location)) {action -> program_action (& action -> selector0, action -> display . area); redraw = true;}
-	if (action -> selector1 . keyon (location)) {action -> program_action (& action -> selector1, action -> display . area); redraw = true;}
-	if (action -> selector2 . keyon (location)) {action -> program_action (& action -> selector2, action -> display . area); redraw = true;}
-	if (action -> selector3 . keyon (location)) {action -> program_action (& action -> selector3, action -> display . area); redraw = true;}
-	if (action -> selector4 . keyon (location)) {action -> program_action (& action -> selector4, action -> display . area); redraw = true;}
-	if (action -> selector5 . keyon (location)) {action -> program_action (& action -> selector5, action -> display . area); redraw = true;}
-	if (action -> selector6 . keyon (location)) {action -> program_action (& action -> selector6, action -> display . area); redraw = true;}
-	if (action -> selector7 . keyon (location)) {action -> program_action (& action -> selector7, action -> display . area); redraw = true;}
-	if (action -> selector8 . keyon (location)) {action -> program_action (& action -> selector8, action -> display . area); redraw = true;}
-	if (action -> selector9 . keyon (location)) {action -> program_action (& action -> selector9, action -> display . area); redraw = true;}
-	if (action -> program0 . keyon (location)) {action -> program_action (& action -> program0, action -> display . area); redraw = true;}
-	if (action -> program1 . keyon (location)) {action -> program_action (& action -> program1, action -> display . area); redraw = true;}
-	if (action -> program2 . keyon (location)) {action -> program_action (& action -> program2, action -> display . area); redraw = true;}
-	if (action -> program3 . keyon (location)) {action -> program_action (& action -> program3, action -> display . area); redraw = true;}
-	if (action -> program4 . keyon (location)) {action -> program_action (& action -> program4, action -> display . area); redraw = true;}
-	if (action -> program5 . keyon (location)) {action -> program_action (& action -> program5, action -> display . area); redraw = true;}
-	if (action -> program6 . keyon (location)) {action -> program_action (& action -> program6, action -> display . area); redraw = true;}
-	if (action -> program7 . keyon (location)) {action -> program_action (& action -> program7, action -> display . area); redraw = true;}
-	if (action -> program8 . keyon (location)) {action -> program_action (& action -> program8, action -> display . area); redraw = true;}
-	if (action -> program9 . keyon (location)) {action -> program_action (& action -> program9, action -> display . area); redraw = true;}
+	if (action -> poly_mono . keyon (location)) {
+		action -> poly_mono . engaged = ! action -> poly_mono . engaged;
+		action -> action (action -> poly_mono . engaged ? 127 : 126, 0.0);
+		redraw = true;
+	}
+	if (action -> porta_on_off . keyon (location)) {
+		action -> porta_on_off . engaged = ! action -> porta_on_off . engaged;
+		action -> action (65, action -> porta_on_off . engaged ? 1.0 : 0.0);
+		redraw = true;
+	}
+	if (action -> selector0 . keyon (location)) {action -> program_action (& action -> selector0); redraw = true;}
+	if (action -> selector1 . keyon (location)) {action -> program_action (& action -> selector1); redraw = true;}
+	if (action -> selector2 . keyon (location)) {action -> program_action (& action -> selector2); redraw = true;}
+	if (action -> selector3 . keyon (location)) {action -> program_action (& action -> selector3); redraw = true;}
+	if (action -> selector4 . keyon (location)) {action -> program_action (& action -> selector4); redraw = true;}
+	if (action -> selector5 . keyon (location)) {action -> program_action (& action -> selector5); redraw = true;}
+	if (action -> selector6 . keyon (location)) {action -> program_action (& action -> selector6); redraw = true;}
+	if (action -> selector7 . keyon (location)) {action -> program_action (& action -> selector7); redraw = true;}
+	if (action -> selector8 . keyon (location)) {action -> program_action (& action -> selector8); redraw = true;}
+	if (action -> selector9 . keyon (location)) {action -> program_action (& action -> selector9); redraw = true;}
+	if (action -> program0 . keyon (location)) {action -> program_action (& action -> program0); redraw = true;}
+	if (action -> program1 . keyon (location)) {action -> program_action (& action -> program1); redraw = true;}
+	if (action -> program2 . keyon (location)) {action -> program_action (& action -> program2); redraw = true;}
+	if (action -> program3 . keyon (location)) {action -> program_action (& action -> program3); redraw = true;}
+	if (action -> program4 . keyon (location)) {action -> program_action (& action -> program4); redraw = true;}
+	if (action -> program5 . keyon (location)) {action -> program_action (& action -> program5); redraw = true;}
+	if (action -> program6 . keyon (location)) {action -> program_action (& action -> program6); redraw = true;}
+	if (action -> program7 . keyon (location)) {action -> program_action (& action -> program7); redraw = true;}
+	if (action -> program8 . keyon (location)) {action -> program_action (& action -> program8); redraw = true;}
+	if (action -> program9 . keyon (location)) {action -> program_action (& action -> program9); redraw = true;}
 	if (action -> delta_1 . keyon (location)) {
 		action -> delta_1 . engaged = true; action -> delta_8 . engaged = action -> delta_128 . engaged = false;
 		action -> current_delta = 1; redraw = true;

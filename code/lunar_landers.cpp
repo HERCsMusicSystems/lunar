@@ -405,7 +405,7 @@ void lunar_trigger :: keyon_velocity_request (void) {
 	if (keystack_pointer < 1) sub_velocity (request_velocity); sub_keyon (request_key);
 }
 void lunar_trigger :: keyoff_request (void) {
-	this -> key = -1; drop_stack (key); if (keystack_pointer == 0 && hold_ctrl == 0.0) trigger = 0.0;
+	this -> key = -1; drop_stack (request_key); if (keystack_pointer == 0 && hold_ctrl == 0.0) trigger = 0.0;
 }
 void lunar_trigger :: keyoff_all_request (void) {
 	this -> key = -1; keystack_pointer = 0; trigger = 0;

@@ -176,17 +176,20 @@ midi_code :: midi_code (PrologRoot * root, PrologDirectory * directory, PrologAt
 	this -> atom = atom;
 	this -> callback = callback;
 	if (callback != 0) {COLLECTOR_REFERENCE_INC (callback);}
+	fd = open (location, O_RDONLY | O_NONBLOCK);
+	if (fd < 0) {printf ("no MIDI\n"); return;}
 	pthread_create (& thread, 0, midi_runner, this);
 	pthread_detach (thread);
-	fd = open (location, O_RDONLY | O_NONBLOCK);
 }
 
 midi_code :: ~ midi_code (void) {
-	if (fd >= 0) close (fd);
-	if (should_continue) {
-		should_continue = false;
-		while (! should_continue) usleep (100);
-		should_continue = false;
+	if (fd >= 0) {
+		close (fd);
+		if (should_continue) {
+			should_continue = false;
+			while (! should_continue) usleep (100);
+			should_continue = false;
+		}
 	}
 	if (callback != 0) callback -> removeAtom (); callback = 0;
 }

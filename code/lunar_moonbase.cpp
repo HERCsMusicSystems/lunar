@@ -106,7 +106,10 @@ void moonbase :: keyoff (void) {
 void moonbase :: keyoff (int key, int velocity) {
 	pthread_mutex_lock (& critical);
 	lunar_trigger * trigger = select (key);
-	if (trigger != 0) trigger -> keyoff ();
+	if (trigger != 0) {
+		if (mono_mode) trigger -> keyoff (key);
+		else trigger -> keyoff ();
+	}
 	key_counter--; if (key_counter < 0) key_counter = 0;
 	pthread_mutex_unlock (& critical);
 }

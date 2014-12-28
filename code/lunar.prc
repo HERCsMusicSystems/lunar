@@ -311,7 +311,19 @@ program lunar #machine := "prolog.lunar"
 
 [[InsertIO *parameters *operator *selector [*i *o]] [show "Failed inserting IO at " [*parameters *operator *i *o]]]
 
-[[InsertController *ctrl *moonbase : *selector] [*moonbase *parameters *modules *cb : *] [*parameters *base : *selector] [*cb *base *ctrl]]
+[[InsertController *ctrl *shift *moonbase : *selector]
+	[is_integer *shift]
+	[*moonbase *parameters *modules *cb : *]
+	[*parameters *base : *selector]
+	[*cb *base *ctrl *shift]
+]
+
+[[InsertController *ctrl *moonbase : *selector]
+	[is_atom *moonbase]
+	[*moonbase *parameters *modules *cb : *]
+	[*parameters *base : *selector]
+	[*cb *base *ctrl]
+]
 
 [[Lander *base *moonbase : *selector] [*moonbase * *modules : *] [*modules *base : *selector]]
 

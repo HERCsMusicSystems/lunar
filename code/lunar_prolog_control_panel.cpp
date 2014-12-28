@@ -96,13 +96,13 @@ public:
 		if (! var -> isPair ()) {delete query; return;}
 		el = var -> getLeft (); if (el -> isDouble ()) porta_on_off . engaged = el -> getDouble () != 0.0; var = var -> getRight ();
 		if (! var -> isPair ()) {delete query; return;} el = var -> getLeft ();
-		if (el -> isDouble ()) {x = el -> getDouble () / 16384.0 + 0.5; if (x < 0.0) x = 0.0; if (x > 1.0) x = 1.0; pitch . position = x;}
+		if (el -> isDouble ()) {x = el -> getDouble () / 16384.0; if (x < 0.0) x = 0.0; if (x > 1.0) x = 1.0; pitch . position = x;}
 		var = var -> getRight (); if (! var -> isPair ()) {delete query; return;} el = var -> getLeft ();
 		if (el -> isDouble ()) {x = el -> getDouble () / 16384.0; if (x < 0.0) x = 0.0; if (x > 1.0) x = 1.0; modulation . position = x;}
 		var = var -> getRight (); if (! var -> isPair ()) {delete query; return;} el = var -> getLeft ();
-		if (el -> isDouble ()) {x = el -> getDouble () / 8192.0; if (x < -1.0) x = -1.0; if (x > 1.0) x = 1.0; vector . position . x = x;}
+		if (el -> isDouble ()) {x = el -> getDouble () / 8192.0; x -= 1.0; if (x < -1.0) x = -1.0; if (x > 1.0) x = 1.0; vector . position . x = x;}
 		var = var -> getRight (); if (! var -> isPair ()) {delete query; return;} el = var -> getLeft ();
-		if (el -> isDouble ()) {x = el -> getDouble () / 8192.0; if (x < -1.0) x = -1.0; if (x > 1.0) x = 1.0; vector . position . y = x;}
+		if (el -> isDouble ()) {x = el -> getDouble () / 8192.0; x -= 1.0; if (x < -1.0) x = -1.0; if (x > 1.0) x = 1.0; vector . position . y = x;}
 		var = var -> getRight (); if (! var -> isPair ()) {delete query; return;} el = var -> getLeft ();
 		if (el -> isDouble ()) {x = el -> getDouble () / 16384.0; if (x < -1.0) x = -1.0; if (x > 1.0) x = 1.0; ctrl_volume . angle = x;}
 		var = var -> getRight (); if (! var -> isPair ()) {delete query; return;} el = var -> getLeft ();
@@ -116,9 +116,9 @@ public:
 		var = var -> getRight (); if (! var -> isPair ()) {delete query; return;} el = var -> getLeft ();
 		if (el -> isDouble ()) {x = el -> getDouble () / 16384.0; if (x < 0.0) x = 0.0; if (x > 1.0) x = 1.0; ctrl_freq . angle = x;}
 		var = var -> getRight (); if (! var -> isPair ()) {delete query; return;} el = var -> getLeft ();
-		if (el -> isDouble ()) {x = el -> getDouble () / 16384.0 + 0.5; if (x < 0.0) x = 0.0; if (x > 1.0) x = 1.0; ctrl_drywet . angle = x;}
+		if (el -> isDouble ()) {x = el -> getDouble () / 16384.0; if (x < 0.0) x = 0.0; if (x > 1.0) x = 1.0; ctrl_drywet . angle = x;}
 		var = var -> getRight (); if (! var -> isPair ()) {delete query; return;} el = var -> getLeft ();
-		if (el -> isDouble ()) {x = el -> getDouble () / 16384.0 + 0.5; if (x < 0.0) x = 0.0; if (x > 1.0) x = 1.0; ctrl_pan . angle = x;}
+		if (el -> isDouble ()) {x = el -> getDouble () / 16384.0; if (x < 0.0) x = 0.0; if (x > 1.0) x = 1.0; ctrl_pan . angle = x;}
 		var = var -> getRight (); if (! var -> isPair ()) {delete query; return;} el = var -> getLeft ();
 		if (el -> isDouble ()) {x = el -> getDouble () / 16384.0; if (x < 0.0) x = 0.0; if (x > 1.0) x = 1.0; ctrl_porta . angle = x;}
 		var = var -> getRight (); if (! var -> isPair ()) {delete query; return;} el = var -> getLeft ();
@@ -217,8 +217,8 @@ public:
 		PrologElement * query = root -> pair (root -> atom (command),
 								root -> pair (root -> var (0),
 								root -> pair (root -> integer (ind),
-								root -> pair (root -> integer ((int) (x * 64.0)),
-								root -> pair (root -> integer ((int) (y * 64.0)),
+								root -> pair (root -> integer ((int) (x * 64.0 + 64.0)),
+								root -> pair (root -> integer ((int) (y * 64.0 + 64.0)),
 								root -> earth ())))));
 		query = root -> pair (root -> var (0), root -> pair (query, root -> earth ()));
 		if (root -> resolution (query) == 1) {
@@ -595,7 +595,7 @@ static gint ControlPanelKeyoff (GtkWidget * viewport, GdkEventButton * event, co
 	action -> poly_mono . keyoff (location);
 	action -> porta_on_off . keyoff (location);
 	bool redraw = false;
-	if (action -> pitch . keyoff (location)) {action -> action (action -> pitch . id, action -> pitch . position - 0.5); redraw = true;}
+	if (action -> pitch . keyoff (location)) {action -> action (action -> pitch . id, action -> pitch . position); redraw = true;}
 	if (action -> add_one . keyoff (location)) {action -> add_one . engaged = false; redraw = true;}
 	if (action -> sub_one . keyoff (location)) {action -> sub_one . engaged = false; redraw = true;}
 	if (redraw) gtk_widget_queue_draw (viewport);
@@ -612,8 +612,8 @@ static gint ControlPanelMove (GtkWidget * viewport, GdkEventButton * event, cont
 	if (action -> ctrl_sustain . move (delta)) {action -> action (action -> ctrl_sustain . id, action -> ctrl_sustain . angle); redraw = true;}
 	if (action -> ctrl_release . move (delta)) {action -> action (action -> ctrl_release . id, action -> ctrl_release . angle); redraw = true;}
 	if (action -> ctrl_freq . move (delta)) {action -> action (action -> ctrl_freq . id, action -> ctrl_freq . angle); redraw = true;}
-	if (action -> ctrl_drywet . move (delta)) {action -> action (action -> ctrl_drywet . id, action -> ctrl_drywet . angle - 0.5); redraw = true;}
-	if (action -> ctrl_pan . move (delta)) {action -> action (action -> ctrl_pan . id, action -> ctrl_pan . angle - 0.5); redraw = true;}
+	if (action -> ctrl_drywet . move (delta)) {action -> action (action -> ctrl_drywet . id, action -> ctrl_drywet . angle); redraw = true;}
+	if (action -> ctrl_pan . move (delta)) {action -> action (action -> ctrl_pan . id, action -> ctrl_pan . angle); redraw = true;}
 	if (action -> ctrl_porta . move (delta)) {action -> action (action -> ctrl_porta . id, action -> ctrl_porta . angle); redraw = true;}
 	if (action -> ctrl_speed . move (delta)) {action -> action (action -> ctrl_speed . id, action -> ctrl_speed . angle); redraw = true;}
 	if (action -> ctrl_vibrato . move (delta)) {action -> action (action -> ctrl_vibrato . id, action -> ctrl_vibrato . angle); redraw = true;}
@@ -622,7 +622,7 @@ static gint ControlPanelMove (GtkWidget * viewport, GdkEventButton * event, cont
 		redraw = true;
 	}
 	if (action -> encoder . move (delta)) {action -> value_change_action ((int) action -> encoder . increment); redraw = true;}
-	if (action -> pitch . move (delta)) {action -> action (action -> pitch . id, action -> pitch . position - 0.5); redraw = true;}
+	if (action -> pitch . move (delta)) {action -> action (action -> pitch . id, action -> pitch . position); redraw = true;}
 	if (action -> modulation . move (delta)) {action -> action (action -> modulation . id, action -> modulation . position); redraw = true;}
 	if (redraw) gtk_widget_queue_draw (viewport);
 	return TRUE;

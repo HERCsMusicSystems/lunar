@@ -177,7 +177,7 @@ midi_code :: midi_code (PrologRoot * root, PrologDirectory * directory, PrologAt
 	this -> callback = callback;
 	if (callback != 0) {COLLECTOR_REFERENCE_INC (callback);}
 	fd = open (location, O_RDONLY | O_NONBLOCK);
-	if (fd < 0) {printf ("no MIDI\n"); return;}
+	if (fd < 0) return;
 	pthread_create (& thread, 0, midi_runner, this);
 	pthread_detach (thread);
 }

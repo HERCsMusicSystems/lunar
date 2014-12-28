@@ -421,7 +421,7 @@ public:
 		CommandModule * trigger = (CommandModule *) module;
 		if (atom != 0) {
 			if (atom -> isEarth ()) {
-				if (key != 0) return trigger -> insert_controller (0, key -> getInteger ());
+				if (key != 0) return trigger -> insert_controller (0, key -> getInteger (), 0);
 				return trigger -> set_map (0);
 			}
 			if (atom -> isAtom ()) {
@@ -462,7 +462,8 @@ public:
 					return trigger -> insert_trigger ((lunar_trigger *) ((trigger_native_orbiter *) machine) -> module);
 				}
 				if (machine -> isTypeOf (PrologNativeOrbiter :: name ()) && key != 0) {
-					return trigger -> insert_controller ((orbiter *) ((PrologNativeOrbiter *) machine) -> module, key -> getInteger ());
+					return trigger -> insert_controller ((orbiter *) ((PrologNativeOrbiter *) machine) -> module,
+														key -> getInteger (), velocity != 0 ? velocity -> getInteger () : 0);
 				}
 			}
 		}

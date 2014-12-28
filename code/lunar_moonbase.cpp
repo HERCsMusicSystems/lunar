@@ -42,11 +42,12 @@ bool moonbase :: insert_trigger (lunar_trigger * trigger) {
 	trigger -> hold ();
 	return true;
 }
-bool moonbase :: insert_controller (orbiter * controller, int location) {
+bool moonbase :: insert_controller (orbiter * controller, int location, int shift) {
 	if (location < 0 || location > 128) return false;
 	if (controller != 0 && controller -> numberOfInputs () < 1) return false;
 	if (controllers [location] != 0) controllers [location] -> release ();
 	controllers [location] = controller;
+	shifts [location] = shift;
 	if (controller != 0) controller -> hold ();
 	return true;
 }
@@ -119,7 +120,7 @@ bool moonbase :: isMonoMode (void) {return mono_mode;}
 void moonbase :: control (int ctrl, int value) {
 	if (ctrl < 0 || ctrl > 128) return;
 	if (controllers [ctrl] != 0) {
-		* (controllers [ctrl] -> inputAddress (0)) = (double) ((value << 7) + ctrl_lsbs [ctrl]);
+		* (controllers [ctrl] -> inputAddress (0)) = (double) (((value + shifts [ctrl]) << 7) + ctrl_lsbs [ctrl]);
 		ctrl_lsbs [ctrl] = 0;
 	} else if (ctrl > 31) ctrl_lsbs [ctrl - 32] = value;
 	if (ctrl == 126) mono ();
@@ -127,9 +128,10 @@ void moonbase :: control (int ctrl, int value) {
 }
 double moonbase :: getControl (int ctrl) {
 	if (ctrl < 0 || ctrl > 128) return 0.0;
-	if (controllers [ctrl] != 0) return * (controllers [ctrl] -> outputAddress (0));
+	if (controllers [ctrl] != 0) return * (controllers [ctrl] -> outputAddress (0)) - (double) shifts [ctrl] * 128.0;
 	if (ctrl == 126) return mono_mode ? 1.0 : 0.0;
 	if (ctrl == 127) return mono_mode ? 0.0 : 1.0;
+	if (ctrl == 128) return 8192.0;
 	return 0.0;
 }
 void moonbase :: timing_clock (void) {}
@@ -149,7 +151,7 @@ bool moonbase :: release (void) {
 moonbase :: moonbase (orbiter_core * core) : CommandModule (core) {
 	pthread_mutex_init (& critical, 0);
 	map = 0; choice = triggers = 0; mono_mode = false; signal = 1.0; base_key = 64; previous_key = -1; key_counter = 0;
-	for (int ind = 0; ind < 129; ind++) {controllers [ind] = 0; ctrl_lsbs [ind] = 0;}
+	for (int ind = 0; ind < 129; ind++) {controllers [ind] = 0; ctrl_lsbs [ind] = 0; shifts [ind] = 0;}
 	initialise ();
 }
 
@@ -602,8 +604,8 @@ bool arpeggiator :: insert_trigger (lunar_trigger * trigger) {
 	if (base != 0) return base -> insert_trigger (trigger);
 	return false;
 }
-bool arpeggiator :: insert_controller (orbiter * controller, int location) {
-	if (base != 0) return base -> insert_controller (controller, location);
+bool arpeggiator :: insert_controller (orbiter * controller, int location, int shift) {
+	if (base != 0) return base -> insert_controller (controller, location, shift);
 	return false;
 }
 void arpeggiator :: keyon (int key) {

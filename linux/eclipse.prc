@@ -66,7 +66,7 @@ program eclipse [
 [[cb *ret 7 *v] [cb_callback : *callback] [*callback control 7 *v] [add *ret "Volume = " *v]]
 [[cb *ret 11 *v] [cb_callback : *callback] [*callback control 11 *v] [add *ret "Porta = " *v]]
 [[cb *ret 65 *v] [cb_callback : *callback] [*callback control 65 *v] [add *ret "Porta Switch = " *v]]
-[[cb *ret 95 *v] [cb_callback : *callback] [*callback control 95 *v] [add *ret "Speed = " *v]]
+[[cb *ret 95 *v] [cb_callback : *callback] [*callback control 95 *v] [- *v 64 *vv] [add *ret "Speed = " *vv]]
 [[cb *ret 71 *v] [cb_callback : *callback] [*callback control 71 *v] [add *ret "Vibrato = " *v]]
 [[cb *ret 128 *v] [cb_callback : *callback] [*callback control 128 *v] [- *v 64 *vv] [add *ret "Pitch = " *vv]]
 [[cb *ret 1 *v] [cb_callback : *callback] [*callback control 1 *v] [add *ret "Modulation = " *v]]
@@ -203,7 +203,7 @@ program eclipse [
 	[InsertController 13 -64 *Phobos core Y]
 	[InsertController 74 -64 *Phobos core freq]
 	[InsertController 91 -64 *Phobos core balance]
-	[InsertController 95 *Phobos lfo 1 speed]
+	[InsertController 95 -64 *Phobos lfo 1 speed]
 ]
 
 

@@ -129,10 +129,16 @@ void moonbase :: control (int ctrl, int value) {
 double moonbase :: getControl (int ctrl) {
 	if (ctrl < 0 || ctrl > 128) return 0.0;
 	if (controllers [ctrl] != 0) return * (controllers [ctrl] -> outputAddress (0)) - (double) shifts [ctrl] * 128.0;
-	if (ctrl == 126) return mono_mode ? 1.0 : 0.0;
-	if (ctrl == 127) return mono_mode ? 0.0 : 1.0;
-	if (ctrl == 128) return 8192.0;
-	return 0.0;
+	switch (ctrl) {
+	case 0: return 0.0; break;
+	case 1: return 0.0; break;
+	case 7: return 12800.0; break;
+	case 126: return mono_mode ? 1.0 : 0.0; break;
+	case 127: return mono_mode ? 0.0 : 1.0; break;
+	case 128: return 8192.0; break;
+	default: break;
+	}
+	return 8192.0;
 }
 void moonbase :: timing_clock (void) {}
 bool moonbase :: release (void) {

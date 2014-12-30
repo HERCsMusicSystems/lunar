@@ -187,7 +187,7 @@ program eclipse [
 	[Insert *lfo1 *Phobos lfo 1]
 	[Insert *lfo2 *Phobos lfo 2]
 
-	[BuildPhobosPart *Phobos *moonbase *pan *lfosens1]
+	[BuildPhobosPart *Phobos *moonbase *pan *lfosens1 *lfosens2 *lfosens3 *lfosens4]
 
 	[Insert *lfo1_ctrl *Phobos sensitivity lfo 1 vibrato]
 	[Insert *lfo1mod *Phobos sensitivity lfo 1 modulation]
@@ -204,6 +204,10 @@ program eclipse [
 	[InsertController 74 -64 *Phobos core freq]
 	[InsertController 91 -64 *Phobos core balance]
 	[InsertController 95 -64 *Phobos lfo 1 speed]
+	[InsertController 73 *Phobos adsr attack]
+	[InsertController 93 *Phobos adsr decay]
+	[InsertController 94 -128 *Phobos adsr sustain]
+	[InsertController 72 *Phobos adsr release]
 ]
 
 
@@ -242,23 +246,31 @@ program eclipse [
 	[addcl [[Moons *Phobos]]]
 ]
 
-[[BuildPhobosPart *Phobos *PhobosCB *mixer *lfosens1]
+[[BuildPhobosPart *Phobos *PhobosCB *mixer *lfosens1 *lfosens2 *lfosens3 *lfosens4]
 	[trigger *trigger]
 	[fm4 *op]
 	[adsr *adsr]
 	[amplifier *dca]
 	[parameter_block *trigger_delay 0]
 	[sensitivity *freq1] [sensitivity *freq2] [sensitivity *freq3] [sensitivity *freq4]
+	[eg *ampeg1] [eg *ampeg2] [eg *ampeg3] [eg *ampeg4]
+	[eg *freqeg] [gateway *freqeg1] [gateway *freqeg2] [gateway *freqeg3] [gateway *freqeg4]
 
 	[*PhobosCB *trigger]
 	[*trigger_delay "signal" *trigger "trigger"]
 	[*adsr "trigger" *trigger_delay]
+	[*freqeg "trigger" *trigger_delay]
+	[*ampeg1 "trigger" *trigger_delay] [*ampeg2 "trigger" *trigger_delay] [*ampeg3 "trigger" *trigger_delay] [*ampeg4 "trigger" *trigger_delay]
 	[*trigger "busy" *adsr "busy"]
 
 	[*freq1 "signal" *trigger "key"] [*freq2 "signal" *trigger "key"] [*freq3 "signal" *trigger "key"] [*freq4 "signal" *trigger "key"]
 	[*op "trigger" *trigger_delay]
 	[*op "freq1" *freq1] [*op "freq2" *freq2] [*op "freq3" *freq3] [*op "freq4" *freq4]
-	[*op "freq1" *lfosens1]
+	[*op "freq1" *lfosens1] [*op "freq2" *lfosens2] [*op "freq3" *lfosens3] [*op "freq4" *lfosens4]
+
+	[*freqeg1 *freqeg] [*freqeg2 *freqeg] [*freqeg3 *freqeg] [*freqeg4 *freqeg]
+	[*op "freq1" *freqeg1] [*op "freq2" *freqeg2] [*op "freq3" *freqeg3] [*op "freq4" *freqeg4]
+	[*op "amp1" *ampeg1] [*op "amp2" *ampeg2] [*op "amp3" *ampeg3] [*op "amp4" *ampeg4]
 
 	[*dca *op]
 	[*dca "gateway" *adsr]
@@ -269,6 +281,15 @@ program eclipse [
 	[Insert *freq2 *Phobos operator 2 sensitivity freq]
 	[Insert *freq3 *Phobos operator 3 sensitivity freq]
 	[Insert *freq4 *Phobos operator 4 sensitivity freq]
+	[Insert *freqeg *Phobos operator eg freq]
+	[Insert *ampeg1 *Phobos operator 1 eg amp]
+	[Insert *ampeg2 *Phobos operator 2 eg amp]
+	[Insert *ampeg3 *Phobos operator 3 eg amp]
+	[Insert *ampeg4 *Phobos operator 4 eg amp]
+	[Insert *freqeg1 *Phobos operator 1 eg freq]
+	[Insert *freqeg2 *Phobos operator 2 eg freq]
+	[Insert *freqeg3 *Phobos operator 3 eg freq]
+	[Insert *freqeg4 *Phobos operator 4 eg freq]
 	[Insert *adsr *Phobos adsr]
 ]
 
@@ -337,7 +358,6 @@ end := [
 		[var cb_path cb_callback]
 		[oscilloscope radar] [radar 900 540]
 		[BuildPhobos Phobos PhobosCB *phobos_mixer *feed]
-		[PhobosCB control 126 0]
 		[build_Abakos *Abakos_mixer]
 		[CommandCentre commander cb] ;[commander 3000 1060]
 		;[Lunar 4000 Abakos adsr attack]

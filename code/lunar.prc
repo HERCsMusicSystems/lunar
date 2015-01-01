@@ -175,7 +175,6 @@ program lunar #machine := "prolog.lunar"
 
 [[InsertPB *pb *base : *selector]
 	[*base *parameters *modules : *]
-	[addcl [[*modules *pb : *selector]]]
 	[addcl [[*parameters *pb : *selector]]]
 ]
 

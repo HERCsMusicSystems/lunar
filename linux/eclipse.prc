@@ -3,6 +3,7 @@
 
 import studio
 import lunar
+import control
 
 program eclipse [
 					commander cb cb_path cb_callback moon mooncb
@@ -12,6 +13,7 @@ program eclipse [
 					reactor left right radar
 					kb kbcb
 					AT sub mdi mdicb
+					js jcb
 				]
 
 [[AT * *x [*x]]/]
@@ -161,7 +163,10 @@ program eclipse [
 
 	[moonbase *moonbase]
 	[arpeggiator *PhobosCB *moonbase]
-	[parameter_block *X "index"] [parameter_block *Y "index"] [parameter_block *modulation "index"] [parameter_block *freq "index"]
+	[auto_data *XData] [parameter_block *X "index"] [*XData *X]
+	[auto_data *YData] [parameter_block *Y "index"] [*YData *Y]
+	[parameter_block *AutoCtrl "index"] [*XData "control" *AutoCtrl] [*YData "control" *AutoCtrl]
+	[parameter_block *modulation "index"] [parameter_block *freq "index"]
 	[lfo *lfo1] [lfo *lfo2]
 
 	[control *lfo1_ctrl] [gateway *lfo1mod]
@@ -178,16 +183,20 @@ program eclipse [
 	[Insert *volume *Phobos core]
 	[Insert *pan *Phobos core]
 	[Insert *mixer *Phobos core]
-	[Insert *delay *Phobos core]
+	[Insert *delay *Phobos core delay]
 	[InsertPB *X *Phobos core X]
 	[InsertPB *Y *Phobos core Y]
 	[InsertPB *modulation *Phobos core modulation]
 	[InsertPB *freq *Phobos core freq]
+	[InsertPB *AutoCtrl *Phobos core auto]
 	[Insert *PhobosCB *Phobos arpeggiator]
 	[Insert *lfo1 *Phobos lfo 1]
 	[Insert *lfo2 *Phobos lfo 2]
 
-	[BuildPhobosPart *Phobos *moonbase *pan *lfosens1 *lfosens2 *lfosens3 *lfosens4]
+	[BuildPhobosPart *Phobos *moonbase *pan *XData *YData *lfosens1 *lfosens2 *lfosens3 *lfosens4]
+	[BuildPhobosPart *Phobos *moonbase *pan *XData *YData *lfosens1 *lfosens2 *lfosens3 *lfosens4]
+	[BuildPhobosPart *Phobos *moonbase *pan *XData *YData *lfosens1 *lfosens2 *lfosens3 *lfosens4]
+	[BuildPhobosPart *Phobos *moonbase *pan *XData *YData *lfosens1 *lfosens2 *lfosens3 *lfosens4]
 
 	[Insert *lfo1_ctrl *Phobos sensitivity lfo 1 vibrato]
 	[Insert *lfo1mod *Phobos sensitivity lfo 1 modulation]
@@ -211,42 +220,7 @@ program eclipse [
 ]
 
 
-[[BuildPhobosBak *Phobos *PhobosCB *volume *pan]
-	[moonbase *moonbase]
-	[arpeggiator *PhobosCB *moonbase]
-	[Moonbase *Phobos *PhobosCB Phobos]
-	[lfo *lfo] [control *lfo_freq] [*lfo_freq *lfo]
-	[pan *pan]
-	[delay *dsp]
-	[drywet *mixer]
-	[volume *volume]
-	[ConnectStereo *dsp *pan]
-	[ConnectDryWet *mixer *pan *dsp]
-	[ConnectStereo *volume *mixer]
-
-	[Insert *moonbase *Phobos]
-	[Insert *PhobosCB *Phobos arpeggiator]
-	[Insert *pan *Phobos moonbase]
-	[Insert *dsp *Phobos moonbase]
-	[Insert *mixer *Phobos moonbase]
-	[Insert *volume *Phobos moonbase]
-	[Insert *lfo *Phobos lfo]
-
-	[BuildPhobosPartBak *Phobos *moonbase *pan *lfo_freq]
-
-	[InsertController 7 *Phobos moonbase volume]
-	[InsertController 10 *Phobos moonbase pan]
-	[InsertController 91 *Phobos moonbase balance]
-	[InsertController 73 *Phobos adsr attack]
-	[InsertController 93 *Phobos adsr decay]
-	[InsertController 94 *Phobos adsr sustain]
-	[InsertController 72 *Phobos adsr release]
-	[InsertController 1 *Phobos lfo freq]
-
-	[addcl [[Moons *Phobos]]]
-]
-
-[[BuildPhobosPart *Phobos *PhobosCB *mixer *lfosens1 *lfosens2 *lfosens3 *lfosens4]
+[[BuildPhobosPart *Phobos *PhobosCB *mixer *X *Y *lfosens1 *lfosens2 *lfosens3 *lfosens4]
 	[trigger *trigger]
 	[fm4 *op]
 	[adsr *adsr]
@@ -259,7 +233,7 @@ program eclipse [
 	[*PhobosCB *trigger]
 	[*trigger_delay "signal" *trigger "trigger"]
 	[*adsr "trigger" *trigger_delay]
-	[*freqeg "trigger" *trigger_delay]
+	[*freqeg "trigger" *trigger]
 	[*ampeg1 "trigger" *trigger_delay] [*ampeg2 "trigger" *trigger_delay] [*ampeg3 "trigger" *trigger_delay] [*ampeg4 "trigger" *trigger_delay]
 	[*trigger "busy" *adsr "busy"]
 
@@ -267,6 +241,14 @@ program eclipse [
 	[*op "trigger" *trigger_delay]
 	[*op "freq1" *freq1] [*op "freq2" *freq2] [*op "freq3" *freq3] [*op "freq4" *freq4]
 	[*op "freq1" *lfosens1] [*op "freq2" *lfosens2] [*op "freq3" *lfosens3] [*op "freq4" *lfosens4]
+
+	[auto *vectorX *X] [*vectorX "trigger" *trigger "trigger"] [*X "trigger" *trigger "trigger"]
+	[sensitivity *Xsa1] [sensitivity *Xsa2] [sensitivity *Xsa3] [sensitivity *Xsa4]
+	[sensitivity *Ysa1] [sensitivity *Ysa2] [sensitivity *Ysa3] [sensitivity *Ysa4]
+	[*Xsa1 *vectorX] [*Xsa2 *vectorX] [*Xsa3 *vectorX] [*Xsa4 *vectorX]
+	[*Ysa1 *vectorY] [*Ysa2 *vectorY] [*Ysa3 *vectorY] [*Ysa4 *vectorY]
+	[*op "amp1" *Xsa1] [*op "amp2" *Xsa2] [*op "amp3" *Xsa3] [*op "amp4" *Xsa4]
+	[*op "amp1" *Ysa1] [*op "amp2" *Ysa2] [*op "amp3" *Ysa3] [*op "amp4" *Ysa4]
 
 	[*freqeg1 *freqeg] [*freqeg2 *freqeg] [*freqeg3 *freqeg] [*freqeg4 *freqeg]
 	[*op "freq1" *freqeg1] [*op "freq2" *freqeg2] [*op "freq3" *freqeg3] [*op "freq4" *freqeg4]
@@ -277,10 +259,18 @@ program eclipse [
 	[*mixer *dca]
 
 	[Insert *op *Phobos operator]
-	[Insert *freq1 *Phobos operator 1 sensitivity freq]
-	[Insert *freq2 *Phobos operator 2 sensitivity freq]
-	[Insert *freq3 *Phobos operator 3 sensitivity freq]
-	[Insert *freq4 *Phobos operator 4 sensitivity freq]
+	[Insert *freq1 *Phobos sensitivity freq 1]
+	[Insert *freq2 *Phobos sensitivity freq 2]
+	[Insert *freq3 *Phobos sensitivity freq 3]
+	[Insert *freq4 *Phobos sensitivity freq 4]
+	[Insert *Xsa1 *Phobos sensitivity amp 1 X]
+	[Insert *Xsa2 *Phobos sensitivity amp 2 X]
+	[Insert *Xsa3 *Phobos sensitivity amp 3 X]
+	[Insert *Xsa4 *Phobos sensitivity amp 4 X]
+	[Insert *Ysa1 *Phobos sensitivity amp 1 Y]
+	[Insert *Ysa2 *Phobos sensitivity amp 2 Y]
+	[Insert *Ysa3 *Phobos sensitivity amp 3 Y]
+	[Insert *Ysa4 *Phobos sensitivity amp 4 Y]
 	[Insert *freqeg *Phobos operator eg freq]
 	[Insert *ampeg1 *Phobos operator 1 eg amp]
 	[Insert *ampeg2 *Phobos operator 2 eg amp]
@@ -291,17 +281,9 @@ program eclipse [
 	[Insert *freqeg3 *Phobos operator 3 eg freq]
 	[Insert *freqeg4 *Phobos operator 4 eg freq]
 	[Insert *adsr *Phobos adsr]
-]
 
-[[BuildPhobosPartBak *Phobos *PhobosCB *mixer *lfo_freq]
-	[gateway *lfo_gate1]
-
-	[*op "freq1" *freq1] [*op "freq1" *lfo_gate1] [*lfo_gate1 *lfo_freq]
-
-	[Insert *trigger *Phobos portamento]
-	[AddModule *dca *Phobos adsr]
-	[AddModule *trigger_delay *Phobos]
-	[Insert *lfo_gate1 *Phobos lfo sensitivity]
+	[AddModule *vectorX *Phobos]
+	[AddModule *vectorY *Phobos]
 ]
 
 [[build_Abakos *drywet]
@@ -353,6 +335,10 @@ program eclipse [
 	[show [PhobosCB *command : *t]]
 	[PhobosCB *command : *t]
 ]
+[[jcb 1.0 *v]
+	[times *v -64.0 *vv] [add *vv 64.0 *vvv] [trunc *vvv *vvvv]
+	[PhobosCB control 12 *vvvv]
+]
 
 end := [
 		[var cb_path cb_callback]
@@ -366,13 +352,14 @@ end := [
 		;[Lunar 1 Abakos arpeggiator hold]
 		;[Lunar 9 Abakos arpeggiator algo]
 		[TRY [midi mdi mdicb]]
-		;[core reactor 330 22050 2048]
+		[TRY [joystick js jcb]]
+		[core reactor 330 22050 2048] [ConnectStereo reactor *phobos_mixer]
 		;[ConnectStereo reactor *Abakos_mixer]
-		;[ConnectStereo reactor *phobos_mixer]
 		[radar *feed]
 		/ [command] /
 		[TRY [mdi]]
+		[TRY [js]]
 		[Moonbase Phobos]
-		;[Moonbase Abakos]
+		[Moonbase Abakos]
 		] .
 

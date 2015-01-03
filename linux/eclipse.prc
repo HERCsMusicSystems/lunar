@@ -10,10 +10,11 @@ program eclipse [
 					Phobos PhobosCB BuildPhobos BuildPhobosPart BuildPhobosBak BuildPhobosPartBak
 					paths modules adjacent next_path previous_path next_module previous_module
 					build_Abakos build_Abakos_part Abakos Abakoscb
-					reactor left right radar
+					reactor left_radar right_radar radar
 					kb kbcb
 					AT sub mdi mdicb
 					js jcb
+					MM audio phobos_mixer abakos_mixer
 				]
 
 [[AT * *x [*x]]/]
@@ -140,6 +141,7 @@ program eclipse [
 	[isallr *y *x [Moons *x]]
 	[AT *i1 *moon *y]
 	[text_term *program *moon]
+	[cb_path [*moon]]
 	[*moon * * *moon_callback : *]
 	[cb_callback *moon_callback]
 ]
@@ -152,6 +154,7 @@ program eclipse [
 	[text_term *pather [*moon : *path]]
 	[*parameters *pb : *path] [*pb : *v]
 	[add *program *pather " = " *v]
+	[show [*moon : *path]]
 	[cb_path [*moon : *path]]
 	[*moon * * *moon_callback : *]
 	[cb_callback *moon_callback]
@@ -205,6 +208,9 @@ program eclipse [
 	[Insert *lfosens3 *Phobos sensitivity lfo 1 freq 3]
 	[Insert *lfosens4 *Phobos sensitivity lfo 1 freq 4]
 
+	[InsertBlock *XData *Phobos vector X]
+	[InsertBlock *YData *Phobos vector Y]
+
 	[InsertController 1 *Phobos core modulation]
 	[InsertController 7 *Phobos core volume]
 	[InsertController 10 -64 *Phobos core pan]
@@ -243,6 +249,7 @@ program eclipse [
 	[*op "freq1" *lfosens1] [*op "freq2" *lfosens2] [*op "freq3" *lfosens3] [*op "freq4" *lfosens4]
 
 	[auto *vectorX *X] [*vectorX "trigger" *trigger "trigger"] [*X "trigger" *trigger "trigger"]
+	[auto *vectorY *Y] [*vectorY "trigger" *trigger "trigger"] [*Y "trigger" *trigger "trigger"]
 	[sensitivity *Xsa1] [sensitivity *Xsa2] [sensitivity *Xsa3] [sensitivity *Xsa4]
 	[sensitivity *Ysa1] [sensitivity *Ysa2] [sensitivity *Ysa3] [sensitivity *Ysa4]
 	[*Xsa1 *vectorX] [*Xsa2 *vectorX] [*Xsa3 *vectorX] [*Xsa4 *vectorX]
@@ -335,16 +342,33 @@ program eclipse [
 	[show [PhobosCB *command : *t]]
 	[PhobosCB *command : *t]
 ]
+
+[[jcb 0.0 *v]
+	[times *v 64.0 *vv] [add *vv 64.0 *vvv] [trunc *vvv *vvvv]
+	[PhobosCB control 12 *vvvv]
+]
+
 [[jcb 1.0 *v]
 	[times *v -64.0 *vv] [add *vv 64.0 *vvv] [trunc *vvv *vvvv]
-	[PhobosCB control 12 *vvvv]
+	[PhobosCB control 13 *vvvv]
+]
+
+[[audio] [core reactor 330 22050 2048] [ConnectStereo reactor phobos_mixer] [ConnectStereo reactor abakos_mixer]]
+
+[[MM *base]
+	[*base *parameters *modules *callback : *]
+	[delallcl *base]
+	[TRY [*parameters *parameter : *selector] [*parameter] fail]
+	[TRY [*modules *module : *selector] [show *selector *module] [*module []] [*module] fail]
+	[delallcl *parameters]
+	[delallcl *modules]
 ]
 
 end := [
 		[var cb_path cb_callback]
 		[oscilloscope radar] [radar 900 540]
-		[BuildPhobos Phobos PhobosCB *phobos_mixer *feed]
-		[build_Abakos *Abakos_mixer]
+		[BuildPhobos Phobos PhobosCB phobos_mixer *feed]
+		[build_Abakos abakos_mixer]
 		[CommandCentre commander cb] ;[commander 3000 1060]
 		;[Lunar 4000 Abakos adsr attack]
 		;[Lunar 4000 Abakos adsr release]
@@ -353,9 +377,8 @@ end := [
 		;[Lunar 9 Abakos arpeggiator algo]
 		[TRY [midi mdi mdicb]]
 		[TRY [joystick js jcb]]
-		[core reactor 330 22050 2048] [ConnectStereo reactor *phobos_mixer]
-		;[ConnectStereo reactor *Abakos_mixer]
 		[radar *feed]
+		[audio]
 		/ [command] /
 		[TRY [mdi]]
 		[TRY [js]]

@@ -47,6 +47,7 @@ public:
 			case 4: sprintf (command, "%i sec.", (int) pb -> signal); break;
 			case 5: if (pb -> signal == 0) sprintf (command, "off"); else sprintf (command, "on"); break;
 			case 6: sprintf (command, "wave [%i]", (int) pb -> signal); break;
+			case 7: sprintf (command, "* %g", pb -> signal); break;
 			default: sprintf (command, "??"); break;
 			}
 			parameters -> setText (command);
@@ -65,6 +66,7 @@ static int toStyle (char * name) {
 	if (strcasecmp (name, "time") == 0) return 4;
 	if (strcasecmp (name, "onoff") == 0) return 5;
 	if (strcasecmp (name, "wave") == 0) return 6;
+	if (strcasecmp (name, "ratio") == 0) return 7;
 	return 0;
 }
 

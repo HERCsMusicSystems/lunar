@@ -21,7 +21,7 @@ program lunar #machine := "prolog.lunar"
 				Lunar Lander Activate Deactivate
 				Connect ConnectStereo ConnectDryWet Disconnect DisconnectStereo DisconnectDryWet
 				AddParameterBlock AddNamedParameterBlock
-				Moonbase AddModule Insert InsertPB InsertController InsertIO Store Restore SubRestore Moons
+				Moonbase AddModule Insert InsertPB InsertController InsertIO InsertBlock Store Restore SubRestore Moons
 				Cbb Cb C C# Cx
 				Dbb Db D D# Dx
 				Ebb Eb E E# Ex
@@ -116,8 +116,8 @@ program lunar #machine := "prolog.lunar"
 ]
 
 [[Moonbase *base *distributor *type]
-	[create_atom *modules] [create_atom *parameters]
-	[addcl [[*base *parameters *modules *distributor *type]]]
+	[create_atom *modules] [create_atom *parameters] [create_atom *blocks]
+	[addcl [[*base *parameters *modules *distributor *type *blocks]]]
 ]
 
 [[Moonbase *base]
@@ -176,6 +176,11 @@ program lunar #machine := "prolog.lunar"
 [[InsertPB *pb *base : *selector]
 	[*base *parameters *modules : *]
 	[addcl [[*parameters *pb : *selector]]]
+]
+
+[[InsertBlock *block *base : *selector]
+	[*base *parameters *modules *callback *type *blocks : *]
+	[addcl [[*blocks *block : *selector]]]
 ]
 
 [[Insert *operator *base : *selector]
@@ -336,7 +341,7 @@ program lunar #machine := "prolog.lunar"
 ]
 
 [[Store *moonbase *file_name]
-	[*moonbase *parameters *modules *cb *type : *]
+	[*moonbase *parameters *modules *cb *type *blocks : *]
 	[file_writer *tc *file_name]
 	[*tc [*type] "\n"]
 	[*cb control : *mono] [*tc [*mono] "\n"] [show *mono]
@@ -347,6 +352,14 @@ program lunar #machine := "prolog.lunar"
 		[*tc [*selector] [*x] "\n"]
 		fail
 	]
+	[list *blocks]
+	[TRY
+		[*blocks *block : *selector]
+		[*block *x]
+		[*tc [*selector] [*x] "\n"]
+		fail
+	]
+	[*tc "\n"]
 	[*tc]
 ]
 
@@ -368,9 +381,11 @@ program lunar #machine := "prolog.lunar"
 
 [[SubRestore *moonbase *fr]
 	[*fr *one] [*fr *two]
-	[show *one " => " *two]
-	[show [Lunar *two *moonbase : *one]]
-	[Lunar *two *moonbase : *one]
+	[show *one " => " *two] /
+	[SELECT
+		[[is_number *two] [Lunar *two *moonbase : *one]]
+		[[*moonbase *parameters *modules *cb *type *blocks] [*blocks *block : *one] [*block : *two]]
+	]
 	/ [SubRestore *moonbase *fr]
 ]
 [[SubRestore : *]]

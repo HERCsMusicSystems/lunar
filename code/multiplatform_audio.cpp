@@ -1,6 +1,7 @@
 
 #include "multiplatform_audio.h"
 #include <stdio.h>
+#include <string.h>
 
 void AudioBuffers :: insertStereo (double left, double right) {}
 void AudioBuffers :: insertMono (double value) {}
@@ -61,7 +62,13 @@ static int get_sample_16 (FILE * file) {
 
 static FILE * output_file = NULL;
 static int record_frames = 0;
+static int recorded_frames = 0;
+static bool stop_recording = false;
+class audio_dx_stereo_buffers;
+static audio_dx_stereo_buffers * record_root = 0;
+static audio_dx_stereo_buffers * record_current = 0;
 static int record_sampling_freq = 127;
+static char output_file_name [1024] = "";
 static void insert_long (FILE * tc, int ind) {
 	fputc (ind & 0xff, tc);
 	ind >>= 8;
@@ -76,24 +83,15 @@ static void insert_short (FILE * tc, int ind) {
 	ind >>= 8;
 	fputc (ind & 0xff, tc);
 }
-void MultiplatformAudio :: selectOutputFile (int seconds, char * file_name) {
-	if (* file_name == '\0') return;
-	output_file = fopen (file_name, "wb");
-	if (output_file == NULL) return;
-	record_frames = seconds * record_sampling_freq;
-	fprintf (output_file, "RIFF");
-	insert_long (output_file, 36 + (record_frames << 2));
-	fprintf (output_file, "WAVEfmt ");
-	insert_long (output_file, 16);
-	insert_short (output_file, 1);                          // some kind of tag = 1
-	insert_short (output_file, 2);                          // channels (stereo)
-	insert_long (output_file, record_sampling_freq);        // samples per second
-	insert_long (output_file, record_sampling_freq << 2);   // bytes per second
-	insert_short (output_file, 4);                          // bytes per sample
-	insert_short (output_file, 16);                         // bits per sample
-	fprintf (output_file, "data");
-	insert_long (output_file, record_frames << 2);
+void MultiplatformAudio :: selectOutputFile (double seconds, char * file_name) {
+	if (record_frames > 0) {printf ("currently recording....\n"); return;}
+	strcpy (output_file_name, file_name);
+	record_frames = (int) (seconds * (double) record_sampling_freq);
+	recorded_frames = 0;
+	stop_recording = false;
+	printf ("%s for %i frames (%i %i).\n", file_name, record_frames, (int) seconds, record_sampling_freq);
 }
+void MultiplatformAudio :: stopRecording (void) {printf ("stopping record....\n"); stop_recording = true;}
 
 bool MultiplatformAudio :: inputFileActive (void) {return input_file != NULL;}
 bool MultiplatformAudio :: outputFileActive (void) {return output_file != NULL;}
@@ -101,7 +99,29 @@ bool MultiplatformAudio :: outputFileActive (void) {return output_file != NULL;}
 class audio_dx_stereo_buffers : public AudioBuffers {
 public:
 	short int * from;
-	audio_dx_stereo_buffers (short int * from) {this -> from = from;}
+	audio_dx_stereo_buffers * next;
+	int size;
+	audio_dx_stereo_buffers (short int * from) {this -> from = from; next = 0; size = -1;}
+	audio_dx_stereo_buffers (int size) {this -> size = size + size; this -> from = new short int [this -> size]; next = 0;}
+	audio_dx_stereo_buffers (short int * data, int size) {
+		size += size;
+		this -> size = size;
+		this -> from = new short int [size];
+		next = 0;
+		for (int ind = 0; ind < size; ind++) from [ind] = data [ind];
+	}
+	void drop_to_file (FILE * tc) {
+		if (tc == 0) return;
+		for (int ind = 0; ind < size; ind++) {
+			short int value = from [ind];
+			fputc (value & 0xff, tc);
+			fputc (value >> 8, tc);
+		}
+	}
+	~ audio_dx_stereo_buffers (void) {
+		//if (size >= 0 && from != 0) {printf ("DELETE [%i]\n", size); delete [] from;}
+		if (size >= 0 && from != 0) delete [] from;
+	}
 	virtual void insertStereo (double left, double right) {
 		int out = (int) (left * 32768.0);
 		if (out > 32767) out = 32767; if (out < -32768) out = -32768;
@@ -128,6 +148,63 @@ public:
 	}
 	virtual void * getRawData (void) {return from;}
 };
+
+static void delete_record_root (FILE * tc) {
+	if (record_root == 0) return;
+	audio_dx_stereo_buffers * dx = record_root;
+	while (dx != 0) {
+		audio_dx_stereo_buffers * dd = dx -> next;
+		dx -> drop_to_file (tc);
+		delete dx;
+		dx = dd;
+	}
+	record_root = record_current = 0;
+}
+
+static void * drop_audio_file (void * empty) {
+	printf ("writing audio file [%s]\n", output_file_name);
+	FILE * output_file = fopen (output_file_name, "wb");
+	if (output_file == 0) {delete_record_root (0); return 0;}
+	fprintf (output_file, "RIFF");
+	insert_long (output_file, 36 + (recorded_frames << 2));
+	fprintf (output_file, "WAVEfmt ");
+	insert_long (output_file, 16);
+	insert_short (output_file, 1);
+	insert_short (output_file, 2);
+	insert_long (output_file, record_sampling_freq);
+	insert_long (output_file, record_sampling_freq << 2);
+	insert_short (output_file, 4);
+	insert_short (output_file, 16);
+	fprintf (output_file, "data");
+	insert_long (output_file, recorded_frames << 2);
+
+	delete_record_root (output_file);
+	fclose (output_file);
+	record_frames = recorded_frames = 0;
+	stop_recording = false;
+	return 0;
+}
+
+static void write_file (int seconds, char * file_name) {
+	if (* file_name == '\0') return;
+	output_file = fopen (file_name, "wb");
+	if (output_file == NULL) return;
+	record_frames = seconds * record_sampling_freq;
+	fprintf (output_file, "RIFF");
+	insert_long (output_file, 36 + (record_frames << 2));
+	fprintf (output_file, "WAVEfmt ");
+	insert_long (output_file, 16);
+	insert_short (output_file, 1);                          // some kind of tag = 1
+	insert_short (output_file, 2);                          // channels (stereo)
+	insert_long (output_file, record_sampling_freq);        // samples per second
+	insert_long (output_file, record_sampling_freq << 2);   // bytes per second
+	insert_short (output_file, 4);                          // bytes per sample
+	insert_short (output_file, 16);                         // bits per sample
+	fprintf (output_file, "data");
+	insert_long (output_file, record_frames << 2);
+
+	fclose (output_file);
+}
 
 class audio_dx_mono_buffers : public AudioBuffers {
 public:
@@ -228,6 +305,19 @@ static void * start_pcm (void * parameters) {
 		if (output_callback != NULL) {
 			audio_dx_stereo_buffers buffers (buffer);
 			output_callback (res, & buffers, output_source);
+			if (record_frames > 0) {
+				audio_dx_stereo_buffers * buf = new audio_dx_stereo_buffers (buffer, res);
+				if (record_current != 0) record_current -> next = buf;
+				record_current = buf;
+				if (record_root == 0) record_root = buf;
+				record_frames -= res; recorded_frames += res;
+				//printf ("RES [%i %i %i]\n", record_frames, recorded_frames, res);
+				if (record_frames <= 0 || stop_recording) {
+					pthread_t thread;
+					pthread_create (& thread, 0, drop_audio_file, 0);
+					pthread_detach (thread);
+				}
+			}
 		}
 		res = snd_pcm_writei (output_pcm, buffer, res);
 		if (res < 0) {
@@ -237,6 +327,7 @@ static void * start_pcm (void * parameters) {
 		}
 	}
 	snd_pcm_close (output_pcm);
+	if (record_root != 0) drop_audio_file (0);
 //	printf ("		.... playback stopped!\n");
 	playback_running = true;
 	return 0;
@@ -291,6 +382,7 @@ void MultiplatformAudio :: selectOutputDevice (int ind) {
 }
 
 MultiplatformAudio :: MultiplatformAudio (int channels, int sampling_freq, int latency_samples, void * hwnd) {
+	record_sampling_freq = sampling_freq;
 	pcm_channels = channels;
 	pcm_sampling_freq = sampling_freq;
 	pcm_block_size = latency_samples;

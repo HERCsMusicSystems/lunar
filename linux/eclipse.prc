@@ -160,6 +160,9 @@ program eclipse [
 	[cb_callback *moon_callback]
 ]
 
+[[cb *ret START *file_name] [core *file_name] [add *ret "Recording started " *file_name]]
+[[cb STOP] [core] [show "STOP RECORDING"]]
+
 [[BuildPhobos *Phobos *PhobosCB *volume *pan]
 	[addcl [[Moons *Phobos]]]
 	[Moonbase *Phobos *PhobosCB Phobos]

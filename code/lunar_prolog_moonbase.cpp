@@ -84,9 +84,9 @@ public:
 	}
 };
 
+static MultiplatformAudio * audio = 0;
 class core_action : public PrologNativeOrbiter {
 public:
-	MultiplatformAudio * audio;
 	core_action (PrologAtom * atom, orbiter_core * core) : PrologNativeOrbiter (atom, core, new lunar_core (core)) {
 		printf ("..... creating moonbase\n");
 		cores++;
@@ -109,7 +109,7 @@ public:
 	}
 	~ core_action (void) {
 		printf (".... deleting moonbase\n");
-		delete audio;
+		delete audio; audio = 0;
 		cores--;
 		printf ("Moonbase prolog destroyed.\n");
 	}
@@ -142,7 +142,26 @@ void beta_callback (int frames, AudioBuffers * data, void * source) {
 	pthread_mutex_unlock (& core -> main_mutex);
 }
 
+static bool recorder (PrologElement * parameters) {
+	if (audio == 0) return false;
+	if (parameters -> isEarth ()) {audio -> stopRecording (); return true;}
+	PrologElement * seconds = 0;
+	PrologElement * path = 0;
+	while (parameters -> isPair ()) {
+		PrologElement * el = parameters -> getLeft ();
+		if (el -> isNumber ()) seconds = el;
+		if (el -> isText ()) path = el;
+		parameters = parameters -> getRight ();
+	}
+	if (path == 0) return false;
+	double sec = seconds != 0 ? seconds -> getNumber () : 60.0;
+	if (sec < 0.0) sec = 1.0; if (sec > 3600.0) sec = 3600.0;
+	audio -> selectOutputFile (sec, path -> getText ());
+	return true;
+}
+
 bool core_class :: code (PrologElement * parameters, PrologResolution * resolution) {
+	if (recorder (parameters)) return true;
 	if (cores > 0) return false;
 	PrologElement * atom = 0;
 	double centre_frequency = -1;

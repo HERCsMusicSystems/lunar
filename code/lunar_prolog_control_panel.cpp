@@ -268,6 +268,17 @@ public:
 		}
 		delete query;
 	}
+	void stop_recording_action (void) {
+		PrologAtom * STOP = root -> search ("STOP");
+		if(atom == 0) return;
+		PrologElement * query = root -> pair (root -> atom (command),
+								root -> pair (root -> atom (STOP),
+								root -> earth ()));
+		query = root -> pair (root -> earth (), root -> pair (query, root -> earth ()));
+		root -> resolution (query);
+		delete query;
+		area_cat (display . area, 0, "RECORDING COMPLETED.");
+	}
 	bool remove (bool remove_gtk = true) {
 		if (remove_gtk) g_idle_add ((GSourceFunc) RemoveViewportIdleCode, viewport);
 		delete this;
@@ -501,6 +512,8 @@ static gboolean ControlPanelButtonOn (GtkWidget * viewport, GdkEventKey * event,
 		action -> action (65, action -> porta_on_off . engaged ? 1.0 : 0.0);
 		redraw = true;
 		break;
+	case 47: redraw = file_action ("START", "Record File", viewport, action); break;
+	case 32: action -> stop_recording_action (); redraw = true; break;
 	default: return FALSE;
 	}
 	if (redraw) gtk_widget_queue_draw (viewport);

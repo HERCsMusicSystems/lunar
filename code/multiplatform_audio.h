@@ -51,7 +51,8 @@ public:
 	MultiplatformAudio (int channels, int sampling_freq, int latency_samples, void * hwnd = 0);
 	~ MultiplatformAudio (void);
 	void selectInputFile (char * file_name);
-	void selectOutputFile (int seconds, char * file_name);
+	void selectOutputFile (double seconds, char * file_name);
+	void stopRecording (void);
 	bool inputFileActive (void);
 	bool outputFileActive (void);
 };

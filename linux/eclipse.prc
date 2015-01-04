@@ -247,6 +247,7 @@ program eclipse [
 					]
 	[trigger *trigger]
 	[fm4 *op]
+	[filter *filter]
 	[adsr *adsr]
 	[amplifier *dca]
 	[parameter_block *trigger_delay 0]
@@ -288,7 +289,8 @@ program eclipse [
 	[*key1 "signal" *trigger "key"] [*key2 "signal" *trigger "key"] [*key3 "signal" *trigger "key"] [*key4 "signal" *trigger "key"]
 	[*op "amp1" *key1] [*op "amp2" *key2] [*op "amp3" *key3] [*op "amp4" *key4]
 
-	[*dca *op]
+	[*filter *op]
+	[*dca *filter]
 	[*dca "gateway" *adsr]
 	[*mixer *dca]
 
@@ -322,6 +324,7 @@ program eclipse [
 	[Insert *velocity2 *Phobos sensitivity amp 2 velocity]
 	[Insert *velocity3 *Phobos sensitivity amp 3 velocity]
 	[Insert *velocity4 *Phobos sensitivity amp 4 velocity]
+	[Insert *filter *Phobos filter]
 	[Insert *adsr *Phobos adsr]
 	[Insert *trigger *Phobos portamento]
 

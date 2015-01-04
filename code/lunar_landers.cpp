@@ -392,6 +392,7 @@ void lunar_trigger :: ground_request (void) {
 void lunar_trigger :: keyoff (int key) {
 	pthread_mutex_lock (& critical);
 	request_key = key; request = 1;
+	drop_stack (request_key);
 	if (! active) keyoff_request ();
 	pthread_mutex_unlock (& critical);
 }
@@ -405,10 +406,12 @@ void lunar_trigger :: keyon_velocity_request (void) {
 	if (keystack_pointer < 1) sub_velocity (request_velocity); sub_keyon (request_key);
 }
 void lunar_trigger :: keyoff_request (void) {
-	this -> key = -1; drop_stack (request_key); if (keystack_pointer == 0 && hold_ctrl == 0.0) trigger = 0.0;
+	this -> key = -1;
+	//drop_stack (request_key);
+	if (keystack_pointer == 0 && hold_ctrl == 0.0) trigger = 0.0;
 }
 void lunar_trigger :: keyoff_all_request (void) {
-	this -> key = -1; keystack_pointer = 0; trigger = 0;
+	this -> key = -1; keystack_pointer = 0; trigger = 0.0;
 }
 bool lunar_trigger :: release (void) {
 	lunar_map * to_delete_key_map = key_map;

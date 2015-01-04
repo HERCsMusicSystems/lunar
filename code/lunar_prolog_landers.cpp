@@ -365,7 +365,7 @@ sensitivity_class :: sensitivity_class (orbiter_core * core) : PrologNativeOrbit
 static char * moonbase_action_code = "Moonbase Action";
 class native_moonbase : public PrologNativeOrbiter {
 private:
-	PrologAtom * keyon, * keyoff, * control, * mono, * poly, * timingclock;
+	PrologAtom * keyon, * keyoff, *pitch, * control, * mono, * poly, * timingclock;
 	PrologAtom * cbb, * cb, * c, * cx, * cxx;
 	PrologAtom * dbb, * db, * d, * dx, * dxx;
 	PrologAtom * ebb, * eb, * e, * ex, * exx;
@@ -452,6 +452,17 @@ public:
 					if (var != 0) {var -> setAtom (trigger -> isMonoMode () ? mono : poly); return true;}
 					return false;
 				}
+				if (a == pitch) {
+					if (key != 0 && velocity != 0) {
+						int lsb = key -> getInteger ();
+						int msb = velocity -> getInteger ();
+						if (msb == 127 && lsb == 127) msb = 128;
+						trigger -> control (128, msb);
+						return true;
+					}
+					if (var != 0) {var -> setDouble (trigger -> getControl (128)); return true;}
+					return false;
+				}
 				if (a == mono) {trigger -> mono (); return true;}
 				if (a == poly) {trigger -> poly (); return true;}
 				if (a == timingclock) {trigger -> timing_clock (); return true;}
@@ -472,7 +483,7 @@ public:
 		return PrologNativeOrbiter :: code (parameters, resolution);
 	}
 	native_moonbase (PrologDirectory * dir, PrologAtom * atom, orbiter_core * core, orbiter * module) : PrologNativeOrbiter (atom, core, module) {
-		keyon = keyoff = control = mono = poly = timingclock = 0;
+		keyon = keyoff = pitch = control = mono = poly = timingclock = 0;
 		cbb = cb = c = cx = cxx = 0;
 		dbb = db = d = dx = dxx = 0;
 		ebb = eb = e = ex = exx = 0;
@@ -483,6 +494,7 @@ public:
 		if (dir == 0) return;
 		keyon = dir -> searchAtom ("keyon");
 		keyoff = dir -> searchAtom ("keyoff");
+		pitch = dir -> searchAtom ("pitch");
 		control = dir -> searchAtom ("control");
 		mono = dir -> searchAtom ("mono");
 		poly = dir -> searchAtom ("poly");

@@ -15,7 +15,7 @@ program lunar #machine := "prolog.lunar"
 				level1 level2 level3 level4 time1 time2 time3 time4 attack decay sustain release
 				signal freq amp ratio sync resonance hold busy portamento porta  legato time speed wave pulse phase poly feedback highdamp
 				mono left right mic mic_left mic_right breakpoint algo key_ratio
-				keyon keyoff polyaftertouch control programchange aftertouch pitch
+				key velocity keyon keyoff polyaftertouch control programchange aftertouch pitch
 				sysex timingclock START CONTINUE STOP activesensing
 				division active
 				Lunar Lander Activate Deactivate
@@ -258,8 +258,8 @@ program lunar #machine := "prolog.lunar"
 ]
 
 [[InsertIO *parameters *delay *selector [["LEFT" "RIGHT" "FEEDBACK" "TIME" "HIGHDAMP"] ["LEFT" "RIGHT"]]]
-	[AddParameterBlock *parameters feedback *delay *selector 0 "index"]
-	[AddParameterBlock *parameters time *delay *selector 0 "time"]
+	[AddParameterBlock *parameters feedback *delay *selector 8192 "index"]
+	[AddParameterBlock *parameters time *delay *selector 8192 "time"]
 	[AddParameterBlock *parameters highdamp *delay *selector 0 "index"]
 ]
 

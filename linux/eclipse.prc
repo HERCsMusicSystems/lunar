@@ -172,14 +172,16 @@ program eclipse [
 	[auto_data *XData] [parameter_block *X "index"] [*XData *X]
 	[auto_data *YData] [parameter_block *Y "index"] [*YData *Y]
 	[parameter_block *AutoCtrl "index"] [*XData "control" *AutoCtrl] [*YData "control" *AutoCtrl]
-	[parameter_block *modulation "index"] [parameter_block *freq "index"]
+	[parameter_block *pitch "index"] [parameter_block *modulation "index"] [parameter_block *freq "index"]
 	[lfo *lfo1] [lfo *lfo2]
 
 	[control *lfo1_ctrl] [gateway *lfo1mod]
 	[gateway *lfosens1] [gateway *lfosens2] [gateway *lfosens3] [gateway *lfosens4]
+	[gateway *pitch_ctrl1] [gateway *pitch_ctrl2] [gateway *pitch_ctrl3] [gateway *pitch_ctrl4]
 
 	[*lfo1_ctrl *lfo1] [*lfo1mod *modulation] [*lfo1_ctrl "gateway" *lfo1mod]
 	[*lfosens1 *lfo1_ctrl] [*lfosens2 *lfo1_ctrl] [*lfosens3 *lfo1_ctrl] [*lfosens4 *lfo1_ctrl]
+	[*pitch_ctrl1 *pitch] [*pitch_ctrl2 *pitch] [*pitch_ctrl3 *pitch] [*pitch_ctrl4 *pitch]
 
 	[pan *pan] [delay *delay] [drywet *mixer] [volume *volume]
 	[ConnectStereo *delay *pan]
@@ -194,15 +196,22 @@ program eclipse [
 	[InsertPB *Y *Phobos core Y]
 	[InsertPB *modulation *Phobos core modulation]
 	[InsertPB *freq *Phobos core freq]
+	[InsertPB *pitch *Phobos core pitch]
 	[InsertPB *AutoCtrl *Phobos core auto]
 	[Insert *PhobosCB *Phobos arpeggiator]
 	[Insert *lfo1 *Phobos lfo 1]
 	[Insert *lfo2 *Phobos lfo 2]
+	[Insert *pitch_ctrl1 *Phobos sensitivity pitch 1]
+	[Insert *pitch_ctrl2 *Phobos sensitivity pitch 2]
+	[Insert *pitch_ctrl3 *Phobos sensitivity pitch 3]
+	[Insert *pitch_ctrl4 *Phobos sensitivity pitch 4]
 
-	[BuildPhobosPart *Phobos *moonbase *pan *XData *YData *lfosens1 *lfosens2 *lfosens3 *lfosens4]
-	[BuildPhobosPart *Phobos *moonbase *pan *XData *YData *lfosens1 *lfosens2 *lfosens3 *lfosens4]
-	[BuildPhobosPart *Phobos *moonbase *pan *XData *YData *lfosens1 *lfosens2 *lfosens3 *lfosens4]
-	[BuildPhobosPart *Phobos *moonbase *pan *XData *YData *lfosens1 *lfosens2 *lfosens3 *lfosens4]
+	[REPEAT 1
+		[BuildPhobosPart *Phobos *moonbase *pan *XData *YData
+			*lfosens1 *lfosens2 *lfosens3 *lfosens4
+			*pitch_ctrl1 *pitch_ctrl2 *pitch_ctrl3 *pitch_ctrl4
+			]
+	]
 
 	[Insert *lfo1_ctrl *Phobos sensitivity lfo 1 vibrato]
 	[Insert *lfo1mod *Phobos sensitivity lfo 1 modulation]
@@ -217,8 +226,10 @@ program eclipse [
 	[InsertController 1 *Phobos core modulation]
 	[InsertController 7 *Phobos core volume]
 	[InsertController 10 -64 *Phobos core pan]
+	[InsertController 11 -64 *Phobos portamento time]
 	[InsertController 12 -64 *Phobos core X]
 	[InsertController 13 -64 *Phobos core Y]
+	[InsertController 65 *Phobos portamento porta]
 	[InsertController 74 -64 *Phobos core freq]
 	[InsertController 91 -64 *Phobos core balance]
 	[InsertController 95 -64 *Phobos lfo 1 speed]
@@ -226,10 +237,14 @@ program eclipse [
 	[InsertController 93 *Phobos adsr decay]
 	[InsertController 94 -128 *Phobos adsr sustain]
 	[InsertController 72 *Phobos adsr release]
+	[InsertController 128 -64 *Phobos core pitch]
 ]
 
 
-[[BuildPhobosPart *Phobos *PhobosCB *mixer *X *Y *lfosens1 *lfosens2 *lfosens3 *lfosens4]
+[[BuildPhobosPart *Phobos *PhobosCB *mixer *X *Y
+					*lfosens1 *lfosens2 *lfosens3 *lfosens4
+					*pitchsens1 *pitchsens2 *pitchsens3 *pitchsens4
+					]
 	[trigger *trigger]
 	[fm4 *op]
 	[adsr *adsr]
@@ -238,6 +253,8 @@ program eclipse [
 	[sensitivity *freq1] [sensitivity *freq2] [sensitivity *freq3] [sensitivity *freq4]
 	[eg *ampeg1] [eg *ampeg2] [eg *ampeg3] [eg *ampeg4]
 	[eg *freqeg] [gateway *freqeg1] [gateway *freqeg2] [gateway *freqeg3] [gateway *freqeg4]
+	[sensitivity *velocity1] [sensitivity *velocity2] [sensitivity *velocity3] [sensitivity *velocity4]
+	[sensitivity *key1] [sensitivity *key2] [sensitivity *key3] [sensitivity *key4]
 
 	[*PhobosCB *trigger]
 	[*trigger_delay "signal" *trigger "trigger"]
@@ -250,6 +267,7 @@ program eclipse [
 	[*op "trigger" *trigger_delay]
 	[*op "freq1" *freq1] [*op "freq2" *freq2] [*op "freq3" *freq3] [*op "freq4" *freq4]
 	[*op "freq1" *lfosens1] [*op "freq2" *lfosens2] [*op "freq3" *lfosens3] [*op "freq4" *lfosens4]
+	[*op "freq1" *pitchsens1] [*op "freq2" *pitchsens2] [*op "freq3" *pitchsens3] [*op "freq4" *pitchsens4]
 
 	[auto *vectorX *X] [*vectorX "trigger" *trigger "trigger"] [*X "trigger" *trigger "trigger"]
 	[auto *vectorY *Y] [*vectorY "trigger" *trigger "trigger"] [*Y "trigger" *trigger "trigger"]
@@ -263,6 +281,12 @@ program eclipse [
 	[*freqeg1 *freqeg] [*freqeg2 *freqeg] [*freqeg3 *freqeg] [*freqeg4 *freqeg]
 	[*op "freq1" *freqeg1] [*op "freq2" *freqeg2] [*op "freq3" *freqeg3] [*op "freq4" *freqeg4]
 	[*op "amp1" *ampeg1] [*op "amp2" *ampeg2] [*op "amp3" *ampeg3] [*op "amp4" *ampeg4]
+
+	[*velocity1 "signal" *trigger "velocity"] [*velocity2 "signal" *trigger "velocity"]
+	[*velocity3 "signal" *trigger "velocity"] [*velocity4 "signal" *trigger "velocity"]
+	[*op "amp1" *velocity1] [*op "amp2" *velocity2] [*op "amp3" *velocity3] [*op "amp4" *velocity4]
+	[*key1 "signal" *trigger "key"] [*key2 "signal" *trigger "key"] [*key3 "signal" *trigger "key"] [*key4 "signal" *trigger "key"]
+	[*op "amp1" *key1] [*op "amp2" *key2] [*op "amp3" *key3] [*op "amp4" *key4]
 
 	[*dca *op]
 	[*dca "gateway" *adsr]
@@ -290,7 +314,16 @@ program eclipse [
 	[Insert *freqeg2 *Phobos operator 2 eg freq]
 	[Insert *freqeg3 *Phobos operator 3 eg freq]
 	[Insert *freqeg4 *Phobos operator 4 eg freq]
+	[Insert *key1 *Phobos sensitivity amp 1 key]
+	[Insert *key2 *Phobos sensitivity amp 2 key]
+	[Insert *key3 *Phobos sensitivity amp 3 key]
+	[Insert *key4 *Phobos sensitivity amp 4 key]
+	[Insert *velocity1 *Phobos sensitivity amp 1 velocity]
+	[Insert *velocity2 *Phobos sensitivity amp 2 velocity]
+	[Insert *velocity3 *Phobos sensitivity amp 3 velocity]
+	[Insert *velocity4 *Phobos sensitivity amp 4 velocity]
 	[Insert *adsr *Phobos adsr]
+	[Insert *trigger *Phobos portamento]
 
 	[AddModule *vectorX *Phobos]
 	[AddModule *vectorY *Phobos]
@@ -342,7 +375,7 @@ program eclipse [
 [[@ lunar . LunarDrop : *command] [show *command]]
 
 [[mdicb *command * : *t]
-	[show [PhobosCB *command : *t]]
+	;[show [PhobosCB *command : *t]]
 	[PhobosCB *command : *t]
 ]
 

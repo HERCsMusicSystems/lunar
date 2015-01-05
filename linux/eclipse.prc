@@ -138,10 +138,10 @@ program eclipse [
 [[cb *program 0 *i1 : *]
 	[isallr *y *x [Moons *x]]
 	[AT *i1 *moon *y]
-	[text_term *program *moon]
 	[cb_path [*moon]]
-	[*moon * * *moon_callback : *]
+	[*moon * * *moon_callback *type : *]
 	[cb_callback *moon_callback]
+	[add *program *type " : channel=" *i1 " " *moon]
 ]
 
 [[cb *program *mode *i1 : *is]

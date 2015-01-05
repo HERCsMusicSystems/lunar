@@ -204,12 +204,16 @@ program eclipse [
 	[Insert *pitch_ctrl3 *Phobos sensitivity pitch 3]
 	[Insert *pitch_ctrl4 *Phobos sensitivity pitch 4]
 
+	[show "STAGE 1 (common)"]
+
 	[REPEAT 1
 		[BuildPhobosPart *Phobos *moonbase *pan *XData *YData
 			*lfosens1 *lfosens2 *lfosens3 *lfosens4
 			*pitch_ctrl1 *pitch_ctrl2 *pitch_ctrl3 *pitch_ctrl4
 			]
 	]
+
+	[show "STAGE 2 (parts)"]
 
 	[Insert *lfo1_ctrl *Phobos sensitivity lfo 1 vibrato]
 	[Insert *lfo1mod *Phobos sensitivity lfo 1 modulation]
@@ -236,6 +240,8 @@ program eclipse [
 	[InsertController 94 -128 *Phobos adsr sustain]
 	[InsertController 72 *Phobos adsr release]
 	[InsertController 128 -64 *Phobos core pitch]
+
+	[show "STAGE 3 (completed)"]
 ]
 
 
@@ -328,12 +334,14 @@ program eclipse [
 
 	[AddModule *vectorX *Phobos]
 	[AddModule *vectorY *Phobos]
+
+	[show ".... PART"]
 ]
 
-[[build_Abakos *drywet]
+[[build_Abakos *Abakos *drywet]
 	[moonbase *Abakoscb]
 	[arpeggiator Abakoscb *Abakoscb]
-	[Moonbase Abakos Abakoscb Abakos]
+	[Moonbase *Abakos Abakoscb Abakos]
 	[pan *pan]
 	[delay *delay]
 	[drywet *drywet]
@@ -342,20 +350,20 @@ program eclipse [
 	[*drywet "dryright" *pan "right"]
 	[*drywet "wetleft" *delay "left"]
 	[*drywet "wetright" *delay "right"]
-	[Insert Abakoscb Abakos arpeggiator]
-	[Insert *pan Abakos reactor]
-	[Insert *drywet Abakos reactor]
-	[Insert *delay Abakos reactor]
-	[build_Abakos_part Abakos *pan *Abakoscb]
-	[build_Abakos_part Abakos *pan *Abakoscb]
-	[build_Abakos_part Abakos *pan *Abakoscb]
-	[build_Abakos_part Abakos *pan *Abakoscb]
-	[build_Abakos_part Abakos *pan *Abakoscb]
-	[build_Abakos_part Abakos *pan *Abakoscb]
-	[InsertController 16 Abakos reactor pan]
-	[InsertController 17 Abakos reactor time]
-	[InsertController 65 Abakos portamento porta]
-	[addcl [[Moons Abakos]]]
+	[Insert Abakoscb *Abakos arpeggiator]
+	[Insert *pan *Abakos reactor]
+	[Insert *drywet *Abakos reactor]
+	[Insert *delay *Abakos reactor]
+	[build_Abakos_part *Abakos *pan *Abakoscb]
+	[build_Abakos_part *Abakos *pan *Abakoscb]
+	[build_Abakos_part *Abakos *pan *Abakoscb]
+	[build_Abakos_part *Abakos *pan *Abakoscb]
+	[build_Abakos_part *Abakos *pan *Abakoscb]
+	[build_Abakos_part *Abakos *pan *Abakoscb]
+	[InsertController 16 *Abakos reactor pan]
+	[InsertController 17 *Abakos reactor time]
+	[InsertController 65 *Abakos portamento porta]
+	[addcl [[Moons *Abakos]]]
 ]
 
 [[build_Abakos_part *Abakos *mixer *cb]
@@ -403,15 +411,11 @@ program eclipse [
 
 end := [
 		[var cb_path cb_callback]
-		[oscilloscope radar] [radar 900 540]
 		[BuildPhobos Phobos PhobosCB phobos_mixer *feed]
-		[build_Abakos abakos_mixer]
-		[CommandCentre commander cb] ;[commander 3000 1060]
-		;[Lunar 4000 Abakos adsr attack]
-		;[Lunar 4000 Abakos adsr release]
-		;[Lunar 1 Abakos arpeggiator active]
-		;[Lunar 1 Abakos arpeggiator hold]
-		;[Lunar 9 Abakos arpeggiator algo]
+		[build_Abakos *Abakos abakos_mixer]
+		[oscilloscope radar]
+		[CommandCentre commander cb]
+		;[commander 3000 1060] [radar 2000 1060]
 		[TRY [midi mdi mdicb]]
 		[TRY [joystick js jcb]]
 		[radar *feed]
@@ -420,6 +424,6 @@ end := [
 		[TRY [mdi]]
 		[TRY [js]]
 		[Moonbase Phobos]
-		[Moonbase Abakos]
+		[Moonbase *Abakos]
 		] .
 

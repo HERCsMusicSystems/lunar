@@ -84,7 +84,6 @@ program eclipse [
 			*freq *drywet *pan *porta_time *speed *vibrato : *]
 	[is_var *poly]
 	[cb_callback : *cb]
-	[show *cb]
 	[*cb control 127 : *poly]
 	[*cb control 65 : *porta]
 	[*cb control 128 : *pitch]
@@ -102,7 +101,6 @@ program eclipse [
 	[*cb control 11 : *porta_time]
 	[*cb control 95 : *speed]
 	[*cb control 71 : *vibrato]
-	[show *poly]
 ]
 
 [[cb *ret Store *file_name]

@@ -242,6 +242,15 @@ program eclipse [
 	[InsertController 128 -64 *Phobos core pitch]
 
 	[show "STAGE 3 (completed)"]
+
+	[Lunar -128 *Phobos sensitivity freq 1 left]
+	[Lunar 128 *Phobos sensitivity freq 1 right]
+	[Lunar -128 *Phobos sensitivity freq 2 left]
+	[Lunar 128 *Phobos sensitivity freq 2 right]
+	[Lunar -128 *Phobos sensitivity freq 3 left]
+	[Lunar 128 *Phobos sensitivity freq 3 right]
+	[Lunar -128 *Phobos sensitivity freq 4 left]
+	[Lunar 128 *Phobos sensitivity freq 4 right]
 ]
 
 
@@ -260,6 +269,7 @@ program eclipse [
 	[eg *freqeg] [gateway *freqeg1] [gateway *freqeg2] [gateway *freqeg3] [gateway *freqeg4]
 	[sensitivity *velocity1] [sensitivity *velocity2] [sensitivity *velocity3] [sensitivity *velocity4]
 	[sensitivity *key1] [sensitivity *key2] [sensitivity *key3] [sensitivity *key4]
+	[sensitivity *egscal] [sensitivity *egscalfreq] [sensitivity *egscal1] [sensitivity *egscal2] [sensitivity *egscal3] [sensitivity *egscal4]
 
 	[*PhobosCB *trigger]
 	[*trigger_delay "signal" *trigger "trigger"]
@@ -292,6 +302,15 @@ program eclipse [
 	[*op "amp1" *velocity1] [*op "amp2" *velocity2] [*op "amp3" *velocity3] [*op "amp4" *velocity4]
 	[*key1 "signal" *trigger "key"] [*key2 "signal" *trigger "key"] [*key3 "signal" *trigger "key"] [*key4 "signal" *trigger "key"]
 	[*op "amp1" *key1] [*op "amp2" *key2] [*op "amp3" *key3] [*op "amp4" *key4]
+
+	[*egscal "signal" *trigger "key"] [*egscalfreq "signal" *trigger "key"]
+	[*egscal1 "signal" *trigger "key"] [*egscal2 "signal" *trigger "key"] [*egscal3 "signal" *trigger "key"] [*egscal4 "signal" *trigger "key"]
+	[*adsr "attack" *egscal] [*adsr "decay" *egscal] [*adsr "release" *egscal]
+	[*freqeg "time1" *egscalfreq] [*freqeg "time2" *egscalfreq] [*freqeg "time3" *egscalfreq] [*freqeg "time4" *egscalfreq]
+	[*ampeg1 "time1" *egscal1] [*ampeg1 "time2" *egscal1] [*ampeg1 "time3" *egscal1] [*ampeg1 "time4" *egscal1]
+	[*ampeg2 "time1" *egscal2] [*ampeg2 "time2" *egscal2] [*ampeg1 "time3" *egscal2] [*ampeg1 "time4" *egscal2]
+	[*ampeg3 "time1" *egscal3] [*ampeg3 "time2" *egscal3] [*ampeg1 "time3" *egscal3] [*ampeg1 "time4" *egscal3]
+	[*ampeg4 "time1" *egscal4] [*ampeg4 "time2" *egscal4] [*ampeg1 "time3" *egscal4] [*ampeg1 "time4" *egscal4]
 
 	[*filter *op]
 	[*dca *filter]
@@ -328,6 +347,12 @@ program eclipse [
 	[Insert *velocity2 *Phobos sensitivity amp 2 velocity]
 	[Insert *velocity3 *Phobos sensitivity amp 3 velocity]
 	[Insert *velocity4 *Phobos sensitivity amp 4 velocity]
+	[Insert *egscal *Phobos sensitivity egscaling adsr]
+	[Insert *egscalfreq *Phobos sensitivity egscaling freq]
+	[Insert *egscal1 *Phobos sensitivity egscaling 1]
+	[Insert *egscal2 *Phobos sensitivity egscaling 2]
+	[Insert *egscal3 *Phobos sensitivity egscaling 3]
+	[Insert *egscal4 *Phobos sensitivity egscaling 4]
 	[Insert *filter *Phobos filter]
 	[Insert *adsr *Phobos adsr]
 	[Insert *trigger *Phobos portamento]

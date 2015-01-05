@@ -1001,7 +1001,7 @@ void lunar_pan :: move (void) {
 	signal = * (core -> pan - ind) * enter;
 	right = * (core -> pan + ind) * enter;
 }
-lunar_pan :: lunar_pan (orbiter_core * core) : orbiter (core) {initialise (); activate ();}
+lunar_pan :: lunar_pan (orbiter_core * core) : orbiter (core) {enter = pan = right = 0.0; initialise (); activate ();}
 void lunar_power_pan :: move (void) {
 	int ind = (int) pan;
 	if (ind > 8192) ind = 8192; if (ind < -8192) ind = -8192;

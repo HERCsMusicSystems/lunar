@@ -851,7 +851,7 @@ double * lunar_delay :: outputAddress (int ind) {
 #define DIV_16384 0.00006103515625
 void lunar_delay :: move (void) {
 	double feed = feedback * DIV_16384;
-	int sentinel = (int) time;
+	int sentinel = (int) (time * core -> DSP_time_fraction);
 	sentinel |= 1;
 	if (sentinel > 131071) sentinel = 131071;
 	if (index >= sentinel) index = 0;

@@ -87,6 +87,7 @@ void orbiter_core :: recalculate (void) {
 		}
 	}
 	// .... ACTIVES
+	DSP_time_fraction = sampling_frequency / 8192.0;
 	gate_gap = sampling_frequency / 2048.0;
 	gate_delay = 48000.0 / sampling_frequency;
 	double delay = sampling_frequency > 0.0 ? centre_frequency  / sampling_frequency : centre_frequency;

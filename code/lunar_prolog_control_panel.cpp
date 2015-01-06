@@ -127,19 +127,19 @@ public:
 		if (el -> isDouble ()) {x = el -> getDouble () / 16384.0; if (x < 0.0) x = 0.0; if (x > 1.0) x = 1.0; ctrl_vibrato . angle = x;}
 		delete query;
 	}
-	void reset_buttons (int id) {
-		if (selector0 . id <= id && id <= selector9 . id) {
-			selector0 . engaged = false;
-			selector1 . engaged = false;
-			selector2 . engaged = false;
-			selector3 . engaged = false;
-			selector4 . engaged = false;
-			selector5 . engaged = false;
-			selector6 . engaged = false;
-			selector7 . engaged = false;
-			selector8 . engaged = false;
-			selector9 . engaged = false;
-		}
+	void reset_selectors (void) {
+		selector0 . engaged = false;
+		selector1 . engaged = false;
+		selector2 . engaged = false;
+		selector3 . engaged = false;
+		selector4 . engaged = false;
+		selector5 . engaged = false;
+		selector6 . engaged = false;
+		selector7 . engaged = false;
+		selector8 . engaged = false;
+		selector9 . engaged = false;
+	}
+	void reset_programs (void) {
 		program0 . engaged = false;
 		program1 . engaged = false;
 		program2 . engaged = false;
@@ -151,25 +151,37 @@ public:
 		program8 . engaged = false;
 		program9 . engaged = false;
 	}
-	void program_action (button_active_graphics * button) {
-		reset_buttons (button -> id);
-		if (selector0 . id <= button -> id && button -> id <= selector9 . id) {
-			current_program = button -> id - selector0 . id;
-			switch (programs [current_program]) {
-			case 0: program0 . engaged = true; break;
-			case 1: program1 . engaged = true; break;
-			case 2: program2 . engaged = true; break;
-			case 3: program3 . engaged = true; break;
-			case 4: program4 . engaged = true; break;
-			case 5: program5 . engaged = true; break;
-			case 6: program6 . engaged = true; break;
-			case 7: program7 . engaged = true; break;
-			case 8: program8 . engaged = true; break;
-			case 9: program9 . engaged = true; break;
-			default: break;
-			}
-		} else programs [current_program] = button -> id - program0 . id;
-		button -> engaged = true;
+	void select_program (void) {
+		switch (programs [current_program]) {
+		case 0: program0 . engaged = true; break;
+		case 1: program1 . engaged = true; break;
+		case 2: program2 . engaged = true; break;
+		case 3: program3 . engaged = true; break;
+		case 4: program4 . engaged = true; break;
+		case 5: program5 . engaged = true; break;
+		case 6: program6 . engaged = true; break;
+		case 7: program7 . engaged = true; break;
+		case 8: program8 . engaged = true; break;
+		case 9: program9 . engaged = true; break;
+		default: break;
+		}
+	}
+	void select_selector (void) {
+		switch (current_program) {
+		case 0: selector0 . engaged = true; break;
+		case 1: selector1 . engaged = true; break;
+		case 2: selector2 . engaged = true; break;
+		case 3: selector3 . engaged = true; break;
+		case 4: selector4 . engaged = true; break;
+		case 5: selector5 . engaged = true; break;
+		case 6: selector6 . engaged = true; break;
+		case 7: selector7 . engaged = true; break;
+		case 8: selector8 . engaged = true; break;
+		case 9: selector9 . engaged = true; break;
+		default: break;
+		}
+	}
+	void program_action (void) {
 		PrologElement * query = root -> pair (root -> atom (command),
 								root -> pair (root -> var (0),
 								root -> pair (root -> integer (current_program),
@@ -198,6 +210,30 @@ public:
 		}
 		delete query;
 		if (current_program == 0) feedback_on_controllers ();
+	}
+	void program_action (button_active_graphics * button) {
+		reset_programs ();
+		if (selector0 . id <= button -> id && button -> id <= selector9 . id) {
+			reset_selectors ();
+			current_program = button -> id - selector0 . id;
+			select_program ();
+		} else programs [current_program] = button -> id - program0 . id;
+		button -> engaged = true;
+		program_action ();
+	}
+	void change_selector (int delta) {
+		reset_selectors ();
+		current_program += delta;
+		if (current_program < 0) current_program = 0; if (current_program > 9) current_program = 9;
+		select_selector ();
+		program_action ();
+	}
+	void change_program (int delta) {
+		reset_programs ();
+		programs [current_program] += delta;
+		if (programs [current_program] < 0) programs [current_program] = 0; if (programs [current_program] > 9) programs [current_program] = 9;
+		select_program ();
+		program_action ();
 	}
 	void action (int ind, double value) {
 		PrologElement * query = root -> pair (root -> atom (command),
@@ -514,6 +550,10 @@ static gboolean ControlPanelButtonOn (GtkWidget * viewport, GdkEventKey * event,
 		break;
 	case 47: redraw = file_action ("START", "Record File", viewport, action); break;
 	case 32: action -> stop_recording_action (); redraw = true; break;
+	case 97: action -> change_selector (-1); redraw = true; break;
+	case 100: action -> change_selector (1); redraw = true; break;
+	case 115: action -> change_program (-1); redraw = true; break;
+	case 119: action -> change_program (1); redraw = true; break;
 	default: return FALSE;
 	}
 	if (redraw) gtk_widget_queue_draw (viewport);

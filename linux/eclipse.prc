@@ -6,7 +6,7 @@ import lunar
 import control
 
 program eclipse [
-					commander cb cb_path cb_callback moon mooncb
+					commander cb cb_path cb_callback moon mooncb process_mode
 					Phobos PhobosCB BuildPhobos BuildPhobosPart BuildPhobosBak BuildPhobosPartBak
 					paths modules adjacent next_path previous_path next_module previous_module
 					build_Abakos build_Abakos_part Abakos Abakoscb
@@ -149,7 +149,8 @@ program eclipse [
 	[AT *i1 *moon *y]
 	[*moon *parameters : *]
 	[sub *parameters *is *path *path]
-	[text_term *pather [*moon : *path]]
+	[process_mode [*moon : *path] *mode *processed]
+	[text_term *pather *processed]
 	[*parameters *pb : *path] [*pb : *v]
 	[add *program *pather " = " *v]
 	[show [*moon : *path]]
@@ -160,6 +161,9 @@ program eclipse [
 
 [[cb *ret START *file_name] [core *file_name] [add *ret "Recording started " *file_name]]
 [[cb STOP] [core] [show "STOP RECORDING"]]
+
+[[process_mode [*h : *t] 0 [[*h] : *t]]]
+[[process_mode [*h : *t] *i [*h : *t2]] [less 0 *i] / [-- *i *next] [process_mode *t *next *t2]]
 
 [[BuildPhobos *Phobos *PhobosCB *volume *pan]
 	[addcl [[Moons *Phobos]]]

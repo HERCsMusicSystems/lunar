@@ -552,8 +552,8 @@ static gboolean ControlPanelButtonOn (GtkWidget * viewport, GdkEventKey * event,
 	case 32: action -> stop_recording_action (); redraw = true; break;
 	case 97: action -> change_selector (-1); redraw = true; break;
 	case 100: action -> change_selector (1); redraw = true; break;
-	case 115: action -> change_program (-1); redraw = true; break;
-	case 119: action -> change_program (1); redraw = true; break;
+	case 115: action -> change_program (1); redraw = true; break;
+	case 119: action -> change_program (-1); redraw = true; break;
 	default: return FALSE;
 	}
 	if (redraw) gtk_widget_queue_draw (viewport);

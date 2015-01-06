@@ -478,25 +478,27 @@ double * lunar_impulse :: inputAddress (int ind) {return ind == 0 ? & enter : or
 void lunar_impulse :: move (void) {signal = enter > 0.0 && sync == 0.0 ? 1.0 : 0.0; sync = enter;}
 lunar_impulse :: lunar_impulse (orbiter_core * core) : orbiter (core) {enter = sync = 0.0; initialise (); activate ();}
 
-int lunar_lfo :: numberOfInputs (void) {return 5;}
+int lunar_lfo :: numberOfInputs (void) {return 6;}
 char * lunar_lfo :: inputName (int ind) {
 	switch (ind) {
-	case 0: return "SPEED"; break;
-	case 1: return "WAVE"; break;
-	case 2: return "PULSE"; break;
-	case 3: return "PHASE"; break;
-	case 4: return "SYNC"; break;
+	case 0: return "TRIGGER"; break;
+	case 1: return "SPEED"; break;
+	case 2: return "WAVE"; break;
+	case 3: return "PULSE"; break;
+	case 4: return "PHASE"; break;
+	case 5: return "SYNC"; break;
 	default: break;
 	}
 	return orbiter :: inputName (ind);
 }
 double * lunar_lfo :: inputAddress (int ind) {
 	switch (ind) {
-	case 0: return & speed; break;
-	case 1: return & wave; break;
-	case 2: return & pulse; break;
-	case 3: return & phase; break;
-	case 4: return & sync; break;
+	case 0: return & trigger; break;
+	case 1: return & speed; break;
+	case 2: return & wave; break;
+	case 3: return & pulse; break;
+	case 4: return & phase; break;
+	case 5: return & sync; break;
 	default: break;
 	}
 	return orbiter :: inputAddress (ind);
@@ -519,6 +521,7 @@ double * lunar_lfo :: outputAddress (int ind) {
 	return orbiter :: outputAddress (ind);
 }
 void lunar_lfo :: move (void) {
+	if (sync > 0.0 && trigger > 0.0 && previous_trigger == 0.0) time = phase * 0.00006103515625; previous_trigger = trigger;
 	double t = 0.5 + pulse * 0.00006103515625;
 	switch ((int) wave) {
 	case 0: // sine
@@ -574,12 +577,13 @@ void lunar_lfo :: move (void) {
 		break;
 	}
 	time += core -> ControlTimeDelta (speed);
-	if (time >= 1.0) time -= 1.0;
+	while (time >= 1.0) time -= 1.0;
 }
 lunar_lfo :: lunar_lfo (orbiter_core * core) : orbiter (core) {
 	stage_one = true;
 	origin = target = delta = 0.0;
 	time = speed = wave = pulse = phase = sync = positive = negative = 0.0;
+	trigger = previous_trigger = 0.0;
 	initialise (); activate ();
 }
 

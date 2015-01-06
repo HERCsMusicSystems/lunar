@@ -47,7 +47,16 @@ public:
 			case 3: sprintf (command, "%i  (%.2f Db)", (int) pb -> signal, 10.0 * log10 (core -> Amplitude (pb -> signal))); break;
 			case 4: sprintf (command, "%i  (%.2f sec.)", (int) pb -> signal, pb -> signal <= 0.0 ? 0.0 : pow (2.0, (pb -> signal - 8192.0) / 768.0)); break;
 			case 5: if (pb -> signal == 0) sprintf (command, "off"); else sprintf (command, "on"); break;
-			case 6: sprintf (command, "wave [%i]", (int) pb -> signal); break;
+			case 6:
+				switch ((int) pb -> signal) {
+				case 0: sprintf (command, "0 (sine)"); break;
+				case 1: sprintf (command, "1 (triangle)"); break;
+				case 2: sprintf (command, "2 (square)"); break;
+				case 3: sprintf (command, "3 (random)"); break;
+				case 4: sprintf (command, "4 (S/H)"); break;
+				default: sprintf (command, "%i", (int) pb -> signal); break;
+				}
+				break;
 			case 7: sprintf (command, "* %g", pb -> signal); break;
 			default: sprintf (command, "??"); break;
 			}

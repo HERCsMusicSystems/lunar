@@ -211,7 +211,7 @@ program eclipse [
 	[show "STAGE 1 (common)"]
 
 	[REPEAT 1
-		[BuildPhobosPart *Phobos *moonbase *pan *XData *YData
+		[BuildPhobosPart *Phobos *moonbase *pan *XData *YData *lfo1 *lfo2
 			*lfosens1 *lfosens2 *lfosens3 *lfosens4
 			*pitch_ctrl1 *pitch_ctrl2 *pitch_ctrl3 *pitch_ctrl4
 			]
@@ -258,7 +258,7 @@ program eclipse [
 ]
 
 
-[[BuildPhobosPart *Phobos *PhobosCB *mixer *X *Y
+[[BuildPhobosPart *Phobos *PhobosCB *mixer *X *Y *lfo1 *lfo2
 					*lfosens1 *lfosens2 *lfosens3 *lfosens4
 					*pitchsens1 *pitchsens2 *pitchsens3 *pitchsens4
 					]
@@ -278,9 +278,10 @@ program eclipse [
 	[*PhobosCB *trigger]
 	[*trigger_delay "signal" *trigger "trigger"]
 	[*adsr "trigger" *trigger_delay]
-	[*freqeg "trigger" *trigger]
+	[*freqeg "trigger" *trigger "trigger"]
 	[*ampeg1 "trigger" *trigger_delay] [*ampeg2 "trigger" *trigger_delay] [*ampeg3 "trigger" *trigger_delay] [*ampeg4 "trigger" *trigger_delay]
 	[*trigger "busy" *adsr "busy"]
+	[*lfo1 "trigger" *trigger "trigger"] [*lfo2 "trigger" *trigger "trigger"]
 
 	[*freq1 "signal" *trigger "key"] [*freq2 "signal" *trigger "key"] [*freq3 "signal" *trigger "key"] [*freq4 "signal" *trigger "key"]
 	[*op "trigger" *trigger_delay]

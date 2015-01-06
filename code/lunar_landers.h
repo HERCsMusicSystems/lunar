@@ -253,6 +253,7 @@ private:
 	double time;
 	double speed, wave, pulse, phase, sync;
 	double positive, negative;
+	double trigger, previous_trigger;
 public:
 	virtual int numberOfInputs (void);
 	virtual char * inputName (int ind);

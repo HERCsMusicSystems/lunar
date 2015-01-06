@@ -233,7 +233,7 @@ program lunar #machine := "prolog.lunar"
 	[AddParameterBlock *parameters hold *trigger *selector 0 "onoff"]
 ]
 
-[[InsertIO *parameters *lfo *selector [["SPEED" "WAVE" "PULSE" "PHASE" "SYNC" : *] *]]
+[[InsertIO *parameters *lfo *selector [["TRIGGER" "SPEED" "WAVE" "PULSE" "PHASE" "SYNC" : *] *]]
 	[AddParameterBlock *parameters speed *lfo *selector 0 "time"]
 	[AddParameterBlock *parameters wave *lfo *selector 0 "wave"]
 	[AddParameterBlock *parameters pulse *lfo *selector 0 "index"]

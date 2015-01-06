@@ -6,7 +6,7 @@ import lunar
 import control
 
 program eclipse [
-					commander cb cb_path cb_callback moon mooncb process_mode
+					commander cb cb_path cb_edit_path cb_callback moon mooncb process_mode
 					Phobos PhobosCB BuildPhobos BuildPhobosPart BuildPhobosBak BuildPhobosPartBak
 					paths modules adjacent next_path previous_path next_module previous_module
 					build_Abakos build_Abakos_part Abakos Abakoscb
@@ -122,7 +122,6 @@ program eclipse [
 [[cb *ret Restore *file_name] [add *ret "Failed to restore " *file_name]]
 
 [[cb *ret [] *delta]
-	;[add *ret "delta [" *delta "]"]
 	[cb_path : *path]
 	[eq *path [*m : *p]]
 	[*m *parameters : *]
@@ -131,7 +130,8 @@ program eclipse [
 	[add *v1 *delta *v2]
 	[*pb *v2]
 	[*pb : *v3]
-	[text_term *pather *path]
+	[cb_edit_path : *edit_path]
+	[text_term *pather *edit_path]
 	[add *ret *pather " = " *v3]
 ]
 
@@ -139,6 +139,7 @@ program eclipse [
 	[isallr *y *x [Moons *x]]
 	[AT *i1 *moon *y]
 	[cb_path [*moon]]
+	[cb_edit_path [*moon]]
 	[*moon * * *moon_callback *type : *]
 	[cb_callback *moon_callback]
 	[add *program *type " : channel=" *i1 " " *moon]
@@ -155,6 +156,7 @@ program eclipse [
 	[add *program *pather " = " *v]
 	[show [*moon : *path]]
 	[cb_path [*moon : *path]]
+	[cb_edit_path *processed]
 	[*moon * * *moon_callback : *]
 	[cb_callback *moon_callback]
 ]
@@ -440,7 +442,7 @@ program eclipse [
 ]
 
 end := [
-		[var cb_path cb_callback]
+		[var cb_path cb_callback cb_edit_path]
 		[BuildPhobos Phobos PhobosCB phobos_mixer *feed]
 		[build_Abakos *Abakos abakos_mixer]
 		[oscilloscope radar]

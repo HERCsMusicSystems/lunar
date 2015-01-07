@@ -171,7 +171,7 @@ program eclipse [
 	[addcl [[Moons *Phobos]]]
 	[Moonbase *Phobos *PhobosCB Phobos]
 
-	[moonbase *moonbase]
+	[moonbase *moonbase] [key_map *mapper] [*moonbase *mapper]
 	[arpeggiator *PhobosCB *moonbase]
 	[auto_data *XData] [parameter_block *X "index"] [*XData *X]
 	[auto_data *YData] [parameter_block *Y "index"] [*YData *Y]
@@ -227,6 +227,7 @@ program eclipse [
 
 	[InsertBlock *XData *Phobos vector X]
 	[InsertBlock *YData *Phobos vector Y]
+	[InsertBlock *mapper *Phobos key_map]
 
 	[InsertController 1 *Phobos lfo 1 vibrato]
 	[InsertController 7 *Phobos core volume]

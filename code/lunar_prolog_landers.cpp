@@ -169,18 +169,17 @@ PrologNativeKeyOrbiter :: PrologNativeKeyOrbiter (PrologAtom * atom, orbiter_cor
 
 class key_map_native_orbiter : public PrologNativeKeyOrbiter {
 public:
+	void return_content (PrologElement * parameters, lunar_map * map) {
+		for (int ind = 0; ind < 128; ind++) {
+			parameters -> setPair ();
+			parameters -> getLeft () -> setDouble (map -> map [ind]);
+			parameters = parameters -> getRight ();
+		}
+	}
 	virtual bool code (PrologElement * parameters, PrologResolution * resolution) {
 		if (parameters -> isEarth ()) return onEarth ();
 		lunar_map * map = (lunar_map *) module;
-		if (parameters -> isVar ()) {
-			int ind = 0;
-			while (ind < 128) {
-				parameters -> setPair ();
-				parameters -> getLeft () -> setDouble (map -> map [ind++]);
-				parameters = parameters -> getRight ();
-			}
-			return true;
-		}
+		if (parameters -> isVar ()) {return_content (parameters, map); return true;}
 		int double_count = 0;
 		PrologElement * doubles [128];
 		PrologElement * ret = 0;
@@ -192,7 +191,7 @@ public:
 		}
 		if (parameters -> isVar ()) ret = parameters;
 		if (ret != 0) {
-			if (double_count < 1) return false;
+			if (double_count < 1) {return_content (ret, map); return true;}
 			if (! doubles [0] -> isInteger ()) return false;
 			int index = doubles [0] -> getInteger ();
 			if (index < 0 || index > 127) return false;

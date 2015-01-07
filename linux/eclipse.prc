@@ -167,7 +167,7 @@ program eclipse [
 [[process_mode [*h : *t] 0 [[*h] : *t]]]
 [[process_mode [*h : *t] *i [*h : *t2]] [less 0 *i] / [-- *i *next] [process_mode *t *next *t2]]
 
-[[BuildPhobos *Phobos *PhobosCB *volume *pan]
+[[BuildPhobos *polyphony *Phobos *PhobosCB *volume *pan]
 	[addcl [[Moons *Phobos]]]
 	[Moonbase *Phobos *PhobosCB Phobos]
 
@@ -181,9 +181,18 @@ program eclipse [
 
 	[control *vibrato]
 	[gateway *lfosens1] [gateway *lfosens2] [gateway *lfosens3] [gateway *lfosens4]
-	[gateway *pitch_ctrl1] [gateway *pitch_ctrl2] [gateway *pitch_ctrl3] [gateway *pitch_ctrl4]
-
 	[*vibrato *lfo1] [*lfosens1 *vibrato] [*lfosens2 *vibrato] [*lfosens3 *vibrato] [*lfosens4 *vibrato]
+
+	[control *tremolo] [control *negative]
+	[gateway *lfo2freq1] [gateway *lfo2freq2] [gateway *lfo2freq3] [gateway *lfo2freq4]
+	[gateway *lfo2amp1] [gateway *lfo2amp2] [gateway *lfo2amp3] [gateway *lfo2amp4]
+	[gateway *lfo2filter] [gateway *lfo2amp] [gateway *lfo2pan]
+	[*tremolo *lfo2] [*negative "enter" *lfo2 "negative"]
+	[*lfo2freq1 *tremolo] [*lfo2freq2 *tremolo] [*lfo2freq3 *tremolo] [*lfo2freq4 *tremolo]
+	[*lfo2amp1 *negative] [*lfo2amp2 *negative] [*lfo2amp3 *negative] [*lfo2amp4 *negative]
+	[*lfo2filter *tremolo] [*lfo2amp *tremolo] [*lfo2pan *tremolo]
+
+	[gateway *pitch_ctrl1] [gateway *pitch_ctrl2] [gateway *pitch_ctrl3] [gateway *pitch_ctrl4]
 	[*pitch_ctrl1 *pitch] [*pitch_ctrl2 *pitch] [*pitch_ctrl3 *pitch] [*pitch_ctrl4 *pitch]
 
 	[pan *pan] [delay *delay] [drywet *mixer] [volume *volume]
@@ -204,6 +213,8 @@ program eclipse [
 	[Insert *lfo1 *Phobos lfo 1]
 	[Insert *vibrato *Phobos lfo 1 vibrato]
 	[Insert *lfo2 *Phobos lfo 2]
+	[Insert *tremolo *Phobos lfo 2 tremolo]
+	[Insert *negative *Phobos lfo 2 tremolo]
 	[Insert *pitch_ctrl1 *Phobos sensitivity pitch 1]
 	[Insert *pitch_ctrl2 *Phobos sensitivity pitch 2]
 	[Insert *pitch_ctrl3 *Phobos sensitivity pitch 3]
@@ -211,9 +222,12 @@ program eclipse [
 
 	[show "STAGE 1 (common)"]
 
-	[REPEAT 1
+	[REPEAT *polyphony
 		[BuildPhobosPart *Phobos *moonbase *pan *XData *YData *lfo1 *lfo2
 			*lfosens1 *lfosens2 *lfosens3 *lfosens4
+			*lfo2freq1 *lfo2freq2 *lfo2freq3 *lfo2freq4
+			*lfo2amp1 *lfo2amp2 *lfo2amp3 *lfo2amp4
+			*lfo2filter *lfo2amp
 			*pitch_ctrl1 *pitch_ctrl2 *pitch_ctrl3 *pitch_ctrl4
 			]
 	]
@@ -224,6 +238,17 @@ program eclipse [
 	[Insert *lfosens2 *Phobos sensitivity lfo 1 freq 2]
 	[Insert *lfosens3 *Phobos sensitivity lfo 1 freq 3]
 	[Insert *lfosens4 *Phobos sensitivity lfo 1 freq 4]
+	[Insert *lfo2freq1 *Phobos sensitivity lfo 2 freq 1]
+	[Insert *lfo2freq2 *Phobos sensitivity lfo 2 freq 2]
+	[Insert *lfo2freq3 *Phobos sensitivity lfo 2 freq 3]
+	[Insert *lfo2freq4 *Phobos sensitivity lfo 2 freq 4]
+	[Insert *lfo2amp1 *Phobos sensitivity lfo 2 amp 1]
+	[Insert *lfo2amp2 *Phobos sensitivity lfo 2 amp 2]
+	[Insert *lfo2amp3 *Phobos sensitivity lfo 2 amp 3]
+	[Insert *lfo2amp4 *Phobos sensitivity lfo 2 amp 4]
+	[Insert *lfo2filter *Phobos sensitivity lfo 2 filter]
+	[Insert *lfo2amp *Phobos sensitivity lfo 2 tremolo]
+	[Insert *lfo2pan *Phobos sensitivity lfo 2 pan]
 
 	[InsertBlock *XData *Phobos vector X]
 	[InsertBlock *YData *Phobos vector Y]
@@ -242,6 +267,7 @@ program eclipse [
 	[InsertController 73 *Phobos adsr attack]
 	[InsertController 93 *Phobos adsr decay]
 	[InsertController 94 -128 *Phobos adsr sustain]
+	[InsertController 71 *Phobos lfo 2 tremolo]
 	[InsertController 72 *Phobos adsr release]
 	[InsertController 128 -64 *Phobos core pitch]
 
@@ -260,6 +286,9 @@ program eclipse [
 
 [[BuildPhobosPart *Phobos *PhobosCB *mixer *X *Y *lfo1 *lfo2
 					*lfosens1 *lfosens2 *lfosens3 *lfosens4
+					*lfo2freq1 *lfo2freq2 *lfo2freq3 *lfo2freq4
+					*lfo2amp1 *lfo2amp2 *lfo2amp3 *lfo2amp4
+					*lfo2filter *lfo2amp
 					*pitchsens1 *pitchsens2 *pitchsens3 *pitchsens4
 					]
 	[trigger *trigger]
@@ -287,6 +316,7 @@ program eclipse [
 	[*op "freq1" *freq1] [*op "freq2" *freq2] [*op "freq3" *freq3] [*op "freq4" *freq4]
 	[*op "freq1" *lfosens1] [*op "freq2" *lfosens2] [*op "freq3" *lfosens3] [*op "freq4" *lfosens4]
 	[*op "freq1" *pitchsens1] [*op "freq2" *pitchsens2] [*op "freq3" *pitchsens3] [*op "freq4" *pitchsens4]
+	[*op "freq1" *lfo2freq1] [*op "freq2" *lfo2freq2] [*op "freq3" *lfo2freq3] [*op "freq4" *lfo2freq4]
 
 	[auto *vectorX *X] [*vectorX "trigger" *trigger "trigger"] [*X "trigger" *trigger "trigger"]
 	[auto *vectorY *Y] [*vectorY "trigger" *trigger "trigger"] [*Y "trigger" *trigger "trigger"]
@@ -296,6 +326,7 @@ program eclipse [
 	[*Ysa1 *vectorY] [*Ysa2 *vectorY] [*Ysa3 *vectorY] [*Ysa4 *vectorY]
 	[*op "amp1" *Xsa1] [*op "amp2" *Xsa2] [*op "amp3" *Xsa3] [*op "amp4" *Xsa4]
 	[*op "amp1" *Ysa1] [*op "amp2" *Ysa2] [*op "amp3" *Ysa3] [*op "amp4" *Ysa4]
+	[*op "amp1" *lfo2amp1] [*op "amp2" *lfo2amp2] [*op "amp3" *lfo2amp3] [*op "amp4" *lfo2amp4]
 
 	[*freqeg1 *freqeg] [*freqeg2 *freqeg] [*freqeg3 *freqeg] [*freqeg4 *freqeg]
 	[*op "freq1" *freqeg1] [*op "freq2" *freqeg2] [*op "freq3" *freqeg3] [*op "freq4" *freqeg4]
@@ -315,6 +346,9 @@ program eclipse [
 	[*ampeg2 "time1" *egscal2] [*ampeg2 "time2" *egscal2] [*ampeg1 "time3" *egscal2] [*ampeg1 "time4" *egscal2]
 	[*ampeg3 "time1" *egscal3] [*ampeg3 "time2" *egscal3] [*ampeg1 "time3" *egscal3] [*ampeg1 "time4" *egscal3]
 	[*ampeg4 "time1" *egscal4] [*ampeg4 "time2" *egscal4] [*ampeg1 "time3" *egscal4] [*ampeg1 "time4" *egscal4]
+
+	[*filter "freq" *lfo2filter]
+	[*filter "amp" *lfo2amp]
 
 	[*filter *op]
 	[*filter "amp" *adsr]
@@ -406,6 +440,7 @@ program eclipse [
 	[Insert *op1 *Abakos operator]
 	[Insert *adsr1 *Abakos adsr]
 	[Insert *trigger *Abakos portamento]
+
 ]
 
 
@@ -439,7 +474,7 @@ program eclipse [
 
 end := [
 		[var cb_path cb_callback cb_edit_path]
-		[BuildPhobos Phobos PhobosCB phobos_mixer *feed]
+		[BuildPhobos 2 Phobos PhobosCB phobos_mixer *feed]
 		[build_Abakos *Abakos abakos_mixer]
 		[oscilloscope radar]
 		[CommandCentre commander cb]

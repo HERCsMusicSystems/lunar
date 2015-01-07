@@ -268,7 +268,6 @@ program eclipse [
 	[fm4 *op]
 	[filter *filter]
 	[adsr *adsr]
-	[amplifier *dca]
 	[parameter_block *trigger_delay 0]
 	[sensitivity *freq1] [sensitivity *freq2] [sensitivity *freq3] [sensitivity *freq4]
 	[eg *ampeg1] [eg *ampeg2] [eg *ampeg3] [eg *ampeg4]
@@ -320,9 +319,8 @@ program eclipse [
 	[*ampeg4 "time1" *egscal4] [*ampeg4 "time2" *egscal4] [*ampeg1 "time3" *egscal4] [*ampeg1 "time4" *egscal4]
 
 	[*filter *op]
-	[*dca *filter]
-	[*dca "gateway" *adsr]
-	[*mixer *dca]
+	[*filter "amp" *adsr]
+	[*mixer *filter]
 
 	[Insert *op *Phobos operator]
 	[Insert *freq1 *Phobos sensitivity freq 1]

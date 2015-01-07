@@ -1106,6 +1106,7 @@ void lunar_filter :: move (void) {
 	running_signal += running_band_pass_signal * F;
 	running_high_pass_signal = enter - running_signal - running_band_pass_signal * Q;
 	running_band_pass_signal += running_high_pass_signal * F;
+	if (running_band_pass_signal > 10.0) running_band_pass_signal = 10.0; if (running_band_pass_signal < -10.0) running_band_pass_signal = -10.0;
 	double amplitude = core -> Amplitude (amp);
 	signal = running_signal * amplitude;
 	high_pass_signal = running_high_pass_signal * amplitude;

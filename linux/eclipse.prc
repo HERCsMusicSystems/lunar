@@ -176,15 +176,14 @@ program eclipse [
 	[auto_data *XData] [parameter_block *X "index"] [*XData *X]
 	[auto_data *YData] [parameter_block *Y "index"] [*YData *Y]
 	[parameter_block *AutoCtrl "index"] [*XData "control" *AutoCtrl] [*YData "control" *AutoCtrl]
-	[parameter_block *pitch "index"] [parameter_block *modulation "index"] [parameter_block *freq "index"]
+	[parameter_block *pitch "index"] [parameter_block *freq "index"]
 	[lfo *lfo1] [lfo *lfo2]
 
-	[control *lfo1_ctrl] [gateway *lfo1mod]
+	[control *vibrato]
 	[gateway *lfosens1] [gateway *lfosens2] [gateway *lfosens3] [gateway *lfosens4]
 	[gateway *pitch_ctrl1] [gateway *pitch_ctrl2] [gateway *pitch_ctrl3] [gateway *pitch_ctrl4]
 
-	[*lfo1_ctrl *lfo1] [*lfo1mod *modulation] [*lfo1_ctrl "gateway" *lfo1mod]
-	[*lfosens1 *lfo1_ctrl] [*lfosens2 *lfo1_ctrl] [*lfosens3 *lfo1_ctrl] [*lfosens4 *lfo1_ctrl]
+	[*vibrato *lfo1] [*lfosens1 *vibrato] [*lfosens2 *vibrato] [*lfosens3 *vibrato] [*lfosens4 *vibrato]
 	[*pitch_ctrl1 *pitch] [*pitch_ctrl2 *pitch] [*pitch_ctrl3 *pitch] [*pitch_ctrl4 *pitch]
 
 	[pan *pan] [delay *delay] [drywet *mixer] [volume *volume]
@@ -198,12 +197,12 @@ program eclipse [
 	[Insert *delay *Phobos core delay]
 	[InsertPB *X *Phobos core X]
 	[InsertPB *Y *Phobos core Y]
-	[InsertPB *modulation *Phobos core modulation]
 	[InsertPB *freq *Phobos core freq]
 	[InsertPB *pitch *Phobos core pitch]
 	[InsertPB *AutoCtrl *Phobos core auto]
 	[Insert *PhobosCB *Phobos arpeggiator]
 	[Insert *lfo1 *Phobos lfo 1]
+	[Insert *vibrato *Phobos lfo 1 vibrato]
 	[Insert *lfo2 *Phobos lfo 2]
 	[Insert *pitch_ctrl1 *Phobos sensitivity pitch 1]
 	[Insert *pitch_ctrl2 *Phobos sensitivity pitch 2]
@@ -221,8 +220,6 @@ program eclipse [
 
 	[show "STAGE 2 (parts)"]
 
-	[Insert *lfo1_ctrl *Phobos sensitivity lfo 1 vibrato]
-	[Insert *lfo1mod *Phobos sensitivity lfo 1 modulation]
 	[Insert *lfosens1 *Phobos sensitivity lfo 1 freq 1]
 	[Insert *lfosens2 *Phobos sensitivity lfo 1 freq 2]
 	[Insert *lfosens3 *Phobos sensitivity lfo 1 freq 3]
@@ -231,7 +228,7 @@ program eclipse [
 	[InsertBlock *XData *Phobos vector X]
 	[InsertBlock *YData *Phobos vector Y]
 
-	[InsertController 1 *Phobos core modulation]
+	[InsertController 1 *Phobos lfo 1 vibrato]
 	[InsertController 7 *Phobos core volume]
 	[InsertController 10 -64 *Phobos core pan]
 	[InsertController 11 -64 *Phobos portamento time]

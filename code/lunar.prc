@@ -289,7 +289,7 @@ program lunar #machine := "prolog.lunar"
 	[APPEND *selector [2] *selector2]
 	[AddParameterBlock *parameters freq "freq2" *op *selector2 0 "freq"]
 	[AddParameterBlock *parameters amp "amp2" *op *selector2 -16383.0 "amp"]
-	[AddParameterBlock *parameters ratio "ratio2" *op *selector1 2 "ratio"]
+	[AddParameterBlock *parameters ratio "ratio2" *op *selector2 1 "ratio"]
 	[AddParameterBlock *parameters feedback "feedback2" *op *selector2 0 "index"]
 	[APPEND *selector [3] *selector3]
 	[AddParameterBlock *parameters freq "freq3" *op *selector3 0 "freq"]

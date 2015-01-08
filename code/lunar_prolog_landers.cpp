@@ -44,7 +44,10 @@ public:
 			switch (pb -> style) {
 			case 1: sprintf (command, "%i", (int) pb -> signal); break;
 			case 2: sprintf (command, "%i  (%.2f Hz)", (int) pb -> signal, core -> centre_frequency * pow (2.0, pb -> signal / 1536.0)); break;
-			case 3: sprintf (command, "%i  (%.2f Db)", (int) pb -> signal, 10.0 * log10 (core -> Amplitude (pb -> signal))); break;
+			case 3:
+				if (pb -> signal <= -16383.0) sprintf (command, "%i (ZERO)", (int) pb -> signal);
+				else sprintf (command, "%i  (%.2f Db)", (int) pb -> signal, 10.0 * log10 (core -> Amplitude (pb -> signal)));
+				break;
 			case 4: sprintf (command, "%i  (%.2f sec.)", (int) pb -> signal, pb -> signal <= 0.0 ? 0.0 : pow (2.0, (pb -> signal - 8192.0) / 768.0)); break;
 			case 5: if (pb -> signal == 0) sprintf (command, "off"); else sprintf (command, "on"); break;
 			case 6:

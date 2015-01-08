@@ -196,6 +196,7 @@ program eclipse [
 	[*pitch_ctrl1 *pitch] [*pitch_ctrl2 *pitch] [*pitch_ctrl3 *pitch] [*pitch_ctrl4 *pitch]
 
 	[pan *pan] [delay *delay] [drywet *mixer] [volume *volume]
+	[*pan "pan" *lfo2pan]
 	[ConnectStereo *delay *pan]
 	[ConnectDryWet *mixer *pan *delay]
 	[ConnectStereo *volume *mixer]
@@ -292,13 +293,13 @@ program eclipse [
 					*pitchsens1 *pitchsens2 *pitchsens3 *pitchsens4
 					]
 	[trigger *trigger]
-	[fm4 *op]
+	[fm4 *op] [noise_operator *noise]
 	[filter *filter]
 	[adsr *adsr]
 	[parameter_block *trigger_delay 0]
 	[sensitivity *freq1] [sensitivity *freq2] [sensitivity *freq3] [sensitivity *freq4]
-	[eg *ampeg1] [eg *ampeg2] [eg *ampeg3] [eg *ampeg4]
-	[eg *freqeg] [gateway *freqeg1] [gateway *freqeg2] [gateway *freqeg3] [gateway *freqeg4]
+	[eg *ampeg1] [eg *ampeg2] [eg *ampeg3] [eg *ampeg4] [eg *noiseeg]
+	[eg *freqeg] [gateway *freqeg1] [gateway *freqeg2] [gateway *freqeg3] [gateway *freqeg4] [gateway *filtereg]
 	[sensitivity *velocity1] [sensitivity *velocity2] [sensitivity *velocity3] [sensitivity *velocity4]
 	[sensitivity *key1] [sensitivity *key2] [sensitivity *key3] [sensitivity *key4]
 	[sensitivity *egscal] [sensitivity *egscalfreq] [sensitivity *egscal1] [sensitivity *egscal2] [sensitivity *egscal3] [sensitivity *egscal4]
@@ -306,11 +307,12 @@ program eclipse [
 	[*PhobosCB *trigger]
 	[*trigger_delay "signal" *trigger "trigger"]
 	[*adsr "trigger" *trigger_delay]
-	[*freqeg "trigger" *trigger "trigger"]
+	[*freqeg "trigger" *trigger "trigger"] [*noiseeg "trigger" *trigger_delay]
 	[*ampeg1 "trigger" *trigger_delay] [*ampeg2 "trigger" *trigger_delay] [*ampeg3 "trigger" *trigger_delay] [*ampeg4 "trigger" *trigger_delay]
 	[*trigger "busy" *adsr "busy"]
 	[*lfo1 "trigger" *trigger "trigger"] [*lfo2 "trigger" *trigger "trigger"]
 
+	[*noise "amp" *noiseeg]
 	[*freq1 "signal" *trigger "key"] [*freq2 "signal" *trigger "key"] [*freq3 "signal" *trigger "key"] [*freq4 "signal" *trigger "key"]
 	[*op "trigger" *trigger_delay]
 	[*op "freq1" *freq1] [*op "freq2" *freq2] [*op "freq3" *freq3] [*op "freq4" *freq4]
@@ -328,7 +330,7 @@ program eclipse [
 	[*op "amp1" *Ysa1] [*op "amp2" *Ysa2] [*op "amp3" *Ysa3] [*op "amp4" *Ysa4]
 	[*op "amp1" *lfo2amp1] [*op "amp2" *lfo2amp2] [*op "amp3" *lfo2amp3] [*op "amp4" *lfo2amp4]
 
-	[*freqeg1 *freqeg] [*freqeg2 *freqeg] [*freqeg3 *freqeg] [*freqeg4 *freqeg]
+	[*freqeg1 *freqeg] [*freqeg2 *freqeg] [*freqeg3 *freqeg] [*freqeg4 *freqeg] [*filtereg *freqeg]
 	[*op "freq1" *freqeg1] [*op "freq2" *freqeg2] [*op "freq3" *freqeg3] [*op "freq4" *freqeg4]
 	[*op "amp1" *ampeg1] [*op "amp2" *ampeg2] [*op "amp3" *ampeg3] [*op "amp4" *ampeg4]
 
@@ -348,9 +350,10 @@ program eclipse [
 	[*ampeg4 "time1" *egscal4] [*ampeg4 "time2" *egscal4] [*ampeg1 "time3" *egscal4] [*ampeg1 "time4" *egscal4]
 
 	[*filter "freq" *lfo2filter]
+	[*filter "freq" *filtereg]
 	[*filter "amp" *lfo2amp]
 
-	[*filter *op]
+	[*filter *op] [*filter *noise]
 	[*filter "amp" *adsr]
 	[*mixer *filter]
 
@@ -367,7 +370,9 @@ program eclipse [
 	[Insert *Ysa2 *Phobos sensitivity amp 2 Y]
 	[Insert *Ysa3 *Phobos sensitivity amp 3 Y]
 	[Insert *Ysa4 *Phobos sensitivity amp 4 Y]
+	[Insert *noise *Phobos operator noise]
 	[Insert *freqeg *Phobos operator eg freq]
+	[Insert *noiseeg *Phobos operator eg noise]
 	[Insert *ampeg1 *Phobos operator 1 eg amp]
 	[Insert *ampeg2 *Phobos operator 2 eg amp]
 	[Insert *ampeg3 *Phobos operator 3 eg amp]
@@ -391,6 +396,7 @@ program eclipse [
 	[Insert *egscal3 *Phobos sensitivity egscaling 3]
 	[Insert *egscal4 *Phobos sensitivity egscaling 4]
 	[Insert *filter *Phobos filter]
+	[Insert *filtereg *Phobos filter eg]
 	[Insert *adsr *Phobos adsr]
 	[Insert *trigger *Phobos portamento]
 

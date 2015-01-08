@@ -303,6 +303,7 @@ program eclipse [
 	[sensitivity *velocity1] [sensitivity *velocity2] [sensitivity *velocity3] [sensitivity *velocity4]
 	[sensitivity *key1] [sensitivity *key2] [sensitivity *key3] [sensitivity *key4]
 	[sensitivity *egscal] [sensitivity *egscalfreq] [sensitivity *egscal1] [sensitivity *egscal2] [sensitivity *egscal3] [sensitivity *egscal4]
+	[sensitivity *filter_key]
 
 	[*PhobosCB *trigger]
 	[*trigger_delay "signal" *trigger "trigger"]
@@ -314,6 +315,7 @@ program eclipse [
 
 	[*noise "amp" *noiseeg]
 	[*freq1 "signal" *trigger "key"] [*freq2 "signal" *trigger "key"] [*freq3 "signal" *trigger "key"] [*freq4 "signal" *trigger "key"]
+	[*filter_key "signal" *trigger "key"]
 	[*op "trigger" *trigger_delay]
 	[*op "freq1" *freq1] [*op "freq2" *freq2] [*op "freq3" *freq3] [*op "freq4" *freq4]
 	[*op "freq1" *lfosens1] [*op "freq2" *lfosens2] [*op "freq3" *lfosens3] [*op "freq4" *lfosens4]
@@ -351,6 +353,7 @@ program eclipse [
 
 	[*filter "freq" *lfo2filter]
 	[*filter "freq" *filtereg]
+	[*filter "freq" *filter_key]
 	[*filter "amp" *lfo2amp]
 
 	[*filter *op] [*filter *noise]
@@ -397,6 +400,7 @@ program eclipse [
 	[Insert *egscal4 *Phobos sensitivity egscaling 4]
 	[Insert *filter *Phobos filter]
 	[Insert *filtereg *Phobos filter eg]
+	[Insert *filter_key *Phobos filter key]
 	[Insert *adsr *Phobos adsr]
 	[Insert *trigger *Phobos portamento]
 

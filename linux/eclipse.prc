@@ -192,8 +192,8 @@ program eclipse [
 	[*lfo2amp1 *negative] [*lfo2amp2 *negative] [*lfo2amp3 *negative] [*lfo2amp4 *negative]
 	[*lfo2filter *tremolo] [*lfo2amp *tremolo] [*lfo2pan *tremolo]
 
-	[gateway *pitch_ctrl1] [gateway *pitch_ctrl2] [gateway *pitch_ctrl3] [gateway *pitch_ctrl4]
-	[*pitch_ctrl1 *pitch] [*pitch_ctrl2 *pitch] [*pitch_ctrl3 *pitch] [*pitch_ctrl4 *pitch]
+	[gateway *pitch_ctrl1] [gateway *pitch_ctrl2] [gateway *pitch_ctrl3] [gateway *pitch_ctrl4] [gateway *pitch_ctrlfilter]
+	[*pitch_ctrl1 *pitch] [*pitch_ctrl2 *pitch] [*pitch_ctrl3 *pitch] [*pitch_ctrl4 *pitch] [*pitch_ctrlfilter *pitch]
 
 	[pan *pan] [delay *delay] [drywet *mixer] [volume *volume]
 	[*pan "pan" *lfo2pan]
@@ -220,6 +220,7 @@ program eclipse [
 	[Insert *pitch_ctrl2 *Phobos sensitivity pitch 2]
 	[Insert *pitch_ctrl3 *Phobos sensitivity pitch 3]
 	[Insert *pitch_ctrl4 *Phobos sensitivity pitch 4]
+	[Insert *pitch_ctrlfilter *Phobos sensitivity pitch filter]
 
 	[show "STAGE 1 (common)"]
 
@@ -230,6 +231,7 @@ program eclipse [
 			*lfo2amp1 *lfo2amp2 *lfo2amp3 *lfo2amp4
 			*lfo2filter *lfo2amp
 			*pitch_ctrl1 *pitch_ctrl2 *pitch_ctrl3 *pitch_ctrl4
+			*pitch_ctrlfilter
 			]
 	]
 
@@ -291,6 +293,7 @@ program eclipse [
 					*lfo2amp1 *lfo2amp2 *lfo2amp3 *lfo2amp4
 					*lfo2filter *lfo2amp
 					*pitchsens1 *pitchsens2 *pitchsens3 *pitchsens4
+					*pitchsensfilter
 					]
 	[trigger *trigger]
 	[fm4 *op] [noise_operator *noise]
@@ -354,6 +357,7 @@ program eclipse [
 	[*filter "freq" *lfo2filter]
 	[*filter "freq" *filtereg]
 	[*filter "freq" *filter_key]
+	[*filter "freq" *pitchsensfilter]
 	[*filter "amp" *lfo2amp]
 
 	[*filter *op] [*filter *noise]

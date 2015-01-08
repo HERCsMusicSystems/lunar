@@ -180,8 +180,8 @@ program eclipse [
 	[lfo *lfo1] [lfo *lfo2]
 
 	[control *vibrato]
-	[gateway *lfosens1] [gateway *lfosens2] [gateway *lfosens3] [gateway *lfosens4]
-	[*vibrato *lfo1] [*lfosens1 *vibrato] [*lfosens2 *vibrato] [*lfosens3 *vibrato] [*lfosens4 *vibrato]
+	[gateway *lfosens1] [gateway *lfosens2] [gateway *lfosens3] [gateway *lfosens4] [gateway *lfosensfilter]
+	[*vibrato *lfo1] [*lfosens1 *vibrato] [*lfosens2 *vibrato] [*lfosens3 *vibrato] [*lfosens4 *vibrato] [*lfosensfilter *vibrato]
 
 	[control *tremolo] [control *negative]
 	[gateway *lfo2freq1] [gateway *lfo2freq2] [gateway *lfo2freq3] [gateway *lfo2freq4]
@@ -226,7 +226,7 @@ program eclipse [
 
 	[REPEAT *polyphony
 		[BuildPhobosPart *Phobos *moonbase *pan *XData *YData *lfo1 *lfo2
-			*lfosens1 *lfosens2 *lfosens3 *lfosens4
+			*lfosens1 *lfosens2 *lfosens3 *lfosens4 *lfosensfilter
 			*lfo2freq1 *lfo2freq2 *lfo2freq3 *lfo2freq4
 			*lfo2amp1 *lfo2amp2 *lfo2amp3 *lfo2amp4
 			*lfo2filter *lfo2amp
@@ -241,6 +241,7 @@ program eclipse [
 	[Insert *lfosens2 *Phobos sensitivity lfo 1 freq 2]
 	[Insert *lfosens3 *Phobos sensitivity lfo 1 freq 3]
 	[Insert *lfosens4 *Phobos sensitivity lfo 1 freq 4]
+	[Insert *lfosensfilter *Phobos sensitivity lfo 1 filter]
 	[Insert *lfo2freq1 *Phobos sensitivity lfo 2 freq 1]
 	[Insert *lfo2freq2 *Phobos sensitivity lfo 2 freq 2]
 	[Insert *lfo2freq3 *Phobos sensitivity lfo 2 freq 3]
@@ -288,7 +289,7 @@ program eclipse [
 
 
 [[BuildPhobosPart *Phobos *PhobosCB *mixer *X *Y *lfo1 *lfo2
-					*lfosens1 *lfosens2 *lfosens3 *lfosens4
+					*lfosens1 *lfosens2 *lfosens3 *lfosens4 *lfosensfilter
 					*lfo2freq1 *lfo2freq2 *lfo2freq3 *lfo2freq4
 					*lfo2amp1 *lfo2amp2 *lfo2amp3 *lfo2amp4
 					*lfo2filter *lfo2amp
@@ -354,6 +355,7 @@ program eclipse [
 	[*ampeg3 "time1" *egscal3] [*ampeg3 "time2" *egscal3] [*ampeg1 "time3" *egscal3] [*ampeg1 "time4" *egscal3]
 	[*ampeg4 "time1" *egscal4] [*ampeg4 "time2" *egscal4] [*ampeg1 "time3" *egscal4] [*ampeg1 "time4" *egscal4]
 
+	[*filter "freq" *lfosensfilter]
 	[*filter "freq" *lfo2filter]
 	[*filter "freq" *filtereg]
 	[*filter "freq" *filter_key]

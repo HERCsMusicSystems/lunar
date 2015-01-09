@@ -9,12 +9,12 @@ program lunar #machine := "prolog.lunar"
 				small_keyboard keyboard big_keyboard oscilloscope vector CommandCentre
 				noise orbiter X Y modulation vibrato tremolo wahwah
 				core moonbase arpeggiator operator parameter_block auto auto_data key_map velocity_map impulse
-				trigger inactive_trigger mixer stereo_mixer gateway stereo_gateway amplifier stereo_amplifier volume mono_volume lfo adsr eg egscaling
-				square_operator fm4 fm6 dx9 dx7 saw_operator noise_operator sampler_operator sensitivity filter delay pan power_pan linear_pan
+				trigger inactive_trigger mixer stereo_mixer gateway stereo_gateway amplifier stereo_amplifier volume mono_volume lfo adsr eg egscaling egscal
+				square_operator fm4 fm6 dx9 dx7 saw_operator noise_operator sampler_operator sensitivity sens filter delay pan power_pan linear_pan
 				drywet drywet_mono balance
 				level1 level2 level3 level4 time1 time2 time3 time4 attack decay sustain release
 				signal freq amp ratio sync resonance hold busy portamento porta  legato time speed wave pulse phase poly feedback highdamp
-				mono left right mic mic_left mic_right breakpoint algo key_ratio
+				mono left right mic mic_left mic_right breakpoint BP algo key_ratio
 				key velocity keyon keyoff polyaftertouch control programchange aftertouch pitch
 				sysex timingclock START CONTINUE STOP activesensing
 				division active
@@ -266,7 +266,7 @@ program lunar #machine := "prolog.lunar"
 ]
 
 [[InsertIO *parameters *sensitivity *selector [["SIGNAL" "BREAKPOINT" "LEFT" "RIGHT"] ["SIGNAL"]]]
-	[AddParameterBlock *parameters breakpoint *sensitivity *selector 0 "index"]
+	[AddParameterBlock *parameters BP "breakpoint" *sensitivity *selector 0 "index"]
 	[AddParameterBlock *parameters left *sensitivity *selector 0 "index"]
 	[AddParameterBlock *parameters right *sensitivity *selector 0 "index"]
 ]

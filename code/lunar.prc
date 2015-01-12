@@ -17,7 +17,7 @@ program lunar #machine := "prolog.lunar"
 				mono left right mic mic_left mic_right breakpoint BP algo key_ratio
 				key velocity keyon keyoff polyaftertouch control programchange aftertouch pitch
 				sysex timingclock START CONTINUE STOP activesensing
-				division active
+				subdivision active
 				Lunar Lander Activate Deactivate
 				Connect ConnectStereo ConnectDryWet Disconnect DisconnectStereo DisconnectDryWet
 				AddParameterBlock AddNamedParameterBlock
@@ -202,7 +202,7 @@ program lunar #machine := "prolog.lunar"
 
 [[InsertIO *parameters *arpeggiator *selector [["SPEED" "DIVISION" "ACTIVE" "ALGO" "HOLD" : *] *]]
 	[AddParameterBlock *parameters speed *arpeggiator *selector 140 "index"]
-	[AddParameterBlock *parameters division *arpeggiator *selector 24 "index"]
+	[AddParameterBlock *parameters subdivision "division" *arpeggiator *selector 24 "index"]
 	[AddParameterBlock *parameters active *arpeggiator *selector 0 "onoff"]
 	[AddParameterBlock *parameters algo *arpeggiator *selector 0 "index"]
 	[AddParameterBlock *parameters hold *arpeggiator *selector 0 "onoff"]

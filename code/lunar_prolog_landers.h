@@ -217,5 +217,12 @@ public:
 	arpeggiator_class (PrologDirectory * dir, orbiter_core * core);
 };
 
+class detector_class : public PrologNativeOrbiterCreator {
+public:
+	PrologRoot * root;
+	virtual orbiter * create_orbiter (PrologElement * parameters);
+	detector_class (PrologRoot * root, orbiter_core * core);
+};
+
 #endif
 

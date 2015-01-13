@@ -540,3 +540,60 @@ orbiter * arpeggiator_class :: create_orbiter (PrologElement * parameters) {
 PrologNativeOrbiter * arpeggiator_class :: create_native_orbiter (PrologAtom * atom, orbiter * module) {return new native_moonbase (dir, atom, core, module);}
 arpeggiator_class :: arpeggiator_class (PrologDirectory * dir, orbiter_core * core) : PrologNativeOrbiterCreator (core) {this -> dir = dir;}
 
+class lunar_detector : public orbiter {
+private:
+	double trigger;
+	bool trigger_active;
+	PrologRoot * root;
+	PrologElement * query;
+public:
+	int numberOfInputs (void) {return orbiter :: numberOfOutputs ();}
+	char * inputName (int ind) {return orbiter :: outputName (ind);}
+	double * inputAddress (int ind) {return orbiter :: outputAddress (ind);}
+	int numberOfOuptuts (void) {return 0;}
+	void move (void) {
+		if (trigger_active) {
+			if (trigger != signal) return;
+			trigger_active = false;
+			if (query != 0) {
+				PrologElement * sub = query -> duplicate ();
+				AREA area;
+				root -> getValue (sub, area, 0);
+				root -> resolution (sub);
+				delete sub;
+			}
+			return;
+		}
+		if (trigger != signal) trigger_active = true;
+	}
+	lunar_detector (PrologRoot * root, double trigger, PrologElement * query, orbiter_core * core) : orbiter (core) {
+		this -> root = root;
+		this -> query = 0;
+		if (query != 0) {
+			PrologDirectory * studio = root -> searchDirectory ("studio");
+			if (studio != 0) {
+				PrologAtom * crack = studio -> searchAtom ("crack");
+				if (crack != 0) {
+					this -> query = root -> pair (root -> earth (),
+						root -> pair (root -> pair (root -> atom (crack), query -> duplicate ()), root -> earth ()));
+				}
+			}
+		}
+		trigger_active = false; this -> trigger = trigger;
+		initialise (); activate ();
+	}
+	~ lunar_detector (void) {if (query != 0) delete query;}
+};
+
+orbiter * detector_class :: create_orbiter (PrologElement * parameters) {
+	PrologElement * detector = 0;
+	PrologElement * query = 0;
+	while (parameters -> isPair ()) {
+		PrologElement * el = parameters -> getLeft ();
+		if (el -> isPair () && query == 0) query = parameters;
+		if (el -> isNumber ()) detector = el;
+		parameters = parameters -> getRight ();
+	}
+	return new lunar_detector (root, detector != 0 ? detector -> getNumber () : 0.0, query, core);
+}
+detector_class :: detector_class (PrologRoot * root, orbiter_core * core) : PrologNativeOrbiterCreator (core) {this -> root = root;}

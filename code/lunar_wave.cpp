@@ -107,7 +107,7 @@ wave_data * create_lunar_wave_data (char * file_name) {
 	if (riff_size < 4) fail;
 	if (! read_id (fr, command)) fail; riff_size -= 4; if (riff_size < 4) fail;
 	if (strcmp (command, "WAVE") != 0) fail;
-	printf ("wave [%s %li]\n", command, riff_size);
+	//printf ("wave [%s %li]\n", command, riff_size);
 	short int format_tag = 0;
 	short int channels = 0;
 	long int samples_per_second = 0;
@@ -119,7 +119,7 @@ wave_data * create_lunar_wave_data (char * file_name) {
 		if (! read_id (fr, command)) fail; riff_size -= 4; if (riff_size < 4) fail;
 		long int chunk_size;
 		if (! read4 (fr, & chunk_size)) fail; riff_size -= 4; if (riff_size < 4) fail;
-		printf ("chunk [%s %li] at [%li]\n", command, chunk_size, riff_size);
+		//printf ("chunk [%s %li] at [%li]\n", command, chunk_size, riff_size);
 		if (chunk_size < 0 || chunk_size > riff_size) fail;
 		riff_size -= chunk_size;
 		if (strcmp (command, "fmt ") == 0) {
@@ -130,7 +130,7 @@ wave_data * create_lunar_wave_data (char * file_name) {
 			if (! read4 (fr, & bytes_per_second)) fail;
 			if (! read2 (fr, & block_align)) fail;
 			if (! read2 (fr, & bits_per_sample)) fail;
-			printf ("format [%i %i %li %li %i %i]\n", format_tag, channels, samples_per_second, bytes_per_second, block_align, bits_per_sample);
+			//printf ("format [%i %i %li %li %i %i]\n", format_tag, channels, samples_per_second, bytes_per_second, block_align, bits_per_sample);
 		} else if (strcmp (command, "data") == 0) {
 			if (channels < 1 || block_align < 1 || chunk_size < block_align) fail;
 			int wave_size = chunk_size / block_align;
@@ -172,7 +172,7 @@ wave_data * create_lunar_wave_data (char * file_name) {
 			long int sample_loops; if (! read4 (fr, & sample_loops)) fail;
 			long int sampler_data; if (! read4 (fr, & sampler_data)) fail;
 			chunk_size -= 36;
-			printf ("........... got sampler [%li %li]\n", unity_note, sample_loops);
+			//printf ("........... got sampler [%li %li]\n", unity_note, sample_loops);
 			while (chunk_size-- > 0) {
 				long int dw_identifier; if (! read4 (fr, & dw_identifier)) fail;
 				long int dw_type; if (! read4 (fr, & dw_type)) fail;
@@ -181,7 +181,7 @@ wave_data * create_lunar_wave_data (char * file_name) {
 				long int dw_fraction; if (! read4 (fr, & dw_fraction)) fail;
 				long int dw_play_count; if (! read4 (fr, & dw_play_count)) fail;
 				chunk_size -= 24;
-				printf ("................... got loop [%li %li %li]\n", dw_type, dw_start, dw_end);
+				//printf ("................... got loop [%li %li %li]\n", dw_type, dw_start, dw_end);
 				if (dw_type == 0) {wave -> loop_point = (double) dw_end; wave -> loop_size = (double) (dw_end - dw_start);}
 			}
 		} else {while (chunk_size-- > 0) fgetc (fr);}

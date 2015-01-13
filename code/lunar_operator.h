@@ -104,6 +104,7 @@ private:
 	double index;
 	double trigger;
 	double signal_right;
+	double busy;
 	lunar_wave * wave;
 public:
 	virtual int numberOfInputs (void);

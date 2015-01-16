@@ -13,7 +13,7 @@ program lunar #machine := "prolog.lunar"
 				square_operator fm4 fm6 dx9 dx7 saw_operator noise_operator sampler_operator sensitivity sens filter delay pan power_pan linear_pan
 				drywet drywet_mono balance
 				level1 level2 level3 level4 time1 time2 time3 time4 attack decay sustain release
-				signal freq amp ratio sync resonance hold busy portamento porta  legato time speed wave pulse phase poly feedback highdamp
+				freq amp ratio sync resonance hold busy portamento porta  legato time speed wave pulse phase poly feedback highdamp
 				mono left right mic mic_left mic_right breakpoint BP algo key_ratio
 				key velocity keyon keyoff polyaftertouch control programchange aftertouch pitch
 				sysex timingclock START CONTINUE STOP activesensing
@@ -32,6 +32,7 @@ program lunar #machine := "prolog.lunar"
 				midi
 				ParameterBlockPanel AdsrPanel
 				MoveModules PropagateSignals MoveCore LunarDrop
+				CreateDistributor CloseDistributor Distribute Redistribute
 			]
 
 #machine small_keyboard := "small_keyboard"
@@ -93,6 +94,40 @@ program lunar #machine := "prolog.lunar"
 
 [[MoveCore] [MoveModules] [PropagateSignals]]
 
+[[CreateDistributor *distributor]
+	[create_atom *distributor]
+	[mutex *mx]
+	[addcl [[*distributor *mx]]]
+]
+
+[[CloseDistributor *distributor]
+	[*distributor *mx]
+	[*mx]
+	[delallcl *distributor]
+]
+
+[[Distribute *distributor *key *velocity *keyon_actions *keyoff_actions]
+	[*distributor *mx]
+	[*mx wait]
+	[TRY
+		[res : *keyon_actions]
+		[addcl [[*distributor *key *keyoff_actions]]]
+	]
+	[*mx signal]
+]
+
+[[Redistribute *distributor *key *velocity]
+	[*distributor *mx]
+	[*mx wait]
+	[TRY
+		[cl *index [[*distributor *key *action]]]
+		[res : *action]
+		[show "Deleting " *index " => " *action]
+		[DELCL *index *distributor]
+	]
+	[*mx signal]
+]
+
 [[Connect : *command] *command]
 [[ConnectStereo *to *from]
 	[*to "LEFT" *from "LEFT"]
@@ -117,7 +152,7 @@ program lunar #machine := "prolog.lunar"
 ]
 
 [[Moonbase *base *distributor *type]
-	[create_atom *base] [create_atom *modules] [create_atom *parameters] [create_atom *blocks]
+	[create_atoms *base *modules *parameters *blocks]
 	[addcl [[*base *parameters *modules *distributor *type *blocks]]]
 ]
 

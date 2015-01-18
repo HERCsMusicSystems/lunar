@@ -45,6 +45,8 @@ public:
 	double sample_duration;
 	int latency_block_size;
 	int requested_active_size;
+	int output_device;
+	int input_device;
 	double gate_gap;
 	double gate_delay;
 	double time_deltas [32768];

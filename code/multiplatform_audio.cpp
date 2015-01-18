@@ -20,8 +20,8 @@ int MultiplatformAudio :: getNumberOfInputDevices (void) {return number_of_input
 int MultiplatformAudio :: getNumberOfOutputDevices (void) {return number_of_output_devices;}
 
 typedef char text [128];
-static text input_device_names [32];
-static text output_device_names [32];
+static text input_device_names [128];
+static text output_device_names [128];
 char * MultiplatformAudio :: getInputDeviceName (int ind) {if (ind < 0 || ind >= number_of_input_devices) return NULL; return input_device_names [ind];}
 char * MultiplatformAudio :: getOutputDeviceName (int ind) {if (ind < 0 || ind >= number_of_output_devices) return NULL; return output_device_names [ind];}
 
@@ -333,9 +333,9 @@ static void * start_pcm (void * parameters) {
 	return 0;
 }
 
-void MultiplatformAudio :: selectInputDevice (int ind) {
+bool MultiplatformAudio :: selectInputDevice (int ind) {
 	int res;
-	if (ind >= getNumberOfInputDevices ()) return;
+	if (ind >= getNumberOfInputDevices ()) return false;
 	if (selected_input_device >= 0) {
 		if (capture_running) {
 			capture_running = false;
@@ -355,11 +355,12 @@ void MultiplatformAudio :: selectInputDevice (int ind) {
 		pthread_create (& threader, & attr, start_pcm_capture, 0);
 		pthread_attr_destroy (& attr);
 	}
+	return true;
 }
 
-void MultiplatformAudio :: selectOutputDevice (int ind) {
+bool MultiplatformAudio :: selectOutputDevice (int ind) {
 	int res;
-	if (ind >= getNumberOfOutputDevices ()) return;
+	if (ind >= getNumberOfOutputDevices ()) return false;
 	if (selected_output_device >= 0) {
 		if (playback_running) {
 			playback_running = false;
@@ -379,35 +380,30 @@ void MultiplatformAudio :: selectOutputDevice (int ind) {
 		pthread_create (& threader, & attr, start_pcm, 0);
 		pthread_attr_destroy (& attr);
 	}
+	return true;
 }
 
-MultiplatformAudio :: MultiplatformAudio (int channels, int sampling_freq, int latency_samples, void * hwnd) {
-	record_sampling_freq = sampling_freq;
-	pcm_channels = channels;
-	pcm_sampling_freq = sampling_freq;
-	pcm_block_size = latency_samples;
+void MultiplatformAudio :: setChannels (int channels) {pcm_channels = channels;}
+void MultiplatformAudio :: setSamplingFrequency (int sampling_frequency) {record_sampling_freq = pcm_sampling_freq = sampling_frequency;}
+void MultiplatformAudio :: setLatencyBufferSize (int bytes) {pcm_block_size = bytes;}
+
+MultiplatformAudio :: MultiplatformAudio (void * hwnd) {
 	strcpy (input_device_names [number_of_input_devices++], "default");
 	strcpy (output_device_names [number_of_output_devices++], "default");
-	int res;
 	void * * names;
-	res = snd_device_name_hint (-1, "pcm", & names);
+	int res = snd_device_name_hint (-1, "pcm", & names);
 	if (res < 0) {printf ("Error [%s]\n", snd_strerror (res)); return;}
-	char * found = strstr ((char *) * names, "NAME");
-	while (found != NULL) {
-		found += 4;
-		char * cpi = input_device_names [number_of_input_devices++];
-		char * cpo = output_device_names [number_of_output_devices++];
-		char * fp = cpi;
-		while (* found != '|' && * found != '\0') {* cpi++ = * cpo++ = * found++;}
-		* cpi++ = * cpo++ = '\0';
-		found = strstr (found, "NAME");
+	char * * hint = (char * *) names;
+	int ind = 0;
+	while (* hint != 0) {
+		char * name = snd_device_name_get_hint (* hint, "NAME");
+		//printf ("%i DEVICE %s\n", ind++, * hint);
+		strcpy (input_device_names [number_of_input_devices++], name);
+		strcpy (output_device_names [number_of_output_devices++], name);
+		delete [] name;
+		hint++;
 	}
-	res = snd_device_name_free_hint (names);
-	if (res < 0) {printf ("Error [%s]\n", snd_strerror (res)); return;}
-//	snd_pcm_t * pcm;
-//	res = snd_pcm_open (& pcm, "default", SND_PCM_STREAM_PLAYBACK, SND_PCM_ASYNC);
-//	if (res < 0) {printf ("Error [%s]\n", snd_strerror (res)); return;}
-//	printf ("Success!\n");
+	snd_device_name_free_hint (names);
 }
 
 MultiplatformAudio :: ~ MultiplatformAudio (void) {

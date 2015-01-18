@@ -37,11 +37,12 @@ orbiter_core :: orbiter_core (void) {
 	pthread_mutex_init (& main_mutex, 0);
 	noise24b = 0;
 	root = 0;
-	requested_active_size = 131072;
+	requested_active_size = 4096;
 	active_pointer = 0; actives = 0; active_limit = 0;
 	this -> centre_frequency = 330.0;
 	this -> sampling_frequency = 48000.0;
 	this -> latency_block_size = 128;
+	output_device = input_device = 0;
 	time_delta = time_deltas + 16384;
 	sampler_time_delta = sampler_time_deltas + 16384;
 	control_time_delta = control_time_deltas + 8192;

@@ -44,11 +44,14 @@ public:
 	char * getOutputDeviceName (int ind);
 	int getSelectedInputDevice (void);
 	int getSelectedOutputDevice (void);
-	void selectInputDevice (int ind);
-	void selectOutputDevice (int ind);
+	bool selectInputDevice (int ind);
+	bool selectOutputDevice (int ind);
 	void installInputCallback (AudioCallback callback, void * source = 0);
 	void installOutputCallback (AudioCallback callback, void * source = 0);
-	MultiplatformAudio (int channels, int sampling_freq, int latency_samples, void * hwnd = 0);
+	void setChannels (int channels);
+	void setSamplingFrequency (int sampling_frequency);
+	void setLatencyBufferSize (int bytes);
+	MultiplatformAudio (void * hwnd = 0);
 	~ MultiplatformAudio (void);
 	void selectInputFile (char * file_name);
 	void selectOutputFile (double seconds, char * file_name);

@@ -84,32 +84,31 @@ public:
 	}
 };
 
-static MultiplatformAudio * audio = 0;
+static MultiplatformAudio audio (0);
+
 class core_action : public PrologNativeOrbiter {
 public:
 	core_action (PrologAtom * atom, orbiter_core * core) : PrologNativeOrbiter (atom, core, new lunar_core (core)) {
 		printf ("..... creating moonbase\n");
 		cores++;
-		audio = new MultiplatformAudio (2, (int) core -> sampling_frequency, core -> latency_block_size);
-		int outputs = audio -> getNumberOfOutputDevices ();
-		printf ("Number of outputs = %i\n", outputs);
-		for (int ind = 0; ind < outputs; ind++) printf ("	device [%s]\n", audio -> getOutputDeviceName (ind));
-		int inputs = audio -> getNumberOfInputDevices ();
-		printf ("Number of inputs = %i\n", inputs);
-		for (int ind = 0; ind < inputs; ind++) printf ("	device [%s]\n", audio -> getInputDeviceName (ind));
-		if (outputs > 0) {
-			audio -> installOutputCallback (alpha_callback, this);
-			audio -> selectOutputDevice (0);
+		//audio = new MultiplatformAudio ();
+		audio . setChannels (2);
+		audio . setSamplingFrequency ((int) core -> sampling_frequency);
+		audio . setLatencyBufferSize (core -> latency_block_size);
+		if (core -> output_device >= 0 && core -> output_device < audio . getNumberOfOutputDevices ()) {
+			audio . installOutputCallback (alpha_callback, this);
+			audio . selectOutputDevice (core -> output_device);
 		}
-		if (inputs > 0) {
-			audio -> installInputCallback (beta_callback, this);
-			audio -> selectInputDevice (0);
+		if (core -> input_device >= 0 && core -> input_device < audio . getNumberOfInputDevices ()) {
+			audio . installInputCallback (beta_callback, this);
+			audio . selectInputDevice (core -> input_device);
 		}
 		printf ("Moonbase prolog created.\n");
 	}
 	~ core_action (void) {
 		printf (".... deleting moonbase\n");
-		delete audio; audio = 0;
+		audio . selectInputDevice (-1);
+		audio . selectOutputDevice (-1);
 		cores--;
 		printf ("Moonbase prolog destroyed.\n");
 	}
@@ -125,7 +124,7 @@ void alpha_callback (int frames, AudioBuffers * data, void * source) {
 	for (int ind = 0; ind < frames; ind++) {
 		core -> move_modules ();
 		core -> propagate_signals ();
-		data -> insertStereo (((* moon) + (* left_moon)) * 0.2, ((* moon) + (* right_moon)) * 0.2);
+		data -> insertStereo (((* moon) + (* left_moon)) * 0.4, ((* moon) + (* right_moon)) * 0.4);
 	}
 	pthread_mutex_unlock (& core -> main_mutex);
 }
@@ -143,8 +142,7 @@ void beta_callback (int frames, AudioBuffers * data, void * source) {
 }
 
 static bool recorder (PrologElement * parameters) {
-	if (audio == 0) return false;
-	if (parameters -> isEarth ()) {audio -> stopRecording (); return true;}
+	if (parameters -> isEarth ()) {audio . stopRecording (); return true;}
 	PrologElement * seconds = 0;
 	PrologElement * path = 0;
 	while (parameters -> isPair ()) {
@@ -156,17 +154,28 @@ static bool recorder (PrologElement * parameters) {
 	if (path == 0) return false;
 	double sec = seconds != 0 ? seconds -> getNumber () : 60.0;
 	if (sec < 0.0) sec = 1.0; if (sec > 3600.0) sec = 3600.0;
-	audio -> selectOutputFile (sec, path -> getText ());
+	audio . selectOutputFile (sec, path -> getText ());
 	return true;
 }
 
 bool core_class :: code (PrologElement * parameters, PrologResolution * resolution) {
+	if (parameters -> isEarth () && ! audio . outputFileActive ()) {
+		int outputs = audio . getNumberOfOutputDevices ();
+		printf ("Number of outputs = %i\n", outputs);
+		for (int ind = 0; ind < outputs; ind++) printf ("	device %i [%s]\n", ind, audio . getOutputDeviceName (ind));
+		int inputs = audio . getNumberOfInputDevices ();
+		printf ("Number of inputs = %i\n", inputs);
+		for (int ind = 0; ind < inputs; ind++) printf ("	device %i [%s]\n", ind, audio . getInputDeviceName (ind));
+		return true;
+	}
 	if (recorder (parameters)) return true;
 	if (cores > 0) return false;
 	PrologElement * atom = 0;
 	double centre_frequency = -1;
 	double sampling_frequency = -1;
 	int latency_block_size = -1;
+	PrologElement * output_device = 0;
+	PrologElement * input_device = 0;
 	int requested_number_of_actives = -1;
 	while (parameters -> isPair ()) {
 		PrologElement * el = parameters -> getLeft ();
@@ -176,6 +185,8 @@ bool core_class :: code (PrologElement * parameters, PrologResolution * resoluti
 			if (centre_frequency < 0.0) centre_frequency = (double) el -> getInteger ();
 			else if (sampling_frequency < 0.0) sampling_frequency = (double) el -> getInteger ();
 			else if (latency_block_size < 0) latency_block_size = el -> getInteger ();
+			else if (output_device == 0) output_device = el;
+			else if (input_device == 0) input_device = el;
 			else requested_number_of_actives = el -> getInteger ();
 		}
 		if (el -> isDouble ()) centre_frequency = el -> getDouble ();
@@ -192,6 +203,8 @@ bool core_class :: code (PrologElement * parameters, PrologResolution * resoluti
 	core -> centre_frequency = centre_frequency;
 	core -> sampling_frequency = (double) sampling_frequency;
 	core -> latency_block_size = latency_block_size;
+	if (output_device != 0) core -> output_device = output_device -> getInteger ();
+	if (input_device != 0) core -> input_device = input_device -> getInteger ();
 	core -> requested_active_size = requested_number_of_actives;
 	core -> recalculate ();
 	core_action * machine = new core_action (atom -> getAtom (), core);

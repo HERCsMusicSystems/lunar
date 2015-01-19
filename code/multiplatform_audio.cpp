@@ -233,6 +233,8 @@ public:
 
 #ifdef LINUX_ALSA
 
+static char * input_device_ids [128];
+static char * output_device_ids [128];
 
 #include <alsa/asoundlib.h>
 #include <pthread.h>
@@ -247,7 +249,7 @@ static bool capture_running = false;
 
 static void * start_pcm_capture (void * parameters) {
 	int res;
-	if ((res = snd_pcm_open (& input_pcm, input_device_names [selected_input_device], SND_PCM_STREAM_CAPTURE, 0)) < 0) {printf ("INPUT: snd_pcm_open: %s\n", snd_strerror (res)); return 0;}
+	if ((res = snd_pcm_open (& input_pcm, input_device_ids [selected_input_device], SND_PCM_STREAM_CAPTURE, 0)) < 0) {printf ("INPUT: snd_pcm_open: %s\n", snd_strerror (res)); return 0;}
 	snd_pcm_hw_params_t * hw_params;
 	if ((res = snd_pcm_hw_params_malloc (& hw_params)) < 0) {printf ("INPUT: snd_pcm_hw_params_malloc: %s\n", snd_strerror (res)); return 0;}
 	if ((res = snd_pcm_hw_params_any (input_pcm, hw_params)) < 0) {printf ("INPUT: snd_pcm_hw_params_any: %s\n", snd_strerror (res)); return 0;}
@@ -272,7 +274,7 @@ static void * start_pcm_capture (void * parameters) {
 static void * start_pcm (void * parameters) {
 //	printf ("Starting: %s\n", output_device_names [selected_output_device]);
 	int res;
-	if ((res = snd_pcm_open (& output_pcm, output_device_names [selected_output_device], SND_PCM_STREAM_PLAYBACK, 0)) < 0) {printf ("snd_pcm_open: %s\n", snd_strerror (res)); return 0;}
+	if ((res = snd_pcm_open (& output_pcm, output_device_ids [selected_output_device], SND_PCM_STREAM_PLAYBACK, 0)) < 0) {printf ("snd_pcm_open: %s\n", snd_strerror (res)); return 0;}
 	snd_pcm_hw_params_t * hw_parameters;
 	if ((res = snd_pcm_hw_params_malloc (& hw_parameters)) < 0) {printf ("snd_pcm_hw_params_malloc: %s\n", snd_strerror (res)); return 0;}
 	if ((res = snd_pcm_hw_params_any (output_pcm, hw_parameters)) < 0) {printf ("snd_pcm_hw_params_any: %s\n", snd_strerror (res)); return 0;}
@@ -386,11 +388,13 @@ void MultiplatformAudio :: setChannels (int channels) {pcm_channels = channels <
 void MultiplatformAudio :: setSamplingFrequency (int sampling_frequency) {record_sampling_freq = pcm_sampling_freq = sampling_frequency < 1 ? 1 : sampling_frequency;}
 void MultiplatformAudio :: setLatencyBufferSize (int size) {pcm_block_size = size;}
 
+static void replace_enter (char * command) {
+	if (command == 0) return;
+	char * cp = command;
+	while ((cp = strchr (cp, '\n')) != 0) * cp = ' ';
+}
+
 MultiplatformAudio :: MultiplatformAudio (void * hwnd) {
-	//input_device_names [0] = new char [8];
-	//output_device_names [0] = new char [8];
-	//strcpy (input_device_names [number_of_input_devices++], "default");
-	//strcpy (output_device_names [number_of_output_devices++], "default");
 	void * * names;
 	int res = snd_device_name_hint (-1, "pcm", & names);
 	if (res < 0) {printf ("Error [%s]\n", snd_strerror (res)); return;}
@@ -398,17 +402,27 @@ MultiplatformAudio :: MultiplatformAudio (void * hwnd) {
 	int ind = 0;
 	while (* hint != 0) {
 		char * name = snd_device_name_get_hint (* hint, "NAME");
+		char * description = snd_device_name_get_hint (* hint, "DESC");
 		char * io = snd_device_name_get_hint (* hint, "IOID");
 		//printf ("%i DEVICE %s\n", ind++, * hint);
 		if (io == 0 || strstr (io, "nput") != 0) {
-			input_device_names [number_of_input_devices] = new char [strlen (name) + 1];
-			strcpy (input_device_names [number_of_input_devices++], name);
+			input_device_names [number_of_input_devices] = new char [strlen (description) + 1];
+			input_device_ids [number_of_input_devices] = new char [strlen (name) + 1];
+			strcpy (input_device_names [number_of_input_devices], description);
+			strcpy (input_device_ids [number_of_input_devices], name);
+			replace_enter (input_device_names [number_of_input_devices]);
+			number_of_input_devices++;
 		}
 		if (io == 0 || strstr (io, "utput") != 0) {
-			output_device_names [number_of_output_devices] = new char [strlen (name) + 1];
-			strcpy (output_device_names [number_of_output_devices++], name);
+			output_device_names [number_of_output_devices] = new char [strlen (description) + 1];
+			output_device_ids [number_of_output_devices] = new char [strlen (name) + 1];
+			strcpy (output_device_names [number_of_output_devices], description);
+			strcpy (output_device_ids [number_of_output_devices], name);
+			replace_enter (output_device_names [number_of_output_devices]);
+			number_of_output_devices++;
 		}
 		free (name);
+		free (description);
 		if (io != 0) free (io);
 		hint++;
 	}
@@ -418,8 +432,8 @@ MultiplatformAudio :: MultiplatformAudio (void * hwnd) {
 MultiplatformAudio :: ~ MultiplatformAudio (void) {
 	selectInputDevice (-1);
 	selectOutputDevice (-1);
-	for (int ind = 0; ind < number_of_input_devices; ind++) delete [] input_deivce_names [ind];
-	for (int ind = 0; ind < number_of_output_devices; ind++) delete [] output_device_names [ind];
+	for (int ind = 0; ind < number_of_input_devices; ind++) {delete [] input_device_names [ind]; delete [] input_device_ids [ind];}
+	for (int ind = 0; ind < number_of_output_devices; ind++) {delete [] output_device_names [ind]; delete [] output_device_ids [ind];}
 	number_of_input_devices = number_of_output_devices = 0;
 	printf ("Audio deallocated.\n");
 }

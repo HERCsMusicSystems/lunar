@@ -19,9 +19,8 @@ static int number_of_output_devices = 0;
 int MultiplatformAudio :: getNumberOfInputDevices (void) {return number_of_input_devices;}
 int MultiplatformAudio :: getNumberOfOutputDevices (void) {return number_of_output_devices;}
 
-typedef char text [128];
-static text input_device_names [128];
-static text output_device_names [128];
+static char * input_device_names [128];
+static char * output_device_names [128];
 char * MultiplatformAudio :: getInputDeviceName (int ind) {if (ind < 0 || ind >= number_of_input_devices) return NULL; return input_device_names [ind];}
 char * MultiplatformAudio :: getOutputDeviceName (int ind) {if (ind < 0 || ind >= number_of_output_devices) return NULL; return output_device_names [ind];}
 
@@ -383,13 +382,15 @@ bool MultiplatformAudio :: selectOutputDevice (int ind) {
 	return true;
 }
 
-void MultiplatformAudio :: setChannels (int channels) {pcm_channels = channels;}
-void MultiplatformAudio :: setSamplingFrequency (int sampling_frequency) {record_sampling_freq = pcm_sampling_freq = sampling_frequency;}
-void MultiplatformAudio :: setLatencyBufferSize (int bytes) {pcm_block_size = bytes;}
+void MultiplatformAudio :: setChannels (int channels) {pcm_channels = channels < 1 ? 1 : channels;}
+void MultiplatformAudio :: setSamplingFrequency (int sampling_frequency) {record_sampling_freq = pcm_sampling_freq = sampling_frequency < 1 ? 1 : sampling_frequency;}
+void MultiplatformAudio :: setLatencyBufferSize (int size) {pcm_block_size = size;}
 
 MultiplatformAudio :: MultiplatformAudio (void * hwnd) {
-	strcpy (input_device_names [number_of_input_devices++], "default");
-	strcpy (output_device_names [number_of_output_devices++], "default");
+	//input_device_names [0] = new char [8];
+	//output_device_names [0] = new char [8];
+	//strcpy (input_device_names [number_of_input_devices++], "default");
+	//strcpy (output_device_names [number_of_output_devices++], "default");
 	void * * names;
 	int res = snd_device_name_hint (-1, "pcm", & names);
 	if (res < 0) {printf ("Error [%s]\n", snd_strerror (res)); return;}
@@ -397,10 +398,18 @@ MultiplatformAudio :: MultiplatformAudio (void * hwnd) {
 	int ind = 0;
 	while (* hint != 0) {
 		char * name = snd_device_name_get_hint (* hint, "NAME");
+		char * io = snd_device_name_get_hint (* hint, "IOID");
 		//printf ("%i DEVICE %s\n", ind++, * hint);
-		strcpy (input_device_names [number_of_input_devices++], name);
-		strcpy (output_device_names [number_of_output_devices++], name);
-		delete [] name;
+		if (io == 0 || strstr (io, "nput") != 0) {
+			input_device_names [number_of_input_devices] = new char [strlen (name) + 1];
+			strcpy (input_device_names [number_of_input_devices++], name);
+		}
+		if (io == 0 || strstr (io, "utput") != 0) {
+			output_device_names [number_of_output_devices] = new char [strlen (name) + 1];
+			strcpy (output_device_names [number_of_output_devices++], name);
+		}
+		free (name);
+		if (io != 0) free (io);
 		hint++;
 	}
 	snd_device_name_free_hint (names);
@@ -409,6 +418,9 @@ MultiplatformAudio :: MultiplatformAudio (void * hwnd) {
 MultiplatformAudio :: ~ MultiplatformAudio (void) {
 	selectInputDevice (-1);
 	selectOutputDevice (-1);
+	for (int ind = 0; ind < number_of_input_devices; ind++) delete [] input_deivce_names [ind];
+	for (int ind = 0; ind < number_of_output_devices; ind++) delete [] output_device_names [ind];
+	number_of_input_devices = number_of_output_devices = 0;
 	printf ("Audio deallocated.\n");
 }
 
@@ -714,6 +726,7 @@ static void AudioCaptureNotificationProc (void * lpParameter) {
 
 static BOOL CALLBACK DSCEnumCallbackProc (LPGUID lpGuid, LPCSTR lpcstrDescription, LPCSTR lpcstrModule, LPVOID lpContext) {
 	input_device_guid [number_of_input_devices] = lpGuid;
+	input_device_names [number_of_input_devices] = new char [strlen ((char *) lpcstrDescription) + 1];
 	strcpy (input_device_names [number_of_input_devices++], (char *) lpcstrDescription);
 	return TRUE;
 }
@@ -821,6 +834,7 @@ static void AudioNotificationProc (void * lpParameter) {
 //#include "MMSystem.h"
 static BOOL CALLBACK DSEnumCallbackProc (LPGUID lpGuid, LPCSTR lpcstrDescription, LPCSTR lpcstrModule, LPVOID lpContext) {
 	output_device_guid [number_of_output_devices] = lpGuid;
+	output_device_names [number_of_output_devices] = new char [strlen ((char *) lpcstrDescription) + 1];
 	strcpy (output_device_names [number_of_output_devices++], (char *) lpcstrDescription);
 	return TRUE;
 }
@@ -967,16 +981,15 @@ static void oscilloscope_audio_capture_dx_init (int sampling_frequency) {
 	if (MMSYSERR_NOERROR != waveInStart (hwavein)) {MessageBox (GetActiveWindow (), "Failed to start", "INFO", MB_OK); return;}
 }
 
-
-MultiplatformAudio :: MultiplatformAudio (int channels, int sampling_freq, int latency_samples, void * hwnd) {
+void MultiplatformAudio :: setChannels (int channels) {audio_channels = channels < 1 ? 1 : channels;}
+void MultiplatformAudio :: setSamplingFrequency (int sampling_frequency) {record_sampling_freq = audio_sampling_freq = sampling_frequency < 1 ? 1 : sampling_frequency;}
+void MultiplatformAudio :: setLatencyBufferSize (int size) {set_audio_block_size (size);}
+MultiplatformAudio :: MultiplatformAudio (void * hwnd) {
 	if (hwnd == 0) hwnd = GetForegroundWindow ();
 	if (hwnd == 0) hwnd = GetDesktopWindow ();
-	record_sampling_freq = sampling_freq;
-	audio_channels = channels;
-	if (audio_channels < 1) audio_channels = 1;
-	set_audio_block_size (latency_samples);
-	audio_sampling_freq = sampling_freq;
-	if (audio_sampling_freq < 1) audio_sampling_freq = 1;
+	audio_channels = 2;
+	record_sampling_freq = audio_sampling_freq = 48000;
+	set_audio_block_size (128);
 	main_window_hwnd = (HWND) hwnd;
 	audio_transmission_dx_init ();
 	audio_capture_dx_init ();
@@ -985,24 +998,30 @@ MultiplatformAudio :: ~ MultiplatformAudio (void) {
 	installInputCallback (0);
 	installOutputCallback (0);
 	audio_transmission_dx_stop ();
+	for (int ind = 0; ind < number_of_input_devices; ind++) delete [] input_device_names [ind];
+	for (int ind = 0; ind < number_of_output_devices; ind++) delete [] output_device_names [ind];
+	number_of_input_devices = number_of_output_devices = 0;
+	printf ("Audio deallocated.\n");
 }
 
-void MultiplatformAudio :: selectInputDevice (int ind) {
-	if (ind >= getNumberOfInputDevices ()) return;
+bool MultiplatformAudio :: selectInputDevice (int ind) {
+	if (ind >= getNumberOfInputDevices ()) return false;
 	if (selected_input_device >= 0) audio_capture_dx_stop ();
 	if (ind < 0) ind = -1;
 	selected_input_device = ind;
 	if (selected_input_device >= 0) audio_capture_dx_start (main_window_hwnd, selected_input_device);
+	return true;
 }
 
 //void MultiplatformAudio :: selectInputDevice (int ind) {oscilloscope_audio_capture_dx_init (audio_sampling_freq);}
 
-void MultiplatformAudio :: selectOutputDevice (int ind) {
-	if (ind >= getNumberOfOutputDevices ()) return;
+bool MultiplatformAudio :: selectOutputDevice (int ind) {
+	if (ind >= getNumberOfOutputDevices ()) return false;
 	if (selected_output_device >= 0) audio_transmission_dx_stop ();
 	if (ind < 0) ind = -1;
 	selected_output_device = ind;
 	if (selected_output_device >= 0) audio_transmission_dx_start (main_window_hwnd, selected_output_device);
+	return true;
 }
 
 #endif

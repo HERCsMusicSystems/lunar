@@ -50,7 +50,7 @@ public:
 	void installOutputCallback (AudioCallback callback, void * source = 0);
 	void setChannels (int channels);
 	void setSamplingFrequency (int sampling_frequency);
-	void setLatencyBufferSize (int bytes);
+	void setLatencyBufferSize (int size);
 	MultiplatformAudio (void * hwnd = 0);
 	~ MultiplatformAudio (void);
 	void selectInputFile (char * file_name);

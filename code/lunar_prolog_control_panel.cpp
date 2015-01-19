@@ -56,7 +56,7 @@ public:
 	button_active_graphics selector0, selector1, selector2, selector3, selector4, selector5, selector6, selector7, selector8, selector9;
 	button_active_graphics add_one, sub_one, delta_1, delta_8, delta_128;
 	button_active_graphics poly_mono, porta_on_off;
-	button_active_graphics store, restore;
+	button_active_graphics store, restore, voice_init;
 	encoder_active_graphics encoder;
 	slider_active_graphics pitch, modulation;
 	cairo_surface_t * command_centre_image;
@@ -306,6 +306,12 @@ public:
 		}
 		delete query;
 	}
+	bool voice_init_action (void) {
+		AREA file_name;
+		area_cat (file_name, area_cat (file_name, 0, area), "/default.txt");
+		preset_action ("Restore", file_name);
+		return true;
+	}
 	void stop_recording_action (void) {
 		PrologAtom * STOP = root -> search ("STOP");
 		if(atom == 0) return;
@@ -368,8 +374,9 @@ public:
 	modulation (point (72.0, 228.0), 1, false, resources, true),
 	poly_mono (point (33.0, 175.0), 503, resources, active),
 	porta_on_off (point (73.0, 175.0), 65, resources, active),
-	store (point (1240.0, 110.0), 601, resources, true),
-	restore (point (1280.0, 110.0), 602, resources, true)
+	store (point (1200.0, 110.0), 601, resources, true),
+	restore (point (1240.0, 110.0), 602, resources, true),
+	voice_init (point (1280.0, 110.0), 603, resources, true)
 	{
 		cwd (area, sizeof (AREA));
 		command_centre_image = resources != 0 ? resources -> command_centre : 0;
@@ -446,6 +453,7 @@ static gboolean RedrawControlPanel (GtkWidget * viewport, GdkEvent * event, cont
 	action -> porta_on_off . draw (cr);
 	action -> store . draw (cr);
 	action -> restore . draw (cr);
+	action -> voice_init . draw (cr);
 	cairo_destroy (cr);
 	return FALSE;
 }
@@ -539,6 +547,7 @@ static gboolean ControlPanelButtonOn (GtkWidget * viewport, GdkEventKey * event,
 	case 65363: action -> value_change_action (1); redraw = true; break;
 	case 65364: action -> value_change_action (-4); redraw = true; break;
 	case 91: redraw = file_action ("Store", "Save File", viewport, action); break;
+	case 92: redraw = action -> voice_init_action (); action -> feedback_on_controllers (); break;
 	case 93: redraw = file_action ("Restore", "Load File", viewport, action); action -> feedback_on_controllers (); break;
 	case 44:
 		action -> poly_mono . engaged = ! action -> poly_mono . engaged;
@@ -627,6 +636,7 @@ static gint ControlPanelKeyon (GtkWidget * viewport, GdkEventButton * event, con
 	if (action -> sub_one . keyon (location)) {action -> value_change_action (-1); action -> sub_one . engaged = true; redraw = true;}
 	if (action -> store . keyon (location)) redraw = file_action ("Store", "Save File", viewport, action);
 	if (action -> restore . keyon (location)) {redraw = file_action ("Restore", "Load File", viewport, action); action -> feedback_on_controllers ();}
+	if (action -> voice_init . keyon (location)) {redraw = action -> voice_init_action (); action -> feedback_on_controllers ();}
 	if (redraw) gtk_widget_queue_draw (viewport);
 	return TRUE;
 }

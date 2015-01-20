@@ -307,6 +307,10 @@ public:
 		delete query;
 	}
 	bool voice_init_action (void) {
+		GtkWidget * dialog = gtk_message_dialog_new (GTK_WINDOW (viewport), GTK_DIALOG_DESTROY_WITH_PARENT, GTK_MESSAGE_INFO, GTK_BUTTONS_OK_CANCEL, "Load default settings?", "INFO");
+		int res = gtk_dialog_run (GTK_DIALOG (dialog));
+		gtk_widget_destroy (dialog);
+		if (res != GTK_RESPONSE_OK) return false;
 		AREA file_name;
 		area_cat (file_name, area_cat (file_name, 0, area), "/default.txt");
 		preset_action ("Restore", file_name);
@@ -635,8 +639,8 @@ static gint ControlPanelKeyon (GtkWidget * viewport, GdkEventButton * event, con
 	if (action -> add_one . keyon (location)) {action -> value_change_action (1); action -> add_one . engaged = true; redraw = true;}
 	if (action -> sub_one . keyon (location)) {action -> value_change_action (-1); action -> sub_one . engaged = true; redraw = true;}
 	if (action -> store . keyon (location)) redraw = file_action ("Store", "Save File", viewport, action);
-	if (action -> restore . keyon (location)) {redraw = file_action ("Restore", "Load File", viewport, action); action -> feedback_on_controllers ();}
-	if (action -> voice_init . keyon (location)) {redraw = action -> voice_init_action (); action -> feedback_on_controllers ();}
+	if (action -> restore . keyon (location)) {if (redraw = file_action ("Restore", "Load File", viewport, action)) action -> feedback_on_controllers ();}
+	if (action -> voice_init . keyon (location)) {if (redraw = action -> voice_init_action ()) action -> feedback_on_controllers ();}
 	if (redraw) gtk_widget_queue_draw (viewport);
 	return TRUE;
 }

@@ -414,7 +414,7 @@ program lunar #machine := "prolog.lunar"
 	[show *one " => " *two] /
 	[SELECT
 		[[is_number *two] [Lunar *two *moonbase : *one]]
-		[[*moonbase *parameters *modules *cb *type *blocks] [*blocks *block : *one] [*block : *two]]
+		[[*moonbase *parameters *modules *cb *type *blocks] [*blocks *block : *one] [*block *two]]
 	]
 	/ [SubRestore *moonbase *fr]
 ]

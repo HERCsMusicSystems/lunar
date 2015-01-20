@@ -190,6 +190,14 @@ public:
 			PrologElement * el = parameters -> getLeft ();
 			if (el -> isNumber ()) if (double_count < 128) doubles [double_count++] = el;
 			if (el -> isVar ()) ret = el;
+			if (el -> isPair ()) {
+				PrologElement * subel = el;
+				while (subel -> isPair ()) {
+					PrologElement * ell = subel -> getLeft ();
+					if (ell -> isNumber ()) if (double_count < 128) doubles [double_count++] = ell;
+					subel = subel -> getRight ();
+				}
+			}
 			parameters = parameters -> getRight ();
 		}
 		if (parameters -> isVar ()) ret = parameters;

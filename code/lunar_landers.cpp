@@ -879,6 +879,7 @@ lunar_delay :: lunar_delay (orbiter_core * core) : orbiter (core) {
 	index = 0;
 	filter = 0.0;
 	enter = enter_right = signal_right = 0.0;
+	time = 8192.0; feedback = 0.0;
 	initialise (); activate ();
 }
 

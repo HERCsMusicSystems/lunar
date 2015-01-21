@@ -202,7 +202,8 @@ void lunar_sampler_operator :: move (void) {
 	if (channels > 0) signal = data -> get_data (0, time) * core -> Amplitude (amp);
 	signal_right = channels > 1 ? data -> get_data (1, time) * core -> Amplitude (amp) : signal;
 	time += core -> SamplerTimeDelta (freq) * ratio * data -> sampling_freq;
-	while (time > data -> loop_point && return_possible) {time -= data -> loop_size; if (trigger <= 0.0) return_possible = false;}
+	// The start point and end point should be identical. The end point is NOT meant to be played.
+	while (time >= data -> loop_point && return_possible) {time -= data -> loop_size; if (trigger <= 0.0) return_possible = false;}
 }
 lunar_sampler_operator :: lunar_sampler_operator (orbiter_core * core) : orbiter (core) {
 	time = -1.0;

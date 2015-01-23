@@ -6,166 +6,16 @@ import lunar
 import control
 
 program eclipse [
-					commander cb cb_path cb_edit_path cb_callback moon mooncb process_mode
+					commander cb_edit_path moon mooncb
 					Phobos PhobosCB BuildPhobos BuildPhobosPart BuildPhobosBak BuildPhobosPartBak
-					paths modules adjacent next_path previous_path next_module previous_module
 					build_Abakos build_Abakos_part Abakos Abakoscb
 					reactor left_radar right_radar radar
 					kb kbcb
-					AT sub mdi mdicb
+					mdi mdicb
 					js jcb
 					MM audio phobos_mixer abakos_mixer
 				]
 
-[[AT * *x [*x]]/]
-[[AT 0 *x [*x : *]]/]
-[[AT *i *x [*a : *b]] [-- *i *i1] / [AT *i1 *x *b]]
-
-[[paths *base]
-	[*base *parameters : *]
-	[isallr *list *el [*parameters *module : *el]]
-	[show *list]
-]
-
-[[modules *base]
-	[*base * *modules : *]
-	[isallr *list *el [*modules *module : *el]]
-	[show *list]
-]
-
-[[adjacent [*p1 *p2 : *] *p1 *p2] /]
-[[adjacent [* : *p] *p1 *p2] / [adjacent *p *p1 *p2]]
-
-[[next_path *base *p1 *p2]
-	[*base *p : *]
-	[isallr *list *el [*p * : *el]]
-	[adjacent *list *p1 *p2]
-]
-[[next_path *base *p *p]]
-
-[[previous_path *base *p1 *p2]
-	[*base *p : *]
-	[isall *list *el [*p * : *el]]
-	[adjacent *list *p1 *p2]
-]
-[[previous_path *base *p *p]]
-
-[[sub *moon [*i : *is] *path [*pp : *tail]]
-	[isall *pr *pp [*moon * : *path]]
-	[NODUP *pr *pnr] [REVERSE *pnr *pn]
-	[AT *i *pp *pn]
-	/ [sub *moon *is *path *tail]
-]
-[[sub * * * []]]
-
-[[cb *key *velocity] [cb_callback : *callback] [*callback keyon *key *velocity]]
-[[cb *ret 73 *v] [cb_callback : *callback] [*callback control 73 *v] [add *ret "Attack = " *v]]
-[[cb *ret 93 *v] [cb_callback : *callback] [*callback control 93 *v] [add *ret "Decay = " *v]]
-[[cb *ret 94 *v] [cb_callback : *callback] [*callback control 94 *v] [add *ret "Sustain = " *v]]
-[[cb *ret 72 *v] [cb_callback : *callback] [*callback control 72 *v] [add *ret "Release = " *v]]
-[[cb *ret 74 *v] [cb_callback : *callback] [*callback control 74 *v] [- *v 64 *vv] [add *ret "Freq = " *vv]]
-[[cb *ret 91 *v] [cb_callback : *callback] [*callback control 91 *v] [- *v 64 *vv] [add *ret "Dry/Wet = " *vv]]
-[[cb *ret 10 *v] [cb_callback : *callback] [*callback control 10 *v] [- *v 64 *vv] [add *ret "Pan = " *vv]]
-[[cb *ret 7 *v] [cb_callback : *callback] [*callback control 7 *v] [add *ret "Volume = " *v]]
-[[cb *ret 11 *v] [cb_callback : *callback] [*callback control 11 *v] [add *ret "Porta = " *v]]
-[[cb *ret 65 *v] [cb_callback : *callback] [*callback control 65 *v] [add *ret "Porta Switch = " *v]]
-[[cb *ret 95 *v] [cb_callback : *callback] [*callback control 95 *v] [- *v 64 *vv] [add *ret "Speed = " *vv]]
-[[cb *ret 71 *v] [cb_callback : *callback] [*callback control 71 *v] [add *ret "Vibrato = " *v]]
-[[cb *ret 128 *v] [cb_callback : *callback] [*callback control 128 *v] [- *v 64 *vv] [add *ret "Pitch = " *vv]]
-[[cb *ret 1 *v] [cb_callback : *callback] [*callback control 1 *v] [add *ret "Modulation = " *v]]
-[[cb "Mode = Mono" 126 *v] [cb_callback : *callback] [*callback control 126 0]]
-[[cb "Mode = Poly" 127 *v] [cb_callback : *callback] [*callback control 127 0]]
-[[cb *ret 12 *x *y]
-	[cb_callback : *callback] [*callback control 12 *x] [*callback control 13 *y]
-	[- *x 64 *xx] [- *y 64 *yy] [add *ret "Vector = [" *xx " / " *yy "]"]
-]
-
-[[cb cb *poly *porta *pitch *modulation *x *y *volume *attack *decay *sustain *release
-			*freq *drywet *pan *porta_time *speed *vibrato : *]
-	[is_var *poly]
-	[cb_callback : *cb]
-	[*cb control 127 : *poly]
-	[*cb control 65 : *porta]
-	[*cb control 128 : *pitch]
-	[*cb control 1 : *modulation]
-	[*cb control 12 : *x]
-	[*cb control 13 : *y]
-	[*cb control 7 : *volume]
-	[*cb control 73 : *attack]
-	[*cb control 93 : *decay]
-	[*cb control 94 : *sustain]
-	[*cb control 72 : *release]
-	[*cb control 74 : *freq]
-	[*cb control 91 : *drywet]
-	[*cb control 10 : *pan]
-	[*cb control 11 : *porta_time]
-	[*cb control 95 : *speed]
-	[*cb control 71 : *vibrato]
-]
-
-[[cb *ret Store *file_name]
-	[cb_path : *path]
-	[eq *path [*moon : *]]
-	[Store *moon *file_name]
-	[relativise_path *file_name *file]
-	[add *ret *file " Stored"]
-]
-[[cb *ret Store *file_name] [add *ret "Failed to store " *file_name]]
-
-[[cb *ret Restore *file_name]
-	[cb_path : *path]
-	[eq *path [*moon : *]]
-	[Restore *moon *file_name]
-	[relativise_path *file_name *file]
-	[add *ret *file " Restored"]
-]
-[[cb *ret Restore *file_name] [add *ret "Failed to restore " *file_name]]
-
-[[cb *ret [] *delta]
-	[cb_path : *path]
-	[eq *path [*m : *p]]
-	[*m *parameters : *]
-	[*parameters *pb : *p]
-	[*pb *v1]
-	[add *v1 *delta *v2]
-	[*pb *v2]
-	[*pb : *v3]
-	[cb_edit_path : *edit_path]
-	[text_term *pather *edit_path]
-	[add *ret *pather " = " *v3]
-]
-
-[[cb *program 0 *i1 : *]
-	[isallr *y *x [Moons *x]]
-	[AT *i1 *moon *y]
-	[cb_path [*moon]]
-	[cb_edit_path [*moon]]
-	[*moon * * *moon_callback *type : *]
-	[cb_callback *moon_callback]
-	[add *program *type " : channel=" *i1 " " *moon]
-]
-
-[[cb *program *mode *i1 : *is]
-	[isallr *y *x [Moons *x]]
-	[AT *i1 *moon *y]
-	[*moon *parameters : *]
-	[sub *parameters *is *path *path]
-	[process_mode [*moon : *path] *mode *processed]
-	[text_term *pather *processed]
-	[*parameters *pb : *path] [*pb : *v]
-	[add *program *pather " = " *v]
-	[show [*moon : *path]]
-	[cb_path [*moon : *path]]
-	[cb_edit_path *processed]
-	[*moon * * *moon_callback : *]
-	[cb_callback *moon_callback]
-]
-
-[[cb *ret START *file_name] [core *file_name] [add *ret "Recording started " *file_name]]
-[[cb STOP] [core] [show "STOP RECORDING"]]
-
-[[process_mode [*h : *t] 0 [[*h] : *t]]]
-[[process_mode [*h : *t] *i [*h : *t2]] [less 0 *i] / [-- *i *next] [process_mode *t *next *t2]]
 
 [[BuildPhobos *polyphony *Phobos *PhobosCB *volume *pan]
 	[addcl [[Moons *Phobos]]]
@@ -478,7 +328,7 @@ program eclipse [
 	[PhobosCB control 13 *vvvv]
 ]
 
-[[audio] [core reactor 330 22050 2048] [ConnectStereo reactor phobos_mixer] [ConnectStereo reactor abakos_mixer]]
+[[audio] [core reactor 330 22050 2048 0 -1] [ConnectStereo reactor phobos_mixer] [ConnectStereo reactor abakos_mixer]]
 
 [[MM *base]
 	[*base *parameters *modules *callback : *]
@@ -490,12 +340,11 @@ program eclipse [
 ]
 
 end := [
-		[var cb_path cb_callback cb_edit_path]
 		[BuildPhobos 2 Phobos PhobosCB phobos_mixer *feed]
 		[build_Abakos *Abakos abakos_mixer]
 		[oscilloscope radar]
-		[CommandCentre commander cb]
-		;[commander 3000 1060] [radar 2000 1060]
+		[CommandCentre commander CCCB]
+		;[commander 3000 1180] [radar 2000 1180]
 		[TRY [midi mdi mdicb]]
 		[TRY [joystick js jcb]]
 		[radar *feed]

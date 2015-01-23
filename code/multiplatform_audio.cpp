@@ -247,19 +247,23 @@ static int pcm_block_size = 1024;
 static bool playback_running = false;
 static bool capture_running = false;
 
+static bool prestart_pcm_capture (void) {
+	int res;
+	if ((res = snd_pcm_open (& input_pcm, input_device_ids [selected_input_device], SND_PCM_STREAM_CAPTURE, 0)) < 0) {printf ("INPUT: snd_pcm_open: %s\n", snd_strerror (res)); return false;}
+	snd_pcm_hw_params_t * hw_params;
+	if ((res = snd_pcm_hw_params_malloc (& hw_params)) < 0) {printf ("INPUT: snd_pcm_hw_params_malloc: %s\n", snd_strerror (res)); return false;}
+	if ((res = snd_pcm_hw_params_any (input_pcm, hw_params)) < 0) {printf ("INPUT: snd_pcm_hw_params_any: %s\n", snd_strerror (res)); snd_pcm_hw_params_free (hw_params); return false;}
+	if ((res = snd_pcm_hw_params_set_access (input_pcm, hw_params, SND_PCM_ACCESS_RW_INTERLEAVED)) < 0) {printf ("INPUT: snd_pcm_hw_params_set_access: %s\n", snd_strerror (res)); snd_pcm_hw_params_free (hw_params); return false;}
+	if ((res = snd_pcm_hw_params_set_format (input_pcm, hw_params, SND_PCM_FORMAT_S16_LE)) < 0) {printf ("INPUT: snd_pcm_hw_params_set_format: %s\n", snd_strerror (res)); snd_pcm_hw_params_free (hw_params); return false;}
+	unsigned int rate = (unsigned int) pcm_sampling_freq;
+	if ((res = snd_pcm_hw_params_set_rate_near (input_pcm, hw_params, & rate, 0)) < 0) {printf ("INPUT: snd_pcm_hw_params_set_near: %s\n", snd_strerror (res)); snd_pcm_hw_params_free (hw_params); return false;}
+	if ((res = snd_pcm_hw_params_set_channels (input_pcm, hw_params, pcm_channels)) < 0) {printf ("INPUT: snd_pcm_hw_params_set_channels: %s\n", snd_strerror (res)); snd_pcm_hw_params_free (hw_params); return false;}
+	if ((res = snd_pcm_hw_params (input_pcm, hw_params)) < 0) {printf ("INPUT: snd_pcm_hw_params: %s\n", snd_strerror (res)); snd_pcm_hw_params_free (hw_params); return false;}
+	snd_pcm_hw_params_free (hw_params);
+}
+
 static void * start_pcm_capture (void * parameters) {
 	int res;
-	if ((res = snd_pcm_open (& input_pcm, input_device_ids [selected_input_device], SND_PCM_STREAM_CAPTURE, 0)) < 0) {printf ("INPUT: snd_pcm_open: %s\n", snd_strerror (res)); return 0;}
-	snd_pcm_hw_params_t * hw_params;
-	if ((res = snd_pcm_hw_params_malloc (& hw_params)) < 0) {printf ("INPUT: snd_pcm_hw_params_malloc: %s\n", snd_strerror (res)); return 0;}
-	if ((res = snd_pcm_hw_params_any (input_pcm, hw_params)) < 0) {printf ("INPUT: snd_pcm_hw_params_any: %s\n", snd_strerror (res)); return 0;}
-	if ((res = snd_pcm_hw_params_set_access (input_pcm, hw_params, SND_PCM_ACCESS_RW_INTERLEAVED)) < 0) {printf ("INPUT: snd_pcm_hw_params_set_access: %s\n", snd_strerror (res)); return 0;}
-	if ((res = snd_pcm_hw_params_set_format (input_pcm, hw_params, SND_PCM_FORMAT_S16_LE)) < 0) {printf ("INPUT: snd_pcm_hw_params_set_format: %s\n", snd_strerror (res)); return 0;}
-	unsigned int rate = (unsigned int) pcm_sampling_freq;
-	if ((res = snd_pcm_hw_params_set_rate_near (input_pcm, hw_params, & rate, 0)) < 0) {printf ("INPUT: snd_pcm_hw_params_set_near: %s\n", snd_strerror (res)); return 0;}
-	if ((res = snd_pcm_hw_params_set_channels (input_pcm, hw_params, pcm_channels)) < 0) {printf ("INPUT: snd_pcm_hw_params_set_channels: %s\n", snd_strerror (res)); return 0;}
-	if ((res = snd_pcm_hw_params (input_pcm, hw_params)) < 0) {printf ("INPUT: snd_pcm_hw_params: %s\n", snd_strerror (res)); return 0;}
-	snd_pcm_hw_params_free (hw_params);
 	short int buffer [32768];
 	capture_running = true;
 	while (capture_running) {
@@ -271,29 +275,35 @@ static void * start_pcm_capture (void * parameters) {
 	return 0;
 }
 
-static void * start_pcm (void * parameters) {
+static bool prestart_pcm (void) {
 //	printf ("Starting: %s\n", output_device_names [selected_output_device]);
 	int res;
-	if ((res = snd_pcm_open (& output_pcm, output_device_ids [selected_output_device], SND_PCM_STREAM_PLAYBACK, 0)) < 0) {printf ("snd_pcm_open: %s\n", snd_strerror (res)); return 0;}
+	if ((res = snd_pcm_open (& output_pcm, output_device_ids [selected_output_device], SND_PCM_STREAM_PLAYBACK, 0)) < 0) {printf ("snd_pcm_open: %s\n", snd_strerror (res)); return false;}
 	snd_pcm_hw_params_t * hw_parameters;
-	if ((res = snd_pcm_hw_params_malloc (& hw_parameters)) < 0) {printf ("snd_pcm_hw_params_malloc: %s\n", snd_strerror (res)); return 0;}
-	if ((res = snd_pcm_hw_params_any (output_pcm, hw_parameters)) < 0) {printf ("snd_pcm_hw_params_any: %s\n", snd_strerror (res)); return 0;}
-	if ((res = snd_pcm_hw_params_set_access (output_pcm, hw_parameters, SND_PCM_ACCESS_RW_INTERLEAVED)) < 0) {printf ("snd_pcm_hw_params_set_access: %s\n", snd_strerror (res)); return 0;}
-	if ((res = snd_pcm_hw_params_set_format (output_pcm, hw_parameters, SND_PCM_FORMAT_S16_LE)) < 0) {printf ("snd_pcm_hw_params_set_format: %s\n", snd_strerror (res)); return 0;}
+	if ((res = snd_pcm_hw_params_malloc (& hw_parameters)) < 0) {printf ("snd_pcm_hw_params_malloc: %s\n", snd_strerror (res)); return false;}
+	if ((res = snd_pcm_hw_params_any (output_pcm, hw_parameters)) < 0) {printf ("snd_pcm_hw_params_any: %s\n", snd_strerror (res)); snd_pcm_hw_params_free (hw_parameters); return false;}
+	if ((res = snd_pcm_hw_params_set_access (output_pcm, hw_parameters, SND_PCM_ACCESS_RW_INTERLEAVED)) < 0) {printf ("snd_pcm_hw_params_set_access: %s\n", snd_strerror (res)); snd_pcm_hw_params_free (hw_parameters); return false;}
+	if ((res = snd_pcm_hw_params_set_format (output_pcm, hw_parameters, SND_PCM_FORMAT_S16_LE)) < 0) {printf ("snd_pcm_hw_params_set_format: %s\n", snd_strerror (res)); snd_pcm_hw_params_free (hw_parameters); return false;}
 	unsigned int rate = (unsigned int) pcm_sampling_freq;
-	if ((res = snd_pcm_hw_params_set_rate_near (output_pcm, hw_parameters, & rate, 0)) < 0) {printf ("snd_pcm_hw_params_set_rate_near: %s\n", snd_strerror (res)); return 0;}
-	if ((res = snd_pcm_hw_params_set_channels (output_pcm, hw_parameters, pcm_channels)) < 0) {printf ("snd_pcm_hw_params_set_channels: %s\n", snd_strerror (res)); return 0;}
-	if ((res = snd_pcm_hw_params_set_buffer_size (output_pcm, hw_parameters, pcm_block_size * 2)) < 0) {printf ("snd_pcm_hw_params_set_channels: %s\n", snd_strerror (res)); return 0;}
+	if ((res = snd_pcm_hw_params_set_rate_near (output_pcm, hw_parameters, & rate, 0)) < 0) {printf ("snd_pcm_hw_params_set_rate_near: %s\n", snd_strerror (res)); snd_pcm_hw_params_free (hw_parameters); return false;}
+	if ((res = snd_pcm_hw_params_set_channels (output_pcm, hw_parameters, pcm_channels)) < 0) {printf ("snd_pcm_hw_params_set_channels: %s\n", snd_strerror (res)); snd_pcm_hw_params_free (hw_parameters); return false;}
+	if ((res = snd_pcm_hw_params_set_buffer_size (output_pcm, hw_parameters, pcm_block_size * 2)) < 0) {printf ("snd_pcm_hw_params_set_channels: %s\n", snd_strerror (res)); snd_pcm_hw_params_free (hw_parameters); return false;}
 //	printf ("block size => %i\n", res);
-	if ((res = snd_pcm_hw_params (output_pcm, hw_parameters)) < 0) {printf ("snd_pcm_hw_params: %s\n", snd_strerror (res)); return 0;}
+	if ((res = snd_pcm_hw_params (output_pcm, hw_parameters)) < 0) {printf ("snd_pcm_hw_params: %s\n", snd_strerror (res)); snd_pcm_hw_params_free (hw_parameters); return false;}
 	snd_pcm_hw_params_free (hw_parameters);
 	snd_pcm_sw_params_t * sw_parameters;
-	if ((res = snd_pcm_sw_params_malloc (& sw_parameters)) < 0) {printf ("snd_pcm_sw_params_malloc: %s\n", snd_strerror (res)); return 0;}
-	if ((res = snd_pcm_sw_params_current (output_pcm, sw_parameters)) < 0) {printf ("snd_pcm_sw_params_current: %s\n", snd_strerror (res)); return 0;}
-	if ((res = snd_pcm_sw_params_set_avail_min (output_pcm, sw_parameters, pcm_block_size)) < 0) {printf ("snd_pcm_sw_params_set_avail_min: %s\n", snd_strerror (res)); return 0;}
-	if ((res = snd_pcm_sw_params_set_start_threshold (output_pcm, sw_parameters, 0U)) < 0) {printf ("snd_pcm_sw_params_set_start_threshold: %s\n", snd_strerror (res)); return 0;}
-	if ((res = snd_pcm_sw_params (output_pcm, sw_parameters)) < 0) {printf ("snd_pcm_sw_params: %s\n", snd_strerror (res)); return 0;}
-	if ((res = snd_pcm_prepare (output_pcm)) < 0) {printf ("snd_pcm_prepare: %s\n", snd_strerror (res)); return 0;}
+	if ((res = snd_pcm_sw_params_malloc (& sw_parameters)) < 0) {printf ("snd_pcm_sw_params_malloc: %s\n", snd_strerror (res)); return false;}
+	if ((res = snd_pcm_sw_params_current (output_pcm, sw_parameters)) < 0) {printf ("snd_pcm_sw_params_current: %s\n", snd_strerror (res)); snd_pcm_sw_params_free (hw_parameters); return false;}
+	if ((res = snd_pcm_sw_params_set_avail_min (output_pcm, sw_parameters, pcm_block_size)) < 0) {printf ("snd_pcm_sw_params_set_avail_min: %s\n", snd_strerror (res)); snd_pcm_sw_params_free (hw_parameters); return false;}
+	if ((res = snd_pcm_sw_params_set_start_threshold (output_pcm, sw_parameters, 0U)) < 0) {printf ("snd_pcm_sw_params_set_start_threshold: %s\n", snd_strerror (res)); snd_pcm_sw_params_free (hw_parameters); return false;}
+	if ((res = snd_pcm_sw_params (output_pcm, sw_parameters)) < 0) {printf ("snd_pcm_sw_params: %s\n", snd_strerror (res)); snd_pcm_sw_params_free (hw_parameters); return false;}
+	if ((res = snd_pcm_prepare (output_pcm)) < 0) {printf ("snd_pcm_prepare: %s\n", snd_strerror (res)); snd_pcm_sw_params_free (hw_parameters); return false;}
+	snd_pcm_sw_params_free (hw_parameters);
+	return true;
+}
+
+static void * start_pcm (void * parameters) {
+	int res;
 	playback_running = true;
 	short int buffer [32768];
 	for (int ind = 0; ind < 32768; ind++) {buffer [ind] = 0;}
@@ -348,13 +358,8 @@ bool MultiplatformAudio :: selectInputDevice (int ind) {
 	if (ind < 0) ind = -1;
 	selected_input_device = ind;
 	if (selected_input_device >= 0) {
-		pthread_t threader;
-		pthread_attr_t attr;
-		pthread_attr_init (& attr);
-		pthread_attr_setstacksize (& attr, 120 * 1024);
-		pthread_attr_setdetachstate (& attr, PTHREAD_CREATE_DETACHED);
-		pthread_create (& threader, & attr, start_pcm_capture, 0);
-		pthread_attr_destroy (& attr);
+		if (prestart_pcm_capture ()) {pthread_t threader; pthread_create (& threader, 0, start_pcm_capture, 0); pthread_detach (threader); return true;}
+		return false;
 	}
 	return true;
 }
@@ -373,13 +378,8 @@ bool MultiplatformAudio :: selectOutputDevice (int ind) {
 	if (ind < 0) ind = -1;
 	selected_output_device = ind;
 	if (selected_output_device >= 0) {
-		pthread_t threader;
-		pthread_attr_t attr;
-		pthread_attr_init (& attr);
-		pthread_attr_setstacksize (& attr, 120 * 1024);
-		pthread_attr_setdetachstate (& attr, PTHREAD_CREATE_DETACHED);
-		pthread_create (& threader, & attr, start_pcm, 0);
-		pthread_attr_destroy (& attr);
+		if (prestart_pcm ()) {pthread_t threader; pthread_create (& threader, 0, start_pcm, 0); pthread_detach (threader); return true;}
+		return false;
 	}
 	return true;
 }
@@ -669,9 +669,9 @@ static HWND main_window_hwnd = NULL;
 static void audio_capture_dx_get (int location) {
 	LPVOID address;
 	DWORD capture_position, read_position, length;
-	if (! (DS_OK == audio_capture_lpdscb -> GetCurrentPosition (& capture_position, & read_position))) MessageBox (GetActiveWindow (), "Failed to get current position.", "INFO", MB_OK);
+	if (! (DS_OK == audio_capture_lpdscb -> GetCurrentPosition (& capture_position, & read_position))) printf ("Direct X: Failed to get current position.\n");
 //	length = capture_position - read_position;
-	if (! (DS_OK == audio_capture_lpdscb -> Lock (location, audio_block_size, & address, & length, NULL, NULL, 0))) MessageBox (GetActiveWindow (), "Buffer not locked.", "INFO", MB_OK);
+	if (! (DS_OK == audio_capture_lpdscb -> Lock (location, audio_block_size, & address, & length, NULL, NULL, 0))) printf ("Direct X: Buffer not locked.\n");
 	if (input_callback != NULL) {
 		if (input_file_active) {
 			if (audio_channels == 2) {
@@ -746,7 +746,7 @@ static BOOL CALLBACK DSCEnumCallbackProc (LPGUID lpGuid, LPCSTR lpcstrDescriptio
 }
 static void audio_capture_dx_init (void) {
 	HRESULT hr;
-	if (FAILED (hr = DirectSoundCaptureEnumerate (DSCEnumCallbackProc, NULL))) MessageBox (GetActiveWindow (), "Failed to enumerate capture devices.", "INFO", MB_OK);
+	if (FAILED (hr = DirectSoundCaptureEnumerate (DSCEnumCallbackProc, NULL))) printf ("Direct X: Failed to enumerate capture devices.\n");
 }
 static void audio_capture_dx_stop (void) {
 	if (capture_cont) {
@@ -759,14 +759,14 @@ static void audio_capture_dx_stop (void) {
 	if (audio_capture_lpdscb != NULL) audio_capture_lpdscb -> Release (); audio_capture_lpdscb = NULL;
 	if (audio_capture_lpdsc != NULL) audio_capture_lpdsc -> Release (); audio_capture_lpdsc = NULL;
 }
-static void audio_capture_dx_start (HWND hwnd, int device_index) {
+static bool audio_capture_dx_start (HWND hwnd, int device_index) {
 	HRESULT hr;
-	if (FAILED (hr = DirectSoundCaptureCreate8 (input_device_guid [device_index], & audio_capture_lpdsc, NULL))) {MessageBox (GetActiveWindow (), "Failed to create capture interface.", "INFO", MB_OK); return;}
+	if (FAILED (hr = DirectSoundCaptureCreate8 (input_device_guid [device_index], & audio_capture_lpdsc, NULL))) {printf ("Direct X: Failed to create capture interface.\n"); return false;}
 	DSCCAPS capture_caps;
 	capture_caps . dwSize = sizeof (DSCCAPS);
-	if (FAILED (hr = audio_capture_lpdsc -> GetCaps (& capture_caps))) MessageBox (GetActiveWindow (), "Failed to get device caps.", "INFO", MB_OK);
-	char command [256];
-	sprintf (command, "channels [%x %x]", capture_caps . dwChannels, capture_caps . dwFormats);
+	if (FAILED (hr = audio_capture_lpdsc -> GetCaps (& capture_caps))) {printf ("Direct X: Failed to get device caps.\n"); return false;}
+//	char command [256];
+//	sprintf (command, "channels [%x %x]", capture_caps . dwChannels, capture_caps . dwFormats);
 //	MessageBox (GetActiveWindow (), command, "INFO", MB_OK);
 	DSCBUFFERDESC dscbdesc;
 	WAVEFORMATEX wfx = {WAVE_FORMAT_PCM, audio_channels, audio_sampling_freq, audio_sampling_freq * 2 * audio_channels, audio_channels * 2, 16, 0};
@@ -777,9 +777,9 @@ static void audio_capture_dx_start (HWND hwnd, int device_index) {
 	dscbdesc . lpwfxFormat = & wfx;
 	dscbdesc . dwFXCount = 0;
 	dscbdesc . lpDSCFXDesc = NULL;
-	if (FAILED (hr = audio_capture_lpdsc -> CreateCaptureBuffer (& dscbdesc, & audio_capture_lpdscb, NULL))) MessageBox (GetActiveWindow (), "Failed to create capture buffer.", "INFO", MB_OK);
+	if (FAILED (hr = audio_capture_lpdsc -> CreateCaptureBuffer (& dscbdesc, & audio_capture_lpdscb, NULL))) {printf ("Direct X: Failed to create capture buffer.\n"); return false;}
 	LPDIRECTSOUNDNOTIFY8 lpdscNotify;
-	if (FAILED (hr = audio_capture_lpdscb -> QueryInterface (IID_IDirectSoundNotify, (LPVOID *) & lpdscNotify))) MessageBox (GetActiveWindow (), "Can not get notification addresses.", "INFO", MB_OK);
+	if (FAILED (hr = audio_capture_lpdscb -> QueryInterface (IID_IDirectSoundNotify, (LPVOID *) & lpdscNotify))) {printf ("Direct X: Can not get notification addresses.\n"); return false;}
 	for (int ind = 0; ind < 2; ind++) {
 		audio_capture_notification_events [ind] = CreateEvent (NULL, FALSE, FALSE, NULL);
 //		audio_capture_position_notify [ind] . dwOffset = audio_block_size * ind + 100;
@@ -789,13 +789,14 @@ static void audio_capture_dx_start (HWND hwnd, int device_index) {
 	lpdscNotify -> SetNotificationPositions (2, audio_capture_position_notify);
 //	lpdscNotify -> Release ();
 	_beginthread (AudioCaptureNotificationProc, 0, main_window_hwnd);
-	if (FAILED (hr = audio_capture_lpdscb -> Start (DSCBSTART_LOOPING))) MessageBox (GetActiveWindow (), "Failed to start looping.", "INFO", MB_OK);
+	if (FAILED (hr = audio_capture_lpdscb -> Start (DSCBSTART_LOOPING))) {printf ("Direct X: Failed to start looping.\n"); return false;}
+	return true;
 }
 
 static void audio_transmission_dx_fill_in (DWORD index) {
 	LPVOID address;
 	DWORD length;
-	if (! (DS_OK == audio_lpdsb -> Lock (index, audio_block_size, & address, & length, NULL, NULL, 0))) {MessageBox (GetActiveWindow (), "Buffer not locked.", "INFO", MB_OK); return;}
+	if (! (DS_OK == audio_lpdsb -> Lock (index, audio_block_size, & address, & length, NULL, NULL, 0))) {printf ("Direct X: Buffer not locked.\n"); return;}
 	if (output_callback != NULL) {
 		if (audio_channels == 1) {
 			audio_dx_mono_buffers buffers ((short int *) address);
@@ -854,7 +855,7 @@ static BOOL CALLBACK DSEnumCallbackProc (LPGUID lpGuid, LPCSTR lpcstrDescription
 }
 static void audio_transmission_dx_init (void) {
 	HRESULT hr;
-	if (FAILED (hr = DirectSoundEnumerate (DSEnumCallbackProc, NULL))) MessageBox (GetActiveWindow (), "Failed to enumerate transmission devices.", "INFO", MB_OK);
+	if (FAILED (hr = DirectSoundEnumerate (DSEnumCallbackProc, NULL))) printf ("Direct X: Failed to enumerate transmission devices.\n");
 }
 static void audio_transmission_dx_stop (void) {
 	if (audio_lpds == NULL) return;
@@ -868,10 +869,10 @@ static void audio_transmission_dx_stop (void) {
 	if (audio_lpdsb != NULL) audio_lpdsb -> Release (); audio_lpdsb = NULL;
 	if (audio_lpds != NULL) audio_lpds -> Release (); audio_lpds = NULL;
 }
-static void audio_transmission_dx_start (HWND hwnd, int device_index) {
+static bool audio_transmission_dx_start (HWND hwnd, int device_index) {
 	HRESULT hr;
-	if (FAILED (hr = DirectSoundCreate8 (output_device_guid [device_index], & audio_lpds, NULL))) MessageBox (GetActiveWindow (), "Direct sound create failed.", "INFO", MB_OK);
-	if (FAILED (hr = audio_lpds -> SetCooperativeLevel (hwnd, DSSCL_PRIORITY))) MessageBox (GetActiveWindow (), "Cooperative level failed.", "INFO", MB_OK);
+	if (FAILED (hr = DirectSoundCreate8 (output_device_guid [device_index], & audio_lpds, NULL))) {printf ("Direct X: Direct sound create failed.\n"); return false;}
+	if (FAILED (hr = audio_lpds -> SetCooperativeLevel (hwnd, DSSCL_PRIORITY))) {printf ("Direct X: Cooperative level failed.\n"); return false;}
 	PCMWAVEFORMAT pcmwf;
 	DSBUFFERDESC dsbdesc;
 	memset (& pcmwf, 0, sizeof (PCMWAVEFORMAT));
@@ -886,9 +887,9 @@ static void audio_transmission_dx_start (HWND hwnd, int device_index) {
 	dsbdesc . dwFlags = DSBCAPS_CTRLPOSITIONNOTIFY | DSBCAPS_GETCURRENTPOSITION2;
 	dsbdesc . dwBufferBytes = audio_block_size + audio_block_size; //BUFFER_SIZE;
 	dsbdesc . lpwfxFormat = (LPWAVEFORMATEX) & pcmwf;
-	if (FAILED (hr = audio_lpds -> CreateSoundBuffer (& dsbdesc, & audio_lpdsb, NULL))) MessageBox (GetActiveWindow (), "Buffer not created.", "INFO", MB_OK);
+	if (FAILED (hr = audio_lpds -> CreateSoundBuffer (& dsbdesc, & audio_lpdsb, NULL))) {printf ("Direct X: Buffer not created.\n"); return false;}
 	LPDIRECTSOUNDNOTIFY8 lpdsnotify;
-	if (FAILED (hr = audio_lpdsb -> QueryInterface (IID_IDirectSoundNotify8, (LPVOID *) & lpdsnotify))) MessageBox (GetActiveWindow (), "Interface not availlable.", "INFO", MB_OK);
+	if (FAILED (hr = audio_lpdsb -> QueryInterface (IID_IDirectSoundNotify8, (LPVOID *) & lpdsnotify))) {printf ("Direct X: Interface not availlable.\n"); return false;}
 	for (int ind = 0; ind < 2; ind++) {
 		audio_notification_events [ind] = CreateEvent (NULL, FALSE, FALSE, NULL);
 		audio_position_notify [ind] . dwOffset = audio_block_size * ind + 100;
@@ -900,6 +901,7 @@ static void audio_transmission_dx_start (HWND hwnd, int device_index) {
 	audio_transmission_dx_fill_in (0);
 	audio_lpdsb -> SetCurrentPosition (0);
 	hr = audio_lpdsb -> Play (0, 0, DSBPLAY_LOOPING);
+	return true;
 }
 
 static HWAVEIN hwavein;
@@ -1023,7 +1025,7 @@ bool MultiplatformAudio :: selectInputDevice (int ind) {
 	if (selected_input_device >= 0) audio_capture_dx_stop ();
 	if (ind < 0) ind = -1;
 	selected_input_device = ind;
-	if (selected_input_device >= 0) audio_capture_dx_start (main_window_hwnd, selected_input_device);
+	if (selected_input_device >= 0) return audio_capture_dx_start (main_window_hwnd, selected_input_device);
 	return true;
 }
 
@@ -1034,7 +1036,7 @@ bool MultiplatformAudio :: selectOutputDevice (int ind) {
 	if (selected_output_device >= 0) audio_transmission_dx_stop ();
 	if (ind < 0) ind = -1;
 	selected_output_device = ind;
-	if (selected_output_device >= 0) audio_transmission_dx_start (main_window_hwnd, selected_output_device);
+	if (selected_output_device >= 0) return audio_transmission_dx_start (main_window_hwnd, selected_output_device);
 	return true;
 }
 

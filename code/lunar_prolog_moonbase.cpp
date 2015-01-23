@@ -88,7 +88,9 @@ static MultiplatformAudio audio (0);
 
 class core_action : public PrologNativeOrbiter {
 public:
+	bool audio_failed;
 	core_action (PrologAtom * atom, orbiter_core * core) : PrologNativeOrbiter (atom, core, new lunar_core (core)) {
+		audio_failed = false;
 		printf ("..... creating moonbase\n");
 		cores++;
 		//audio = new MultiplatformAudio ();
@@ -97,11 +99,11 @@ public:
 		audio . setLatencyBufferSize (core -> latency_block_size);
 		if (core -> output_device >= 0 && core -> output_device < audio . getNumberOfOutputDevices ()) {
 			audio . installOutputCallback (alpha_callback, this);
-			audio . selectOutputDevice (core -> output_device);
+			if (! audio . selectOutputDevice (core -> output_device)) audio_failed = true;
 		}
 		if (core -> input_device >= 0 && core -> input_device < audio . getNumberOfInputDevices ()) {
 			audio . installInputCallback (beta_callback, this);
-			audio . selectInputDevice (core -> input_device);
+			if (! audio . selectInputDevice (core -> input_device)) audio_failed = true;
 		}
 		printf ("Moonbase prolog created.\n");
 	}
@@ -208,6 +210,7 @@ bool core_class :: code (PrologElement * parameters, PrologResolution * resoluti
 	core -> requested_active_size = requested_number_of_actives;
 	core -> recalculate ();
 	core_action * machine = new core_action (atom -> getAtom (), core);
+	if (machine -> audio_failed) {delete machine; return false;}
 	if (atom -> getAtom () -> setMachine (machine)) return true;
 	delete machine;
 	return false;

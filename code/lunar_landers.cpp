@@ -296,12 +296,15 @@ double * lunar_trigger :: inputAddress (int ind) {
 	}
 	return orbiter :: inputAddress (ind);
 }
-int lunar_trigger :: numberOfOutputs (void) {return 3;}
+int lunar_trigger :: numberOfOutputs (void) {return 6;}
 char * lunar_trigger :: outputName (int ind) {
 	switch (ind) {
 	case 0: return "KEY"; break;
 	case 1: return "VELOCITY"; break;
 	case 2: return "TRIGGER"; break;
+	case 3: return "INDEX"; break;
+	case 4: return "DELAY1"; break;
+	case 5: return "DELAY2"; break;
 	default: break;
 	}
 	return orbiter :: outputName (ind);
@@ -311,6 +314,9 @@ double * lunar_trigger :: outputAddress (int ind) {
 	case 0: return & signal; break;
 	case 1: return & velocity; break;
 	case 2: return & trigger; break;
+	case 3: return & index; break;
+	case 4: return & delay1; break;
+	case 5: return & delay2; break;
 	default: break;
 	}
 	return orbiter :: outputAddress (ind);
@@ -345,6 +351,7 @@ void lunar_trigger :: drop_stack (int key) {
 void lunar_trigger :: sub_keyon (int key) {
 	if (key < 0) key = 0;
 	if (key > 127) key = 127;
+	index = (double) (key - 64);
 	target = key_map == 0 ? (double) (key - 64) * 128.0 : key_map -> map [key];
 	this -> key = key;
 	if (! active || porta_switch == 0.0 || porta_time == 0.0 || (porta_control != 0.0 && trigger == 0)) this -> signal = target;
@@ -379,6 +386,7 @@ void lunar_trigger :: ground (int key, int velocity, int base, int previous) {
 void lunar_trigger :: ground_request (void) {
 	sub_velocity (request_velocity);
 	if (request_key < 0) request_key = 0; if (request_key > 127) request_key = 127;
+	index = (double) (request_key - 64);
 	target = key_map == 0 ? (double) (request_key - 64) * 128.0 : key_map -> map [request_key];
 	this -> key = request_key; trigger = 16384.0; time = 0.0;
 	if (! active || porta_switch == 0.0 || porta_time == 0.0) this -> signal = target;
@@ -430,6 +438,8 @@ bool lunar_trigger :: release (void) {
 }
 void lunar_trigger :: move (void) {
 	pthread_mutex_lock (& critical);
+	delay2 = delay1;
+	delay1 = trigger;
 	if (request != 0) {
 		switch (request) {
 		case 5: ground_request (); break;
@@ -458,7 +468,7 @@ lunar_trigger :: lunar_trigger (orbiter_core * core, bool active, lunar_trigger 
 	this -> next = next;
 	if (next != 0) next -> hold ();
 	key = -1;
-	signal = trigger = busy = 0.0;
+	signal = index = delay2 = delay1 = trigger = busy = 0.0;
 	origin = delta = target = 0.0;
 	porta_switch = porta_time = porta_control = 0.0;
 	hold_ctrl = 0.0;

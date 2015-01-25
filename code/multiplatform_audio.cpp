@@ -248,6 +248,7 @@ static bool playback_running = false;
 static bool capture_running = false;
 
 static bool prestart_pcm_capture (void) {
+	if (selected_input_device >= number_of_input_devices) {printf ("INPUT: Input device too high.\n"); return false;}
 	int res;
 	if ((res = snd_pcm_open (& input_pcm, input_device_ids [selected_input_device], SND_PCM_STREAM_CAPTURE, 0)) < 0) {printf ("INPUT: snd_pcm_open: %s\n", snd_strerror (res)); return false;}
 	snd_pcm_hw_params_t * hw_params;
@@ -277,6 +278,7 @@ static void * start_pcm_capture (void * parameters) {
 
 static bool prestart_pcm (void) {
 //	printf ("Starting: %s\n", output_device_names [selected_output_device]);
+	if (selected_output_device >= number_of_output_devices) {printf ("Output device too high.\n"); return false;}
 	int res;
 	if ((res = snd_pcm_open (& output_pcm, output_device_ids [selected_output_device], SND_PCM_STREAM_PLAYBACK, 0)) < 0) {printf ("snd_pcm_open: %s\n", snd_strerror (res)); return false;}
 	snd_pcm_hw_params_t * hw_parameters;
@@ -293,12 +295,12 @@ static bool prestart_pcm (void) {
 	snd_pcm_hw_params_free (hw_parameters);
 	snd_pcm_sw_params_t * sw_parameters;
 	if ((res = snd_pcm_sw_params_malloc (& sw_parameters)) < 0) {printf ("snd_pcm_sw_params_malloc: %s\n", snd_strerror (res)); return false;}
-	if ((res = snd_pcm_sw_params_current (output_pcm, sw_parameters)) < 0) {printf ("snd_pcm_sw_params_current: %s\n", snd_strerror (res)); snd_pcm_sw_params_free (hw_parameters); return false;}
-	if ((res = snd_pcm_sw_params_set_avail_min (output_pcm, sw_parameters, pcm_block_size)) < 0) {printf ("snd_pcm_sw_params_set_avail_min: %s\n", snd_strerror (res)); snd_pcm_sw_params_free (hw_parameters); return false;}
-	if ((res = snd_pcm_sw_params_set_start_threshold (output_pcm, sw_parameters, 0U)) < 0) {printf ("snd_pcm_sw_params_set_start_threshold: %s\n", snd_strerror (res)); snd_pcm_sw_params_free (hw_parameters); return false;}
-	if ((res = snd_pcm_sw_params (output_pcm, sw_parameters)) < 0) {printf ("snd_pcm_sw_params: %s\n", snd_strerror (res)); snd_pcm_sw_params_free (hw_parameters); return false;}
-	if ((res = snd_pcm_prepare (output_pcm)) < 0) {printf ("snd_pcm_prepare: %s\n", snd_strerror (res)); snd_pcm_sw_params_free (hw_parameters); return false;}
-	snd_pcm_sw_params_free (hw_parameters);
+	if ((res = snd_pcm_sw_params_current (output_pcm, sw_parameters)) < 0) {printf ("snd_pcm_sw_params_current: %s\n", snd_strerror (res)); snd_pcm_sw_params_free (sw_parameters); return false;}
+	if ((res = snd_pcm_sw_params_set_avail_min (output_pcm, sw_parameters, pcm_block_size)) < 0) {printf ("snd_pcm_sw_params_set_avail_min: %s\n", snd_strerror (res)); snd_pcm_sw_params_free (sw_parameters); return false;}
+	if ((res = snd_pcm_sw_params_set_start_threshold (output_pcm, sw_parameters, 0U)) < 0) {printf ("snd_pcm_sw_params_set_start_threshold: %s\n", snd_strerror (res)); snd_pcm_sw_params_free (sw_parameters); return false;}
+	if ((res = snd_pcm_sw_params (output_pcm, sw_parameters)) < 0) {printf ("snd_pcm_sw_params: %s\n", snd_strerror (res)); snd_pcm_sw_params_free (sw_parameters); return false;}
+	if ((res = snd_pcm_prepare (output_pcm)) < 0) {printf ("snd_pcm_prepare: %s\n", snd_strerror (res)); snd_pcm_sw_params_free (sw_parameters); return false;}
+	snd_pcm_sw_params_free (sw_parameters);
 	return true;
 }
 
@@ -346,7 +348,7 @@ static void * start_pcm (void * parameters) {
 
 bool MultiplatformAudio :: selectInputDevice (int ind) {
 	int res;
-	if (ind >= getNumberOfInputDevices ()) return false;
+	if (ind >= getNumberOfInputDevices ()) {printf ("Input device out of range.\n"); return false;}
 	if (selected_input_device >= 0) {
 		if (capture_running) {
 			capture_running = false;
@@ -366,7 +368,7 @@ bool MultiplatformAudio :: selectInputDevice (int ind) {
 
 bool MultiplatformAudio :: selectOutputDevice (int ind) {
 	int res;
-	if (ind >= getNumberOfOutputDevices ()) return false;
+	if (ind >= getNumberOfOutputDevices ()) {printf ("Output device out of range.\n"); return false;}
 	if (selected_output_device >= 0) {
 		if (playback_running) {
 			playback_running = false;

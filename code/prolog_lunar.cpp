@@ -182,6 +182,7 @@ public:
 		return false;
 #else
 		midi_code * mc = new midi_code (root, directory, atom -> getAtom (), callback -> getAtom (), midi_location);
+		if (mc -> fd < 0) {delete mc; return false;}
 		if (atom -> getAtom () -> setMachine (mc)) return true;
 		delete mc;
 		return false;

@@ -97,11 +97,11 @@ public:
 		audio . setChannels (2);
 		audio . setSamplingFrequency ((int) core -> sampling_frequency);
 		audio . setLatencyBufferSize (core -> latency_block_size);
-		if (core -> output_device >= 0 && core -> output_device < audio . getNumberOfOutputDevices ()) {
+		if (core -> output_device >= 0) {
 			audio . installOutputCallback (alpha_callback, this);
 			if (! audio . selectOutputDevice (core -> output_device)) audio_failed = true;
 		}
-		if (core -> input_device >= 0 && core -> input_device < audio . getNumberOfInputDevices ()) {
+		if (core -> input_device >= 0) {
 			audio . installInputCallback (beta_callback, this);
 			if (! audio . selectInputDevice (core -> input_device)) audio_failed = true;
 		}
@@ -205,6 +205,8 @@ bool core_class :: code (PrologElement * parameters, PrologResolution * resoluti
 	core -> centre_frequency = centre_frequency;
 	core -> sampling_frequency = (double) sampling_frequency;
 	core -> latency_block_size = latency_block_size;
+	core -> output_device = output_device != 0 ? output_device -> getInteger () : 0;
+	core -> input_device = input_device != 0 ? input_device -> getInteger () : 0;
 	if (output_device != 0) core -> output_device = output_device -> getInteger ();
 	if (input_device != 0) core -> input_device = input_device -> getInteger ();
 	core -> requested_active_size = requested_number_of_actives;

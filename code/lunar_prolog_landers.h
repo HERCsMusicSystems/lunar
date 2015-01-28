@@ -80,6 +80,8 @@ public:
 	wave_class (orbiter_core * core);
 };
 
+class LoopWaveClass : public PrologNativeCode {public: bool code (PrologElement * parameters, PrologResolution * resolution);};
+
 class impulse_class : public PrologNativeOrbiterCreator {
 public:
 	virtual orbiter * create_orbiter (PrologElement * parameters);

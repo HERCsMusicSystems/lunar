@@ -36,6 +36,7 @@ program lunar #machine := "prolog.lunar"
 				MoveModules PropagateSignals MoveCore LunarDrop
 				CreateDistributor CloseDistributor Distribute Redistribute
 				CCCB cb_callback cb_path cb_edit_path process_mode CBsub
+				LoopWave
 			]
 
 #machine small_keyboard := "small_keyboard"
@@ -94,6 +95,8 @@ program lunar #machine := "prolog.lunar"
 
 #machine MoveModules := "MoveModules"
 #machine PropagateSignals := "PropagateSignals"
+
+#machine LoopWave := "LoopWave"
 
 [[MoveCore] [MoveModules] [PropagateSignals]]
 

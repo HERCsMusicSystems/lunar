@@ -262,6 +262,7 @@ PrologNativeCode * PrologLunarServiceClass :: getNativeCode (char * name) {
 	if (strcmp (name, "AdsrPanel") == 0) return new adsr_panel_class (this);
 	if (strcmp (name, "MoveModules") == 0) return new move_modules_class (& core);
 	if (strcmp (name, "PropagateSignals") == 0) return new propagate_signals_class (& core);
+	if (strcmp (name, "LoopWave") == 0) return new LoopWaveClass ();
 	return 0;
 }
 

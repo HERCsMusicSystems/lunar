@@ -255,6 +255,21 @@ orbiter * wave_class :: create_orbiter (PrologElement * parameters) {
 PrologNativeOrbiter * wave_class :: create_native_orbiter (PrologAtom * atom, orbiter * module) {return new wave_native_orbiter (atom, core, module);}
 wave_class :: wave_class (orbiter_core * core) : PrologNativeOrbiterCreator (core) {}
 
+bool LoopWaveClass :: code (PrologElement * parameters, PrologResolution * resolution) {
+	PrologElement * source = 0;
+	PrologElement * destination = 0;
+	PrologElement * start = 0;
+	PrologElement * stop = 0;
+	while (parameters -> isPair ()) {
+		PrologElement * el = parameters -> getLeft ();
+		if (el -> isText ()) if (source == 0) source = el; else destination = el;
+		if (el -> isInteger ()) if (start == 0) start = el; else stop = el;
+		parameters = parameters -> getRight ();
+	}
+	if (source == 0 || destination == 0 || start == 0 || stop == 0) return false;
+	return loop_wave (source -> getText (), destination -> getText (), start -> getInteger (), stop -> getInteger ());
+}
+
 orbiter * impulse_class :: create_orbiter (PrologElement * parameters) {return new lunar_impulse (core);}
 impulse_class :: impulse_class (orbiter_core * core) : PrologNativeOrbiterCreator (core) {}
 

@@ -53,7 +53,7 @@ public:
 };
 
 extern wave_data * create_lunar_wave_data (char * file_name);
-
+extern bool loop_wave (char * source, char * destination, int start, int stop);
 
 #endif
 

@@ -190,3 +190,66 @@ wave_data * create_lunar_wave_data (char * file_name) {
 	return wave;
 }
 
+static void write_id (FILE * tc, char * command) {
+	fputc (command [0], tc);
+	fputc (command [1], tc);
+	fputc (command [2], tc);
+	fputc (command [3], tc);
+}
+
+static void write4 (FILE * tc, long int id) {
+	fputc (id & 0xff, tc);
+	fputc ((id >> 8) & 0xff, tc);
+	fputc ((id >> 16) & 0xff, tc);
+	fputc ((id >> 24) & 0xff, tc);
+}
+
+#define Fail {fclose (fr); fclose (tc); return false;}
+bool loop_wave (char * source, char * destination, int start, int stop) {
+	if (source == 0 && destination == 0) return false;
+	if (start > stop) {int ind = start; start = stop; stop = ind;}
+	if (start < 0) start = 0; if (stop < 0) stop = 0;
+	FILE * fr = 0;
+	FILE * tc = 0;
+	fr = fopen (source, "rb");
+	if (! fr) {
+		fr = fopen (destination, "rb");
+		if (! fr) return false;
+		destination = source;
+	}
+	char command [8];
+	if (! read_id (fr, command)) {fclose (fr); return false;}
+	if (strcmp (command, "RIFF") != 0) {fclose (fr); return false;}
+	long int riff_size;
+	if (! read4 (fr, & riff_size)) {fclose (fr); return false;}
+	if (riff_size < 4) {fclose (fr); return false;}
+	tc = fopen (destination, "wb"); if (! tc) {fclose (fr); return false;}
+	write_id (tc, command);
+	write4 (tc, riff_size + 68);
+	if (! read_id (fr, command)) Fail; riff_size -= 4; write_id (tc, command);
+	bool loop_not_exported = true;
+	while (riff_size > 0 && loop_not_exported) {
+		if (! read_id (fr, command)) Fail; riff_size -= 4;
+		long int chunk_size;
+		if (! read4 (fr, & chunk_size)) Fail; riff_size -= 4;
+		if (strcmp (command, "fmt ") == 0 || strcmp (command, "data") == 0) {
+			write_id (tc, command); write4 (tc, chunk_size);
+			riff_size -= chunk_size;
+			while (chunk_size-- > 0) fputc (fgetc (fr), tc);
+		} else {
+			write_id (tc, "smpl<"); write4 (tc, 60);
+			write4 (tc, 0); write4 (tc, 0); write4 (tc, 0); write4 (tc, 60);
+			write4 (tc, 0); write4 (tc, 0); write4 (tc, 0); write4 (tc, 1); write4 (tc, 0);
+			write4 (tc, 0); write4 (tc, 0); write4 (tc, start); write4 (tc, stop); write4 (tc, 0); write4 (tc, 0);
+			loop_not_exported = false;
+			write_id (tc, command); write4 (tc, chunk_size);
+			riff_size -= chunk_size;
+			while (chunk_size-- > 0) fputc (fgetc (fr), tc);
+		}
+	}
+	while (riff_size-- > 0) fputc (fgetc (fr), tc);
+	fclose (fr);
+	fclose (tc);
+	return true;
+}
+

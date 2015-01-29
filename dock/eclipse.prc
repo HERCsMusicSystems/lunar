@@ -9,53 +9,62 @@ import phobos
 import abakos
 
 program eclipse [
-					commander cb_edit_path moon mooncb
+					commander
+					BuildMidi mdi mdicb BuildJoystick js jscb
 					PhobosCB AbakosCB
 					reactor left_radar right_radar radar
-					kb kbcb
-					mdi mdicb
-					js jcb
-					MM audio phobos_mixer abakos_mixer
+					BuildAudio RemoveAudio ConnectToReactor
+					phobos_mixer abakos_mixer
 					shm
+					CloseMoons
 				]
 
 
 [[@ lunar . LunarDrop : *command] [show *command]]
 
-[[mdicb *command * : *t]
-	;[show [PhobosCB *command : *t]]
-	[PhobosCB *command : *t]
+[[mdicb *command *ch : *t]
+	[MIDI_CHANNELS *ch : *cb]
+	[*cb *command : *t]
 ]
 
-[[jcb 0.0 *v]
-	[times *v 64.0 *vv] [add *vv 64.0 *vvv] [trunc *vvv *vvvv]
-	[PhobosCB control 12 *vvvv]
+[[BuildAudio] [core reactor 330 32000 1024 30 15] [show "USB Audio Device ready."]/]
+[[BuildAudio] [core reactor 330 22050 2048] [show "Motherboard Audio Device ready."]/]
+[[BuildAudio] [show "Audio device not found."]]
+[[RemoveAudio] [reactor []] [reactor] [show "Audio Device stopped."]/]
+[[RemoveAudio] [show "Audio Device not present."]]
+
+[[ConnectToReactor]
+	[Moons *id *moon *cb *line]
+	[ConnectStereo reactor *line]
 ]
 
-[[jcb 1.0 *v]
-	[times *v -64.0 *vv] [add *vv 64.0 *vvv] [trunc *vvv *vvvv]
-	[PhobosCB control 13 *vvvv]
+[[CloseMoons]
+	[delcl [[Moons *moon : *x]]]
+	[show *moon]
+	[Moonbase *moon]
+	fail
 ]
-
-[[audio] [core reactor 330 32000 1024 30 15] [ConnectStereo reactor phobos_mixer] [ConnectStereo reactor abakos_mixer]]
-[[audio] [core reactor 330 22050 2048] [ConnectStereo reactor phobos_mixer] [ConnectStereo reactor abakos_mixer]]
-
-[[MM *base]
-	[*base *parameters *modules *callback : *]
-	[delallcl *base]
-	[TRY [*parameters *parameter : *selector] [*parameter] fail]
-	[TRY [*modules *module : *selector] [show *selector *module] [*module []] [*module] fail]
-	[delallcl *parameters]
-	[delallcl *modules]
-]
+[[CloseMoons] [show "Moons removed."]]
 
 [[shm]
 	[list Moons]
 	[FOR *i 0 15 1 [MIDI_CHANNELS *i : *m] [show "Callback " *i " = " *m]]
 ]
 
+[[BuildMidi] [midi mdi mdicb] /]
+[[BuildMidi] [show "MIDI Device not found."]]
+
+[[BuildJoystick] [joystick js jscb]/]
+[[BuildJoystick] [show "Joystick not found."]]
+
+[[jscb 11 1] [BuildAudio]]
+[[jscb 10 1] [RemoveAudio]]
+[[jscb 9 1] [ConnectToReactor]]
+[[jscb : *x] [show *x]]
+
 end := [
-		;[BuildPhobos 2 Phobos PhobosCB phobos_mixer *feed]
+		[BuildPhobos 2 Phobos PhobosCB phobos_mixer *feed]
+		[BuildMidi] [BuildJoystick]
 		;[build_Abakos *Abakos abakos_mixer]
 		;[oscilloscope radar]
 		[CommandCentre commander CCCB]
@@ -66,10 +75,11 @@ end := [
 		;[radar *feed]
 		;[audio]
 		/ [command] /
-		;[TRY [mdi]]
-		;[TRY [js]]
-		[commander]
+		[TRY [mdi]]
+		[TRY [js]]
+		[TRY [commander]]
 		;[Moonbase Phobos]
 		;[Moonbase *Abakos]
+		[CloseMoons]
 		] .
 

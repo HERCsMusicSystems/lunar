@@ -574,6 +574,7 @@ program lunar #machine := "prolog.lunar"
 ]
 [[CBsub * * * []]]
 
+[[MIDI_BACK activesensing]]
 [[MIDI_BACK : *command] [show *command]]
 
 auto := [

@@ -5,7 +5,6 @@ import lunar
 program phobos [Phobos BuildPhobos BuildPhobosPart]
 
 [[BuildPhobos *polyphony *Phobos *PhobosCB *volume *pan]
-	[AddMoon *Phobos *PhobosCB]
 	[Moonbase *Phobos *PhobosCB Phobos]
 
 	[moonbase *moonbase] [key_map *mapper] [*moonbase *mapper]
@@ -124,6 +123,8 @@ program phobos [Phobos BuildPhobos BuildPhobosPart]
 	[Lunar -128 *Phobos operator 4 key freq left]
 	[Lunar 128 *Phobos operator 4 key freq right]
 	[Lunar -16384 *Phobos noise amp]
+
+	[AddMoon *Phobos *PhobosCB *volume]
 ]
 
 

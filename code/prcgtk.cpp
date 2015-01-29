@@ -157,9 +157,9 @@ void * studio_runner (void * parameter) {
 	PrologCommand * command = new PrologWindowsConsole ();
 	#endif
 	root -> insertCommander (command);
-	if (strlen (name) == 0) {root -> auto_atoms = true; root -> resolution ();}
+	if (strlen (name) == 0) root -> resolution ();
 	else {
-		if (strstr (name, ".prc") == NULL && strstr (name, ".prb") == NULL) strcat (name, ".prc");
+		if (strstr (name, ".prc") == 0 && strstr (name, ".prb") == 0) strcat (name, ".prc");
 		root -> resolution (name);
 	}
 	delete root;

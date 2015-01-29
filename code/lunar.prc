@@ -23,7 +23,7 @@ program lunar #machine := "prolog.lunar"
 				Lunar Lander Activate Deactivate
 				Connect ConnectStereo ConnectDryWet Disconnect DisconnectStereo DisconnectDryWet
 				AddParameterBlock AddNamedParameterBlock
-				Moonbase AddModule Insert InsertPB InsertController InsertIO InsertBlock Store Restore SubRestore Moons
+				Moonbase AddModule Insert InsertPB InsertController InsertIO InsertBlock Store Restore SubRestore Moons AddMoon RemoveMoon
 				Cbb Cb C C# Cx
 				Dbb Db D D# Dx
 				Ebb Eb E E# Ex
@@ -37,6 +37,7 @@ program lunar #machine := "prolog.lunar"
 				CreateDistributor CloseDistributor Distribute Redistribute
 				CCCB cb_callback cb_path cb_edit_path process_mode CBsub
 				LoopWave
+				MIDI_CHANNELS MIDI_BACK
 			]
 
 #machine small_keyboard := "small_keyboard"
@@ -443,6 +444,19 @@ program lunar #machine := "prolog.lunar"
 	]
 ]
 
+[[Moons]]
+
+[[AddMoon *location *moon *cb *line]
+	[MIDI_CHANNELS *location : *original]
+	[eq *original MIDI_BACK]
+	[MIDI_CHANNELS *location *cb]
+	[addcl [[Moons *moon *location *cb *line]]]
+]
+[[AddMoon *location *moon *cb *line] [less *location 16] [++ *location *next] / [AddMoon *next *moon *cb *line]]
+[[AddMoon *moon *cb *line] [AddMoon 0 *moon *cb *line]]
+
+[[RemoveMoon *moon] [delcl [[Moons *moon *id : *]]] [MIDI_CHANNELS *id MIDI_BACK]]
+
 [[CCCB *key *velocity] [cb_callback : *callback] [*callback keyon *key *velocity]]
 [[CCCB *ret 73 *v] [cb_callback : *callback] [*callback control 73 *v] [add *ret "Attack = " *v]]
 [[CCCB *ret 93 *v] [cb_callback : *callback] [*callback control 93 *v] [add *ret "Decay = " *v]]
@@ -468,7 +482,7 @@ program lunar #machine := "prolog.lunar"
 [[CCCB CCCB *poly *porta *pitch *modulation *x *y *volume *attack *decay *sustain *release
 			*freq *drywet *pan *porta_time *speed *vibrato : *]
 	[is_var *poly]
-	[cb_callback : *cb]
+	[cb_callback : *cb] [is_atom *cb]
 	[*cb control 127 : *poly]
 	[*cb control 65 : *porta]
 	[*cb control 128 : *pitch]
@@ -521,7 +535,7 @@ program lunar #machine := "prolog.lunar"
 ]
 
 [[CCCB *program 0 *i1 : *]
-	[isallr *y *x [Moons *x]]
+	[isallr *y *x [Moons *x : *]]
 	[AT *i1 *moon *y]
 	[cb_path [*moon]]
 	[cb_edit_path [*moon]]
@@ -531,7 +545,7 @@ program lunar #machine := "prolog.lunar"
 ]
 
 [[CCCB *program *mode *i1 : *is]
-	[isallr *y *x [Moons *x]]
+	[isallr *y *x [Moons *x : *]]
 	[AT *i1 *moon *y]
 	[*moon *parameters : *]
 	[CBsub *parameters *is *path *path]
@@ -560,7 +574,13 @@ program lunar #machine := "prolog.lunar"
 ]
 [[CBsub * * * []]]
 
-auto := [[var cb_callback cb_path cb_edit_path]]
+[[MIDI_BACK : *command] [show *command]]
+
+auto := [
+			[var cb_callback cb_path cb_edit_path]
+			[ARRAY MIDI_CHANNELS 16]
+			[FOR *i 0 15 1 [MIDI_CHANNELS *i MIDI_BACK]]
+		]
 
 private [AddParameterBlock SubRestore cb_callback cb_path cb_edit_path CBsub process_mode]
 

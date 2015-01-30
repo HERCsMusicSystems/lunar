@@ -23,7 +23,8 @@ program lunar #machine := "prolog.lunar"
 				Lunar Lander Activate Deactivate
 				Connect ConnectStereo ConnectDryWet Disconnect DisconnectStereo DisconnectDryWet
 				AddParameterBlock AddNamedParameterBlock
-				Moonbase AddModule Insert InsertPB InsertController InsertIO InsertBlock Store Restore SubRestore Moons AddMoon RemoveMoon
+				Moonbase AddModule Insert InsertPB InsertController InsertIO InsertBlock Store Restore SubRestore
+				Moons AddMoon RemoveMoon CloseAllMoons ConnectAllMoons
 				Cbb Cb C C# Cx
 				Dbb Db D D# Dx
 				Ebb Eb E E# Ex
@@ -37,7 +38,7 @@ program lunar #machine := "prolog.lunar"
 				CreateDistributor CloseDistributor Distribute Redistribute
 				CCCB cb_callback cb_path cb_edit_path process_mode CBsub
 				LoopWave
-				MIDI_CHANNELS MIDI_BACK
+				MIDI_CHANNELS MIDI_BACK income_midi
 			]
 
 #machine small_keyboard := "small_keyboard"
@@ -171,6 +172,23 @@ program lunar #machine := "prolog.lunar"
 	[delallcl *parameters]
 	[delallcl *modules]
 ]
+
+[[CloseAllMoons]
+	[delcl [[Moons *moon : *x]]]
+	[Moonbase *moon]
+	fail
+]
+[[CloseAllMoons]]
+
+[[ConnectAllMoons *reactor]
+	[Moons *id *moon *cb *line]
+	[SELECT
+		[[ConnectStereo *reactor *line]/]
+		[[*reactor *line]/]
+	]
+	fail
+]
+[[ConnectAllMoons *]]
 
 [[AddNamedParameterBlock *parameters *module *name *selector *initial *style]
 	[*parameters *pb : *selector] /
@@ -576,6 +594,10 @@ program lunar #machine := "prolog.lunar"
 
 [[MIDI_BACK activesensing]]
 [[MIDI_BACK : *command] [show *command]]
+[[income_midi *command *ch : *t]
+	[MIDI_CHANNELS *ch : *cb]
+	[*cb *command : *t]
+]
 
 auto := [
 			[var cb_callback cb_path cb_edit_path]

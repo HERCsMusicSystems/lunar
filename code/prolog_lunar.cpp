@@ -205,6 +205,47 @@ public:
 	propagate_signals_class (orbiter_core * core) {this -> core = core;}
 };
 
+class unicar_code : public PrologNativeCode {
+public:
+	PrologAtom * atom;
+	PrologElement * container;
+	bool code (PrologElement * parameters, PrologResolution * resolution) {
+		if (parameters -> isPair ()) {
+			parameters = parameters -> getLeft ();
+			PrologElement * el = container;
+			while (el -> isPair ()) {
+				PrologElement * sub = el -> getLeft ();
+				if (sub -> isAtom () && parameters -> isAtom () && sub -> getAtom () == parameters -> getAtom ()) return true;
+				if (sub -> isInteger () && parameters -> isInteger () && sub -> getInteger () == parameters -> getInteger ()) return true;
+				el = el -> getRight ();
+			}
+			el -> setPair ();
+			el -> getLeft () -> duplicate (parameters);
+			return true;
+		}
+		if (parameters -> isVar ()) {parameters -> duplicate (container); return true;}
+		if (parameters -> isEarth ()) {atom -> setMachine (0); delete this; return true;}
+		return false;
+	}
+	unicar_code (PrologAtom * atom) {this -> atom = atom; container = new PrologElement ();}
+	~ unicar_code (void) {delete container;}
+};
+
+class unicar : public PrologNativeCode {
+public:
+	bool code (PrologElement * parameters, PrologResolution * resolution) {
+		if (parameters -> isPair ()) parameters = parameters -> getLeft ();
+		if (parameters -> isVar ()) parameters -> setAtom (new PrologAtom ());
+		if (! parameters -> isAtom ()) return false;
+		PrologAtom * atom = parameters -> getAtom ();
+		if (atom -> getMachine () != 0) return false;
+		unicar_code * u = new unicar_code (atom);
+		if (atom -> setMachine (u)) return true;
+		delete u;
+		return false;
+	}
+};
+
 void PrologLunarServiceClass :: init (PrologRoot * root, PrologDirectory * directory) {
 	this -> root = root;
 	this -> directory = directory;
@@ -263,6 +304,7 @@ PrologNativeCode * PrologLunarServiceClass :: getNativeCode (char * name) {
 	if (strcmp (name, "MoveModules") == 0) return new move_modules_class (& core);
 	if (strcmp (name, "PropagateSignals") == 0) return new propagate_signals_class (& core);
 	if (strcmp (name, "LoopWave") == 0) return new LoopWaveClass ();
+	if (strcmp (name, "unicar") == 0) return new unicar ();
 	return 0;
 }
 

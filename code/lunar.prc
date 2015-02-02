@@ -37,7 +37,7 @@ program lunar #machine := "prolog.lunar"
 				MoveModules PropagateSignals MoveCore LunarDrop
 				CreateDistributor CloseDistributor Distribute Redistribute
 				CCCB cb_callback cb_path cb_edit_path process_mode CBsub
-				LoopWave
+				LoopWave unicar
 				MIDI_CHANNELS MIDI_BACK income_midi
 			]
 
@@ -99,6 +99,8 @@ program lunar #machine := "prolog.lunar"
 #machine PropagateSignals := "PropagateSignals"
 
 #machine LoopWave := "LoopWave"
+
+#machine unicar := "unicar"
 
 [[MoveCore] [MoveModules] [PropagateSignals]]
 
@@ -585,8 +587,8 @@ program lunar #machine := "prolog.lunar"
 [[process_mode [*h : *t] *i [*h : *t2]] [less 0 *i] / [-- *i *next] [process_mode *t *next *t2]]
 
 [[CBsub *moon [*i : *is] *path [*pp : *tail]]
-	[isall *pr *pp [*moon * : *path]]
-	[NODUP *pr *pnr] [REVERSE *pnr *pn]
+	[unicar *unicar] [TRY [*moon * : *path] [*unicar *pp] fail] [*unicar : *pn] [*unicar]
+	;[isall *pr *pp [*moon * : *path]] [NODUP *pr *pnr] [REVERSE *pnr *pn]
 	[AT *i *pp *pn]
 	/ [CBsub *moon *is *path *tail]
 ]

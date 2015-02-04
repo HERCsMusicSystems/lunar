@@ -16,10 +16,13 @@ program eclipse [
 					BuildAudio RemoveAudio
 					phobos_mixer abakos_mixer
 					shm
+					run_files
 				]
 
 
-[[@ lunar . LunarDrop : *command] [show *command]]
+[[@ lunar . LunarDrop *x *y : *files] [show *files] [run_files : *files]]
+[[run_files]]
+[[run_files *file : *files] [TRY [batch *file]] / [run_files : *files]]
 
 [[BuildAudio] [core reactor 330 32000 1024 30 15] [show "USB Audio Device ready."]/]
 [[BuildAudio] [core reactor 330 22050 2048] [show "Motherboard Audio Device ready."]/]

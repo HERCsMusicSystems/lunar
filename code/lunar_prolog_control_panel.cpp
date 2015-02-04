@@ -225,9 +225,11 @@ public:
 	}
 	void change_selector (int delta) {
 		reset_selectors ();
+		reset_programs ();
 		current_program += delta;
 		if (current_program < 0) current_program = 0; if (current_program > 9) current_program = 9;
 		select_selector ();
+		select_program ();
 		program_action ();
 	}
 	void change_program (int delta) {

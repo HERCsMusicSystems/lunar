@@ -6,9 +6,7 @@ import lunar
 import rudiments
 
 program doctor [
-				start_audio start_midi
-				reactor commander mdi mdicb
-				Doctor cb BuildDoctor BuildDoctorPart DoctorWaveforms
+				Doctor BuildDoctor BuildDoctorPart DoctorWaveforms
 				]
 
 auto := [[wave DoctorWaveforms
@@ -19,7 +17,7 @@ auto := [[wave DoctorWaveforms
 			]]
 
 [[BuildDoctor *polyphony *Doctor *DoctorCB *volume]
-	[addcl [[Moons *Doctor]]]
+	[create_atoms *Doctor *DoctorCB *volume]
 	[Moonbase *Doctor *DoctorCB Doctor]
 	[moonbase *DoctorCB]
 	[parameter_block *freq "freq"]
@@ -42,6 +40,7 @@ auto := [[wave DoctorWaveforms
 	[InsertController 10 -64 *Doctor pan]
 	[InsertController 91 -64 *Doctor delay balance]
 	[Lunar -8192 *Doctor delay balance]
+	[AddMoon *Doctor *DoctorCB *volume]
 ]
 
 [[BuildDoctorPart *Doctor *DoctorCB *freq *index *line]
@@ -60,21 +59,5 @@ auto := [[wave DoctorWaveforms
 	[*sens "left" -48]
 ]
 
-[[start_audio] [core reactor 330 32000 1024 30 -1]]
-[[start_audio] [core reactor 330 22050 4096]]
-
-[[start_midi] [midi mdi mdicb]]
-[[start_midi] [midi mdi mdicb "/dev/snd/midiC3D0"]]
-[[start_midi]]
-
-[[mdicb *command *ch : *x] [cb *command : *x] [show [*command : *x]]]
-
-end := [
-		[BuildDoctor 1 Doctor cb *line]
-		[start_audio] [start_midi]
-		[ConnectStereo reactor *line]
-		[CommandCentre commander CCCB]
-		[command]
-		[Moonbase Doctor]
-		].
+end .
 

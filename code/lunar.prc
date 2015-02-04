@@ -39,6 +39,7 @@ program lunar #machine := "prolog.lunar"
 				CCCB cb_callback cb_path cb_edit_path process_mode CBsub
 				LoopWave unicar
 				MIDI_CHANNELS MIDI_BACK income_midi
+				GenerateInstrumentName InstrumentIndex
 			]
 
 #machine small_keyboard := "small_keyboard"
@@ -601,8 +602,15 @@ program lunar #machine := "prolog.lunar"
 	[*cb *command : *t]
 ]
 
+[[GenerateInstrumentName *prefix *name]
+	[InstrumentIndex : *i]
+	[add *prefix "-" *i *atom_name]
+	[create_atom *atom_name *name]
+	[inc InstrumentIndex]
+]
+
 auto := [
-			[var cb_callback cb_path cb_edit_path]
+			[var cb_callback cb_path cb_edit_path [InstrumentIndex 0]]
 			[ARRAY MIDI_CHANNELS 16]
 			[FOR *i 0 15 1 [MIDI_CHANNELS *i MIDI_BACK]]
 		]

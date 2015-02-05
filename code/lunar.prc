@@ -562,7 +562,7 @@ program lunar #machine := "prolog.lunar"
 	[cb_edit_path [*moon]]
 	[*moon * * *moon_callback *type : *]
 	[cb_callback *moon_callback]
-	[add *program *type " : channel=" *i1 " " *moon]
+	[add *program *type]
 ]
 
 [[CCCB *program *mode *i1 : *is]

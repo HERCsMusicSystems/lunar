@@ -14,6 +14,9 @@ auto := [[wave DoctorWaveforms
 					"Doctor/snare_m.wav"
 					"Doctor/snare_l.wav"
 					"Doctor/snare_roll.wav"
+					"Doctor/snare_hit_roll.wav"
+					"Doctor/snare_soft_roll.wav"
+					"Doctor/snare_loop.wav"
 			]]
 
 [[BuildDoctor *polyphony *Doctor *DoctorCB *volume]

@@ -7,6 +7,7 @@ import control
 import lunar
 import phobos
 import abakos
+import doctor
 
 program eclipse [
 					commander
@@ -48,6 +49,7 @@ program eclipse [
 [[jscb : *x] [show *x]]
 
 end := [
+		[GenerateInstrumentName Doctor *doc_name] [BuildDoctor 2 *doc_name * *]
 		[BuildPhobos 2 Phobos PhobosCB phobos_mixer *feed]
 		[BuildMidi] [BuildJoystick]
 		;[build_Abakos *Abakos abakos_mixer]

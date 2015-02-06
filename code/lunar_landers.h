@@ -312,7 +312,7 @@ private:
 	double time;
 	double high_dump;
 	double signal_right;
-	double line [131072];
+	double line [262144];
 	int index;
 public:
 	virtual int numberOfInputs (void);
@@ -323,6 +323,25 @@ public:
 	virtual double * outputAddress (int ind);
 	virtual void move (void);
 	lunar_delay (orbiter_core * core);
+};
+
+class lunar_chorus : public orbiter {
+private:
+	double enter;
+	double feedback;
+	double time;
+	double wave;
+	double speed;
+	double amp;
+	double line [65536];
+	double omega;
+	int index;
+public:
+	virtual int numberOfInputs (void);
+	virtual char * inputName (int ind);
+	virtual double * inputAddress (int ind);
+	virtual void move (void);
+	lunar_chorus (orbiter_core * core);
 };
 
 class lunar_drywet : public orbiter {

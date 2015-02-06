@@ -870,7 +870,7 @@ void lunar_delay :: move (void) {
 	double feed = feedback * DIV_16384;
 	int sentinel = (int) (time * core -> DSP_time_fraction);
 	sentinel |= 1;
-	if (sentinel > 131071) sentinel = 131071;
+	if (sentinel > 262143) sentinel = 262143;
 	if (index >= sentinel) index = 0;
 	double value = line [index];
 	signal = value;
@@ -885,11 +885,48 @@ void lunar_delay :: move (void) {
 	line [index++] = value;
 }
 lunar_delay :: lunar_delay (orbiter_core * core) : orbiter (core) {
-	for (int ind = 0; ind < 131072; ind++) line [ind] = 0.0;
+	for (int ind = 0; ind < 262144; ind++) line [ind] = 0.0;
 	index = 0;
 	filter = 0.0;
 	enter = enter_right = signal_right = 0.0;
 	time = 8192.0; feedback = 0.0;
+	initialise (); activate ();
+}
+
+int lunar_chorus :: numberOfInputs (void) {return 6;}
+char * lunar_chorus :: inputName (int ind) {
+	switch (ind) {
+	case 0: return "SIGNAL"; break;
+	case 1: return "FEEDBACK"; break;
+	case 2: return "TIME"; break;
+	case 3: return "SPEED"; break;
+	case 4: return "AMP"; break;
+	case 5: return "WAVE"; break;
+	default: break;
+	}
+	return orbiter :: inputName (ind);
+}
+double * lunar_chorus :: inputAddress (int ind) {
+	switch (ind) {
+	case 0: return & enter; break;
+	case 1: return & feedback; break;
+	case 2: return & time; break;
+	case 3: return & speed; break;
+	case 4: return & amp; break;
+	case 5: return & wave; break;
+	default: break;
+	}
+	return orbiter :: inputAddress (ind);
+}
+void lunar_chorus :: move (void) {
+}
+lunar_chorus :: lunar_chorus (orbiter_core * core) : orbiter (core) {
+	for (int ind = 0; ind < 65536; ind++) line [ind] = 0.0;
+	enter = time = omega = 0.0;
+	index = 0;
+	wave = 0.0;
+	feedback = 0.0;
+	speed = amp = 8192.0;
 	initialise (); activate ();
 }
 

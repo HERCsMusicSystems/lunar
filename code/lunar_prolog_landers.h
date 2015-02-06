@@ -176,6 +176,12 @@ public:
 	delay_class (orbiter_core * core);
 };
 
+class chorus_class : public PrologNativeOrbiterCreator {
+public:
+	virtual orbiter * create_orbiter (PrologElement * parameters);
+	chorus_class (orbiter_core * core);
+};
+
 class pan_class : public PrologNativeOrbiterCreator {
 public:
 	int type;

@@ -14,7 +14,7 @@ program lunar #machine := "prolog.lunar"
 				index shift bias
 				square_operator fm4 fm6 dx9 dx7 saw_operator noise_operator sampler_operator sensitivity sens filter delay chorus pan power_pan linear_pan
 				drywet drywet_mono balance
-				level1 level2 level3 level4 time1 time2 time3 time4 attack decay sustain release
+				level level1 level2 level3 level4 time1 time2 time3 time4 attack decay sustain release
 				freq amp ratio sync resonance hold busy portamento porta  legato time speed wave pulse phase poly feedback highdamp
 				mono left right mic mic_left mic_right breakpoint BP algo key_ratio
 				key velocity keyon keyoff polyaftertouch control programchange aftertouch pitch

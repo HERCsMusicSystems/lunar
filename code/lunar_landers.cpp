@@ -28,6 +28,7 @@
 
 #define DIV_16384 0.00006103515625
 #define DIV_8192  0.0001220703125
+#define DIV_4096  0.000244140625
 
 int lunar_parameter_block :: numberOfInputs (void) {return 1;}
 char * lunar_parameter_block :: inputName (int ind) {if (ind == 0) return "SIGNAL"; else return  orbiter :: inputName (ind);}
@@ -865,7 +866,6 @@ double * lunar_delay :: outputAddress (int ind) {
 	}
 	return orbiter :: outputAddress (ind);
 }
-#define DIV_16384 0.00006103515625
 void lunar_delay :: move (void) {
 	double feed = feedback * DIV_16384;
 	int sentinel = (int) (time * core -> DSP_time_fraction);
@@ -897,7 +897,7 @@ int lunar_chorus :: numberOfInputs (void) {return 6;}
 char * lunar_chorus :: inputName (int ind) {
 	switch (ind) {
 	case 0: return "SIGNAL"; break;
-	case 1: return "FEEDBACK"; break;
+	case 1: return "LEVEL"; break;
 	case 2: return "TIME"; break;
 	case 3: return "SPEED"; break;
 	case 4: return "AMP"; break;
@@ -909,7 +909,7 @@ char * lunar_chorus :: inputName (int ind) {
 double * lunar_chorus :: inputAddress (int ind) {
 	switch (ind) {
 	case 0: return & enter; break;
-	case 1: return & feedback; break;
+	case 1: return & level; break;
 	case 2: return & time; break;
 	case 3: return & speed; break;
 	case 4: return & amp; break;
@@ -919,14 +919,26 @@ double * lunar_chorus :: inputAddress (int ind) {
 	return orbiter :: inputAddress (ind);
 }
 void lunar_chorus :: move (void) {
+	double lfo;
+	switch ((int) wave) {
+	case 1: lfo = 1.0 + (omega < 0.5 ? amp * DIV_4096 * omega - 1.0 : 3.0 - amp * DIV_4096 * omega); break;
+	default: lfo = 1.0 + amp * DIV_16384 * core -> SineApproximated (omega); break;
+	}
+	omega += core -> ControlTimeDelta (speed);
+	while (omega >= 1.0) omega -= 1.0;
+	int location = index - (int) (time * lfo * core -> DSP_CHORUS_time_fraction);
+	while (location < 0) location += 65536; while (location > 65535) location -= 65536;
+	line [index++] = enter;
+	if (index > 65535) index = 0;
+	signal = level * DIV_16384 * enter + line [location];
 }
 lunar_chorus :: lunar_chorus (orbiter_core * core) : orbiter (core) {
 	for (int ind = 0; ind < 65536; ind++) line [ind] = 0.0;
 	enter = time = omega = 0.0;
 	index = 0;
 	wave = 0.0;
-	feedback = 0.0;
-	speed = amp = 8192.0;
+	level = 0.0;
+	speed = 0.0; amp = 8192.0;
 	initialise (); activate ();
 }
 

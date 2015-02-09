@@ -328,7 +328,7 @@ public:
 class lunar_chorus : public orbiter {
 private:
 	double enter;
-	double feedback;
+	double level;
 	double time;
 	double wave;
 	double speed;

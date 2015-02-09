@@ -71,6 +71,7 @@ public:
 	double * power_pan;
 	double * linear_pan;
 	double DSP_time_fraction;
+	double DSP_CHORUS_time_fraction;
 	int noise24b;
 	pthread_mutex_t main_mutex;
 	orbiter * root;

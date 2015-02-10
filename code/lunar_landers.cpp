@@ -938,7 +938,7 @@ void lunar_chorus :: move (void) {
 	while (location < 0) location += 65536; while (location > 65535) location -= 65536;
 	line [index++] = enter;
 	if (index > 65535) index = 0;
-	signal = level * DIV_16384 * enter + line [location];
+	signal = enter + level * DIV_16384 * line [location];
 }
 lunar_chorus :: lunar_chorus (orbiter_core * core) : orbiter (core) {
 	for (int ind = 0; ind < 65536; ind++) line [ind] = 0.0;

@@ -25,6 +25,7 @@
 ////////////////////////////////////////////////////////////////////
 
 #include "lunar_landers.h"
+#include <math.h>
 
 #define DIV_16384 0.00006103515625
 #define DIV_8192  0.0001220703125
@@ -589,6 +590,7 @@ void lunar_lfo :: move (void) {
 		}}
 		negative = positive - 1.0;
 		break;
+	default: signal = positive = negative = 0.0; break;
 	}
 	time += core -> ControlTimeDelta (speed);
 	while (time >= 1.0) time -= 1.0;
@@ -844,7 +846,7 @@ double * lunar_delay :: inputAddress (int ind) {
 	case 1: return & enter_right; break;
 	case 2: return & feedback; break;
 	case 3: return & time; break;
-	case 4: return & high_dump; break;
+	case 4: return & high_damp; break;
 	default: break;
 	}
 	return orbiter :: inputAddress (ind);
@@ -867,6 +869,11 @@ double * lunar_delay :: outputAddress (int ind) {
 	return orbiter :: outputAddress (ind);
 }
 void lunar_delay :: move (void) {
+	if (high_damp != previous_high_damp) {
+		previous_high_damp = high_damp;
+		B = high_damp != 0.0 ? exp (-48000000.0 / (core -> sampling_frequency * high_damp)) : 0.0;
+		A = 1.0 - B;
+	}
 	double feed = feedback * DIV_16384;
 	int sentinel = (int) (time * core -> DSP_time_fraction);
 	sentinel |= 1;
@@ -876,13 +883,13 @@ void lunar_delay :: move (void) {
 	signal = value;
 	value *= feed;
 	value += enter;
-	line [index++] = value;
+	line [index++] = left_1 = A * value + B * left_1;
 	if (index >= sentinel) index = 0;
 	value = line [index];
 	signal_right = value;
 	value *= feed;
 	value += enter_right;
-	line [index++] = value;
+	line [index++] = right_1 = A * value + B * right_1;
 }
 lunar_delay :: lunar_delay (orbiter_core * core) : orbiter (core) {
 	for (int ind = 0; ind < 262144; ind++) line [ind] = 0.0;
@@ -890,6 +897,7 @@ lunar_delay :: lunar_delay (orbiter_core * core) : orbiter (core) {
 	filter = 0.0;
 	enter = enter_right = signal_right = 0.0;
 	time = 8192.0; feedback = 0.0;
+	high_damp = previous_high_damp = 0.0; A = 1.0; B = 0.0;
 	initialise (); activate ();
 }
 

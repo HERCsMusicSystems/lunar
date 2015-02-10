@@ -310,10 +310,13 @@ private:
 	double filter;
 	double feedback;
 	double time;
-	double high_dump;
+	double high_damp;
+	double previous_high_damp;
 	double signal_right;
 	double line [262144];
 	int index;
+	double A, B;
+	double left_1, right_1;
 public:
 	virtual int numberOfInputs (void);
 	virtual char * inputName (int ind);

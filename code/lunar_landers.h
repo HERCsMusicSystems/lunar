@@ -333,7 +333,6 @@ private:
 	double enter;
 	double level;
 	double time;
-	double wave;
 	double speed;
 	double amp;
 	double line [65536];

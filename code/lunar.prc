@@ -180,7 +180,7 @@ program lunar #machine := "prolog.lunar"
 [[CloseAllMoons]
 	[delcl [[Moons *moon : *x]]]
 	[Moonbase *moon]
-	fail
+	/ [CloseAllMoons]
 ]
 [[CloseAllMoons]]
 
@@ -322,12 +322,11 @@ program lunar #machine := "prolog.lunar"
 	[AddParameterBlock *parameters highdamp *delay *selector 0 "index"]
 ]
 
-[[InsertIO *parameters *chorus *selector [["SIGNAL" "LEVEL" "TIME" "SPEED" "AMP" "WAVE"] ["SIGNAL"]]]
+[[InsertIO *parameters *chorus *selector [["SIGNAL" "LEVEL" "TIME" "SPEED" "AMP"] ["SIGNAL"]]]
 	[AddParameterBlock *parameters level *chorus *selector 0 "index"]
 	[AddParameterBlock *parameters time *chorus *selector 1024 "index"]
 	[AddParameterBlock *parameters speed *chorus *selector 0 "index"]
 	[AddParameterBlock *parameters amp *chorus *selector 8192 "index"]
-	[AddParameterBlock *parameters wave *chorus *selector 1 "index"]
 ]
 
 [[InsertIO *parameters *volume *selector [["LEFT" "RIGHT" "VOLUME"] ["LEFT" "RIGHT"]]]

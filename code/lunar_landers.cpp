@@ -901,7 +901,7 @@ lunar_delay :: lunar_delay (orbiter_core * core) : orbiter (core) {
 	initialise (); activate ();
 }
 
-int lunar_chorus :: numberOfInputs (void) {return 6;}
+int lunar_chorus :: numberOfInputs (void) {return 5;}
 char * lunar_chorus :: inputName (int ind) {
 	switch (ind) {
 	case 0: return "SIGNAL"; break;
@@ -909,7 +909,6 @@ char * lunar_chorus :: inputName (int ind) {
 	case 2: return "TIME"; break;
 	case 3: return "SPEED"; break;
 	case 4: return "AMP"; break;
-	case 5: return "WAVE"; break;
 	default: break;
 	}
 	return orbiter :: inputName (ind);
@@ -921,30 +920,31 @@ double * lunar_chorus :: inputAddress (int ind) {
 	case 2: return & time; break;
 	case 3: return & speed; break;
 	case 4: return & amp; break;
-	case 5: return & wave; break;
 	default: break;
 	}
 	return orbiter :: inputAddress (ind);
 }
+static double interpolate (double time, double * data) {
+	int ind = (int) time;
+	time -= (double) ind;
+	int sub = ind + 1;
+	if (sub > 65535) sub = 0;
+	return data [ind] * (1.0 - time) + data [sub] * time;
+}
 void lunar_chorus :: move (void) {
-	double lfo;
-	switch ((int) wave) {
-	case 1: lfo = 1.0 + (omega < 0.5 ? amp * DIV_4096 * omega - 1.0 : 3.0 - amp * DIV_4096 * omega); break;
-	default: lfo = 1.0 + amp * DIV_16384 * core -> SineApproximated (omega); break;
-	}
+	double lfo = 1.0 + amp * DIV_16384 * core -> SineApproximated (omega);
 	omega += core -> ControlTimeDelta (speed);
 	while (omega >= 1.0) omega -= 1.0;
-	int location = index - (int) (time * lfo * core -> DSP_CHORUS_time_fraction);
-	while (location < 0) location += 65536; while (location > 65535) location -= 65536;
+	double location = (double) index - time * lfo * core -> DSP_CHORUS_time_fraction;
+	while (location < 0.0) location += 65536.0; while (location >= 65536.0) location -= 65536.0;
 	line [index++] = enter;
 	if (index > 65535) index = 0;
-	signal = enter + level * DIV_16384 * line [location];
+	signal = enter + level * DIV_16384 * interpolate (location, line);
 }
 lunar_chorus :: lunar_chorus (orbiter_core * core) : orbiter (core) {
 	for (int ind = 0; ind < 65536; ind++) line [ind] = 0.0;
 	enter = time = omega = 0.0;
 	index = 0;
-	wave = 0.0;
 	level = 0.0;
 	speed = 0.0; amp = 8192.0;
 	initialise (); activate ();

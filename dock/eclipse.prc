@@ -67,6 +67,7 @@ end := [
 		[TRY [commander]]
 		;[Moonbase Phobos]
 		;[Moonbase *Abakos]
+		[RemoveAudio]
 		[CloseAllMoons]
 		] .
 

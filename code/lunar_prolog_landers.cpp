@@ -61,6 +61,19 @@ public:
 				}
 				break;
 			case 7: sprintf (command, "* %g", pb -> signal); break;
+			case 8:
+				switch ((int) pb -> signal) {
+				case 0: sprintf (command, "0 (horizontal)"); break;
+				case 1: sprintf (command, "1 (half-horizontal)"); break;
+				case 2: sprintf (command, "2 (pyramid)"); break;
+				case 3: sprintf (command, "3 (double)"); break;
+				case 4: sprintf (command, "4 (low-tree)"); break;
+				case 5: sprintf (command, "5 (tree)"); break;
+				case 6: sprintf (command, "6 (high-tree)"); break;
+				case 7: sprintf (command, "7 (vertical)"); break;
+				default: sprintf (command, "%i (horizontal)", (int) pb -> signal); break;
+				}
+				break;
 			default: sprintf (command, "??"); break;
 			}
 			parameters -> setText (command);
@@ -80,6 +93,7 @@ static int toStyle (char * name) {
 	if (strcasecmp (name, "onoff") == 0) return 5;
 	if (strcasecmp (name, "wave") == 0) return 6;
 	if (strcasecmp (name, "ratio") == 0) return 7;
+	if (strcasecmp (name, "fm4algo") == 0) return 8;
 	return 0;
 }
 

@@ -352,7 +352,7 @@ program lunar #machine := "prolog.lunar"
 ]
 
 [[InsertIO *parameters *op *selector [["ALGO" "TRIGGER" "FREQ1" "AMP1" "RATIO1" "FEEDBACK1" "FREQ2" "AMP2" "RATIO2" "FEEDBACK2" "FREQ3" "AMP3" "RATIO3" "FEEDBACK3" "FREQ4" "AMP4" "RATIO4" "FEEDBACK4"] ["SIGNAL"]]]
-	[AddParameterBlock *parameters algo *op *selector 0 "index"]
+	[AddParameterBlock *parameters algo *op *selector 0 "fm4algo"]
 	[APPEND *selector [1] *selector1]
 	[AddParameterBlock *parameters freq "freq1" *op *selector1 0 "freq"]
 	[AddParameterBlock *parameters amp "amp1" *op *selector1 0 "amp"]

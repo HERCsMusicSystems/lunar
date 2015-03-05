@@ -34,6 +34,7 @@ program lunar #machine := "prolog.lunar"
 				Bbb Bb B B# Bx
 				midi
 				ParameterBlockPanel AdsrPanel
+				BuildAdsrPanel
 				MoveModules PropagateSignals MoveCore LunarDrop
 				CreateDistributor CloseDistributor Distribute Redistribute
 				CCCB cb_callback cb_path cb_edit_path process_mode CBsub
@@ -103,6 +104,15 @@ program lunar #machine := "prolog.lunar"
 #machine LoopWave := "LoopWave"
 
 #machine unicar := "unicar"
+
+[[BuildAdsrPanel *panel *instrument : *path]
+	[*instrument *parameters : *]
+	[APPEND *path [attack] *attack_path] [*parameters *attack : *attack_path]
+	[APPEND *path [decay] *decay_path] [*parameters *decay : *decay_path]
+	[APPEND *path [sustain] *sustain_path] [*parameters *sustain : *sustain_path]
+	[APPEND *path [release] *release_path] [*parameters *release : *release_path]
+	[AdsrPanel *panel *attack *decay *sustain *release]
+]
 
 [[MoveCore] [MoveModules] [PropagateSignals]]
 

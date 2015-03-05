@@ -209,6 +209,12 @@ command_centre.o: ../graphics/command_centre.png
 		../graphics/command_centre.png command_centre.o
 	objdump -t command_centre.o
 
+adsr_panel.o: ../graphics/adsr_panel.png
+	objcopy --input binary --output elf64-x86-64 --binary-architecture i386\
+		--redefine-sym _binary____graphics_adsr_panel_png_start=resource_adsr_panel_start\
+		--redefine-sym _binary____graphics_adsr_panel_png_end=resource_adsr_panel_end\
+		../graphics/adsr_panel.png adsr_panel.o
+
 lunar_prc.o: ../code/lunar.prc
 	objcopy --input binary --output elf64-x86-64 --binary-architecture i386\
 		--redefine-sym _binary____code_lunar_prc_start=resource_lunar\
@@ -222,7 +228,7 @@ prcgtk.o: ../code/prcgtk.cpp ../code/prolog_lunar.h ../code/lunar.h\
 
 graphics = small_keyboard.o keyboard.o big_keyboard.o vector_frame.o vector_handle.o knob.o knob_surface.o\
 	knob_handle.o display.o button_on.o button_off.o encoder_surface.o encoder_handle.o slider_surface.o slider_handle.o\
-	command_centre.o
+	command_centre.o adsr_panel.o
 
 ~/bin/lunar: $(lunar_objects) $(objects) $(graphics) $(prc_resources)
 	g++ $(lunar_objects) $(objects) $(prc_resources) $(graphics) \

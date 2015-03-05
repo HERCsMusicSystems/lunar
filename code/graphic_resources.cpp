@@ -69,6 +69,8 @@ extern char resource_slider_handle_start;
 extern char resource_slider_handle_end;
 extern char resource_command_centre_start;
 extern char resource_command_centre_end;
+extern char resource_adsr_panel_start;
+extern char resource_adsr_panel_end;
 #endif
 
 class png_closure {
@@ -109,6 +111,7 @@ GraphicResources :: GraphicResources (void) {
 	png_closure slider_surface_closure (GetResource (SLIDER_SURFACE_PNG), SLIDER_SURFACE_SIZE);
 	png_closure slider_handle_closure (GetResource (SLIDER_HANDLE_PNG), SLIDER_HANDLE_SIZE);
 	png_closure command_centre_closure (GetResource (COMMAND_CENTRE_PNG), COMMAND_CENTRE_SIZE);
+	png_closure adsr_panel_surface_closure (GetResource (ADSR_PANEL_PNG), ADSR_PANEL_SIZE);
 #else
 	png_closure frame_closure (& resource_vector_frame_start, & resource_vector_frame_end);
 	png_closure handle_closure (& resource_vector_handle_start, & resource_vector_handle_end);
@@ -126,6 +129,7 @@ GraphicResources :: GraphicResources (void) {
 	png_closure slider_surface_closure (& resource_slider_surface_start, & resource_slider_surface_end);
 	png_closure slider_handle_closure (& resource_slider_handle_start, & resource_slider_handle_end);
 	png_closure command_centre_closure (& resource_command_centre_start, & resource_command_centre_end);
+	png_closure adsr_panel_surface_closure (& resource_adsr_panel_start, & resource_adsr_panel_end);
 #endif
 	vector_surface = cairo_image_surface_create_from_png_stream (png_reader, & frame_closure);
 	vector_handle = cairo_image_surface_create_from_png_stream (png_reader, & handle_closure);
@@ -143,6 +147,7 @@ GraphicResources :: GraphicResources (void) {
 	slider_surface = cairo_image_surface_create_from_png_stream (png_reader, & slider_surface_closure);
 	slider_handle = cairo_image_surface_create_from_png_stream (png_reader, & slider_handle_closure);
 	command_centre = cairo_image_surface_create_from_png_stream (png_reader, & command_centre_closure);
+	adsr_panel_surface = cairo_image_surface_create_from_png_stream (png_reader, & adsr_panel_surface_closure);
 }
 
 GraphicResources :: ~ GraphicResources (void) {
@@ -161,6 +166,8 @@ GraphicResources :: ~ GraphicResources (void) {
 	if (encoder_handle != 0) cairo_surface_destroy (encoder_handle);
 	if (slider_surface != 0) cairo_surface_destroy (slider_surface);
 	if (slider_handle != 0) cairo_surface_destroy (slider_handle);
+	if (command_centre != 0) cairo_surface_destroy (command_centre);
+	if (adsr_panel_surface != 0) cairo_surface_destroy (adsr_panel_surface);
 }
 
 GraphicResources * create_graphic_resources (void) {return new GraphicResources ();}

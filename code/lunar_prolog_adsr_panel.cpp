@@ -29,14 +29,14 @@
 
 static double prepare (double angle) {
 	angle *= 16384.0;
-	if (angle > 16383.0) angle = 16383.0;
-	if (angle < -16383.0) angle = -16383.0;
+	if (angle > 16384.0) angle = 16384.0;
+	if (angle < -16384.0) angle = -16384.0;
 	int ind = (int) angle;
-	return (double) angle;
+	return (double) ind;
 }
 static double unprepare (double angle) {
-	if (angle <= -16383.0) return -1.0;
-	if (angle >= 16383.0) return 1.0;
+	if (angle <= -16384.0) return -1.0;
+	if (angle >= 16384.0) return 1.0;
 	return angle / 16384.0;
 }
 
@@ -119,11 +119,11 @@ public:
 	bool code (PrologElement * parameters, PrologResolution * resolution);
 	adsr_panel_action (GraphicResources * resources, PrologRoot * root, PrologDirectory * directory, PrologAtom * atom,
 											PrologAtom * a, PrologAtom * d, PrologAtom * s, PrologAtom * r, bool active) :
-	A (point (0, 0), 0, resources, active),
-	D (point (100, 0), 0, resources, active),
-	S (point (200, 0), 0, resources, active),
-	R (point (300, 0), 0, resources, active) {
-		background_image = resources != 0 ? resources -> vector_surface : 0;
+	A (point (14, 8), 0, resources, active),
+	D (point (84, 8), 0, resources, active),
+	S (point (154, 8), 0, resources, active),
+	R (point (224, 8), 0, resources, active) {
+		background_image = resources != 0 ? resources -> adsr_panel_surface : 0;
 		viewport = 0;
 		this -> root = root;
 		this -> atom = atom; COLLECTOR_REFERENCE_INC (atom);

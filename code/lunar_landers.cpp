@@ -709,14 +709,14 @@ int lunar_eg :: numberOfInputs (void) {return 9;}
 char * lunar_eg :: inputName (int ind) {
 	switch (ind) {
 	case 0: return "TRIGGER"; break;
-	case 1: return "LEVEL1"; break;
-	case 2: return "LEVEL2"; break;
-	case 3: return "LEVEL3"; break;
-	case 4: return "LEVEL4"; break;
-	case 5: return "TIME1"; break;
-	case 6: return "TIME2"; break;
-	case 7: return "TIME3"; break;
-	case 8: return "TIME4"; break;
+	case 1: return "TIME1"; break;
+	case 2: return "TIME2"; break;
+	case 3: return "TIME3"; break;
+	case 4: return "TIME4"; break;
+	case 5: return "LEVEL1"; break;
+	case 6: return "LEVEL2"; break;
+	case 7: return "LEVEL3"; break;
+	case 8: return "LEVEL4"; break;
 	default: break;
 	}
 	return orbiter :: inputName (ind);
@@ -724,14 +724,14 @@ char * lunar_eg :: inputName (int ind) {
 double * lunar_eg :: inputAddress (int ind) {
 	switch (ind) {
 	case 0: return & trigger; break;
-	case 1: return & level1; break;
-	case 2: return & level2; break;
-	case 3: return & level3; break;
-	case 4: return & level4; break;
-	case 5: return & time1; break;
-	case 6: return & time2; break;
-	case 7: return & time3; break;
-	case 8: return & time4; break;
+	case 1: return & time1; break;
+	case 2: return & time2; break;
+	case 3: return & time3; break;
+	case 4: return & time4; break;
+	case 5: return & level1; break;
+	case 6: return & level2; break;
+	case 7: return & level3; break;
+	case 8: return & level4; break;
 	default: break;
 	}
 	return orbiter :: inputAddress (ind);

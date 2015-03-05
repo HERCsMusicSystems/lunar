@@ -288,8 +288,8 @@ public:
 
 class lunar_eg : public orbiter {
 private:
-	double level1, level2, level3, level4;
 	double time1, time2, time3, time4;
+	double level1, level2, level3, level4;
 	double trigger;
 	double busy;
 	int stage;

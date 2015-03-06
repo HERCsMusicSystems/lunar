@@ -96,10 +96,18 @@ public:
 class adsr_panel_class : public PrologNativeCode {
 public:
 	PrologRoot * root;
-	PrologDirectory * directory;
 	GraphicResources * resources;
 	bool code (PrologElement * parameters, PrologResolution * resolution);
 	adsr_panel_class (PrologLunarServiceClass * servo);
+};
+
+class eg_panel_class : public PrologNativeCode {
+public:
+	PrologRoot * root;
+	GraphicResources * resources;
+	bool feg;
+	bool code (PrologElement * parameters, PrologResolution * resolution);
+	eg_panel_class (PrologLunarServiceClass * servo, bool feg = false);
 };
 
 class oscilloscope_class : public PrologNativeOrbiterCreator {

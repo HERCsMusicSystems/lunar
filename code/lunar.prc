@@ -33,8 +33,8 @@ program lunar #machine := "prolog.lunar"
 				Abb Ab A A# Ax
 				Bbb Bb B B# Bx
 				midi
-				ParameterBlockPanel AdsrPanel
-				BuildAdsrPanel
+				ParameterBlockPanel AdsrPanel EGPanel FEGPanel
+				BuildParameterBlockPanel BuildAdsrPanel BuildEGPanel BuildFEGPanel
 				MoveModules PropagateSignals MoveCore LunarDrop
 				CreateDistributor CloseDistributor Distribute Redistribute
 				CCCB cb_callback cb_path cb_edit_path process_mode CBsub
@@ -97,6 +97,8 @@ program lunar #machine := "prolog.lunar"
 
 #machine ParameterBlockPanel := "ParameterBlockPanel"
 #machine AdsrPanel := "AdsrPanel"
+#machine EGPanel := "EGPanel"
+#machine FEGPanel := "FEGPanel"
 
 #machine MoveModules := "MoveModules"
 #machine PropagateSignals := "PropagateSignals"
@@ -105,6 +107,11 @@ program lunar #machine := "prolog.lunar"
 
 #machine unicar := "unicar"
 
+[[BuildParameterBlockPanel *panel *instrument : *path]
+	[*instrument *parameters : *] [*parameters *parameter : *path]
+	[ParameterBlockPanel *panel *parameter]
+]
+
 [[BuildAdsrPanel *panel *instrument : *path]
 	[*instrument *parameters : *]
 	[APPEND *path [attack] *attack_path] [*parameters *attack : *attack_path]
@@ -112,6 +119,32 @@ program lunar #machine := "prolog.lunar"
 	[APPEND *path [sustain] *sustain_path] [*parameters *sustain : *sustain_path]
 	[APPEND *path [release] *release_path] [*parameters *release : *release_path]
 	[AdsrPanel *panel *attack *decay *sustain *release]
+]
+
+[[BuildEGPanel *panel *instrument : *path]
+	[*instrument *parameters : *]
+	[APPEND *path [time1] *time1_path] [*parameters *time1 : *time1_path]
+	[APPEND *path [time2] *time2_path] [*parameters *time2 : *time2_path]
+	[APPEND *path [time3] *time3_path] [*parameters *time3 : *time3_path]
+	[APPEND *path [time4] *time4_path] [*parameters *time4 : *time4_path]
+	[APPEND *path [level1] *level1_path] [*parameters *level1 : *level1_path]
+	[APPEND *path [level2] *level2_path] [*parameters *level2 : *level2_path]
+	[APPEND *path [level3] *level3_path] [*parameters *level3 : *level3_path]
+	[APPEND *path [level4] *level4_path] [*parameters *level4 : *level4_path]
+	[EGPanel *panel *time1 *time2 *time3 *time4 *level1 *level2 *level3 *level4]
+]
+
+[[BuildFEGPanel *panel *instrument : *path]
+	[*instrument *parameters : *]
+	[APPEND *path [time1] *time1_path] [*parameters *time1 : *time1_path]
+	[APPEND *path [time2] *time2_path] [*parameters *time2 : *time2_path]
+	[APPEND *path [time3] *time3_path] [*parameters *time3 : *time3_path]
+	[APPEND *path [time4] *time4_path] [*parameters *time4 : *time4_path]
+	[APPEND *path [level1] *level1_path] [*parameters *level1 : *level1_path]
+	[APPEND *path [level2] *level2_path] [*parameters *level2 : *level2_path]
+	[APPEND *path [level3] *level3_path] [*parameters *level3 : *level3_path]
+	[APPEND *path [level4] *level4_path] [*parameters *level4 : *level4_path]
+	[FEGPanel *panel *time1 *time2 *time3 *time4 *level1 *level2 *level3 *level4]
 ]
 
 [[MoveCore] [MoveModules] [PropagateSignals]]

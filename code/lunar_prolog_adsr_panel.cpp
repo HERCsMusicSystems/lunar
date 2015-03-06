@@ -117,7 +117,7 @@ public:
 		delete query;
 	}
 	bool code (PrologElement * parameters, PrologResolution * resolution);
-	adsr_panel_action (GraphicResources * resources, PrologRoot * root, PrologDirectory * directory, PrologAtom * atom,
+	adsr_panel_action (GraphicResources * resources, PrologRoot * root, PrologAtom * atom,
 											PrologAtom * a, PrologAtom * d, PrologAtom * s, PrologAtom * r, bool active) :
 	A (point (14, 8), 0, resources, active),
 	D (point (84, 8), 0, resources, active),
@@ -245,7 +245,7 @@ bool adsr_panel_class :: code (PrologElement * parameters, PrologResolution * re
 	if (atom == 0 || a == 0) return false;
 	if (atom -> isVar ()) atom -> setAtom (new PrologAtom ());
 	if (atom -> getAtom () -> getMachine () != 0) return false;
-	adsr_panel_action * machine = new adsr_panel_action (resources, root, directory, atom -> getAtom (), a -> getAtom (),
+	adsr_panel_action * machine = new adsr_panel_action (resources, root, atom -> getAtom (), a -> getAtom (),
 										d != 0 ? d -> getAtom () : 0, s != 0 ? s -> getAtom () : 0, r != 0 ? r -> getAtom () : 0, true);
 	if (! atom -> getAtom () -> setMachine (machine)) {delete machine; return false;}
 	g_idle_add ((GSourceFunc) CreateAdsrPanelIdleCode, machine);
@@ -254,6 +254,5 @@ bool adsr_panel_class :: code (PrologElement * parameters, PrologResolution * re
 
 adsr_panel_class :: adsr_panel_class (PrologLunarServiceClass * servo) {
 	this -> root = servo -> root;
-	this -> directory = servo -> directory;
 	this -> resources = servo -> resources;
 }

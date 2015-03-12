@@ -309,7 +309,7 @@ public:
 		delete query;
 	}
 	bool voice_init_action (void) {
-		GtkWidget * dialog = gtk_message_dialog_new (GTK_WINDOW (viewport), GTK_DIALOG_DESTROY_WITH_PARENT, GTK_MESSAGE_INFO, GTK_BUTTONS_OK_CANCEL, "Load default settings?", "INFO");
+		GtkWidget * dialog = gtk_message_dialog_new (GTK_WINDOW (viewport), GTK_DIALOG_DESTROY_WITH_PARENT, GTK_MESSAGE_INFO, GTK_BUTTONS_OK_CANCEL, "Load default settings?");
 		int res = gtk_dialog_run (GTK_DIALOG (dialog));
 		gtk_widget_destroy (dialog);
 		if (res != GTK_RESPONSE_OK) return false;
@@ -360,29 +360,29 @@ public:
 	selector7 (point (947.0, 112.0), 207, resources, active),
 	selector8 (point (987.0, 112.0), 208, resources, active),
 	selector9 (point (1027.0, 112.0), 209, resources, active),
-	program0 (point (667.0, 156.0), 100, resources, active),
-	program1 (point (707.0, 156.0), 101, resources, active),
-	program2 (point (747.0, 156.0), 102, resources, active),
-	program3 (point (787.0, 156.0), 103, resources, active),
-	program4 (point (827.0, 156.0), 104, resources, active),
-	program5 (point (867.0, 156.0), 105, resources, active),
-	program6 (point (907.0, 156.0), 106, resources, active),
-	program7 (point (947.0, 156.0), 107, resources, active),
-	program8 (point (987.0, 156.0), 108, resources, active),
-	program9 (point (1027.0, 156.0), 109, resources, active),
-	sub_one (point (1176.0, 130.0), 302, resources, true),
-	add_one (point (1216.0, 130.0), 301, resources, true),
-	delta_1 (point (1155.0, 150.0), 303, resources, true),
-	delta_8 (point (1195.0, 150.0), 304, resources, true),
-	delta_128 (point (1235.0, 150.0), 305, resources, true),
-	encoder (point (1088.0, 97.0), 401, resources, true),
-	pitch (point (42.0, 228.0), 128, true, resources, false),
+	program0 (point (667.0, 152.0), 100, resources, active),
+	program1 (point (707.0, 152.0), 101, resources, active),
+	program2 (point (747.0, 152.0), 102, resources, active),
+	program3 (point (787.0, 152.0), 103, resources, active),
+	program4 (point (827.0, 152.0), 104, resources, active),
+	program5 (point (867.0, 152.0), 105, resources, active),
+	program6 (point (907.0, 152.0), 106, resources, active),
+	program7 (point (947.0, 152.0), 107, resources, active),
+	program8 (point (987.0, 152.0), 108, resources, active),
+	program9 (point (1027.0, 152.0), 109, resources, active),
+	sub_one (point (1176.0, 130.0), 302, resources, active),
+	add_one (point (1216.0, 130.0), 301, resources, active),
+	delta_1 (point (1155.0, 150.0), 303, resources, active),
+	delta_8 (point (1195.0, 150.0), 304, resources, active),
+	delta_128 (point (1235.0, 150.0), 305, resources, active),
+	encoder (point (1088.0, 97.0), 401, resources, active),
+	pitch (point (42.0, 228.0), 128, true, resources, true),
 	modulation (point (72.0, 228.0), 1, false, resources, true),
 	poly_mono (point (33.0, 175.0), 503, resources, active),
 	porta_on_off (point (73.0, 175.0), 65, resources, active),
-	store (point (1200.0, 110.0), 601, resources, true),
-	restore (point (1240.0, 110.0), 602, resources, true),
-	voice_init (point (1280.0, 110.0), 603, resources, true)
+	store (point (1200.0, 110.0), 601, resources, active),
+	restore (point (1240.0, 110.0), 602, resources, active),
+	voice_init (point (1280.0, 110.0), 603, resources, active)
 	{
 		cwd (area, sizeof (AREA));
 		command_centre_image = resources != 0 ? resources -> command_centre : 0;

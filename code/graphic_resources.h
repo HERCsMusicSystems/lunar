@@ -48,6 +48,8 @@ public:
 	cairo_surface_t * slider_handle;
 	cairo_surface_t * command_centre;
 	cairo_surface_t * adsr_panel_surface;
+	cairo_surface_t * eg_panel_surface;
+	cairo_surface_t * fm4_panel_surface;
 	GraphicResources (void);
 	~ GraphicResources (void);
 };
@@ -66,13 +68,13 @@ public:
 
 class knob_active_graphics : public active_graphics {
 public:
-	double angle;
+	double angle, value, range, start;
 	cairo_surface_t * knob_surface_png;
 	cairo_surface_t * knob_png;
 	cairo_surface_t * knob_handle_png;
 	bool move (point delta);
 	void draw (cairo_t * cr);
-	knob_active_graphics (point location, int id, GraphicResources * resources, bool active_surface = false);
+	knob_active_graphics (point location, int id, GraphicResources * resources, bool active_surface = false, double from = -64.0, double to = 64.0);
 };
 
 class encoder_active_graphics : public active_graphics {

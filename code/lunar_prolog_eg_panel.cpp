@@ -21,7 +21,7 @@
 ///////////////////////////////////////////////////////////////////////////////////
 
 /////////////////////////////////////////////////////////////////////
-// This file was created on Wednesday, 6th March 2015 at 09:57:20. //
+// This file was created on Wednesday, 6th March 2015 at 09:57:59. //
 /////////////////////////////////////////////////////////////////////
 
 #include "prolog_lunar.h"
@@ -64,10 +64,10 @@ public:
 		case 1: a = t2; v = prepare (T2 . angle); break;
 		case 2: a = t3; v = prepare (T3 . angle); break;
 		case 3: a = t4; v = prepare (T4 . angle); break;
-		case 4: a = l1; v = prepare (L1 . angle); break;
-		case 5: a = l2; v = prepare (L2 . angle); break;
-		case 6: a = l3; v = prepare (L3 . angle); break;
-		case 7: a = l4; v = prepare (L4 . angle); break;
+		case 4: a = l1; v = prepare (L1 . angle - (feg ? 0.5 : 1.0)); break;
+		case 5: a = l2; v = prepare (L2 . angle - (feg ? 0.5 : 1.0)); break;
+		case 6: a = l3; v = prepare (L3 . angle - (feg ? 0.5 : 1.0)); break;
+		case 7: a = l4; v = prepare (L4 . angle - (feg ? 0.5 : 1.0)); break;
 		default: a = 0; break;
 		}
 		if (a == 0) return;
@@ -108,16 +108,17 @@ public:
 			el = el -> getRight (); if (! el -> isPair ()) {delete query; return;} sub = el -> getLeft ();
 			if (sub -> isNumber ()) T4 . angle = unprepare (sub -> getNumber ());
 			el = el -> getRight (); if (! el -> isPair ()) {delete query; return;} sub = el -> getLeft ();
-			if (sub -> isNumber ()) L1 . angle = unprepare (sub -> getNumber ());
+			if (sub -> isNumber ()) L1 . angle = unprepare (sub -> getNumber ()) + (feg ? 0.5 : 1.0);
 			el = el -> getRight (); if (! el -> isPair ()) {delete query; return;} sub = el -> getLeft ();
-			if (sub -> isNumber ()) L2 . angle = unprepare (sub -> getNumber ());
+			if (sub -> isNumber ()) L2 . angle = unprepare (sub -> getNumber ()) + (feg ? 0.5 : 1.0);
 			el = el -> getRight (); if (! el -> isPair ()) {delete query; return;} sub = el -> getLeft ();
-			if (sub -> isNumber ()) L3 . angle = unprepare (sub -> getNumber ());
+			if (sub -> isNumber ()) L3 . angle = unprepare (sub -> getNumber ()) + (feg ? 0.5 : 1.0);
 			el = el -> getRight (); if (! el -> isPair ()) {delete query; return;} sub = el -> getLeft ();
-			if (sub -> isNumber ()) L4 . angle = unprepare (sub -> getNumber ());
+			if (sub -> isNumber ()) L4 . angle = unprepare (sub -> getNumber ()) + (feg ? 0.5 : 1.0);
 		}
 		delete query;
 	}
+	bool code (PrologElement * parameters, PrologResolution * resolution);
 	eg_panel_action (GraphicResources * resources, PrologRoot * root, bool feg, PrologAtom * atom,
 		PrologAtom * t1, PrologAtom * t2, PrologAtom * t3, PrologAtom * t4,
 		PrologAtom * l1, PrologAtom * l2, PrologAtom * l3, PrologAtom * l4, bool active) :
@@ -129,8 +130,9 @@ public:
 	L2 (point (84, 98), 0, resources, active),
 	L3 (point (154, 98), 0, resources, active),
 	L4 (point (224, 98), 0, resources, active) {
-		background_image = resources != 0 ? resources -> adsr_panel_surface : 0;
+		background_image = resources != 0 ? resources -> eg_panel_surface : 0;
 		viewport = 0;
+		this -> feg = feg;
 		this -> root = root;
 		this -> atom = atom; COLLECTOR_REFERENCE_INC (atom);
 		this -> t1 = t1; COLLECTOR_REFERENCE_INC (t1);
@@ -227,6 +229,28 @@ static gboolean CreateEGPanelIdleCode (eg_panel_action * action) {
 											cairo_image_surface_get_height (action -> background_image));
 	gtk_widget_show_all (action -> viewport);
 	return FALSE;
+}
+
+static gboolean RepositionEGPanel (eg_panel_action * action) {
+	gtk_window_move (GTK_WINDOW (action -> viewport), (int) action -> location . x, (int) action -> location . y);
+	return FALSE;
+}
+
+bool eg_panel_action :: code (PrologElement * parameters, PrologResolution * resolution) {
+	if (parameters -> isEarth ()) return remove ();
+	PrologElement * x = 0, * y = 0;
+	PrologElement * refresher = 0;
+	while (parameters -> isPair ()) {
+		PrologElement * el = parameters -> getLeft ();
+		if (el -> isNumber ()) if (x == 0) x = el; else y = el;
+		if (el -> isEarth ()) refresher = el;
+		parameters = parameters -> getRight ();
+	}
+	if (refresher != 0) {feedback (); gtk_widget_queue_draw (viewport); return true;}
+	if (x == 0 || y == 0) return true;
+	location = point (x -> getNumber (), y -> getNumber ());
+	g_idle_add ((GSourceFunc) RepositionEGPanel, this);
+	return true;
 }
 
 bool eg_panel_class :: code (PrologElement * parameters, PrologResolution * resolution) {

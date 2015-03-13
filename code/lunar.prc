@@ -33,8 +33,8 @@ program lunar #machine := "prolog.lunar"
 				Abb Ab A A# Ax
 				Bbb Bb B B# Bx
 				midi
-				ParameterBlockPanel AdsrPanel EGPanel FEGPanel
-				BuildParameterBlockPanel BuildAdsrPanel BuildEGPanel BuildFEGPanel
+				ParameterBlockPanel AdsrPanel EGPanel FEGPanel FM4Panel
+				BuildParameterBlockPanel BuildAdsrPanel BuildEGPanel BuildFEGPanel BuildFM4Panel
 				MoveModules PropagateSignals MoveCore LunarDrop
 				CreateDistributor CloseDistributor Distribute Redistribute
 				CCCB cb_callback cb_path cb_edit_path process_mode CBsub
@@ -99,6 +99,7 @@ program lunar #machine := "prolog.lunar"
 #machine AdsrPanel := "AdsrPanel"
 #machine EGPanel := "EGPanel"
 #machine FEGPanel := "FEGPanel"
+#machine FM4Panel := "FM4Panel"
 
 #machine MoveModules := "MoveModules"
 #machine PropagateSignals := "PropagateSignals"
@@ -145,6 +146,39 @@ program lunar #machine := "prolog.lunar"
 	[APPEND *path [level3] *level3_path] [*parameters *level3 : *level3_path]
 	[APPEND *path [level4] *level4_path] [*parameters *level4 : *level4_path]
 	[FEGPanel *panel *time1 *time2 *time3 *time4 *level1 *level2 *level3 *level4]
+]
+
+[[BuildFM4Panel *panel *instrument : *path]
+	[*instrument *parameters : *]
+	[APPEND *path [algo] *algo_path] [*parameters *algo : *algo_path]
+	[APPEND *path [1 freq] *freq1_path] [*parameters *freq1 : *freq1_path]
+	[APPEND *path [1 amp] *amp1_path] [*parameters *amp1 : *amp1_path]
+	[APPEND *path [1 ratio] *ratio1_path] [*parameters *ratio1 : *ratio1_path]
+	[APPEND *path [1 feedback] *feedback1_path] [*parameters *feedback1 : *feedback1_path]
+	[APPEND *path [2 freq] *freq2_path] [*parameters *freq2 : *freq2_path]
+	[APPEND *path [2 amp] *amp2_path] [*parameters *amp2 : *amp2_path]
+	[APPEND *path [2 ratio] *ratio2_path] [*parameters *ratio2 : *ratio2_path]
+	[APPEND *path [2 feedback] *feedback2_path] [*parameters *feedback2 : *feedback2_path]
+	[APPEND *path [3 freq] *freq3_path] [*parameters *freq3 : *freq3_path]
+	[APPEND *path [3 amp] *amp3_path] [*parameters *amp3 : *amp3_path]
+	[APPEND *path [3 ratio] *ratio3_path] [*parameters *ratio3 : *ratio3_path]
+	[APPEND *path [3 feedback] *feedback3_path] [*parameters *feedback3 : *feedback3_path]
+	[APPEND *path [4 freq] *freq4_path] [*parameters *freq4 : *freq4_path]
+	[APPEND *path [4 amp] *amp4_path] [*parameters *amp4 : *amp4_path]
+	[APPEND *path [4 ratio] *ratio4_path] [*parameters *ratio4 : *ratio4_path]
+	[APPEND *path [4 feedback] *feedback4_path] [*parameters *feedback4 : *feedback4_path]
+	[show [FM4Panel *panel *algo
+		*freq1 *amp1 *ratio1 *feedback1
+		*freq2 *amp2 *ratio2 *feedback2
+		*freq3 *amp3 *ratio3 *feedback3
+		*freq4 *amp4 *ratio4 *feedback4
+	]]
+	[FM4Panel *panel *algo
+		*freq1 *amp1 *ratio1 *feedback1
+		*freq2 *amp2 *ratio2 *feedback2
+		*freq3 *amp3 *ratio3 *feedback3
+		*freq4 *amp4 *ratio4 *feedback4
+	]
 ]
 
 [[MoveCore] [MoveModules] [PropagateSignals]]

@@ -23,6 +23,8 @@
 #define SLIDER_HANDLE_PNG               216
 #define COMMAND_CENTRE_PNG              217
 #define ADSR_PANEL_PNG                  218
+#define EG_PANEL_PNG                    219
+#define FM4_PANEL_PNG                   220
 
 #define SMALL_KEYBOARD_SIZE             435
 #define KEYBOARD_SIZE                   579
@@ -41,10 +43,12 @@
 #define SLIDER_HANDLE_SIZE              213063
 #define COMMAND_CENTRE_SIZE             213063
 #define ADSR_PANEL_SIZE                 17300
+#define EG_PANEL_SIZE                   17300
+#define FM4_PANEL_SIZE                  17300
 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        219
+#define _APS_NEXT_RESOURCE_VALUE        221
 #define _APS_NEXT_COMMAND_VALUE         40001
 #define _APS_NEXT_CONTROL_VALUE         1001
 #define _APS_NEXT_SYMED_VALUE           101

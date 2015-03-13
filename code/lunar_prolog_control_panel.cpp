@@ -349,7 +349,7 @@ public:
 	ctrl_vibrato (point (582.0, 90.0), 71, resources, active),
 	vector (point (12.0, -2.0), 12, resources, active),
 	keyboard (point (114.0, 194.0), 2, 6, resources, active),
-	display (point (576.0, -7.0), 7, resources, active),
+	display (point (542.0, -7.0), 7, resources, active),
 	selector0 (point (667.0, 112.0), 200, resources, active),
 	selector1 (point (707.0, 112.0), 201, resources, active),
 	selector2 (point (747.0, 112.0), 202, resources, active),
@@ -380,9 +380,9 @@ public:
 	modulation (point (72.0, 228.0), 1, false, resources, true),
 	poly_mono (point (33.0, 175.0), 503, resources, active),
 	porta_on_off (point (73.0, 175.0), 65, resources, active),
-	store (point (1200.0, 110.0), 601, resources, active),
-	restore (point (1240.0, 110.0), 602, resources, active),
-	voice_init (point (1280.0, 110.0), 603, resources, active)
+	store (point (947.0, 71.0), 601, resources, active),
+	restore (point (987.0, 71.0), 602, resources, active),
+	voice_init (point (1027.0, 71.0), 603, resources, active)
 	{
 		cwd (area, sizeof (AREA));
 		command_centre_image = resources != 0 ? resources -> command_centre : 0;
@@ -640,9 +640,9 @@ static gint ControlPanelKeyon (GtkWidget * viewport, GdkEventButton * event, con
 	}
 	if (action -> add_one . keyon (location)) {action -> value_change_action (1); action -> add_one . engaged = true; redraw = true;}
 	if (action -> sub_one . keyon (location)) {action -> value_change_action (-1); action -> sub_one . engaged = true; redraw = true;}
-	if (action -> store . keyon (location)) redraw = file_action ("Store", "Save File", viewport, action);
-	if (action -> restore . keyon (location)) {if (redraw = file_action ("Restore", "Load File", viewport, action)) action -> feedback_on_controllers ();}
-	if (action -> voice_init . keyon (location)) {if (redraw = action -> voice_init_action ()) action -> feedback_on_controllers ();}
+	if (action -> store . keyon (location)) redraw = action -> store . engaged = true;
+	if (action -> restore . keyon (location)) redraw = action -> restore . engaged = true;
+	if (action -> voice_init . keyon (location)) redraw = action -> voice_init . engaged = true;
 	if (redraw) gtk_widget_queue_draw (viewport);
 	return TRUE;
 }
@@ -669,6 +669,19 @@ static gint ControlPanelKeyoff (GtkWidget * viewport, GdkEventButton * event, co
 	if (action -> pitch . keyoff (location)) {action -> action (action -> pitch . id, action -> pitch . position); redraw = true;}
 	if (action -> add_one . keyoff (location)) {action -> add_one . engaged = false; redraw = true;}
 	if (action -> sub_one . keyoff (location)) {action -> sub_one . engaged = false; redraw = true;}
+	if (action -> store . keyoff (location)) {
+		file_action ("Store", "Save File", viewport, action);
+		action -> store . engaged = false; redraw = true;
+	}
+	if (action -> restore . keyoff (location)) {
+		file_action ("Restore", "Load File", viewport, action);
+		action -> feedback_on_controllers ();
+		action -> restore . engaged = false; redraw = true;
+	}
+	if (action -> voice_init . keyoff (location)) {
+		if (action -> voice_init_action ()) action -> feedback_on_controllers ();
+		action -> voice_init . engaged = false; redraw = true;
+	}
 	if (redraw) gtk_widget_queue_draw (viewport);
 	return TRUE;
 }

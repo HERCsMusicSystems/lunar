@@ -70,7 +70,7 @@ public:
 			query = root -> pair (root -> atom (a),
 					root -> pair (root -> Double (prepare (A . angle)),
 					root -> pair (root -> Double (prepare (D . angle)),
-					root -> pair (root -> Double (prepare (-1.0 + S . angle)),
+					root -> pair (root -> Double (prepare (S . angle - 1.0)),
 					root -> pair (root -> Double (prepare (R . angle)), root -> earth ())))));
 			query = root -> pair (root -> head (0), root -> pair (query, root -> earth ()));
 		}

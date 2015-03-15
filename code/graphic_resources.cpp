@@ -71,6 +71,10 @@ extern char resource_command_centre_start;
 extern char resource_command_centre_end;
 extern char resource_adsr_panel_start;
 extern char resource_adsr_panel_end;
+extern char resource_eg_panel_start;
+extern char resource_eg_panel_end;
+extern char resource_fm4_panel_start;
+extern char resource_fm4_panel_end;
 #endif
 
 class png_closure {
@@ -216,7 +220,7 @@ void knob_active_graphics :: draw (cairo_t * cr) {
 		cairo_set_source_surface (cr, knob_handle_png, position . x, position . y);
 		cairo_paint (cr);
 	}
-	if (knob_surface_png == 0) return;
+	if (no_display) return;
 	char command [16];
 	sprintf (command, "%i", (int) (angle * range + start));
 	cairo_set_font_size (cr, 10);
@@ -230,8 +234,10 @@ void knob_active_graphics :: draw (cairo_t * cr) {
 }
 
 
-knob_active_graphics :: knob_active_graphics (point location, int id, GraphicResources * resources, bool active_surface, double from, double to) : active_graphics (location, id) {
+knob_active_graphics :: knob_active_graphics (point location, int id, GraphicResources * resources,
+												bool active_display, bool active_surface, double from, double to) : active_graphics (location, id) {
 	knob_surface_png = knob_png = knob_handle_png = 0;
+	no_display = ! active_display;
 	if (resources != 0) {
 		knob_surface_png = active_surface ? resources -> knob_surface : 0;
 		knob_png = active_surface ? resources -> knob : 0;

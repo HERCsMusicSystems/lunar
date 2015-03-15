@@ -122,14 +122,14 @@ public:
 	eg_panel_action (GraphicResources * resources, PrologRoot * root, bool feg, PrologAtom * atom,
 		PrologAtom * t1, PrologAtom * t2, PrologAtom * t3, PrologAtom * t4,
 		PrologAtom * l1, PrologAtom * l2, PrologAtom * l3, PrologAtom * l4, bool active) :
-	T1 (point (14, 8), 0, resources, active),
-	T2 (point (84, 8), 0, resources, active),
-	T3 (point (154, 8), 0, resources, active),
-	T4 (point (224, 8), 0, resources, active),
-	L1 (point (14, 98), 0, resources, active),
-	L2 (point (84, 98), 0, resources, active),
-	L3 (point (154, 98), 0, resources, active),
-	L4 (point (224, 98), 0, resources, active) {
+	T1 (point (18, 10), 0, resources, true, active, 0.0, 16384.0),
+	T2 (point (88, 10), 0, resources, true, active, 0.0, 16384.0),
+	T3 (point (158, 10), 0, resources, true, active, 0.0, 16384.0),
+	T4 (point (228, 10), 0, resources, true, active, 0.0, 16384.0),
+	L1 (point (18, 98), 0, resources, true, active, feg ? -8192.0 : -16384.0, feg ? 8192.0 : 0.0),
+	L2 (point (88, 98), 0, resources, true, active, feg ? -8192.0 : -16384.0, feg ? 8192.0 : 0.0),
+	L3 (point (158, 98), 0, resources, true, active, feg ? -8192.0 : -16384.0, feg ? 8192.0 : 0.0),
+	L4 (point (228, 98), 0, resources, true, active, feg ? -8192.0 : -16384.0, feg ? 8192.0 : 0.0) {
 		background_image = resources != 0 ? resources -> eg_panel_surface : 0;
 		viewport = 0;
 		this -> feg = feg;

@@ -119,10 +119,10 @@ public:
 	bool code (PrologElement * parameters, PrologResolution * resolution);
 	adsr_panel_action (GraphicResources * resources, PrologRoot * root, PrologAtom * atom,
 											PrologAtom * a, PrologAtom * d, PrologAtom * s, PrologAtom * r, bool active) :
-	A (point (14, 8), 0, resources, active),
-	D (point (84, 8), 0, resources, active),
-	S (point (154, 8), 0, resources, active),
-	R (point (224, 8), 0, resources, active) {
+	A (point (18, 10), 0, resources, true, active, 0.0, 16384.0),
+	D (point (88, 10), 0, resources, true, active, 0.0, 16384.0),
+	S (point (158, 10), 0, resources, true, active, -16384.0, 0.0),
+	R (point (228, 10), 0, resources, true, active, 0.0, 16384.0) {
 		background_image = resources != 0 ? resources -> adsr_panel_surface : 0;
 		viewport = 0;
 		this -> root = root;
@@ -246,7 +246,7 @@ bool adsr_panel_class :: code (PrologElement * parameters, PrologResolution * re
 	if (atom -> isVar ()) atom -> setAtom (new PrologAtom ());
 	if (atom -> getAtom () -> getMachine () != 0) return false;
 	adsr_panel_action * machine = new adsr_panel_action (resources, root, atom -> getAtom (), a -> getAtom (),
-										d != 0 ? d -> getAtom () : 0, s != 0 ? s -> getAtom () : 0, r != 0 ? r -> getAtom () : 0, true);
+										d != 0 ? d -> getAtom () : 0, s != 0 ? s -> getAtom () : 0, r != 0 ? r -> getAtom () : 0, false);
 	if (! atom -> getAtom () -> setMachine (machine)) {delete machine; return false;}
 	g_idle_add ((GSourceFunc) CreateAdsrPanelIdleCode, machine);
 	return true;

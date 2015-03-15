@@ -72,9 +72,11 @@ public:
 	cairo_surface_t * knob_surface_png;
 	cairo_surface_t * knob_png;
 	cairo_surface_t * knob_handle_png;
+	bool no_display;
 	bool move (point delta);
 	void draw (cairo_t * cr);
-	knob_active_graphics (point location, int id, GraphicResources * resources, bool active_surface = false, double from = -64.0, double to = 64.0);
+	knob_active_graphics (point location, int id, GraphicResources * resources,
+							bool active_display = false, bool active_surface = false, double from = -64.0, double to = 64.0);
 };
 
 class encoder_active_graphics : public active_graphics {

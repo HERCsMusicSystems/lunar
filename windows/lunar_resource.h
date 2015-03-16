@@ -42,9 +42,9 @@
 #define SLIDER_SURFACE_SIZE             213063
 #define SLIDER_HANDLE_SIZE              213063
 #define COMMAND_CENTRE_SIZE             213063
-#define ADSR_PANEL_SIZE                 17300
-#define EG_PANEL_SIZE                   17300
-#define FM4_PANEL_SIZE                  17300
+#define ADSR_PANEL_SIZE                 19916
+#define EG_PANEL_SIZE                   37224
+#define FM4_PANEL_SIZE                  66525
 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS

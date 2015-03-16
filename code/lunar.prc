@@ -167,12 +167,6 @@ program lunar #machine := "prolog.lunar"
 	[APPEND *path [4 amp] *amp4_path] [*parameters *amp4 : *amp4_path]
 	[APPEND *path [4 ratio] *ratio4_path] [*parameters *ratio4 : *ratio4_path]
 	[APPEND *path [4 feedback] *feedback4_path] [*parameters *feedback4 : *feedback4_path]
-	[show [FM4Panel *panel *algo
-		*freq1 *amp1 *ratio1 *feedback1
-		*freq2 *amp2 *ratio2 *feedback2
-		*freq3 *amp3 *ratio3 *feedback3
-		*freq4 *amp4 *ratio4 *feedback4
-	]]
 	[FM4Panel *panel *algo
 		*freq1 *amp1 *ratio1 *feedback1
 		*freq2 *amp2 *ratio2 *feedback2

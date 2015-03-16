@@ -177,23 +177,23 @@ public:
 		PrologAtom * freq2, PrologAtom * amp2, PrologAtom * ratio2, PrologAtom * feedback2,
 		PrologAtom * freq3, PrologAtom * amp3, PrologAtom * ratio3, PrologAtom * feedback3,
 		PrologAtom * freq4, PrologAtom * amp4, PrologAtom * ratio4, PrologAtom * feedback4, bool active) :
-	ALGO (point (600, 98), 0, resources, active, 0.0, 7.0),
-	FREQ1 (point (14, 8), 0, resources, active, -8192.0, 8192.0),
-	AMP1 (point (84, 8), 0, resources, active, -16384.0, 0.0),
-	RATIO1 (point (154, 8), 0, resources, active),
-	FEEDBACK1 (point (224, 8), 0, resources, active, 0.0, 16384.0),
-	FREQ2 (point (314, 8), 0, resources, active),
-	AMP2 (point (384, 8), 0, resources, active),
-	RATIO2 (point (454, 8), 0, resources, active),
-	FEEDBACK2 (point (524, 8), 0, resources, active),
-	FREQ3 (point (14, 98), 0, resources, active),
-	AMP3 (point (84, 98), 0, resources, active),
-	RATIO3 (point (154, 98), 0, resources, active),
-	FEEDBACK3 (point (224, 98), 0, resources, active),
-	FREQ4 (point (314, 98), 0, resources, active),
-	AMP4 (point (384, 98), 0, resources, active),
-	RATIO4 (point (454, 98), 0, resources, active),
-	FEEDBACK4 (point (524, 98), 0, resources, active) {
+	ALGO (point (598, 98), 0, resources, true, active, 0.0, 7.0),
+	FREQ1 (point (18, 10), 0, resources, true, active, -8192.0, 8192.0),
+	AMP1 (point (88, 10), 0, resources, true, active, -16384.0, 0.0),
+	RATIO1 (point (158, 10), 0, resources, true, active, 1.0, 17.0),
+	FEEDBACK1 (point (228, 10), 0, resources, true, active, 0.0, 16384.0),
+	FREQ2 (point (310, 8), 0, resources, true, active, -8192.0, 8192.0),
+	AMP2 (point (380, 8), 0, resources, true, active, -16384.0, 0.0),
+	RATIO2 (point (450, 8), 0, resources, true, active, 1.0, 17.0),
+	FEEDBACK2 (point (520, 8), 0, resources, true, active, 0.0, 16384.0),
+	FREQ3 (point (18, 98), 0, resources, true, active, -8192.0, 8192.0),
+	AMP3 (point (88, 98), 0, resources, true, active, -16384.0, 0.0),
+	RATIO3 (point (158, 98), 0, resources, true, active, 1.0, 17.0),
+	FEEDBACK3 (point (228, 98), 0, resources, true, active, 0.0, 16384.0),
+	FREQ4 (point (310, 98), 0, resources, true, active, -8192.0, 8192.0),
+	AMP4 (point (380, 98), 0, resources, true, active, -16384.0, 0.0),
+	RATIO4 (point (450, 98), 0, resources, true, active, 1.0, 17.0),
+	FEEDBACK4 (point (520, 98), 0, resources, true, active, 0.0, 16384.0) {
 		captured_button = 0;
 		background_image = resources != 0 ? resources -> fm4_panel_surface : 0;
 		viewport = 0;
@@ -406,7 +406,7 @@ bool fm4_panel_class :: code (PrologElement * parameters, PrologResolution * res
 		freq1 -> getAtom (), amp1 -> getAtom (), ratio1 -> getAtom (), feedback1 -> getAtom (),
 		freq2 -> getAtom (), amp2 -> getAtom (), ratio2 -> getAtom (), feedback2 -> getAtom (),
 		freq3 -> getAtom (), amp3 -> getAtom (), ratio3 -> getAtom (), feedback3 -> getAtom (),
-		freq4 -> getAtom (), amp4 -> getAtom (), ratio4 -> getAtom (), feedback4 -> getAtom (), true);
+		freq4 -> getAtom (), amp4 -> getAtom (), ratio4 -> getAtom (), feedback4 -> getAtom (), false);
 	if (! atom -> getAtom () -> setMachine (machine)) {delete machine; return false;}
 	g_idle_add ((GSourceFunc) CreateEGPanelIdleCode, machine);
 	return true;

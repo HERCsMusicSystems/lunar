@@ -195,10 +195,12 @@ bool active_graphics :: move (point delta) {return on;}
 void active_graphics :: draw (cairo_t * cr) {}
 active_graphics :: active_graphics (point location, int id) {on = false; this -> id = id; this -> location = rect (location, point (16.0, 16.0));}
 
+void knob_active_graphics :: setValue (double v) {angle = (v - start) / (range != 0 ? range : 1.0);}
+
 bool knob_active_graphics :: move (point delta) {
 	if (! on) return false;
 	angle -= 0.0078125 * delta . y;
-	value = start + angle * range;
+	value = (double) ((int) (start + angle * range));
 	if (angle < 0.0) angle = 0.0; if (angle > 1.0) angle = 1.0;
 	return true;
 }

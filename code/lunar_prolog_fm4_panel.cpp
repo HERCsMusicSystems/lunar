@@ -71,19 +71,19 @@ public:
 		case 0: a = algo; v = (double) ((int) ALGO . value); break;
 		case 1: a = freq1; v = prepare (FREQ1 . angle - 0.5); break;
 		case 2: a = amp1; v = prepare (AMP1 . angle - 1.0); break;
-		case 3: a = ratio1; v = prepare (RATIO1 . angle); break;
+		case 3: a = ratio1; v = RATIO1 . value; break;
 		case 4: a = feedback1; v = prepare (FEEDBACK1 . angle); break;
 		case 5: a = freq2; v = prepare (FREQ2 . angle - 0.5); break;
 		case 6: a = amp2; v = prepare (AMP2 . angle - 1.0); break;
-		case 7: a = ratio2; v = prepare (RATIO2 . angle); break;
+		case 7: a = ratio2; v = RATIO2 . value; break;
 		case 8: a = feedback2; v = prepare (FEEDBACK2 . angle); break;
 		case 9: a = freq3; v = prepare (FREQ3 . angle - 0.5); break;
 		case 10: a = amp3; v = prepare (AMP3 . angle - 1.0); break;
-		case 11: a = ratio3; v = prepare (RATIO3 . angle); break;
+		case 11: a = ratio3; v = RATIO3 . value; break;
 		case 12: a = feedback3; v = prepare (FEEDBACK3 . angle); break;
 		case 13: a = freq4; v = prepare (FREQ4 . angle - 0.5); break;
 		case 14: a = amp4; v = prepare (AMP4 . angle - 1.0); break;
-		case 15: a = ratio4; v = prepare (RATIO4 . angle); break;
+		case 15: a = ratio4; v = RATIO4 . value; break;
 		case 16: a = feedback4; v = prepare (FEEDBACK4 . angle); break;
 		default: a = 0; break;
 		}
@@ -141,7 +141,7 @@ public:
 			el = el -> getRight (); if (! el -> isPair ()) {delete query; return;} sub = el -> getLeft ();
 			if (sub -> isNumber ()) AMP1 . angle = unprepare (sub -> getNumber ()) + 1.0;
 			el = el -> getRight (); if (! el -> isPair ()) {delete query; return;} sub = el -> getLeft ();
-			if (sub -> isNumber ()) RATIO1 . angle = unprepare (sub -> getNumber ());
+			if (sub -> isNumber ()) RATIO1 . setValue (sub -> getNumber ());
 			el = el -> getRight (); if (! el -> isPair ()) {delete query; return;} sub = el -> getLeft ();
 			if (sub -> isNumber ()) FEEDBACK1 . angle = unprepare (sub -> getNumber ());
 			el = el -> getRight (); if (! el -> isPair ()) {delete query; return;} sub = el -> getLeft ();
@@ -149,7 +149,7 @@ public:
 			el = el -> getRight (); if (! el -> isPair ()) {delete query; return;} sub = el -> getLeft ();
 			if (sub -> isNumber ()) AMP2 . angle = unprepare (sub -> getNumber ()) + 1.0;
 			el = el -> getRight (); if (! el -> isPair ()) {delete query; return;} sub = el -> getLeft ();
-			if (sub -> isNumber ()) RATIO2 . angle = unprepare (sub -> getNumber ());
+			if (sub -> isNumber ()) RATIO2 . setValue (sub -> getNumber ());
 			el = el -> getRight (); if (! el -> isPair ()) {delete query; return;} sub = el -> getLeft ();
 			if (sub -> isNumber ()) FEEDBACK2 . angle = unprepare (sub -> getNumber ());
 			el = el -> getRight (); if (! el -> isPair ()) {delete query; return;} sub = el -> getLeft ();
@@ -157,7 +157,7 @@ public:
 			el = el -> getRight (); if (! el -> isPair ()) {delete query; return;} sub = el -> getLeft ();
 			if (sub -> isNumber ()) AMP3 . angle = unprepare (sub -> getNumber ()) + 1.0;
 			el = el -> getRight (); if (! el -> isPair ()) {delete query; return;} sub = el -> getLeft ();
-			if (sub -> isNumber ()) RATIO3 . angle = unprepare (sub -> getNumber ());
+			if (sub -> isNumber ()) RATIO3 . setValue (sub -> getNumber ());
 			el = el -> getRight (); if (! el -> isPair ()) {delete query; return;} sub = el -> getLeft ();
 			if (sub -> isNumber ()) FEEDBACK3 . angle = unprepare (sub -> getNumber ());
 			el = el -> getRight (); if (! el -> isPair ()) {delete query; return;} sub = el -> getLeft ();
@@ -165,7 +165,7 @@ public:
 			el = el -> getRight (); if (! el -> isPair ()) {delete query; return;} sub = el -> getLeft ();
 			if (sub -> isNumber ()) AMP4 . angle = unprepare (sub -> getNumber ()) + 1.0;
 			el = el -> getRight (); if (! el -> isPair ()) {delete query; return;} sub = el -> getLeft ();
-			if (sub -> isNumber ()) RATIO4 . angle = unprepare (sub -> getNumber ());
+			if (sub -> isNumber ()) RATIO4 . setValue (sub -> getNumber ());
 			el = el -> getRight (); if (! el -> isPair ()) {delete query; return;} sub = el -> getLeft ();
 			if (sub -> isNumber ()) FEEDBACK4 . angle = unprepare (sub -> getNumber ());
 		}
@@ -180,19 +180,19 @@ public:
 	ALGO (point (598, 98), 0, resources, true, active, 0.0, 7.0),
 	FREQ1 (point (18, 10), 0, resources, true, active, -8192.0, 8192.0),
 	AMP1 (point (88, 10), 0, resources, true, active, -16384.0, 0.0),
-	RATIO1 (point (158, 10), 0, resources, true, active, 1.0, 17.0),
+	RATIO1 (point (158, 10), 0, resources, true, active, 1.0, 33.0),
 	FEEDBACK1 (point (228, 10), 0, resources, true, active, 0.0, 16384.0),
 	FREQ2 (point (310, 10), 0, resources, true, active, -8192.0, 8192.0),
 	AMP2 (point (380, 10), 0, resources, true, active, -16384.0, 0.0),
-	RATIO2 (point (450, 10), 0, resources, true, active, 1.0, 17.0),
+	RATIO2 (point (450, 10), 0, resources, true, active, 1.0, 33.0),
 	FEEDBACK2 (point (520, 10), 0, resources, true, active, 0.0, 16384.0),
 	FREQ3 (point (18, 98), 0, resources, true, active, -8192.0, 8192.0),
 	AMP3 (point (88, 98), 0, resources, true, active, -16384.0, 0.0),
-	RATIO3 (point (158, 98), 0, resources, true, active, 1.0, 17.0),
+	RATIO3 (point (158, 98), 0, resources, true, active, 1.0, 33.0),
 	FEEDBACK3 (point (228, 98), 0, resources, true, active, 0.0, 16384.0),
 	FREQ4 (point (310, 98), 0, resources, true, active, -8192.0, 8192.0),
 	AMP4 (point (380, 98), 0, resources, true, active, -16384.0, 0.0),
-	RATIO4 (point (450, 98), 0, resources, true, active, 1.0, 17.0),
+	RATIO4 (point (450, 98), 0, resources, true, active, 1.0, 33.0),
 	FEEDBACK4 (point (520, 98), 0, resources, true, active, 0.0, 16384.0) {
 		captured_button = 0;
 		background_image = resources != 0 ? resources -> fm4_panel_surface : 0;

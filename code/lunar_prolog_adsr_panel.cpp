@@ -48,6 +48,7 @@ public:
 	GtkWidget * viewport;
 	point captured;
 	point location;
+	int captured_button;
 	knob_active_graphics A, D, S, R;
 	cairo_surface_t * background_image;
 	bool remove (bool remove_gtk = true) {
@@ -123,6 +124,7 @@ public:
 	D (point (88, 10), 0, resources, true, active, 0.0, 16384.0),
 	S (point (158, 10), 0, resources, true, active, -16384.0, 0.0),
 	R (point (228, 10), 0, resources, true, active, 0.0, 16384.0) {
+		captured_button = 0;
 		background_image = resources != 0 ? resources -> adsr_panel_surface : 0;
 		viewport = 0;
 		this -> root = root;
@@ -159,6 +161,7 @@ static gboolean RedrawAdsrPanel (GtkWidget * viewport, GdkEvent * event, adsr_pa
 	return FALSE;
 }
 static gint AdsrPanelKeyon (GtkWidget * viewport, GdkEventButton * event, adsr_panel_action * action) {
+	action -> captured_button = event -> button;
 	point location (event -> x, event -> y);
 	action -> captured = location;
 	action -> A . keyon (location);
@@ -178,6 +181,7 @@ static gint AdsrPanelKeyoff (GtkWidget * viewport, GdkEventButton * event, adsr_
 static gint AdsrPanelMove (GtkWidget * viewport, GdkEventButton * event, adsr_panel_action * action) {
 	point location (event -> x, event -> y);
 	point delta = location - action -> captured;
+	if (action -> captured_button > 1) delta *= 0.0078125;
 	action -> captured = location;
 	bool redraw = false;
 	if (action -> A . move (delta)) {action -> move (0); redraw = true;}

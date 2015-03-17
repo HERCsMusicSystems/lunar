@@ -49,6 +49,7 @@ public:
 	GtkWidget * viewport;
 	point captured;
 	point location;
+	int captured_button;
 	knob_active_graphics T1, T2, T3, T4, L1, L2, L3, L4;
 	cairo_surface_t * background_image;
 	bool remove (bool remove_gtk = true) {
@@ -130,6 +131,7 @@ public:
 	L2 (point (88, 98), 0, resources, true, active, feg ? -8192.0 : -16384.0, feg ? 8192.0 : 0.0),
 	L3 (point (158, 98), 0, resources, true, active, feg ? -8192.0 : -16384.0, feg ? 8192.0 : 0.0),
 	L4 (point (228, 98), 0, resources, true, active, feg ? -8192.0 : -16384.0, feg ? 8192.0 : 0.0) {
+		captured_button = 0;
 		background_image = resources != 0 ? resources -> eg_panel_surface : 0;
 		viewport = 0;
 		this -> feg = feg;
@@ -173,6 +175,7 @@ static gboolean RedrawEGPanel (GtkWidget * viewport, GdkEvent * event, eg_panel_
 	return FALSE;
 }
 static gint EGPanelKeyon (GtkWidget * viewport, GdkEventButton * event, eg_panel_action * action) {
+	action -> captured_button = event -> button;
 	point location (event -> x, event -> y);
 	action -> captured = location;
 	action -> T1 . keyon (location);
@@ -200,6 +203,7 @@ static gint EGPanelKeyoff (GtkWidget * viewport, GdkEventButton * event, eg_pane
 static gint EGPanelMove (GtkWidget * viewport, GdkEventButton * event, eg_panel_action * action) {
 	point location (event -> x, event -> y);
 	point delta = location - action -> captured;
+	if (action -> captured_button > 1) delta *= 0.0078125;
 	action -> captured = location;
 	bool redraw = false;
 	if (action -> T1 . move (delta)) {action -> move (0); redraw = true;}

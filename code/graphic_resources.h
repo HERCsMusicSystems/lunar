@@ -73,6 +73,7 @@ public:
 	cairo_surface_t * knob_png;
 	cairo_surface_t * knob_handle_png;
 	bool no_display;
+	void setValue (double v);
 	bool move (point delta);
 	void draw (cairo_t * cr);
 	knob_active_graphics (point location, int id, GraphicResources * resources,

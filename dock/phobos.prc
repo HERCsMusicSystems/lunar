@@ -2,7 +2,16 @@
 import studio
 import lunar
 
-program phobos [Phobos BuildPhobos BuildPhobosPart]
+program phobos [Phobos PhobosEditor BuildPhobos BuildPhobosPart Operator-1 Operator-2 Operator-3 Operator-4 Operators]
+
+[[PhobosEditor *phobos]
+	[BuildEGPanel Operator-1 Phobos operator 1 eg amp] [Operator-1 10 10]
+	[BuildEGPanel Operator-2 Phobos operator 2 eg amp] [Operator-2 300 10]
+	[BuildEGPanel Operator-3 Phobos operator 3 eg amp] [Operator-3 10 200]
+	[BuildEGPanel Operator-4 Phobos operator 4 eg amp] [Operator-4 300 200]
+	[BuildFM4Panel Operators Phobos operator] [Operators 10 400]
+]
+[[PhobosEditor] [TRY [Operator-1] [Operator-2] [Operator-3] [Operator-4] [Operators]]]
 
 [[BuildPhobos *polyphony *Phobos *PhobosCB *volume *pan]
 	[Moonbase *Phobos *PhobosCB Phobos]
@@ -57,8 +66,6 @@ program phobos [Phobos BuildPhobos BuildPhobosPart]
 	[Insert *lfo2amp *Phobos lfo 2 tremolo]
 	[Insert *lfo2pan *Phobos lfo 2 pan]
 
-	[show "STAGE 1 (common)"]
-
 	[REPEAT *polyphony
 		[BuildPhobosPart *Phobos *moonbase *chorus *XData *YData *lfo1 *lfo2
 			*lfosens1 *lfosens2 *lfosens3 *lfosens4 *lfosensfilter
@@ -69,8 +76,6 @@ program phobos [Phobos BuildPhobos BuildPhobosPart]
 			*pitch_ctrlfilter
 			]
 	]
-
-	[show "STAGE 2 (parts)"]
 
 	[Insert *pitch_ctrl1 *Phobos operator 1 sens pitch]
 	[Insert *pitch_ctrl2 *Phobos operator 2 sens pitch]
@@ -113,8 +118,6 @@ program phobos [Phobos BuildPhobos BuildPhobosPart]
 	[InsertController 71 *Phobos lfo 2 vibrato]
 	[InsertController 72 *Phobos adsr 1 release]
 	[InsertController 128 -64 *Phobos core pitch]
-
-	[show "STAGE 3 (completed)"]
 
 	[Lunar -128 *Phobos operator 1 key freq left]
 	[Lunar 128 *Phobos operator 1 key freq right]
@@ -253,7 +256,6 @@ program phobos [Phobos BuildPhobos BuildPhobosPart]
 	[AddModule *vectorX *Phobos]
 	[AddModule *vectorY *Phobos]
 
-	[show ".... PART"]
 ]
 
 end .

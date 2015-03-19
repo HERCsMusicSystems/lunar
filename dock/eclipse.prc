@@ -25,10 +25,13 @@ program eclipse [
 [[run_files]]
 [[run_files *file : *files] [TRY [batch *file]] / [run_files : *files]]
 
-[[BuildAudio] [core reactor 330 32000 1024 30 15] [show "USB Audio Device ready."]/]
-[[BuildAudio] [core reactor 330 22050 2048] [show "Motherboard Audio Device ready."]/]
-[[BuildAudio] [core reactor 330 22050 4096 0 -1] [show "Windows Audio Device ready."]/]
-[[BuildAudio] [show "Audio device not found."]]
+[[BuildAudio *reactor] [core *reactor 330 32000 1024 30 15] [show "USB Audio Device ready."]/]
+[[BuildAudio *reactor] [core *reactor 330 22050 2048] [show "Motherboard Audio Device ready."]/]
+[[BuildAudio *reactor] [core *reactor 330 22050 4096 0 -1] [show "Windows Audio Device ready."]/]
+[[BuildAudio *reactor] [show "Audio device not found."] fail]
+[[BuildAudio] [BuildAudio reactor] [ConnectAllMoons reactor]]
+[[BuildAudio] [show "Build Audio failed."]]
+
 [[RemoveAudio] [reactor []] [reactor] [show "Audio Device stopped."]/]
 [[RemoveAudio] [show "Audio Device not present."]]
 

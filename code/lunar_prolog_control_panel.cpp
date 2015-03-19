@@ -320,7 +320,7 @@ public:
 	}
 	void stop_recording_action (void) {
 		PrologAtom * STOP = root -> search ("STOP");
-		if(atom == 0) return;
+		if (STOP == 0) return;
 		PrologElement * query = root -> pair (root -> atom (command),
 								root -> pair (root -> atom (STOP),
 								root -> earth ()));
@@ -328,6 +328,14 @@ public:
 		root -> resolution (query);
 		delete query;
 		area_cat (display . area, 0, "RECORDING COMPLETED.");
+	}
+	void f_action (int ind) {
+		PrologAtom * F = root -> search ("FUNCTION_KEY");
+		if (F == 0) return;
+		PrologElement * query = root -> pair (root -> atom (F), root -> pair (root -> integer (ind), root -> earth ()));
+		query = root -> pair (root -> earth (), root -> pair (query, root -> earth ()));
+		root -> resolution (query);
+		delete query;
 	}
 	bool remove (bool remove_gtk = true) {
 		if (remove_gtk) g_idle_add ((GSourceFunc) RemoveViewportIdleCode, viewport);
@@ -509,17 +517,18 @@ static bool file_action (char * command, char * title, GtkWidget * viewport, con
 static gboolean ControlPanelButtonOn (GtkWidget * viewport, GdkEventKey * event, control_panel_action * action) {
 	bool redraw = false;
 	int key = (int) event -> keyval;
+	if (key >= 65470 && key <= 65481) {action -> f_action (key - 65469 + 12 * event -> state); return FALSE;}
 	switch (key) {
-	case 65470: action -> program_action (& action -> selector0); redraw = true; break;
-	case 65471: action -> program_action (& action -> selector1); redraw = true; break;
-	case 65472: action -> program_action (& action -> selector2); redraw = true; break;
-	case 65473: action -> program_action (& action -> selector3); redraw = true; break;
-	case 65474: action -> program_action (& action -> selector4); redraw = true; break;
-	case 65475: action -> program_action (& action -> selector5); redraw = true; break;
-	case 65476: action -> program_action (& action -> selector6); redraw = true; break;
-	case 65477: action -> program_action (& action -> selector7); redraw = true; break;
-	case 65478: action -> program_action (& action -> selector8); redraw = true; break;
-	case 65479: action -> program_action (& action -> selector9); redraw = true; break;
+	case 33: action -> program_action (& action -> selector0); redraw = true; break;
+	case 64: action -> program_action (& action -> selector1); redraw = true; break;
+	case 35: action -> program_action (& action -> selector2); redraw = true; break;
+	case 36: action -> program_action (& action -> selector3); redraw = true; break;
+	case 37: action -> program_action (& action -> selector4); redraw = true; break;
+	case 94: action -> program_action (& action -> selector5); redraw = true; break;
+	case 38: action -> program_action (& action -> selector6); redraw = true; break;
+	case 42: action -> program_action (& action -> selector7); redraw = true; break;
+	case 40: action -> program_action (& action -> selector8); redraw = true; break;
+	case 41: action -> program_action (& action -> selector9); redraw = true; break;
 	case 49: action -> program_action (& action -> program0); redraw = true; break;
 	case 50: action -> program_action (& action -> program1); redraw = true; break;
 	case 51: action -> program_action (& action -> program2); redraw = true; break;

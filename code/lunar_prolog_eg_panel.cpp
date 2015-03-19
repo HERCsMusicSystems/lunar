@@ -282,7 +282,7 @@ bool eg_panel_class :: code (PrologElement * parameters, PrologResolution * reso
 	if (atom -> getAtom () -> getMachine () != 0) return false;
 	eg_panel_action * machine = new eg_panel_action (resources, root, feg, atom -> getAtom (),
 		t1 -> getAtom (), t2 -> getAtom (), t3 -> getAtom (), t4 -> getAtom (),
-		l1 -> getAtom (), l2 -> getAtom (), l3 -> getAtom (), l4 -> getAtom (), true);
+		l1 -> getAtom (), l2 -> getAtom (), l3 -> getAtom (), l4 -> getAtom (), false);
 	if (! atom -> getAtom () -> setMachine (machine)) {delete machine; return false;}
 	g_idle_add ((GSourceFunc) CreateEGPanelIdleCode, machine);
 	return true;

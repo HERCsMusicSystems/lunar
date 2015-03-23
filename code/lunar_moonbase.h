@@ -154,5 +154,28 @@ public:
 	~ arpeggiator (void);
 };
 
+class sequencer : public CommandModule {
+private:
+	CommandModule * base;
+	pthread_mutex_t critical;
+	void private_signal (void);
+public:
+	bool insert_trigger (lunar_trigger * trigger);
+	bool insert_controller (orbiter * controller, int location, int shift);
+	void keyon (int key);
+	void keyon (int key, int velocity);
+	void keyoff (void);
+	void keyoff (int key, int velocity = 0);
+	void mono (void);
+	void poly (void);
+	bool isMonoMode (void);
+	void control (int ctrl, int value);
+	double getControl (int ctrl);
+	void timing_clock (void);
+public:
+	sequencer (orbiter_core * core, CommandModule * base);
+	~ sequencer (void);
+};
+
 #endif
 

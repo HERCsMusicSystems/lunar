@@ -577,6 +577,22 @@ orbiter * arpeggiator_class :: create_orbiter (PrologElement * parameters) {
 PrologNativeOrbiter * arpeggiator_class :: create_native_orbiter (PrologAtom * atom, orbiter * module) {return new native_moonbase (dir, atom, core, module);}
 arpeggiator_class :: arpeggiator_class (PrologDirectory * dir, orbiter_core * core) : PrologNativeOrbiterCreator (core) {this -> dir = dir;}
 
+orbiter * sequencer_class :: create_orbiter (PrologElement * parameters) {
+	PrologElement * base = 0;
+	while (parameters -> isPair ()) {
+		PrologElement * el = parameters -> getLeft ();
+		if (el -> isAtom ()) base = el;
+		parameters = parameters -> getRight ();
+	}
+	if (base == 0) return 0;
+	PrologNativeCode * machine = base -> getAtom () -> getMachine ();
+	if (machine == 0) return 0;
+	if (! machine -> isTypeOf (native_moonbase :: name ())) return 0;
+	return new sequencer (core, ((moonbase *) ((native_moonbase *) machine) -> module));
+}
+PrologNativeOrbiter * sequencer_class :: create_native_orbiter (PrologAtom * atom, orbiter * module) {return new native_moonbase (dir, atom, core, module);}
+sequencer_class :: sequencer_class (PrologDirectory * dir, orbiter_core * core) : PrologNativeOrbiterCreator (core) {this -> dir = dir;}
+
 class lunar_detector : public orbiter {
 private:
 	double trigger;

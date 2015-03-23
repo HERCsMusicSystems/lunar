@@ -488,7 +488,7 @@ double * arpeggiator :: inputAddress (int ind) {
 int arpeggiator :: numberOfOutputs (void) {return 0;}
 
 bool arpeggiator :: release (void) {
-	moonbase * base_to_delete = base;
+	CommandModule * base_to_delete = base;
 	bool ret = orbiter :: release ();
 	if (ret && base_to_delete != 0) base_to_delete -> release ();
 	return ret;
@@ -633,13 +633,8 @@ void arpeggiator :: keyoff (int key, int velocity) {
 	pthread_mutex_unlock (& critical);
 }
 
-void arpeggiator :: mono (void) {
-	if (base != 0) base -> mono ();
-}
-
-void arpeggiator :: poly (void) {
-	if (base != 0) base -> poly ();
-}
+void arpeggiator :: mono (void) {if (base != 0) base -> mono ();}
+void arpeggiator :: poly (void) {if (base != 0) base -> poly ();}
 
 bool arpeggiator :: isMonoMode (void) {
 	if (base != 0) return base -> isMonoMode ();
@@ -663,7 +658,7 @@ void arpeggiator :: ground (void) {
 	up_direction = true;
 }
 
-arpeggiator :: arpeggiator (orbiter_core * core, moonbase * base) : CommandModule (core) {
+arpeggiator :: arpeggiator (orbiter_core * core, CommandModule * base) : CommandModule (core) {
 	pthread_mutex_init (& critical, 0);
 	active_key_pointer = number_of_keys = 0;
 	tempo = 140.0; division = 24.0;

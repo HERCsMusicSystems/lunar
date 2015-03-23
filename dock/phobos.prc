@@ -16,7 +16,7 @@ program phobos [Phobos PhobosEditor BuildPhobos BuildPhobosPart Operator-1 Opera
 [[BuildPhobos *polyphony *Phobos *PhobosCB *volume *pan]
 	[Moonbase *Phobos *PhobosCB Phobos]
 
-	[moonbase *moonbase] [key_map *mapper] [*moonbase *mapper]
+	[moonbase *moonbase] [key_map *mapper]
 	[arpeggiator *PhobosCB *moonbase]
 	[auto_data *XData] [parameter_block *X "index"] [*XData *X]
 	[auto_data *YData] [parameter_block *Y "index"] [*YData *Y]
@@ -74,6 +74,7 @@ program phobos [Phobos PhobosEditor BuildPhobos BuildPhobosPart Operator-1 Opera
 			*lfo2filter *lfo2amp
 			*pitch_ctrl1 *pitch_ctrl2 *pitch_ctrl3 *pitch_ctrl4
 			*pitch_ctrlfilter
+			*mapper
 			]
 	]
 
@@ -140,8 +141,9 @@ program phobos [Phobos PhobosEditor BuildPhobos BuildPhobosPart Operator-1 Opera
 					*lfo2filter *lfo2amp
 					*pitchsens1 *pitchsens2 *pitchsens3 *pitchsens4
 					*pitchsensfilter
+					*mapper
 					]
-	[trigger *trigger]
+	[trigger *trigger *mapper]
 	[fm4 *op] [noise_operator *noise]
 	[filter *filter]
 	[adsr *adsr]

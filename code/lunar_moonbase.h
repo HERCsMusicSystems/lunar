@@ -99,7 +99,7 @@ private:
 	bool up_direction;
 	double current_algo, previous_algo;
 	void (* algo) (arpeggiator * arp);
-	moonbase * base;
+	CommandModule * base;
 	pthread_mutex_t critical;
 	friend void up1 (arpeggiator * arp);
 	friend void up2 (arpeggiator * arp);
@@ -150,7 +150,7 @@ public:
 	virtual int numberOfOutputs (void);
 	virtual bool release (void);
 	virtual void propagate_signals (void);
-	arpeggiator (orbiter_core * core, moonbase * base);
+	arpeggiator (orbiter_core * core, CommandModule * base);
 	~ arpeggiator (void);
 };
 

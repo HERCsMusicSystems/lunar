@@ -29,12 +29,6 @@
 CommandModule :: CommandModule (orbiter_core * core) : orbiter (core) {}
 
 int moonbase :: numberOfOutputs (void) {return 0;}
-bool moonbase :: set_map (lunar_map * map) {
-	if (this -> map != 0) this -> map -> release ();
-	this -> map = map;
-	if (map != 0) map -> hold ();
-	return true;
-}
 bool moonbase :: insert_trigger (lunar_trigger * trigger) {
 	if (trigger == 0) return false;
 	trigger -> next = triggers;
@@ -143,13 +137,11 @@ double moonbase :: getControl (int ctrl) {
 }
 void moonbase :: timing_clock (void) {}
 bool moonbase :: release (void) {
-	lunar_map * map_to_delete = map;
 	lunar_trigger * triggers_to_delete = triggers;
 	orbiter * controllers_to_delete [129];
 	for (int ind = 0; ind < 129; ind++) controllers_to_delete [ind] = controllers [ind];
 	bool ret = orbiter :: release ();
 	if (ret) {
-		if (map_to_delete != 0) map_to_delete -> release ();
 		if (triggers_to_delete != 0) triggers_to_delete -> release ();
 		for (int ind = 0; ind < 129; ind++) {if (controllers_to_delete [ind] != 0) controllers_to_delete [ind] -> release ();}
 	}
@@ -157,7 +149,7 @@ bool moonbase :: release (void) {
 }
 moonbase :: moonbase (orbiter_core * core) : CommandModule (core) {
 	pthread_mutex_init (& critical, 0);
-	map = 0; choice = triggers = 0; mono_mode = false; signal = 1.0; base_key = 64; previous_key = -1; key_counter = 0;
+	choice = triggers = 0; mono_mode = false; signal = 1.0; base_key = 64; previous_key = -1; key_counter = 0;
 	for (int ind = 0; ind < 129; ind++) {controllers [ind] = 0; ctrl_lsbs [ind] = 0; shifts [ind] = 0;}
 	initialise ();
 }
@@ -603,10 +595,6 @@ void arpeggiator :: remove_key (int key) {
 	if (location <= index) index--;
 }
 
-bool arpeggiator :: set_map (lunar_map * map) {
-	if (base != 0) return base -> set_map (map);
-	return false;
-}
 bool arpeggiator :: insert_trigger (lunar_trigger * trigger) {
 	if (base != 0) return base -> insert_trigger (trigger);
 	return false;

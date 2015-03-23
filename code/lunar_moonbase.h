@@ -32,7 +32,6 @@
 
 class CommandModule : public orbiter {
 public:
-	virtual bool set_map (lunar_map * map) = 0;
 	virtual bool insert_trigger (lunar_trigger * trigger) = 0;
 	virtual bool insert_controller (orbiter * controller, int location, int shift) = 0;
 	virtual void keyon (int key) = 0;
@@ -50,7 +49,6 @@ public:
 
 class moonbase : public CommandModule {
 private:
-	lunar_map * map;
 	lunar_trigger * triggers;
 	lunar_trigger * choice;
 	lunar_trigger * select (void);
@@ -66,7 +64,6 @@ private:
 public:
 	virtual int numberOfOutputs (void);
 	virtual bool release (void);
-	bool set_map (lunar_map * map);
 	bool insert_trigger (lunar_trigger * trigger);
 	bool insert_controller (orbiter * controller, int location, int shift);
 	void keyon (int key);
@@ -134,7 +131,6 @@ private:
 	void ground (void);
 	void private_signal (void);
 public:
-	bool set_map (lunar_map * map);
 	bool insert_trigger (lunar_trigger * trigger);
 	bool insert_controller (orbiter * controller, int location, int shift);
 	void keyon (int key);

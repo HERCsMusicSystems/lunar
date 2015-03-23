@@ -476,7 +476,7 @@ public:
 		if (atom != 0) {
 			if (atom -> isEarth ()) {
 				if (key != 0) return trigger -> insert_controller (0, key -> getInteger (), 0);
-				return trigger -> set_map (0);
+				return false;
 			}
 			if (atom -> isAtom ()) {
 				PrologAtom * a = atom -> getAtom ();
@@ -520,9 +520,6 @@ public:
 				if (a == timingclock) {trigger -> timing_clock (); return true;}
 				PrologNativeCode * machine = a -> getMachine ();
 				if (machine == 0) return false;
-				if (machine -> isTypeOf (key_map_native_orbiter :: name ())) {
-					return trigger -> set_map ((lunar_map *) ((key_map_native_orbiter *) machine) -> module);
-				}
 				if (machine -> isTypeOf (trigger_native_orbiter :: name ())) {
 					return trigger -> insert_trigger ((lunar_trigger *) ((trigger_native_orbiter *) machine) -> module);
 				}

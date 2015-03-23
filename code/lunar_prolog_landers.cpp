@@ -476,7 +476,7 @@ public:
 		if (atom != 0) {
 			if (atom -> isEarth ()) {
 				if (key != 0) return trigger -> insert_controller (0, key -> getInteger (), 0);
-				return false;
+				return true;
 			}
 			if (atom -> isAtom ()) {
 				PrologAtom * a = atom -> getAtom ();

@@ -672,6 +672,22 @@ arpeggiator :: arpeggiator (orbiter_core * core, CommandModule * base) : Command
 
 arpeggiator :: ~ arpeggiator (void) {pthread_mutex_destroy (& critical);}
 
+sequence_element :: sequence_element (int type, int key, int velocity) {
+	this -> type = type;
+	this -> key = key;
+	this -> velocity = velocity;
+	this -> next = 0;
+}
+
+sequence_element :: ~ sequence_element (void) {if (next != 0) delete next;}
+
+bool sequencer :: release (void) {
+	CommandModule * base_to_delete = base;
+	bool ret = orbiter :: release ();
+	if (ret && base_to_delete != 0) base_to_delete -> release ();
+	return ret;
+}
+
 void sequencer :: private_signal (void) {}
 
 bool sequencer :: insert_trigger (lunar_trigger * trigger) {
@@ -683,9 +699,9 @@ bool sequencer :: insert_controller (orbiter * controller, int location, int shi
 	if (base != 0) return base -> insert_controller (controller, location, shift);
 	return false;
 }
-#include <stdio.h>
+
 void sequencer :: keyon (int key) {}
-void sequencer :: keyon (int key, int velocity) {printf ("sequencer keyon [%i %i]\n", key, velocity);}
+void sequencer :: keyon (int key, int velocity) {}
 void sequencer :: keyoff (void) {}
 void sequencer :: keyoff (int key, int velocity) {}
 void sequencer :: mono (void) {if (base != 0) base -> mono ();}
@@ -708,7 +724,9 @@ void sequencer :: timing_clock (void) {
 
 sequencer :: sequencer (orbiter_core * core, CommandModule * base) : CommandModule (core) {
 	pthread_mutex_init (& critical, 0);
-	this -> base = base;
+	this -> base = base; if (base != 0) base -> hold ();
+	elements = 0;
+	initialise (); activate ();
 }
 
-sequencer :: ~ sequencer (void) {pthread_mutex_destroy (& critical);}
+sequencer :: ~ sequencer (void) {pthread_mutex_destroy (& critical); if (elements != 0) delete elements;}

@@ -584,6 +584,109 @@ orbiter * arpeggiator_class :: create_orbiter (PrologElement * parameters) {
 PrologNativeOrbiter * arpeggiator_class :: create_native_orbiter (PrologAtom * atom, orbiter * module) {return new native_moonbase (dir, atom, core, module);}
 arpeggiator_class :: arpeggiator_class (PrologDirectory * dir, orbiter_core * core) : PrologNativeOrbiterCreator (core) {this -> dir = dir;}
 
+class native_sequencer : public native_moonbase {
+public:
+	PrologAtom * keyon, * keyoff, * control;
+	bool code (PrologElement * parameters, PrologResolution * resolution) {
+		if (parameters -> isPair ()) {
+			PrologElement * el = parameters -> getLeft ();
+			if (el -> isVar ()) {
+				sequencer * seq = (sequencer *) module;
+				if (seq == 0) return false;
+				sequence_element * sqep = seq -> elements;
+				while (sqep != 0) {
+					el -> setPair ();
+					PrologElement * ell = el -> getLeft ();
+					switch (sqep -> type) {
+					case 0: ell -> setInteger (sqep -> key); break;
+					case 1:
+						ell -> setPair ();
+						ell -> getLeft () -> setAtom (keyon);
+						ell = ell -> getRight (); ell -> setPair ();
+						ell -> getLeft () -> setInteger (sqep -> key);
+						break;
+					case 2:
+						ell -> setPair ();
+						ell -> getLeft () -> setAtom (keyon);
+						ell = ell -> getRight (); ell -> setPair ();
+						ell -> getLeft () -> setInteger (sqep -> key);
+						ell = ell -> getRight (); ell -> setPair ();
+						ell -> getLeft () -> setInteger (sqep -> velocity);
+						break;
+					case 3: ell -> setAtom (keyoff); break;
+					case 4:
+						ell -> setPair ();
+						ell -> getLeft () -> setAtom (keyoff);
+						ell = ell -> getRight (); ell -> setPair ();
+						ell -> getLeft () -> setInteger (sqep -> key);
+						break;
+					case 5:
+						ell -> setPair ();
+						ell -> getLeft () -> setAtom (control);
+						ell = ell -> getRight (); ell -> setPair ();
+						ell -> getLeft () -> setInteger (sqep -> key);
+						ell = ell -> getRight (); ell -> setPair ();
+						ell -> getLeft () -> setInteger (sqep -> velocity);
+						break;
+					default: break;
+					}
+					el = el -> getRight ();
+					sqep = sqep -> next;
+				}
+				if (! el -> isEarth ()) el -> setPair ();
+				return true;
+			}
+			if (el -> isPair ()) {
+				sequencer * seq = (sequencer *) module;
+				if (seq == 0) return false;
+				if (seq -> elements != 0) delete seq -> elements; seq -> elements = 0;
+				sequence_element * * sqep = & seq -> elements;
+				while (el -> isPair ()) {
+					PrologElement * atom = 0;
+					PrologElement * key = 0;
+					PrologElement * velocity = 0;
+					PrologElement * ticks = 0;
+					PrologElement * eq = el -> getLeft ();
+					if (eq -> isInteger ()) {* sqep = new sequence_element (0, eq -> getInteger ()); sqep = & (* sqep) -> next;}
+					if (eq -> isAtom () && eq -> getAtom () == keyoff) {* sqep = new sequence_element (3); sqep = & (* sqep) -> next;}
+					if (eq -> isPair ()) {
+						while (eq -> isPair ()) {
+							PrologElement * eqq = eq -> getLeft ();
+							if (eqq -> isAtom ()) atom = eqq;
+							if (eqq -> isInteger ()) if (key == 0) key = eqq; else velocity = eqq;
+							eq = eq -> getRight ();
+						}
+						if (atom -> getAtom () == keyon && key != 0) {
+							if (velocity == 0) * sqep = new sequence_element (1, key -> getInteger ());
+							else * sqep = new sequence_element (2, key -> getInteger (), velocity -> getInteger ());
+							sqep = & (* sqep) -> next;
+						}
+						if (atom -> getAtom () == keyoff) {
+							if (key == 0) * sqep = new sequence_element (3);
+							else * sqep = new sequence_element (4, key -> getInteger ());
+							sqep = & (* sqep) -> next;
+						}
+						if (atom -> getAtom () == control && key != 0 && velocity != 0) {
+							* sqep = new sequence_element (5, key -> getInteger (), velocity -> getInteger ());
+							sqep = & (* sqep) -> next;
+						}
+					}
+					el = el -> getRight ();
+				}
+				return true;
+			}
+		}
+		return native_moonbase :: code (parameters, resolution);
+	}
+	native_sequencer (PrologDirectory * dir, PrologAtom * atom, orbiter_core * core, orbiter * module) : native_moonbase (dir, atom, core, module) {
+		keyon = keyoff = control = 0;
+		if (dir == 0) return;
+		keyon = dir -> searchAtom ("keyon");
+		keyoff = dir -> searchAtom ("keyoff");
+		control = dir -> searchAtom ("control");
+	}
+};
+
 orbiter * sequencer_class :: create_orbiter (PrologElement * parameters) {
 	PrologElement * base = 0;
 	while (parameters -> isPair ()) {
@@ -597,7 +700,7 @@ orbiter * sequencer_class :: create_orbiter (PrologElement * parameters) {
 	if (! machine -> isTypeOf (native_moonbase :: name ())) return 0;
 	return new sequencer (core, ((moonbase *) ((native_moonbase *) machine) -> module));
 }
-PrologNativeOrbiter * sequencer_class :: create_native_orbiter (PrologAtom * atom, orbiter * module) {return new native_moonbase (dir, atom, core, module);}
+PrologNativeOrbiter * sequencer_class :: create_native_orbiter (PrologAtom * atom, orbiter * module) {return new native_sequencer (dir, atom, core, module);}
 sequencer_class :: sequencer_class (PrologDirectory * dir, orbiter_core * core) : PrologNativeOrbiterCreator (core) {this -> dir = dir;}
 
 class lunar_detector : public orbiter {

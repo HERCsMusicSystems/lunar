@@ -154,11 +154,23 @@ public:
 	~ arpeggiator (void);
 };
 
+class sequence_element {
+public:
+	int type; // 0 = wait, 1 = keyon [key], 2 = keyon [key velocity] 3 = keyoff [], 4 = keyoff [key], 5 = control
+	int key;
+	int velocity;
+	sequence_element * next;
+	sequence_element (int type, int key = 0, int velocity = 0);
+	~ sequence_element (void);
+};
+
 class sequencer : public CommandModule {
 private:
 	CommandModule * base;
 	pthread_mutex_t critical;
 	void private_signal (void);
+public:
+	sequence_element * elements;
 public:
 	bool insert_trigger (lunar_trigger * trigger);
 	bool insert_controller (orbiter * controller, int location, int shift);
@@ -172,6 +184,8 @@ public:
 	void control (int ctrl, int value);
 	double getControl (int ctrl);
 	void timing_clock (void);
+public:
+	virtual bool release (void);
 public:
 	sequencer (orbiter_core * core, CommandModule * base);
 	~ sequencer (void);

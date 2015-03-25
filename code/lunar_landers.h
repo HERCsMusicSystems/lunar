@@ -186,7 +186,9 @@ public:
 class lunar_map : public orbiter {
 public:
 	double map [128];
+	int initial;
 	virtual int numberOfOutputs (void);
+	void reset (void);
 	lunar_map (orbiter_core * core, int initial = -64);
 };
 

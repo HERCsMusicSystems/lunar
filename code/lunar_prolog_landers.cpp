@@ -187,6 +187,9 @@ PrologNativeKeyOrbiter :: PrologNativeKeyOrbiter (PrologAtom * atom, orbiter_cor
 class key_map_native_orbiter : public PrologNativeKeyOrbiter {
 public:
 	void return_content (PrologElement * parameters, lunar_map * map) {
+		bool clean = true;
+		for (int ind = 0; ind < 128; ind++) {if (map -> map [ind] != (double) (map -> initial + ind) * 128.0) clean = false;}
+		if (clean) {parameters -> setPair (); return;}
 		for (int ind = 0; ind < 128; ind++) {
 			parameters -> setPair ();
 			parameters -> getLeft () -> setDouble (map -> map [ind]);
@@ -200,20 +203,24 @@ public:
 		int double_count = 0;
 		PrologElement * doubles [128];
 		PrologElement * ret = 0;
+		PrologElement * reset = 0;
 		while (parameters -> isPair ()) {
 			PrologElement * el = parameters -> getLeft ();
 			if (el -> isNumber ()) if (double_count < 128) doubles [double_count++] = el;
 			if (el -> isVar ()) ret = el;
+			if (el -> isEarth ()) reset = el;
 			if (el -> isPair ()) {
 				PrologElement * subel = el;
 				while (subel -> isPair ()) {
 					PrologElement * ell = subel -> getLeft ();
+					if (ell -> isEarth ()) reset = ell;
 					if (ell -> isNumber ()) if (double_count < 128) doubles [double_count++] = ell;
 					subel = subel -> getRight ();
 				}
 			}
 			parameters = parameters -> getRight ();
 		}
+		if (reset != 0) {map -> reset (); return true;}
 		if (parameters -> isVar ()) ret = parameters;
 		if (ret != 0) {
 			if (double_count < 1) {return_content (ret, map); return true;}

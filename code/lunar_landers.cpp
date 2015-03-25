@@ -270,8 +270,10 @@ void lunar_control :: move (void) {signal = enter * gateway;}
 lunar_control :: lunar_control (orbiter_core * core) : lunar_gateway (core) {gateway = 0.0;}
 
 int lunar_map :: numberOfOutputs (void) {return 0;}
+void lunar_map :: reset (void) {for (int ind = 0; ind < 128; ind++) map [ind] = (double) (initial + ind) * 128.0;}
 lunar_map :: lunar_map (orbiter_core * core, int initial) : orbiter (core) {
-	for (int ind = 0; ind < 128; ind++) map [ind] = (double) (initial++) * 128.0;
+	this -> initial = initial;
+	reset ();
 	initialise ();
 }
 

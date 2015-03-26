@@ -681,6 +681,24 @@ sequence_element :: sequence_element (int type, int key, int velocity) {
 
 sequence_element :: ~ sequence_element (void) {if (next != 0) delete next;}
 
+int sequencer :: numberOfInputs (void) {return 2;}
+char * sequencer :: inputName (int ind) {
+	switch (ind) {
+	case 0: return "SPEED"; break;
+	case 1: return "TRIGGER"; break;
+	default: break;
+	}
+	return orbiter :: inputName (ind);
+}
+double * sequencer :: inputAddress (int ind) {
+	switch (ind) {
+	case 0: return & tempo; break;
+	case 1: return & trigger; break;
+	default: break;
+	}
+	return orbiter :: inputAddress (ind);
+}
+int sequencer :: numberOfOutputs (void) {return 0;}
 bool sequencer :: release (void) {
 	CommandModule * base_to_delete = base;
 	bool ret = orbiter :: release ();
@@ -688,7 +706,36 @@ bool sequencer :: release (void) {
 	return ret;
 }
 
-void sequencer :: private_signal (void) {}
+void sequencer :: propagate_signals (void) {
+	orbiter :: propagate_signals ();
+	if (trigger < 1.0) {
+		if (time < 0.0) return;
+		time = -1.0;
+		if (base != 0) base -> keyoff ();
+		return;
+	}
+	if (time < 0.0) {time = 1.0; tick = 0; current_frame = elements;}
+	while (time >= 1.0) {time -= 1.0; pthread_mutex_lock (& critical); private_signal (); pthread_mutex_unlock (& critical);}
+	time += core -> sample_duration * tempo * 0.4;
+}
+#include <stdio.h>
+void sequencer :: private_signal (void) {
+	if (current_frame == 0 || base == 0) return;
+	while (tick < 1) {
+		switch (current_frame -> type) {
+		case 0: tick = current_frame -> key; break;
+		case 1: printf ("keyon [%i]\n", current_frame -> key); base -> keyon (current_frame -> key); break;
+		case 2: printf ("keyon [%i %i]\n", current_frame -> key, current_frame -> velocity); base -> keyon (current_frame -> key, current_frame -> velocity); break;
+		case 3: printf ("keyoff []\n"); base -> keyoff (); break;
+		case 4: printf ("keyoff [%i]\n", current_frame -> key); base -> keyoff (current_frame -> key); break;
+		case 5: printf ("ctrl [%i %i]\n", current_frame -> key, current_frame -> velocity); base -> control (current_frame -> key, current_frame -> velocity); break;
+		default: break;
+		}
+		current_frame = current_frame -> next;
+		if (current_frame == 0 && trigger > 1.0) current_frame = elements;
+	}
+	tick--;
+}
 
 bool sequencer :: insert_trigger (lunar_trigger * trigger) {
 	if (base != 0) return base -> insert_trigger (trigger);
@@ -724,8 +771,11 @@ void sequencer :: timing_clock (void) {
 
 sequencer :: sequencer (orbiter_core * core, CommandModule * base) : CommandModule (core) {
 	pthread_mutex_init (& critical, 0);
+	tempo = 140.0;
+	trigger = 0.0; time = -1.0;
+	tick = 0;
 	this -> base = base; if (base != 0) base -> hold ();
-	elements = 0;
+	elements = current_frame = 0;
 	initialise (); activate ();
 }
 

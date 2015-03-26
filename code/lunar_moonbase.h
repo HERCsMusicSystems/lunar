@@ -166,6 +166,11 @@ public:
 
 class sequencer : public CommandModule {
 private:
+	double tempo;
+	double trigger;
+	double time;
+	int tick;
+	sequence_element * current_frame;
 	CommandModule * base;
 	pthread_mutex_t critical;
 	void private_signal (void);
@@ -185,7 +190,12 @@ public:
 	double getControl (int ctrl);
 	void timing_clock (void);
 public:
+	virtual int numberOfInputs (void);
+	virtual char * inputName (int ind);
+	virtual double * inputAddress (int ind);
+	virtual int numberOfOutputs (void);
 	virtual bool release (void);
+	virtual void propagate_signals (void);
 public:
 	sequencer (orbiter_core * core, CommandModule * base);
 	~ sequencer (void);

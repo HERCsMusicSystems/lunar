@@ -1,0 +1,150 @@
+<head>
+    <style type="text/css">
+        .doc_header {font-family:Arial; font-size:1.5em; font-weight:bold;}
+        .doc_library {font-family:Arial; font-size:1.5em;}
+        .doc_library_section {font-family:Arial; font-size:1.5em; margin-top:1em;}
+        .doc_predicate{font-family:Arial; padding:1em; width:70em;}
+        .doc_predicate_header {background-color:#eeeeee; font-family:monospace; background-color:gold;}
+        .doc_predicate_body {font-family:Arial;}
+        .doc_predicate_code {font-family:monospace; background-color:#eeeeee;}
+    </style>
+</head>
+<body bgcolor="blue">
+<div align="center"><div align="left" style="width:1200px; background-color:white;">
+<div class="doc_header">TABLE OF CONTENT</div>
+<ul>
+    <li><a href="#introduction">Introduction</a></li>
+    <li><a href="#audio_modules">Audio Modules</a>
+        <br />
+        <a href="#predicate_oscilloscope">oscilloscope</a>
+    </li>
+    <li><a href="#superstructure">Superstructure</a></li>
+    <li><a href="#midi">Midi</a></li>
+    <li><a href="#panels">Panels</a>
+        <br />
+        <a href="#predicate_big_keyboard">big_keyboard</a>
+        <a href="#predicate_keyboard">keyboard</a>
+        <a href="#predicate_small_keyboard">small_keyboard</a>
+        <a href="#predicate_vector">vector</a>
+    </li>
+</ul>
+
+<br />
+
+<div class="doc_library_section"><a id="#audio_modules">Audio Modules</a></div>
+
+<div class="doc_predicate">
+    <a id="common_behaviour_of_predicates">
+        <div class="doc_predicate_header">
+            <b>Common Behaviour:</b><br />
+            <div style="float:left;">[module]</div><div style="float:left;">&nbsp;=>&nbsp;</div><div style="float:left;">Closes the module. The module is also destroyed and grabage collected if it is not connected to any input of any other module.</div><br />
+            <div style="float:left;">[module : *io]&nbsp;</div><div style="float:left;">=> Reports names of all inputs and outputs.</div><br />
+            [module module] => Used for test purposes to push the model one sample forward.<br />
+            [module []] => Disconnect all inputs.<br />
+            [module source] => Connects the first output of source to the first input of module.<br />
+            [module DESTINATION source] => Connects the first output of source to the DESTINATION input of module.<br />
+            [module DESTINATION source SOURCE] => Connects the SOURCE port of source to the DESTINATION input of module.<br />
+            [module DESTINATION source []] => Disconnects the first output of source from the DESTINATION input of module.<br />
+            [module DESTINATION source SOURCE []] => Disconnects the SOURCE port of source from the DESTINATION input of module.<br />
+            <b>Note:</b> both DESTINATION and SOURCE can be either text or number.<br />
+            [module *x] => Reports the current value of the first output port of the module.<br />
+            [module SOURCE *x] => Reports the current value of the SOURCE output port of the module.<br />
+            [module value] => Sets the value of the first input port of the module.<br />
+            [module DESTINATION value] => Sets the value of the DESTINATION input port of the module.<br />
+            <b>Note:</b> value can be either integer or double.<br />
+        </div>
+        <div class="doc_predicate_body">
+           The commands above describe common behaviour of all audio modules.
+        </div>
+    </a>
+</div>
+
+<div class="doc_library_section"><a id="superstructure">Superstructure</a></div>
+
+<div class="doc_library_section"><a id="midi">Midi</a></div>
+
+<div class="doc_library_section"><a id="panels">Panels</a></div>
+
+<div class="doc_predicate">
+    <a id="predicate_big_keyboard">
+        <div class="doc_predicate_header">
+            [big_keyboard atom callback]<br />
+            [atom *x *y] => reposition on the screen<br />
+            [atom] => closes the panel<br />
+            callback is called as follows:<br />
+            [callback keyon key 100] => for keyon<br />
+            [callback keyon key 0] => for keyoff
+        </div>
+        <div class="doc_predicate_body">
+            Creates a panel containing a big keyboard.<br />
+            <img src="../../graphics/big_keyboard.png" />
+        </div>
+    </a>
+</div>
+
+<div class="doc_predicate">
+    <a id="predicate_keyboard">
+        <div class="doc_predicate_header">
+            [keyboard atom callback]<br />
+            [atom *x *y] => reposition on the screen<br />
+            [atom] => closes the panel<br />
+            callback is called as follows:<br />
+            [callback keyon key 100] => for keyon<br />
+            [callback keyon key 0] => for keyoff
+        </div>
+        <div class="doc_predicate_body">
+            Creates a panel containing a keyboard.<br />
+            <img src="../../graphics/keyboard.png" />
+        </div>
+    </a>
+</div>
+
+<div class="doc_predicate">
+    <a id="predicate_small_keyboard">
+        <div class="doc_predicate_header">
+            [small_keyboard atom callback]<br />
+            [atom *x *y] => reposition on the screen<br />
+            [atom] => closes the panel<br />
+            callback is called as follows:<br />
+            [callback keyon key 100] => for keyon<br />
+            [callback keyon key 0] => for keyoff
+        </div>
+        <div class="doc_predicate_body">
+            Creates a panel containing a small keyboard.<br />
+            <img src="../../graphics/small_keyboard.png" />
+        </div>
+    </a>
+</div>
+
+<div class="doc_predicate">
+    <a id="predicate_vector">
+        <div class="doc_predicate_header">
+            [vector atom callback]<br />
+            [atom *x *y] => reposition on the screen<br />
+            [atom] => closes the panel<br />
+            callback is called as follows:<br />
+            [callback keyon key 100] => for keyon<br />
+            [callback keyon key 0] => for keyoff
+        </div>
+        <div class="doc_predicate_body">
+            Creates a panel containing a vector.<br />
+            <img src="../../graphics/vector_frame.png" />
+        </div>
+    </a>
+</div>
+
+<div class="doc_predicate">
+    <a id="predicate_@">
+        <div class="doc_predicate_header">
+            @
+        </div>
+        <div class="doc_predicate_body">
+            @
+        </div>
+    </a>
+</div>
+
+
+</div></div>
+</body>
+

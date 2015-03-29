@@ -293,7 +293,9 @@ public:
 		delete query;
 	}
 	void preset_action (char * action, char * file_name) {
-		PrologAtom * atom = root -> search (action);
+		PrologDirectory * dir = root -> searchDirectory ("lunar");
+		if (dir == 0) return;
+		PrologAtom * atom = dir -> searchAtom (action);
 		if (atom == 0) return;
 		PrologElement * query = root -> pair (root -> atom (command),
 								root -> pair (root -> var (0),
@@ -319,7 +321,9 @@ public:
 		return true;
 	}
 	void stop_recording_action (void) {
-		PrologAtom * STOP = root -> search ("STOP");
+		PrologDirectory * dir = root -> searchDirectory ("lunar");
+		if (dir == 0) return;
+		PrologAtom * STOP = dir -> searchAtom ("STOP");
 		if (STOP == 0) return;
 		PrologElement * query = root -> pair (root -> atom (command),
 								root -> pair (root -> atom (STOP),
@@ -330,7 +334,9 @@ public:
 		area_cat (display . area, 0, "RECORDING COMPLETED.");
 	}
 	void f_action (int ind) {
-		PrologAtom * F = root -> search ("FUNCTION_KEY");
+		PrologDirectory * dir = root -> searchDirectory ("lunar");
+		if (dir == 0) return;
+		PrologAtom * F = dir -> searchAtom ("FUNCTION_KEY");
 		if (F == 0) return;
 		PrologElement * query = root -> pair (root -> atom (F), root -> pair (root -> integer (ind), root -> earth ()));
 		query = root -> pair (root -> earth (), root -> pair (query, root -> earth ()));

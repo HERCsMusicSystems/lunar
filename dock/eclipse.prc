@@ -51,6 +51,9 @@ program eclipse [
 [[jscb 9 1] [ConnectAllMoons reactor]]
 [[jscb : *x] [show *x]]
 
+[[@ lunar . FUNCTION_KEY 1] [BuildAudio]]
+[[@ lunar . FUNCTION_KEY 2] [RemoveAudio]]
+
 end := [
 		[GenerateInstrumentName Doctor *doc_name] [BuildDoctor 2 *doc_name * *]
 		[BuildPhobos 2 Phobos PhobosCB phobos_mixer *feed]

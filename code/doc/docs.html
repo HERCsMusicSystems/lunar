@@ -16,8 +16,15 @@
     <li><a href="#introduction">Introduction</a></li>
     <li><a href="#audio_modules">Audio Modules</a>
         <br />
+        <a href="#predicate_auto">auto</a>
+        <a href="#predicate_auto_data">auto_data</a>
+        <a href="#predicate_impulse">impulse</a>
+        <a href="#predicate_key_map">key_map</a>
         <a href="#predicate_oscilloscope">oscilloscope</a>
         <a href="#predicate_parameter_block">parameter_block</a>
+        <a href="#predicate_trigger">trigger</a>
+        <a href="#predicate_velocity_map">velocity_map</a>
+        <a href="#predicate_wave">wave</a>
     </li>
     <li><a href="#superstructure">Superstructure</a></li>
     <li><a href="#midi">Midi</a></li>
@@ -75,12 +82,87 @@
 </div>
 
 <div class="doc_predicate">
+    <a id="predicate_auto">
+        <div class="doc_predicate_header">
+            [auto module data maximum_change] => Creates a sequencer connected to <a href="#predicate_auto_data">auto_data</a> (maximum_change is optional).<br />
+            <b>Note:</b> module adheres to <a href="#common_behaviour_of_predicates">Common Behaviour</a>.<br />
+        </div>
+        <div class="doc_predicate_body">
+            <b>Signals:</b> [["TRIGGER"] ["SIGNAL"]]<br />
+            Plays back control sequences stored by the connected <b>data</b> module.
+            The control changes can be ramped (filtered) if maximum_change was specified (ZERO is the default value = no ramping).
+            The exact behaviour depends on the value of the <b>"CONTROL"</b> and <b>"TRIGGER"</b> signals of the auto data block.<br />
+            trigger = 0 or control = 0 => inactive (no playback)<br />
+            control = 1 => play once only<br />
+            control = 2 => play looped<br />
+            control >= 16 => inactive (no playback)
+        </div>
+    </a>
+</div>
+
+<div class="doc_predicate">
+    <a id="predicate_auto_data">
+        <div class="doc_predicate_header">
+            [auto_data module] => Creates a block holiding a sequence of control changes.<br />
+            <b>Note:</b> module adheres to <a href="#common_behaviour_of_predicates">Common Behaviour</a>.<br />
+            <b>Additional usage:</b><br />
+            [module *value] => Returns the sequence of control changes.<br />
+            [module []] => Erases all data.<br />
+            [module [*value1 *time1] [*value2 *time2] ....] => Enters new data.<br />
+            Otherwise defaults to common behaviour.
+        </div>
+        <div class="doc_predicate_body">
+            <b>Signals:</b> [["ENTER" "TRIGGER" "CONTROL"] []]<br />
+            Auto data block holds control sequence as pairs of value and sample number after which the next value should be played.
+            The source of the control values is the <b>"ENTER"</b> input of the data block.<br />
+            A new sequence can be recorded by feeding 16 (or more) to the <b>"CONTROL"</b> input and then starting the recording by feeding 1 to the <b>"TRIGGER"</b> input.
+            The recording stops when triggers disengages.
+            However, recording may be paused by temporarily disengagin the control.
+            Please, note, the recording should be stopped appropriately (by disengaging trigger while control is still 16).
+        </div>
+    </a>
+</div>
+
+<div class="doc_predicate">
+    <a id="predicate_impulse">
+        <div class="doc_predicate_header">
+            [impulse module] => Creates an impulse module.<br />
+            <b>Note:</b> module adheres to <a href="#common_behaviour_of_predicates">Common Behaviour</a>.<br />
+        </div>
+        <div class="doc_predicate_body">
+            <b>Signals:</b> [["ENTER"] ["SIGNAL"]]<br />
+            Generates a one-sample long impulse when the value of <b>"ENTER"</b> input changes from ZERO to something greater.
+        </div>
+    </a>
+</div>
+
+<div class="doc_predicate">
+    <a id="predicate_key_map">
+        <div class="doc_predicate_header">
+            [key_map module] => Creates a frequency mapper, which can be connected to <a href="#predicate_trigger">trigger</a>.<br />
+            [module] => Closes and removes the module.<br />
+            [module key freq] => Sets the frequency value for a particular key.<br />
+            [module v1 v2 v3 .... v128] => Sets the entire frequency map.<br />
+            [module [v1 v2 v3 .... v128]] => Sets the entire frequency map.<br />
+            [module []] or [module [[]]] => Resets the map to the default value (-8192.0 .. 8192.0).<br />
+            <b>Note:</b> there is no common behaviour for this type of module.<br />
+        </div>
+        <div class="doc_predicate_body">
+            <b>Signals:</b>none.<br />
+            Provides key to frequency mapping for triggers (range -8192.0 .. 8192.0).
+            Very good for simulating custom musical scales.
+        </div>
+    </a>
+</div>
+
+<div class="doc_predicate">
     <a id="predicate_oscilloscope">
         <div class="doc_predicate_header">
             [oscilloscope module] => Creates an oscilloscope window.<br />
             <b>Note:</b> module adheres to <a href="#common_behaviour_of_predicates">Common Behaviour</a>.
         </div>
         <div class="doc_predicate_body">
+            <b>Signals:</b> [["SIGNAL"] ["SIGNAL"]]<br />
             Displays the input signal. Range of the signal is from -1.0 to 1.0.
         </div>
     </a>
@@ -96,6 +178,7 @@
             Otherwise defaults to common behaviour.
         </div>
         <div class="doc_predicate_body">
+            <b>Signals:</b> [["SIGNAL"] ["SIGNAL"]]<br />
             Parameter block is a box holding a signal value.
             There are two types of parameter blocks:<br />
             <b>Inactive:</b> this is the default type. Its input is basically the same memory location as its output.<br />
@@ -106,6 +189,75 @@
             Parameter blocks can have their output values formatted into a text.
             To activate this feature a style parameter needs to be passed.
             It can have one of several pre-defined values: "index", "freq", "amp", "time", "onoff", "wave", "ratio" or "fm4algo".
+        </div>
+    </a>
+</div>
+
+<div class="doc_predicate">
+    <a id="predicate_trigger">
+        <div class="doc_predicate_header">
+            [trigger module] => Creates a trigger.<br />
+            <b>Note:</b> module adheres to <a href="#common_behaviour_of_predicates">Common Behaviour</a>.<br />
+            <b>Additional usage:</b><br />
+            [module key_map] => Inserts a <a href="#predicate_key_map">key-frequency</a> map.<br />
+            [module []] => Removes <a href="#predicate_key_map">key-frequency</a> map.<br />
+            [module key_map/[] velocity_map/[] =>
+                Inserts or removes <a href="#predicate_key_map">key-frequency</a> and <a href="#predicate_velocity_map">key-velocity</a> map.<br />
+            [module keyon key velocity] => Generates keyon signals with velocity.<br />
+            [module keyon key] => Generates keyon signals with default velocity = 100.<br />
+            [module keyoff key] => Generates keyoff signals with key.<br />
+            [module keyoff] => Generates all keys off signals.<br />
+            Otherwise defaults to common behaviour.
+        </div>
+        <div class="doc_predicate_body">
+            <b>Signals:</b> [["BUSY" "HOLD" "PORTA" "TIME" "LEGATO"] ["KEY" "VELOCITY" "TRIGGER" "INDEX" "DELAY1" "DELAY2"]]<br />
+            Generates control signals for synthesiser's modules. It can also generate portamento effect.<br />
+            <b>Inputs:</b><br />
+            <b>"BUSY"</b> usually receives signal combined from all the relevant ADSR modules. Indicates whether the sound is still audible (1.0) or not (0.0).<br />
+            <b>"HOLD"</b> is the input signal from food pedal.<br />
+            <b>"PORTA"</b> engages to ramping of the <b>"KEY"</b> output to simulate portamento.<br />
+            <b>"TIME"</b> controls the duration of the portamento transition.<br />
+            <b>"LEGATO"</b> controls the mode of the portamento effect.<br />
+            <b>Outputs:</b><br />
+            <b>"KEY"</b> is the MIDI key number translated into the range between -8192.0 .. 8192.0.<br />
+            <b>"VELOCITY"</b> is the MIDI velocity value translated into the range between 0.0 .. 16384.0.<br />
+            <b>"TRIGGER"</b> translates MIDI keyon/keyoff commands into the range between 0.0 .. 1.0.<br />
+            <b>"INDEX"</b> is the non-translated MIDI key number.<br />
+            <b>"DELAY1"</b> is the <b>"TRIGGER"</b> value delayed by 1 sample.<br />
+            <b>"DELAY2"</b> is the <b>"TRIGGER"</b> value delayed by 2 samples.<br />
+        </div>
+    </a>
+</div>
+
+<div class="doc_predicate">
+    <a id="predicate_velocity_map">
+        <div class="doc_predicate_header">
+            [velocity_map module] => Creates a velocity mapper, which can be connected to <a href="#predicate_trigger">trigger</a>.<br />
+            [module] => Closes and removes the module.<br />
+            [module key velocity] => Sets the velocity value for a particular key.<br />
+            [module v1 v2 v3 .... v128] => Sets the entire velocity map.<br />
+            [module [v1 v2 v3 .... v128]] => Sets the entire velocity map.<br />
+            [module []] or [module [[]]] => Resets the map to the default value (0.0 .. 16384.0).<br />
+            <b>Note:</b> there is no common behaviour for this type of module.<br />
+        </div>
+        <div class="doc_predicate_body">
+            <b>Signals:</b>none.<br />
+            Provides key to velocity mapping for triggers (range 0.0 .. 16384.0).
+            Very good for simulating velocity response of keyboards.
+        </div>
+    </a>
+</div>
+
+<div class="doc_predicate">
+    <a id="predicate_wave">
+        <div class="doc_predicate_header">
+            [wave module "wave-1.wav" "wave-2.wav" ....] => Creates a collection of waves, which can be connected to <a href="#predicate_sampler_operator">sampler_operator</a>.<br />
+            [module] => Closes and removes the module.<br />
+            <b>Note:</b> there is no common behaviour for this type of module although it still reports empty list of inputs and outputs.<br />
+        </div>
+        <div class="doc_predicate_body">
+            <b>Signals:</b>none.<br />
+            Creates a collection of waveforms. They can be connected to a sampler operator.
         </div>
     </a>
 </div>
@@ -128,7 +280,7 @@
         </div>
         <div class="doc_predicate_body">
             Creates a panel containing a big keyboard.<br />
-            <img src="../../graphics/small_keyboard.png" />
+            <img src="../../graphics/big_keyboard.png" />
         </div>
     </a>
 </div>
@@ -162,7 +314,7 @@
         </div>
         <div class="doc_predicate_body">
             Creates a panel containing a keyboard.<br />
-            <img src="../../graphics/small_keyboard.png" />
+            <img src="../../graphics/keyboard.png" />
         </div>
     </a>
 </div>

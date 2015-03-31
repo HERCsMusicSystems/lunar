@@ -17,12 +17,14 @@
     <li><a href="#audio_modules">Audio Modules</a>
         <br />
         <a href="#predicate_oscilloscope">oscilloscope</a>
+        <a href="#predicate_parameter_block">parameter_block</a>
     </li>
     <li><a href="#superstructure">Superstructure</a></li>
     <li><a href="#midi">Midi</a></li>
     <li><a href="#panels">Panels</a>
         <br />
         <a href="#predicate_big_keyboard">big_keyboard</a>
+        <a href="#predicate_command_centre">CommandCentre</a>
         <a href="#predicate_keyboard">keyboard</a>
         <a href="#predicate_small_keyboard">small_keyboard</a>
         <a href="#predicate_vector">vector</a>
@@ -37,24 +39,73 @@
     <a id="common_behaviour_of_predicates">
         <div class="doc_predicate_header">
             <b>Common Behaviour:</b><br />
-            <div style="float:left;">[module]</div><div style="float:left;">&nbsp;=>&nbsp;</div><div style="float:left;">Closes the module. The module is also destroyed and grabage collected if it is not connected to any input of any other module.</div><br />
-            <div style="float:left;">[module : *io]&nbsp;</div><div style="float:left;">=> Reports names of all inputs and outputs.</div><br />
-            [module module] => Used for test purposes to push the model one sample forward.<br />
-            [module []] => Disconnect all inputs.<br />
-            [module source] => Connects the first output of source to the first input of module.<br />
-            [module DESTINATION source] => Connects the first output of source to the DESTINATION input of module.<br />
-            [module DESTINATION source SOURCE] => Connects the SOURCE port of source to the DESTINATION input of module.<br />
-            [module DESTINATION source []] => Disconnects the first output of source from the DESTINATION input of module.<br />
-            [module DESTINATION source SOURCE []] => Disconnects the SOURCE port of source from the DESTINATION input of module.<br />
+            <div style="float:left;">[module]</div><div style="float:left;">&nbsp;=>&nbsp;</div>
+                <div style="float:left;">Closes the module. The module is also destroyed and grabage collected if it is not connected to any input of any other module.</div><br />
+            <div style="float:left;">[module : *io]</div><div style="float:left;">&nbsp;=>&nbsp;</div>
+                <div style="float:left;">Reports names of all inputs and outputs.</div><br />
+            <div style="float:left;">[module module]</div><div style="float:left;">&nbsp;=>&nbsp;</div>
+                <div style="float:left;">Used for test purposes to push the model one sample forward.</div><br />
+            <div style="float:left;">[module []]</div><div style="float:left;">&nbsp;=>&nbsp;</div>
+                <div style="float:left;">Disconnect all inputs.</div><br />
+            <div style="float:left;">[module source]</div><div style="float:left;">&nbsp;=>&nbsp;</div>
+                <div style="float:left;">Connects the first output of source to the first input of module.</div><br />
+            <div style="float:left;">[module DESTINATION source]</div><div style="float:left;">&nbsp;=>&nbsp;</div>
+                <div style="float:left;">Connects the first output of source to the DESTINATION input of module.</div><br />
+            <div style="float:left;">[module DESTINATION source SOURCE]</div><div style="float:left;">&nbsp;=>&nbsp;</div>
+                <div style="float:left;">Connects the SOURCE port of source to the DESTINATION input of module.</div><br />
+            <div style="float:left;">[module DESTINATION source []]</div><div style="float:left;">&nbsp;=>&nbsp;</div>
+                <div style="float:left;">Disconnects the first output of source from the DESTINATION input of module.</div><br />
+            <div style="float:left;">[module DESTINATION source SOURCE []]</div><div style="float:left;">&nbsp;=>&nbsp;</div>
+                <div style="float:left;">Disconnects the SOURCE port of source from the DESTINATION input of module.</div><br />
             <b>Note:</b> both DESTINATION and SOURCE can be either text or number.<br />
-            [module *x] => Reports the current value of the first output port of the module.<br />
-            [module SOURCE *x] => Reports the current value of the SOURCE output port of the module.<br />
-            [module value] => Sets the value of the first input port of the module.<br />
-            [module DESTINATION value] => Sets the value of the DESTINATION input port of the module.<br />
+            <div style="float:left;">[module *x]</div><div style="float:left;">&nbsp;=>&nbsp;</div>
+                <div style="float:left;">Reports the current value of the first output port of the module.</div><br />
+            <div style="float:left;">[module SOURCE *x]</div><div style="float:left;">&nbsp;=>&nbsp;</div>
+                <div style="float:left;">Reports the current value of the SOURCE output port of the module.</div><br />
+            <div style="float:left;">[module value]</div><div style="float:left;">&nbsp;=>&nbsp;</div>
+                <div style="float:left;">Sets the value of the first input port of the module.</div><br />
+            <div style="float:left;">[module DESTINATION value]</div><div style="float:left;">&nbsp;=>&nbsp;</div>
+                <div style="float:left;">Sets the value of the DESTINATION input port of the module.</div><br />
             <b>Note:</b> value can be either integer or double.<br />
         </div>
         <div class="doc_predicate_body">
            The commands above describe common behaviour of all audio modules.
+        </div>
+    </a>
+</div>
+
+<div class="doc_predicate">
+    <a id="predicate_oscilloscope">
+        <div class="doc_predicate_header">
+            [oscilloscope module] => Creates an oscilloscope window.<br />
+            <b>Note:</b> module adheres to <a href="#common_behaviour_of_predicates">Common Behaviour</a>.
+        </div>
+        <div class="doc_predicate_body">
+            Displays the input signal. Range of the signal is from -1.0 to 1.0.
+        </div>
+    </a>
+</div>
+
+<div class="doc_predicate">
+    <a id="predicate_parameter_block">
+        <div class="doc_predicate_header">
+            [parameter_block module "style" maximum_change] => Creates a parameter block (parameter optional).<br />
+            <b>Note:</b> module adheres to <a href="#common_behaviour_of_predicates">Common Behaviour</a>.<br />
+            <b>Additional usage:</b><br />
+            [module : *value] => Returns formatted value of the output if style was specified.
+            Otherwise defaults to common behaviour.
+        </div>
+        <div class="doc_predicate_body">
+            Parameter block is a box holding a signal value.
+            There are two types of parameter blocks:<br />
+            <b>Inactive:</b> this is the default type. Its input is basically the same memory location as its output.<br />
+            <b>Active:</b>, which actively copies its input to its output.<br />
+            To make an active parameter block it is necessary to pass the maximum change parameter.
+            It can be either integer or double and represents the maximum change of the value per sample.
+            ZERO indicates exact copy (i.e. no ramping effect).<br />
+            Parameter blocks can have their output values formatted into a text.
+            To activate this feature a style parameter needs to be passed.
+            It can have one of several pre-defined values: "index", "freq", "amp", "time", "onoff", "wave", "ratio" or "fm4algo".
         </div>
     </a>
 </div>
@@ -77,7 +128,24 @@
         </div>
         <div class="doc_predicate_body">
             Creates a panel containing a big keyboard.<br />
-            <img src="../../graphics/big_keyboard.png" />
+            <img src="../../graphics/small_keyboard.png" />
+        </div>
+    </a>
+</div>
+
+<div class="doc_predicate">
+    <a id="predicate_command_centre">
+        <div class="doc_predicate_header">
+            [CommandCentre commander CCCB] => Create a command centre.<br />
+            [commander *x *y] => reposition on the screen.<br />
+            [commander] => closes the command centre panel.<br />
+        </div>
+        <div class="doc_predicate_body">
+            CommandCentre panel enables effective control on all instruments,
+            which are constructed as superstructures and present on the list of all instruments.
+            It should always be constructed with the predefined callback CCCB.
+            It is possible to use custom callbacks, but its purpose would be rather dubious.
+            <img src="../../graphics/command_centre.png" width="75%" />
         </div>
     </a>
 </div>
@@ -94,7 +162,7 @@
         </div>
         <div class="doc_predicate_body">
             Creates a panel containing a keyboard.<br />
-            <img src="../../graphics/keyboard.png" />
+            <img src="../../graphics/small_keyboard.png" />
         </div>
     </a>
 </div>

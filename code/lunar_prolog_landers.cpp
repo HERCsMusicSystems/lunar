@@ -252,11 +252,6 @@ char * PrologNativeWaveOrbiter :: name (void) {return wave_orbiter_action_code;}
 bool PrologNativeWaveOrbiter :: isTypeOf (char * code_name) {return wave_orbiter_action_code == code_name ? true : PrologNativeOrbiter :: isTypeOf (code_name);}
 PrologNativeWaveOrbiter :: PrologNativeWaveOrbiter (PrologAtom * atom, orbiter_core * core, orbiter * module) : PrologNativeOrbiter (atom, core, module) {}
 
-class wave_native_orbiter : public PrologNativeWaveOrbiter {
-public:
-	wave_native_orbiter (PrologAtom * atom, orbiter_core * core, orbiter * module) : PrologNativeWaveOrbiter (atom, core, module) {}
-};
-
 orbiter * wave_class :: create_orbiter (PrologElement * parameters) {
 	int capacity = 0;
 	PrologElement * counter = parameters;
@@ -273,7 +268,7 @@ orbiter * wave_class :: create_orbiter (PrologElement * parameters) {
 	}
 	return wave;
 }
-PrologNativeOrbiter * wave_class :: create_native_orbiter (PrologAtom * atom, orbiter * module) {return new wave_native_orbiter (atom, core, module);}
+PrologNativeOrbiter * wave_class :: create_native_orbiter (PrologAtom * atom, orbiter * module) {return new PrologNativeWaveOrbiter (atom, core, module);}
 wave_class :: wave_class (orbiter_core * core) : PrologNativeOrbiterCreator (core) {}
 
 bool LoopWaveClass :: code (PrologElement * parameters, PrologResolution * resolution) {

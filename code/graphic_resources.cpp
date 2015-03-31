@@ -200,8 +200,8 @@ void knob_active_graphics :: setValue (double v) {angle = (v - start) / (range !
 bool knob_active_graphics :: move (point delta) {
 	if (! on) return false;
 	angle -= 0.0078125 * delta . y;
-	value = (double) ((int) (start + angle * range));
 	if (angle < 0.0) angle = 0.0; if (angle > 1.0) angle = 1.0;
+	value = (double) ((int) (start + angle * range));
 	return true;
 }
 

@@ -35,11 +35,12 @@ public:
 	GtkWidget * viewport;
 	point captured;
 	point location;
+	int captured_button;
 	knob_active_graphics ctrl;
 	cairo_surface_t * background_image;
 	void move (double value) {
 		PrologElement * query = root -> pair (root -> atom (command),
-								root -> pair (root -> integer ((int) (value * 128.0) - 64),
+								root -> pair (root -> Double (ctrl . value),
 								root -> earth ()));
 		query = root -> pair (root -> head (0), root -> pair (query, root -> earth ()));
 		root -> resolution (query);
@@ -67,6 +68,7 @@ public:
 	parameter_block_panel_action (GraphicResources * resources, PrologRoot * root, PrologDirectory * directory, PrologAtom * atom, PrologAtom * command, bool active) :
 		ctrl (point (0, 0), 0, resources, true)
 	{
+		captured_button = 0;
 		background_image = resources != 0 ? resources -> vector_surface : 0;
 		viewport = 0;
 		this -> root = root;
@@ -94,6 +96,7 @@ static gboolean RedrawParameterBlockPanel (GtkWidget * viewport, GdkEvent * even
 	return FALSE;
 }
 static gint ParameterBlockPanelKeyon (GtkWidget * viewport, GdkEventButton * event, parameter_block_panel_action * action) {
+	action -> captured_button = event -> button;
 	point location (event -> x, event -> y);
 	action -> captured = location;
 	action -> ctrl . keyon (location);
@@ -107,6 +110,7 @@ static gint ParameterBlockPanelKeyoff (GtkWidget * viewport, GdkEventButton * ev
 static gint ParameterBlockPanelMove (GtkWidget * viewport, GdkEventButton * event, parameter_block_panel_action * action) {
 	point location (event -> x, event -> y);
 	point delta = location - action -> captured;
+	if (action -> captured_button > 1) delta *= 0.0078125;
 	action -> captured = location;
 	bool redraw = false;
 	if (action -> ctrl . move (delta)) {action -> move (action -> ctrl . angle); redraw = true;}
@@ -156,10 +160,13 @@ bool parameter_block_panel_action :: code (PrologElement * parameters, PrologRes
 bool parameter_block_panel_class :: code (PrologElement * parameters, PrologResolution * resolution) {
 	PrologElement * atom = 0;
 	PrologElement * command = 0;
+	PrologElement * from = 0;
+	PrologElement * to = 0;
 	while (parameters -> isPair ()) {
 		PrologElement * el = parameters -> getLeft ();
 		if (el -> isAtom ()) {if (atom == 0) atom = el; else command = el;}
 		if (el -> isVar ()) {if (atom != 0) command = atom; atom = el;}
+		if (el -> isNumber ()) {if (from == 0) from = el; else to = el;}
 		parameters = parameters -> getRight ();
 	}
 	if (atom == 0 || command == 0) return false;
@@ -167,6 +174,10 @@ bool parameter_block_panel_class :: code (PrologElement * parameters, PrologReso
 	if (! atom -> isAtom ()) return false;
 	if (atom -> getAtom () -> getMachine () != 0) return false;
 	parameter_block_panel_action * machine = new parameter_block_panel_action (resources, root, directory, atom -> getAtom (), command -> getAtom (), false);
+	if (from != 0) {
+		machine -> ctrl . start = from -> getNumber ();
+		if (to != 0) machine -> ctrl . range = to -> getNumber () - machine -> ctrl . start;
+	}
 	if (! atom -> getAtom () -> setMachine (machine)) {delete machine; return false;}
 	g_idle_add ((GSourceFunc) CreateParameterBlockPanelIdleCode, machine);
 	return true;

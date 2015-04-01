@@ -16,19 +16,35 @@
     <li><a href="#introduction">Introduction</a></li>
     <li><a href="#audio_modules">Audio Modules</a>
         <br />
+        <a href="#predicate_amplifier">amplifier</a>
         <a href="#predicate_auto">auto</a>
         <a href="#predicate_auto_data">auto_data</a>
+        <a href="#predicate_control">control</a>
+        <a href="#predicate_gateway">gateway</a>
         <a href="#predicate_impulse">impulse</a>
         <a href="#predicate_inactive_trigger">inactive_trigger</a>
         <a href="#predicate_key_map">key_map</a>
         <a href="#predicate_mixer">mixer</a>
+        <a href="#predicate_mono_volume">mono_volume</a>
         <a href="#predicate_oscilloscope">oscilloscope</a>
         <a href="#predicate_parameter_block">parameter_block</a>
+        <a href="#predicate_stereo_amplifier">stereo_amplifier</a>
+        <a href="#predicate_stereo_gateway">stereo_gateway</a>
+        <a href="#predicate_stereo_mixer">stereo_mixer</a>
         <a href="#predicate_trigger">trigger</a>
         <a href="#predicate_velocity_map">velocity_map</a>
+        <a href="#predicate_volume">volume</a>
         <a href="#predicate_wave">wave</a>
     </li>
     <li><a href="#superstructure">Superstructure</a></li>
+    <li><a herf="#utilities">Utilities</a>
+        <br />
+        <a href="#predicate_Connect">Connect</a>
+        <a href="#predicate_ConnectDryWet">ConnectDryWet</a>
+        <a href="#predicate_ConnectStereo">ConnectStereo</a>
+        <a href="#predicate_DisconnectDryWet">DisconnectDryWet</a>
+        <a href="#predicate_DisconnectStereo">DisconnectStereo</a>
+    </li>
     <li><a href="#midi">Midi</a></li>
     <li><a href="#panels">Panels</a>
         <br />
@@ -88,6 +104,21 @@
 </div>
 
 <div class="doc_predicate">
+    <a id="predicate_amplifier">
+        <div class="doc_predicate_header">
+            [amplifier module] => Creates an amplifier module.<br />
+            <b>Note:</b> module adheres to <a href="#common_behaviour_of_predicates">Common Behaviour</a>.<br />
+        </div>
+        <div class="doc_predicate_body">
+            <b>Signals:</b> [["ENTER" "GATEWAY"] ["SIGNAL"]]<br />
+            This is an exponential audio amplifier.
+            The range of <b>"GATEWAY"</b> control signal is -16384.0 .. 0.0.
+            Every -1536 (-128 * 12) reduces the input signal by half.
+        </div>
+    </a>
+</div>
+
+<div class="doc_predicate">
     <a id="predicate_auto">
         <div class="doc_predicate_header">
             [auto module data maximum_change] => Creates a sequencer connected to <a href="#predicate_auto_data">auto_data</a> (maximum_change is optional).<br />
@@ -125,6 +156,33 @@
             The recording stops when triggers disengages.
             However, recording may be paused by temporarily disengagin the control.
             Please, note, the recording should be stopped appropriately (by disengaging trigger while control is still 16).
+        </div>
+    </a>
+</div>
+
+<div class="doc_predicate">
+    <a id="predicate_control">
+        <div class="doc_predicate_header">
+            [control module] => Creates a control module.<br />
+            <b>Note:</b> module adheres to <a href="#common_behaviour_of_predicates">Common Behaviour</a>.<br />
+        </div>
+        <div class="doc_predicate_body">
+            <b>Signals:</b> [["ENTER" "GATEWAY"] ["SIGNAL"]]<br />
+            Multiplies two signals. Good for building linear amplifiers and applying sensitivity to control signals.
+        </div>
+    </a>
+</div>
+
+<div class="doc_predicate">
+    <a id="predicate_gateway">
+        <div class="doc_predicate_header">
+            [gateway module] => Creates a gateway module.<br />
+            <b>Note:</b> module adheres to <a href="#common_behaviour_of_predicates">Common Behaviour</a>.<br />
+        </div>
+        <div class="doc_predicate_body">
+            <b>Signals:</b> [["ENTER" "GATEWAY"] ["SIGNAL"]]<br />
+            Works similar to <a href="#predicate_control">control</a> module, but its <b>"SIGNAL"</b> output is divided by 16384.
+            Good for building linear amplifiers and applying sensitivity to control signals.
         </div>
     </a>
 </div>
@@ -189,6 +247,19 @@
 </div>
 
 <div class="doc_predicate">
+    <a id="predicate_mono_volume">
+        <div class="doc_predicate_header">
+            [mono_volume module] => Creates a mono volume amplifier module.<br />
+            <b>Note:</b> module adheres to <a href="#common_behaviour_of_predicates">Common Behaviour</a>.<br />
+        </div>
+        <div class="doc_predicate_body">
+            <b>Signals:</b> [["ENTER" "GATEWAY"] ["SIGNAL"]]<br />
+            Works identical to <a href="#predicate_volume">volume</a> module, but with monophonic signal.
+        </div>
+    </a>
+</div>
+
+<div class="doc_predicate">
     <a id="predicate_oscilloscope">
         <div class="doc_predicate_header">
             [oscilloscope module] => Creates an oscilloscope window.<br />
@@ -222,6 +293,49 @@
             Parameter blocks can have their output values formatted into a text.
             To activate this feature a style parameter needs to be passed.
             It can have one of several pre-defined values: "index", "freq", "amp", "time", "onoff", "wave", "ratio" or "fm4algo".
+        </div>
+    </a>
+</div>
+
+<div class="doc_predicate">
+    <a id="stereo_amplifier">
+        <div class="doc_predicate_header">
+            [stereo_amplifier module] => Creates a stereo amplifier module.<br />
+            <b>Note:</b> module adheres to <a href="#common_behaviour_of_predicates">Common Behaviour</a>.<br />
+        </div>
+        <div class="doc_predicate_body">
+            <b>Signals:</b> [["LEFT" "RIGHT" "GATEWAY"] ["LEFT" "RIGHT"]]<br />
+            Works similar to <a href="#predicate_amplifer">amplifer</a> module, but with stereo signals (<b>"LEFT"</b> and <b>"RIGHT"</b>).
+            Good for building linear stereo amplifiers.
+        </div>
+    </a>
+</div>
+
+<div class="doc_predicate">
+    <a id="predicate_stereo_gateway">
+        <div class="doc_predicate_header">
+            [stereo_gateway module] => Creates a stereo gateway module.<br />
+            <b>Note:</b> module adheres to <a href="#common_behaviour_of_predicates">Common Behaviour</a>.<br />
+        </div>
+        <div class="doc_predicate_body">
+            <b>Signals:</b> [["LEFT" "RIGHT" "GATEWAY"] ["LEFT" "RIGHT"]]<br />
+            Works similar to <a href="#predicate_gateway">gateway</a> module, but with stereo signals (<b>"LEFT"</b> and <b>"RIGHT"</b>).
+            Good for building linear stereo amplifiers.
+        </div>
+    </a>
+</div>
+
+<div class="doc_predicate">
+    <a id="predicate_stereo_mixer">
+        <div class="doc_predicate_header">
+            [stereo_mixer module] => Creates a simple mixer for stereo channels.<br />
+            <b>Note:</b> module adheres to <a href="#common_behaviour_of_predicates">Common Behaviour</a>.<br />
+        </div>
+        <div class="doc_predicate_body">
+            <b>Signals:</b> [["LEFT" "RIGHT"] ["LEFT" "RIGHT"]]<br />
+            Mixer copies its inputs signal to its outputs. Mixing is achieved by connecting several signals to mixer's inputs.
+            <b>Note:</b> use <a href="#predicate_ConnectStereo>ConnectStereo</a> and <a href="#predicate_DisconnectStereo">DisconnectStereo</a>
+            for connecting stereo modules.
         </div>
     </a>
 </div>
@@ -282,6 +396,21 @@
 </div>
 
 <div class="doc_predicate">
+    <a id="predicate_volume">
+        <div class="doc_predicate_header">
+            [volume module] => Creates a stereo volume amplifier module.<br />
+            <b>Note:</b> module adheres to <a href="#common_behaviour_of_predicates">Common Behaviour</a>.<br />
+        </div>
+        <div class="doc_predicate_body">
+            <b>Signals:</b> [["LEFT" "RIGHT" "GATEWAY"] ["LEFT" "RIGHT"]]<br />
+            Applies semi-exponential amplification to both input signals.
+            The range of <b>"GATEWAY"</b> input signal is: 0.0 .. 16384.0,
+            where 12800 (100 * 128) is the non-amplified signal.
+        </div>
+    </a>
+</div>
+
+<div class="doc_predicate">
     <a id="predicate_wave">
         <div class="doc_predicate_header">
             [wave module "wave-1.wav" "wave-2.wav" ....] => Creates a collection of waves, which can be connected to <a href="#predicate_sampler_operator">sampler_operator</a>.<br />
@@ -296,6 +425,74 @@
 </div>
 
 <div class="doc_library_section"><a id="superstructure">Superstructure</a></div>
+
+<div class="doc_predicate">
+    <a id="predicate_Connect">
+        <div class="doc_predicate_header">
+            [Connect : *modules] => Connects two modules.<br />
+        </div>
+        <div class="doc_predicate_body">
+            This is a shortcut designed to make programs easier to read.
+            It allows for writing [Connect filter "enter" osc "signal"] rather than [filter "enter" osc "signal"].
+        </div>
+    </a>
+</div>
+
+<div class="doc_predicate">
+    <a id="predicate_ConnectDryWet">
+        <div class="doc_predicate_header">
+            [ConnectDryWet to *dry *wet] => Connects three stereo modules modules.<br />
+        </div>
+        <div class="doc_predicate_body">
+            This is a shortcut designed to make programs easier to read.
+            It replaces four lines of connections.
+            Works with input modules with <b>"LEFT"</b> and <b>"RIGHT"</b> signals
+            and output modules with <b>"DRYLEFT"</b>, <b>"DRYRIGHT"</b>, <b>"WETLEFT"</b> and <b>"WETRIGHT"</b> signals.
+        </div>
+    </a>
+</div>
+
+<div class="doc_predicate">
+    <a id="predicate_ConnectStereo">
+        <div class="doc_predicate_header">
+            [ConnectStereo to from] => Connects two stereo modules modules.<br />
+        </div>
+        <div class="doc_predicate_body">
+            This is a shortcut designed to make programs easier to read.
+            It replaces two lines of connections.
+            Works with modules with <b>"LEFT"</b> and <b>"RIGHT"</b> signals.
+        </div>
+    </a>
+</div>
+
+<div class="doc_predicate">
+    <a id="predicate_DisconnectDryWet">
+        <div class="doc_predicate_header">
+            [DisonnectDryWet to *dry *wet] => Disconnects three stereo modules modules.<br />
+        </div>
+        <div class="doc_predicate_body">
+            This is a shortcut designed to make programs easier to read.
+            It replaces four lines of disconnections.
+            Works with input modules with <b>"LEFT"</b> and <b>"RIGHT"</b> signals
+            and output modules with <b>"DRYLEFT"</b>, <b>"DRYRIGHT"</b>, <b>"WETLEFT"</b> and <b>"WETRIGHT"</b> signals.
+        </div>
+    </a>
+</div>
+
+<div class="doc_predicate">
+    <a id="predicate_DisconnectStereo">
+        <div class="doc_predicate_header">
+            [DisconnectStereo to from] => Disconnects two stereo modules modules.<br />
+        </div>
+        <div class="doc_predicate_body">
+            This is a shortcut designed to make programs easier to read.
+            It replaces two lines of disconnections.
+            Works with modules with <b>"LEFT"</b> and <b>"RIGHT"</b> signals.
+        </div>
+    </a>
+</div>
+
+<div class="doc_library_section"><a id="utilities">Utilities</a></div>"
 
 <div class="doc_library_section"><a id="midi">Midi</a></div>
 

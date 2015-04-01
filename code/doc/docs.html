@@ -19,7 +19,9 @@
         <a href="#predicate_auto">auto</a>
         <a href="#predicate_auto_data">auto_data</a>
         <a href="#predicate_impulse">impulse</a>
+        <a href="#predicate_inactive_trigger">inactive_trigger</a>
         <a href="#predicate_key_map">key_map</a>
+        <a href="#predicate_mixer">mixer</a>
         <a href="#predicate_oscilloscope">oscilloscope</a>
         <a href="#predicate_parameter_block">parameter_block</a>
         <a href="#predicate_trigger">trigger</a>
@@ -76,7 +78,11 @@
             <b>Note:</b> value can be either integer or double.<br />
         </div>
         <div class="doc_predicate_body">
-           The commands above describe common behaviour of all audio modules.
+            The commands above describe common behaviour of all audio modules.<br />
+            Every module has a number of inputs and outputs, which can be connected.
+            It should be noted that several output signals can be connected to one input.
+            In such cases all those signals are added together.
+            In fact, this is the simplest method of building a mixer.
         </div>
     </a>
 </div>
@@ -137,6 +143,20 @@
 </div>
 
 <div class="doc_predicate">
+    <a id="predicate_inactive_trigger">
+        <div class="doc_predicate_header">
+            [inactive_trigger module] => Creates an inactive_trigger.<br />
+            <b>Note:</b> all usages of module indentical to <a href="#predicate_trigger">trigger</a>.<br />
+        </div>
+        <div class="doc_predicate_body">
+            <b>Signals:</b> [["BUSY" "HOLD" "PORTA" "TIME" "LEGATO"] ["KEY" "VELOCITY" "TRIGGER" "INDEX" "DELAY1" "DELAY2"]]<br />
+            Inactive trigger behaves similar to trigger.
+            However, as it is not active, neither portamento nor trigger delays can be used.
+        </div>
+    </a>
+</div>
+
+<div class="doc_predicate">
     <a id="predicate_key_map">
         <div class="doc_predicate_header">
             [key_map module] => Creates a frequency mapper, which can be connected to <a href="#predicate_trigger">trigger</a>.<br />
@@ -151,6 +171,19 @@
             <b>Signals:</b>none.<br />
             Provides key to frequency mapping for triggers (range -8192.0 .. 8192.0).
             Very good for simulating custom musical scales.
+        </div>
+    </a>
+</div>
+
+<div class="doc_predicate">
+    <a id="predicate_mixer">
+        <div class="doc_predicate_header">
+            [mixer module] => Creates a simple mixer.<br />
+            <b>Note:</b> module adheres to <a href="#common_behaviour_of_predicates">Common Behaviour</a>.<br />
+        </div>
+        <div class="doc_predicate_body">
+            <b>Signals:</b> [["ENTER"] ["SIGNAL"]]<br />
+            Mixer copies its input signal to its output. Mixing is achieved by connecting several signals to mixer's input.
         </div>
     </a>
 </div>

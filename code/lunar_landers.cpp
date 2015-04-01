@@ -259,7 +259,7 @@ void lunar_stereo_amplifier :: move (void) {double dv = core -> Amplitude (gatew
 lunar_stereo_amplifier :: lunar_stereo_amplifier (orbiter_core * core) : lunar_stereo_gateway (core) {gateway = 0.0;}
 
 char * lunar_mono_volume :: inputName (int ind) {if (ind == 1) return "VOLUME"; return lunar_gateway :: inputName (ind);}
-void lunar_mono_volume :: move (void) {signal = enter * gateway * core -> Volume (gateway);}
+void lunar_mono_volume :: move (void) {signal = enter * core -> Volume (gateway);}
 lunar_mono_volume :: lunar_mono_volume (orbiter_core * core) : lunar_gateway (core) {gateway = 1280.0;}
 
 char * lunar_volume :: inputName (int ind) {if (ind == 2) return "VOLUME"; return lunar_stereo_gateway :: inputName (ind);}

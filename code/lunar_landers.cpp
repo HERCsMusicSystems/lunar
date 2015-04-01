@@ -638,7 +638,7 @@ void lunar_adsr :: move (void) {
 			if (decay == 0.0) {signal = sustain; stage = 3; return;}
 			signal = 0.0; stage = 2; time = core -> WaitingTime (decay); return;
 		}
-		signal = -16384.0; stage = 1; time = core -> WaitingTime (attack); return;
+		signal = -16384.0; stage = 1; time = core -> WaitingTime (attack + signal * correction); return;
 	}
 	if (trigger == 0.0) {
 		if (stage == 0) return;
@@ -667,10 +667,10 @@ void lunar_adsr :: move (void) {
 				return;
 			}
 			stage = 1;
-			time += core -> WaitingTime (attack);
+			time += core -> WaitingTime (attack + signal * correction);
 			return;
 		case 1:
-			if (time < 1.0) {signal = time * 16384.0 - 16384.0; time += core -> WaitingTime (attack); return;}
+			if (time < 1.0) {signal = time * 16384.0 - 16384.0; time += core -> WaitingTime (attack + signal * correction); return;}
 			time = 0.0;
 			if (decay == 0.0) {signal = sustain; stage = 3; return;}
 			signal = 0.0;
@@ -693,15 +693,16 @@ void lunar_adsr :: move (void) {
 			}
 			time = 1 + signal / 16384.0;
 			stage = 1;
-			time += core -> WaitingTime (attack);
+			time += core -> WaitingTime (attack + signal * correction);
 			return;
 			break;
 		default: return; break;
 		}
 	}
 }
-lunar_adsr :: lunar_adsr (orbiter_core * core) : orbiter (core) {
+lunar_adsr :: lunar_adsr (orbiter_core * core, double correction) : orbiter (core) {
 	attack = decay = sustain = release = trigger = busy = 0.0;
+	this -> correction = correction;
 	signal = -16384.0; time = busy = 0.0;
 	stage = 0;
 	initialise (); activate ();

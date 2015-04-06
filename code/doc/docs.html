@@ -16,14 +16,19 @@
     <li><a href="#introduction">Introduction</a></li>
     <li><a href="#audio_modules">Audio Modules</a>
         <br />
+        <a href="#predicate_adsr">adsr</a>
         <a href="#predicate_amplifier">amplifier</a>
         <a href="#predicate_auto">auto</a>
         <a href="#predicate_auto_data">auto_data</a>
+        <a href="#predicate_chorus">chorus</a>
         <a href="#predicate_control">control</a>
+        <a href="#predicate_delay">delay</a>
+        <a href="#predicate_eg">eg</a>
         <a href="#predicate_gateway">gateway</a>
         <a href="#predicate_impulse">impulse</a>
         <a href="#predicate_inactive_trigger">inactive_trigger</a>
         <a href="#predicate_key_map">key_map</a>
+        <a href="#predicate_lfo">lfo</a>
         <a href="#predicate_mixer">mixer</a>
         <a href="#predicate_mono_volume">mono_volume</a>
         <a href="#predicate_oscilloscope">oscilloscope</a>
@@ -37,7 +42,7 @@
         <a href="#predicate_wave">wave</a>
     </li>
     <li><a href="#superstructure">Superstructure</a></li>
-    <li><a herf="#utilities">Utilities</a>
+    <li><a href="#utilities">Utilities</a>
         <br />
         <a href="#predicate_Connect">Connect</a>
         <a href="#predicate_ConnectDryWet">ConnectDryWet</a>
@@ -104,6 +109,30 @@
 </div>
 
 <div class="doc_predicate">
+    <a id="predicate_adsr">
+        <div class="doc_predicate_header">
+            [adsr module corrector] => Creates an adsr module. The optional corrector (default = 0.125) specifies attack curve correction.<br />
+            <b>Note:</b> module adheres to <a href="#common_behaviour_of_predicates">Common Behaviour</a>.<br />
+        </div>
+        <div class="doc_predicate_body">
+            <b>Signals:</b> [["ENTER" "GATEWAY"] ["SIGNAL"]]<br />
+            ADSR module. It works on a constant slope basis.
+            <br />
+            <b>INPUTS:</b><br />
+            <b>Trigger:</b> key on/off input. Range between 0.0 .. 1.0.<br />
+            <b>Attack:</b> time. Range between -8192.0 .. 8192.0. ZERO = 1 second (at correction = 0.0).
+            Every step of 768 (6 * 128) multiplies time by 2.<br />
+            <b>Decay:</b> time. Range same as above.<br />
+            <b>Sustain:</b> level. Range between -16384.0 .. 0.0.<br />
+            <b>Release:</b> time. Range same as above.<br />
+            <b>OUTPUTS:</b><br />
+            <b>Signal:</b> output value. Range between -16384.0 .. 0.0.<br />
+            <b>Busy:</b> 0.0 = if finished release stage, 1.0 = otherwise.<br />
+        </div>
+    </a>
+</div>
+
+<div class="doc_predicate">
     <a id="predicate_amplifier">
         <div class="doc_predicate_header">
             [amplifier module] => Creates an amplifier module.<br />
@@ -161,6 +190,27 @@
 </div>
 
 <div class="doc_predicate">
+    <a id="predicate_chorus">
+        <div class="doc_predicate_header">
+            [chorus module] => Creates a chorus module.<br />
+            <b>Note:</b> module adheres to <a href="#common_behaviour_of_predicates">Common Behaviour</a>.<br />
+        </div>
+        <div class="doc_predicate_body">
+            <b>Signals:</b> [["SIGNAL" "LEVEL" "TIME" "SPEED" "AMP"] ["SIGNAL"]]<br />
+            Monophonic chorus effect with integrated LFO block.<br />
+            <b>INPUTS:</b><br />
+            <b>Signal:</b> input signal.<br />
+            <b>Level:</b> mixing. Range between 0.0 .. 16384.0 linear, where 16384.0 represents equal mix.<br />
+            <b>Time:</b> shift. Range between 0.0 .. 16384.0 linear, where 8192.0 represents 1/10 of a second.<br />
+            <b>Speed:</b> of LFO oscillation. Range identical as in <a href="#predicate_lfo">lfo</a>.
+            <b>Amp:</b> level of LFO oscillaction. Range 0.0 .. 16384.0 linear, where 16384.0 represents variation equals to two time shifts.<br />
+            <b>OUTPUTS:</b><br />
+            <b>Signal:</b> output.<br />
+        </div>
+    </a>
+</div>
+
+<div class="doc_predicate">
     <a id="predicate_control">
         <div class="doc_predicate_header">
             [control module] => Creates a control module.<br />
@@ -169,6 +219,50 @@
         <div class="doc_predicate_body">
             <b>Signals:</b> [["ENTER" "GATEWAY"] ["SIGNAL"]]<br />
             Multiplies two signals. Good for building linear amplifiers and applying sensitivity to control signals.
+        </div>
+    </a>
+</div>
+
+<div class="doc_predicate">
+    <a id="predicate_delay">
+        <div class="doc_predicate_header">
+            [delay module] => Creates a dealy module.<br />
+            <b>Note:</b> module adheres to <a href="#common_behaviour_of_predicates">Common Behaviour</a>.<br />
+        </div>
+        <div class="doc_predicate_body">
+            <b>Signals:</b> [["LEFT" "RIGHT" "FEEDBACK" "TIME" "HIGHDAMP"] ["LEFT" "RIGHT"]]<br />
+            Stereo cross delay module.<br />
+            <b>INPUTS:</b><br />
+            <b>Left and Right:</b> stereo inputs.<br />
+            <b>Feedback:</b> level. Range between 0.0 .. 16384.0.<br />
+            <b>Time:</b> delay. Linear range between 0.0 .. 16384.0, where one second = 8192.0.<br />
+            <b>Highdamp:</b> filter. Range between 0.0 .. 1.0 (default = 1.0, means no filtering).<br />
+            <b>OUTPUTS:</b><br />
+            <b>Left and Right:</b> stereo output.<br />
+        </div>
+    </a>
+</div>
+
+<div class="doc_predicate">
+    <a id="predicate_eg">
+        <div class="doc_predicate_header">
+            [eg module] => Creates a 4-stage envelope generator module.<br />
+            <b>Note:</b> module adheres to <a href="#common_behaviour_of_predicates">Common Behaviour</a>.<br />
+        </div>
+        <div class="doc_predicate_body">
+            <b>Signals:</b> [["TRIGGER" "TIME1" "TIME2" "TIME3" "TIME4" "LEVEL1" "LEVEL2" "LEVEL3" "LEVEL4"] ["SIGNAL" "BUSY"]]<br />
+            Envelope Generator module. It works on a constant slope basis.
+            I.e. the times are based on transitions across 16384.0 change between levels.
+            As such, smaller differences between levels will cause the times to get shortened.<br />
+            <b>Note:</b> if retriggered before reaching <b>level 4</b>, it may start from a point between levels 4, 1 or 2.<br />
+            <b>INPUTS:</b><br />
+            <b>Trigger:</b> key on/off input. Range between 0.0 .. 1.0.<br />
+            <b>Time 1 - 4:</b> range between -8192.0 .. 8192.0. ZERO = 1 second (at correction = 0.0).
+            Every step of 768 (6 * 128) multiplies time by 2.<br />
+            <b>Level 1 - 4:</b> range between -8192.0 .. 8192.0 (however, can be more really).<br />
+            <b>OUTPUTS:</b><br />
+            <b>Signal:</b> output value. Range between -16384.0 .. 0.0.<br />
+            <b>Busy:</b> 0.0 = if reached level 4, 1.0 = otherwise.<br />
         </div>
     </a>
 </div>
@@ -229,6 +323,32 @@
             <b>Signals:</b>none.<br />
             Provides key to frequency mapping for triggers (range -8192.0 .. 8192.0).
             Very good for simulating custom musical scales.
+        </div>
+    </a>
+</div>
+
+<div class="doc_predicate">
+    <a id="predicate_lfo">
+        <div class="doc_predicate_header">
+            [lfo module] => Creates an lfo module.<br />
+            <b>Note:</b> all usages of module indentical to <a href="#predicate_trigger">trigger</a>.<br />
+        </div>
+        <div class="doc_predicate_body">
+            <b>Signals:</b> [["TRIGGER" "SPEED" "WAVE" "PULSE" "PHASE" "SYNC"] ["SIGNAL" "NEGATIVE" "POSITIVE"]]<br />
+            LFO generates low frequency oscillations, which can be used as control signals.
+            Very useful for vibrato, tremolo, wah-wah effect and many more.
+            <b>INPUTS:</b><br />
+            <b>Trigger:</b> positive slope resets the value <b>if sync</b> is greater than ZERO.<br />
+            <b>Speed:</b> controls the frequency of LFO. Range between -8192.0 .. 8192.0.
+            Zero represents 1 Hz. Every step of 768 (6 * 128) multiplies speed by 2.<br />
+            <b>Wave:</b> 0 = sine, 1 = triange, 2 = square, 3 = random, 4 = S/H.<br />
+            <b>Pulse:</b> pulse width of the signal. Range between -8192.0 .. 8192.0.<br />
+            <b>Phase:</b> retrigger phase. Range between 0.0 .. 16384.0.<br />
+            <b>Sync:</b> controlls whether LFO can be retriggered.<br />
+            <b>OUTPUTS:</b><br />
+            <b>Signal:</b> output signal in range between -1.0 .. 1.0.<br />
+            <b>Negative:</b> output signal in range between -1.0 .. 0.0.<br />
+            <b>Positive:</b> output signal in range between 0.0 .. 1.0.<br />
         </div>
     </a>
 </div>
@@ -359,19 +479,19 @@
         <div class="doc_predicate_body">
             <b>Signals:</b> [["BUSY" "HOLD" "PORTA" "TIME" "LEGATO"] ["KEY" "VELOCITY" "TRIGGER" "INDEX" "DELAY1" "DELAY2"]]<br />
             Generates control signals for synthesiser's modules. It can also generate portamento effect.<br />
-            <b>Inputs:</b><br />
-            <b>"BUSY"</b> usually receives signal combined from all the relevant ADSR modules. Indicates whether the sound is still audible (1.0) or not (0.0).<br />
-            <b>"HOLD"</b> is the input signal from food pedal.<br />
-            <b>"PORTA"</b> engages to ramping of the <b>"KEY"</b> output to simulate portamento.<br />
-            <b>"TIME"</b> controls the duration of the portamento transition.<br />
-            <b>"LEGATO"</b> controls the mode of the portamento effect.<br />
-            <b>Outputs:</b><br />
-            <b>"KEY"</b> is the MIDI key number translated into the range between -8192.0 .. 8192.0.<br />
-            <b>"VELOCITY"</b> is the MIDI velocity value translated into the range between 0.0 .. 16384.0.<br />
-            <b>"TRIGGER"</b> translates MIDI keyon/keyoff commands into the range between 0.0 .. 1.0.<br />
-            <b>"INDEX"</b> is the non-translated MIDI key number.<br />
-            <b>"DELAY1"</b> is the <b>"TRIGGER"</b> value delayed by 1 sample.<br />
-            <b>"DELAY2"</b> is the <b>"TRIGGER"</b> value delayed by 2 samples.<br />
+            <b>INPUTS:</b><br />
+            <b>Busy:</b> usually receives signal combined from all the relevant ADSR modules. Indicates whether the sound is still audible (1.0) or not (0.0).<br />
+            <b>Hold:</b> is the input signal from food pedal.<br />
+            <b>Porta:</b> engages to ramping of the <b>"KEY"</b> output to simulate portamento.<br />
+            <b>Time:</b> controls the duration of the portamento transition.<br />
+            <b>Legato:</b> controls the mode of the portamento effect.<br />
+            <b>OUTPUTS:</b><br />
+            <b>Key:</b> is the MIDI key number translated into the range between -8192.0 .. 8192.0.<br />
+            <b>Velocity:</b> is the MIDI velocity value translated into the range between 0.0 .. 16384.0.<br />
+            <b>Trigger:</b> translates MIDI keyon/keyoff commands into the range between 0.0 .. 1.0.<br />
+            <b>Index:</b> is the non-translated MIDI key number.<br />
+            <b>Delay1:</b> is the <b>"TRIGGER"</b> value delayed by 1 sample.<br />
+            <b>Delay2:</b> is the <b>"TRIGGER"</b> value delayed by 2 samples.<br />
         </div>
     </a>
 </div>
@@ -425,6 +545,8 @@
 </div>
 
 <div class="doc_library_section"><a id="superstructure">Superstructure</a></div>
+
+<div class="doc_library_section"><a id="utilities">Utilities</a></div>
 
 <div class="doc_predicate">
     <a id="predicate_Connect">
@@ -491,8 +613,6 @@
         </div>
     </a>
 </div>
-
-<div class="doc_library_section"><a id="utilities">Utilities</a></div>"
 
 <div class="doc_library_section"><a id="midi">Midi</a></div>
 

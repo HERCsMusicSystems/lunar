@@ -38,7 +38,9 @@ auto := [[wave DoctorWaveforms
 	[InsertPB *index *Doctor index]
 	[Insert *delay *Doctor delay]
 	[Insert *drywet *Doctor delay]
-	[BuildDoctorPart *Doctor *DoctorCB *freq *index *pan]
+	[REPEAT *polyphony
+		[BuildDoctorPart *Doctor *DoctorCB *freq *index *pan]
+	]
 	[InsertController 7 *Doctor volume]
 	[InsertController 10 -64 *Doctor pan]
 	[InsertController 91 -64 *Doctor delay balance]

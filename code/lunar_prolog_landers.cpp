@@ -471,7 +471,7 @@ public:
 			PrologElement * el = pp -> getLeft ();
 			if (el -> isAtom ()) atom = el;
 			if (el -> isEarth ()) atom = el;
-			if (el -> isInteger ()) if (key == 0 && note == 0) key = el; else velocity = el;
+			if (el -> isNumber ()) if (key == 0 && note == 0) key = el; else velocity = el;
 			if (el -> isVar ()) var = el;
 			if (el -> isPair ()) {
 				note = el -> getLeft ();
@@ -486,39 +486,39 @@ public:
 		CommandModule * trigger = (CommandModule *) module;
 		if (atom != 0) {
 			if (atom -> isEarth ()) {
-				if (key != 0) return trigger -> insert_controller (0, key -> getInteger (), 0);
+				if (key != 0) return trigger -> insert_controller (0, (int) key -> getNumber (), 0);
 				return true;
 			}
 			if (atom -> isAtom ()) {
 				PrologAtom * a = atom -> getAtom ();
 				if (a == keyon) {
 					int key_note;
-					if (key != 0) key_note = key -> getInteger ();
+					if (key != 0) key_note = (int) key -> getNumber ();
 					else if (note != 0 && octave != 0) key_note = chromatic (note -> getAtom ()) + octave -> getInteger () * 12 + 48;
 					else return false;
 					if (velocity == 0) trigger -> keyon (key_note);
-					else trigger -> keyon (key_note, velocity -> getInteger ());
+					else trigger -> keyon (key_note, (int) velocity -> getNumber ());
 					return true;
 				}
 				if (a == keyoff) {
-					if (key != 0) trigger -> keyoff (key -> getInteger (), velocity == 0 ? 0 : velocity -> getInteger ());
+					if (key != 0) trigger -> keyoff ((int) key -> getNumber (), velocity == 0 ? 0 : (int) velocity -> getNumber ());
 					else if (note != 0 && octave != 0)
-						trigger -> keyoff (chromatic (note -> getAtom ()) + octave -> getInteger () * 12 + 48, velocity == 0 ? 0 : velocity -> getInteger ());
+						trigger -> keyoff (chromatic (note -> getAtom ()) + octave -> getInteger () * 12 + 48, velocity == 0 ? 0 : (int) velocity -> getNumber ());
 					else trigger -> keyoff ();
 					return true;
 				}
 				if (a == control) {
 					if (key != 0) {
-						if (var != 0) {var -> setDouble (trigger -> getControl (key -> getInteger ())); return true;}
-						if (velocity != 0) {trigger -> control (key -> getInteger (), velocity -> getInteger ()); return true;}
+						if (var != 0) {var -> setDouble (trigger -> getControl ((int) key -> getNumber ())); return true;}
+						if (velocity != 0) {trigger -> control ((int) key -> getNumber (), (int) velocity -> getNumber ()); return true;}
 					}
 					if (var != 0) {var -> setAtom (trigger -> isMonoMode () ? mono : poly); return true;}
 					return false;
 				}
 				if (a == pitch) {
 					if (key != 0 && velocity != 0) {
-						int lsb = key -> getInteger ();
-						int msb = velocity -> getInteger ();
+						int lsb = (int) key -> getNumber ();
+						int msb = (int) velocity -> getNumber ();
 						if (msb == 127 && lsb == 127) msb = 128;
 						trigger -> control (128, msb);
 						return true;
@@ -536,7 +536,7 @@ public:
 				}
 				if (machine -> isTypeOf (PrologNativeOrbiter :: name ()) && key != 0) {
 					return trigger -> insert_controller ((orbiter *) ((PrologNativeOrbiter *) machine) -> module,
-														key -> getInteger (), velocity != 0 ? velocity -> getInteger () : 0);
+														(int) key -> getNumber (), velocity != 0 ? (int) velocity -> getNumber () : 0);
 				}
 			}
 		}

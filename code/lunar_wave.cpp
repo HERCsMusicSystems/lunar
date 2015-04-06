@@ -227,27 +227,11 @@ bool loop_wave (char * source, char * destination, int start, int stop) {
 	write_id (tc, command);
 	write4 (tc, riff_size + 68);
 	if (! read_id (fr, command)) Fail; riff_size -= 4; write_id (tc, command);
-	bool loop_not_exported = true;
-	while (riff_size > 0 && loop_not_exported) {
-		if (! read_id (fr, command)) Fail; riff_size -= 4;
-		long int chunk_size;
-		if (! read4 (fr, & chunk_size)) Fail; riff_size -= 4;
-		if (strcmp (command, "fmt ") == 0 || strcmp (command, "data") == 0) {
-			write_id (tc, command); write4 (tc, chunk_size);
-			riff_size -= chunk_size;
-			while (chunk_size-- > 0) fputc (fgetc (fr), tc);
-		} else {
-			write_id (tc, "smpl<"); write4 (tc, 60);
-			write4 (tc, 0); write4 (tc, 0); write4 (tc, 0); write4 (tc, 60);
-			write4 (tc, 0); write4 (tc, 0); write4 (tc, 0); write4 (tc, 1); write4 (tc, 0);
-			write4 (tc, 0); write4 (tc, 0); write4 (tc, start); write4 (tc, stop); write4 (tc, 0); write4 (tc, 0);
-			loop_not_exported = false;
-			write_id (tc, command); write4 (tc, chunk_size);
-			riff_size -= chunk_size;
-			while (chunk_size-- > 0) fputc (fgetc (fr), tc);
-		}
-	}
 	while (riff_size-- > 0) fputc (fgetc (fr), tc);
+	write_id (tc, "smpl<"); write4 (tc, 60);
+	write4 (tc, 0); write4 (tc, 0); write4 (tc, 0); write4 (tc, 60);
+	write4 (tc, 0); write4 (tc, 0); write4 (tc, 0); write4 (tc, 1); write4 (tc, 0);
+	write4 (tc, 0); write4 (tc, 0); write4 (tc, start); write4 (tc, stop); write4 (tc, 0); write4 (tc, 0);
 	fclose (fr);
 	fclose (tc);
 	return true;

@@ -12,7 +12,8 @@ program lunar #machine := "prolog.lunar"
 				trigger inactive_trigger delay1 delay2 mixer stereo_mixer gateway stereo_gateway amplifier stereo_amplifier volume mono_volume
 				lfo adsr eg egscaling egscal vco
 				index shift bias
-				square_operator fm4 fm6 dx9 dx7 saw_operator noise_operator sampler_operator sensitivity sens filter delay chorus pan power_pan linear_pan
+				square_operator fm4 fm6 dx9 dx7 saw_operator noise_operator sampler_operator sampler
+				sensitivity sens filter delay chorus pan power_pan linear_pan
 				drywet drywet_mono balance
 				level level1 level2 level3 level4 time1 time2 time3 time4 attack decay sustain release
 				freq amp ratio sync resonance hold busy portamento porta  legato time speed wave pulse phase poly feedback highdamp
@@ -326,6 +327,13 @@ program lunar #machine := "prolog.lunar"
 	[addcl [[*modules *operator : *selector]]]
 	[*operator : *io]
 	[InsertIO *parameters *operator *selector *io]
+]
+
+[[InsertIO *parameters *operator *selector [["FREQ" "AMP" "RATIO" "INDEX" : *] *o]]
+	[AddParameterBlock *parameters freq *operator *selector 0 "freq"]
+	[AddParameterBlock *parameters amp *operator *selector 0 "amp"]
+	[AddParameterBlock *parameters ratio *operator *selector 1 "ratio"]
+	[AddParameterBlock *parameters index *operator *selector 0 "index"]
 ]
 
 [[InsertIO *parameters *operator *selector [["FREQ" "AMP" "RATIO" : *] *o]]

@@ -55,6 +55,9 @@ saw_operator_class :: saw_operator_class (orbiter_core * core) : PrologNativeOrb
 orbiter * noise_operator_class :: create_orbiter (PrologElement * parameters) {return new noise_operator (core);}
 noise_operator_class :: noise_operator_class (orbiter_core * core) : PrologNativeOrbiterCreator (core) {}
 
+orbiter * vco_operator_class :: create_orbiter (PrologElement * parameters) {return new vco_operator (core);}
+vco_operator_class :: vco_operator_class (orbiter_core * core) : PrologNativeOrbiterCreator (core) {}
+
 orbiter * sampler_operator_class :: create_orbiter (PrologElement * parameters) {
 	PrologElement * wave = 0;
 	while (parameters -> isPair ()) {

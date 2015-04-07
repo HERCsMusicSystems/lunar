@@ -163,6 +163,12 @@ public:
 	noise_operator_class (orbiter_core * core);
 };
 
+class vco_operator_class : public PrologNativeOrbiterCreator {
+public:
+	virtual orbiter * create_orbiter (PrologElement * parameters);
+	vco_operator_class (orbiter_core * core);
+};
+
 class sampler_operator_class : public PrologNativeOrbiterCreator {
 public:
 	virtual orbiter * create_orbiter (PrologElement * parameters);

@@ -84,6 +84,17 @@ public:
 	lunar_aliased_square_operator (orbiter_core * core);
 };
 
+class vco_operator : public lunar_square_operator {
+private:
+	double wave; // 0 = sine, 1 = saw, 2 = square, 3 = noise
+public:
+	virtual int numberOfInputs (void);
+	virtual char * inputName (int ind);
+	virtual double * inputAddress (int ind);
+	virtual void move (void);
+	vco_operator (orbiter_core * core);
+};
+
 class noise_operator : public orbiter {
 private:
 	double amp;

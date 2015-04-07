@@ -120,6 +120,28 @@ void lunar_square_operator :: move (void) {
 }
 lunar_square_operator :: lunar_square_operator (orbiter_core * core) : lunar_saw_operator (core) {stage = true;}
 
+/////////
+// VCO //
+/////////
+
+int vco_operator :: numberOfInputs (void) {return 5;}
+char * vco_operator :: inputName (int ind) {if (ind == 4) return "WAVE"; return lunar_square_operator :: inputName (ind);}
+double * vco_operator :: inputAddress (int ind) {if (ind == 4) return & wave; return lunar_square_operator :: inputAddress (ind);}
+void vco_operator :: move (void) {
+	switch ((int) wave) {
+	case 1: lunar_saw_operator :: move (); break;
+	case 2: lunar_square_operator :: move (); break;
+	case 3: signal = core -> Amplitude (amp) * (0.00000011920928955078125 * (double) core -> noise24b - 1.0); break;
+	default:
+		if (trigger >= 16384.0) time = 0.0;
+		this -> signal = core -> Amplitude (amp) * core -> Sine (time);
+		time += core -> TimeDelta (freq) * ratio;
+		while (time >= 1.0) time -= 1.0;
+		break;
+	}
+}
+vco_operator :: vco_operator (orbiter_core * core) : lunar_square_operator (core) {wave = 0.0;}
+
 ///////////
 // NOISE //
 ///////////

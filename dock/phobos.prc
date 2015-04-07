@@ -13,6 +13,11 @@ program phobos [Phobos PhobosEditor BuildPhobos BuildPhobosPart Operator-1 Opera
 ]
 [[PhobosEditor] [TRY [Operator-1] [Operator-2] [Operator-3] [Operator-4] [Operators]]]
 
+[[BuildPhobos *polyphony]
+	[GenerateInstrumentName Phobos *phobos]
+	[BuildPhobos *polyphony *phobos * * *]
+]
+
 [[BuildPhobos *polyphony *Phobos *PhobosCB *volume *pan]
 	[Moonbase *Phobos *PhobosCB Phobos]
 

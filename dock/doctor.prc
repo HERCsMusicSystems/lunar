@@ -5,6 +5,16 @@ program doctor [
 				Doctor BuildDoctor BuildDoctorPart DoctorWaveforms
 				]
 
+[[BuildDoctor *polyphony]
+	[GenerateInstrumentName Doctor *doctor]
+	[BuildDoctor *polyphony *doctor * *]
+]
+
+[[BuildDoctor *polyphony *waveforms]
+	[GenerateInstrumentName Doctor *doctor]
+	[BuildDoctor *polyphony *doctor * * *waveforms]
+]
+
 [[BuildDoctor *polyphony *Doctor *DoctorCB *volume]
 	[TRY
 		[show "trying...."]

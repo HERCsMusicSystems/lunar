@@ -43,8 +43,6 @@ protected:
 	lunar_oscillator (orbiter_core * core);
 };
 
-#define RETRIGGER_OSCILLATOR if (slope != trigger) if (sync != 0.0 && trigger > 0.0) time = 0.0; slope = trigger;
-
 class lunar_operator : public lunar_oscillator {
 private:
 	double shift;
@@ -67,7 +65,15 @@ protected:
 	int blep_index;
 public:
 	virtual void move (void);
+	friend lunar_saw_operator * create_lunar_saw_operator (orbiter_core * core);
+protected:
 	lunar_saw_operator (orbiter_core * core);
+};
+
+class lunar_aliased_square_operator : public lunar_oscillator {
+public:
+	virtual void move (void);
+	lunar_aliased_square_operator (orbiter_core * core);
 };
 
 class lunar_square_operator : public lunar_saw_operator {
@@ -75,13 +81,9 @@ private:
 	bool stage;
 public:
 	virtual void move (void);
+	friend lunar_square_operator * create_lunar_square_operator (orbiter_core * core);
+protected:
 	lunar_square_operator (orbiter_core * core);
-};
-
-class lunar_aliased_square_operator : public lunar_oscillator {
-public:
-	virtual void move (void);
-	lunar_aliased_square_operator (orbiter_core * core);
 };
 
 class vco_operator : public lunar_square_operator {

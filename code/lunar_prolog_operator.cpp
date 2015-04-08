@@ -39,7 +39,7 @@ orbiter * square_operator_class :: create_orbiter (PrologElement * parameters) {
 		parameters = parameters -> getLeft ();
 		if (parameters -> isEarth ()) return new lunar_aliased_square_operator (core);
 	}
-	return new lunar_square_operator (core);
+	return create_lunar_square_operator (core);
 }
 square_operator_class :: square_operator_class (orbiter_core * core) : PrologNativeOrbiterCreator (core) {}
 
@@ -48,7 +48,7 @@ orbiter * saw_operator_class :: create_orbiter (PrologElement * parameters) {
 		parameters = parameters -> getLeft ();
 		if (parameters -> isEarth ()) return new lunar_aliased_saw_operator (core);
 	}
-	return new lunar_saw_operator (core);
+	return create_lunar_saw_operator (core);
 }
 saw_operator_class :: saw_operator_class (orbiter_core * core) : PrologNativeOrbiterCreator (core) {}
 

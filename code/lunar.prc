@@ -336,6 +336,13 @@ program lunar #machine := "prolog.lunar"
 	[AddParameterBlock *parameters index *operator *selector 0 "index"]
 ]
 
+[[InsertIO *parameters *operator *selector [["FREQ" "AMP" "RATIO" "TRIGGER" "WAVE" : *] *o]]
+	[AddParameterBlock *parameters freq *operator *selector 0 "freq"]
+	[AddParameterBlock *parameters amp *operator *selector 0 "amp"]
+	[AddParameterBlock *parameters ratio *operator *selector 1 "ratio"]
+	[AddParameterBlock *parameters wave *operator *selector 0 "index"]
+]
+
 [[InsertIO *parameters *operator *selector [["FREQ" "AMP" "RATIO" : *] *o]]
 	[AddParameterBlock *parameters freq *operator *selector 0 "freq"]
 	[AddParameterBlock *parameters amp *operator *selector 0 "amp"]

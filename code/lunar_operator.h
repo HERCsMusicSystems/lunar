@@ -65,7 +65,7 @@ protected:
 	int blep_index;
 public:
 	virtual void move (void);
-	friend lunar_saw_operator * create_lunar_saw_operator (orbiter_core * core);
+	static lunar_saw_operator * create (orbiter_core * core);
 protected:
 	lunar_saw_operator (orbiter_core * core);
 };
@@ -81,7 +81,7 @@ private:
 	bool stage;
 public:
 	virtual void move (void);
-	friend lunar_square_operator * create_lunar_square_operator (orbiter_core * core);
+	static lunar_square_operator * create (orbiter_core * core);
 protected:
 	lunar_square_operator (orbiter_core * core);
 };

@@ -93,7 +93,7 @@ void lunar_saw_operator :: move (void) {
 	while (time >= 1.0) {time -= 1.0; blep_index = (int) (time * 512.0 / (delta > 0.0 ? delta : 1.0));}
 }
 lunar_saw_operator :: lunar_saw_operator (orbiter_core * core) : lunar_oscillator (core) {blep_index = 0;}
-lunar_saw_operator * create_lunar_saw_operator (orbiter_core * core) {
+lunar_saw_operator * lunar_saw_operator :: create (orbiter_core * core) {
 	lunar_saw_operator * op = new lunar_saw_operator (core);
 	op -> initialise (); op -> activate ();
 	return op;
@@ -123,7 +123,7 @@ void lunar_square_operator :: move (void) {
 	signal *= core -> Amplitude (amp);
 }
 lunar_square_operator :: lunar_square_operator (orbiter_core * core) : lunar_saw_operator (core) {stage = true;}
-lunar_square_operator * create_lunar_square_operator (orbiter_core * core) {
+lunar_square_operator * lunar_square_operator :: create (orbiter_core * core) {
 	lunar_square_operator * op = new lunar_square_operator (core);
 	op -> initialise (); op -> activate ();
 	return op;

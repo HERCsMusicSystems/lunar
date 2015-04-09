@@ -13,7 +13,7 @@ program lunar #machine := "prolog.lunar"
 				lfo adsr eg egscaling egscal vco
 				index shift bias
 				square_operator fm4 fm6 dx9 dx7 saw_operator noise_operator sampler_operator sampler
-				sensitivity sens filter delay chorus pan power_pan linear_pan
+				sensitivity sens filter delay chorus pan power_pan linear_pan stereo_pan stereo_power_pan stereo_linear_pan
 				drywet drywet_mono balance
 				level level1 level2 level3 level4 time1 time2 time3 time4 attack decay sustain release
 				freq amp ratio sync resonance hold busy portamento porta  legato time speed wave pulse phase poly feedback highdamp
@@ -74,10 +74,13 @@ program lunar #machine := "prolog.lunar"
 #machine delay := "delay"
 #machine chorus := "chorus"
 #machine pan := "pan"
-#machine drywet := "drywet"
-#machine drywet_mono := "drywet_mono"
 #machine power_pan := "power_pan"
 #machine linear_pan := "linear_pan"
+#machine stereo_pan := "stereo_pan"
+#machine stereo_power_pan := "stereo_power_pan"
+#machine stereo_linear_pan := "stereo_linear_pan"
+#machine drywet := "drywet"
+#machine drywet_mono := "drywet_mono"
 #machine sensitivity := "sensitivity"
 #machine moonbase := "moonbase"
 #machine arpeggiator := "arpeggiator"
@@ -401,6 +404,10 @@ program lunar #machine := "prolog.lunar"
 ]
 
 [[InsertIO *parameters *pan *selector [["SIGNAL" "PAN" : *] *]]
+	[AddParameterBlock *parameters pan *pan *selector 0 "index"]
+]
+
+[[InsertIO *parameters *pan *selector [["LEFT" "RIGHT" "PAN" : *] *]]
 	[AddParameterBlock *parameters pan *pan *selector 0 "index"]
 ]
 

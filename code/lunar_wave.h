@@ -52,7 +52,7 @@ public:
 	~ lunar_wave (void);
 };
 
-extern wave_data * create_lunar_wave_data (char * file_name);
+extern wave_data * create_lunar_wave_data (char * file_name, double gain);
 extern bool loop_wave (char * source, char * destination, int start, int stop);
 
 #endif

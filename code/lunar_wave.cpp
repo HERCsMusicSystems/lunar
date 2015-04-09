@@ -95,7 +95,8 @@ static bool read4 (FILE * fr, long int * ind) {
 }
 
 #define fail {fclose (fr); return 0;}
-wave_data * create_lunar_wave_data (char * file_name) {
+wave_data * create_lunar_wave_data (char * file_name, double gain) {
+	gain /= HEADROOM_FRACTION;
 	if (file_name == 0) return 0;
 	FILE * fr = fopen (file_name, "rb");
 	if (! fr) return 0;
@@ -144,12 +145,12 @@ wave_data * create_lunar_wave_data (char * file_name) {
 					switch (bits_per_sample) {
 					case 8:
 						if (! read1 (fr, & char_sample)) fail;
-						wave -> data [channel] [index] = sample = ((double) char_sample - 128.0) / 128.0;
+						wave -> data [channel] [index] = sample = gain * ((double) char_sample - 128.0) / 128.0;
 						chunk_size--;
 						break;
 					case 16:
 						if (! read2 (fr, & short_sample)) fail;
-						wave -> data [channel] [index] = sample = (double) short_sample / 32768.0;
+						wave -> data [channel] [index] = sample = gain * (double) short_sample / 32768.0;
 						chunk_size -= 2;
 						break;
 					default: fail; break;

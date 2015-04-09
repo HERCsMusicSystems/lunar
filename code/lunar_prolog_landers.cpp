@@ -261,9 +261,11 @@ orbiter * wave_class :: create_orbiter (PrologElement * parameters) {
 	}
 	lunar_wave * wave = new lunar_wave (core, capacity);
 	capacity = 0;
+	double gain = 4.0;
 	while (parameters -> isPair ()) {
 		PrologElement * el = parameters -> getLeft ();
-		if (el -> isText ()) wave -> waves [capacity++] = create_lunar_wave_data (el -> getText ());
+		if (el -> isDouble ()) gain = el -> getDouble ();
+		if (el -> isText ()) wave -> waves [capacity++] = create_lunar_wave_data (el -> getText (), gain);
 		parameters = parameters -> getRight ();
 	}
 	return wave;
@@ -411,9 +413,13 @@ orbiter * pan_class :: create_orbiter (PrologElement * parameters) {
 	switch (type) {
 	case 0: return new lunar_pan (core); break;
 	case 1: return new lunar_power_pan (core); break;
+	case 2: return new lunar_linear_pan (core); break;
+	case 3: return new lunar_stereo_pan (core); break;
+	case 4: return new lunar_stereo_power_pan (core); break;
+	case 5: return new lunar_stereo_linear_pan (core); break;
 	default: break;
 	}
-	return new lunar_linear_pan (core);
+	return new lunar_pan (core);
 }
 pan_class :: pan_class (orbiter_core * core, int type) : PrologNativeOrbiterCreator (core) {this -> type = type;}
 

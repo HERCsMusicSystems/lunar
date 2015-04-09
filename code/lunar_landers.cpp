@@ -1095,6 +1095,66 @@ void lunar_linear_pan :: move (void) {
 }
 lunar_linear_pan :: lunar_linear_pan (orbiter_core * core) : lunar_pan (core) {}
 
+int lunar_stereo_pan :: numberOfInputs (void) {return 3;}
+char * lunar_stereo_pan :: inputName (int ind) {
+	switch (ind) {
+	case 0: return "LEFT"; break;
+	case 1: return "RIGHT"; break;
+	case 2: return "PAN"; break;
+	default: break;
+	}
+	return orbiter :: inputName (ind);
+}
+double * lunar_stereo_pan :: inputAddress (int ind) {
+	switch (ind) {
+	case 0: return & enter; break;
+	case 1: return & enter_right; break;
+	case 2: return & pan; break;
+	default: break;
+	}
+	return orbiter :: inputAddress (ind);
+}
+int lunar_stereo_pan :: numberOfOutputs (void) {return 2;}
+char * lunar_stereo_pan :: outputName (int ind) {
+	switch (ind) {
+	case 0: return "LEFT"; break;
+	case 1: return "RIGHT"; break;
+	default: break;
+	}
+	return orbiter :: outputName (ind);
+}
+double * lunar_stereo_pan :: outputAddress (int ind) {
+	switch (ind) {
+	case 0: return & signal; break;
+	case 1: return & right; break;
+	default: break;
+	}
+	return orbiter :: outputAddress (ind);
+}
+void lunar_stereo_pan :: move (void) {
+	int ind = (int) pan;
+	if (ind > 8192) ind = 8192; if (ind < -8192) ind = -8192;
+	signal = * (core -> pan - ind) * enter;
+	right = * (core -> pan + ind) * enter_right;
+}
+lunar_stereo_pan :: lunar_stereo_pan (orbiter_core * core) : orbiter (core) {
+	enter = enter_right = pan = right = 0.0; initialise (); activate ();
+}
+void lunar_stereo_power_pan :: move (void) {
+	int ind = (int) pan;
+	if (ind > 8192) ind = 8192; if (ind < -8192) ind = -8192;
+	signal = * (core -> power_pan - ind) * enter;
+	right = * (core -> power_pan + ind) * enter_right;
+}
+lunar_stereo_power_pan :: lunar_stereo_power_pan (orbiter_core * core) : lunar_stereo_pan (core) {}
+void lunar_stereo_linear_pan :: move (void) {
+	int ind = (int) pan;
+	if (ind > 8192) ind = 8192; if (ind < -8192) ind = -8192;
+	signal = * (core -> linear_pan - ind) * enter;
+	right = * (core -> linear_pan + ind) * enter_right;
+}
+lunar_stereo_linear_pan :: lunar_stereo_linear_pan (orbiter_core * core) : lunar_stereo_pan (core) {}
+
 int lunar_sensitivity :: numberOfInputs (void) {return 4;}
 char * lunar_sensitivity :: inputName (int ind) {
 	switch (ind) {

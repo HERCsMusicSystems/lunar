@@ -29,6 +29,8 @@
 
 #include "pthread.h"
 
+#define HEADROOM_FRACTION 0.4
+
 class orbiter;
 class dock;
 typedef dock * dock_pointer;

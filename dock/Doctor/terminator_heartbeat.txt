@@ -1,0 +1,25 @@
+Doctor
+poly
+[volume]5120.0
+[pan]0.0
+[pitch]0.0
+[range]256.0
+[delay feedback]8192.0
+[delay time]8192.0
+[delay highdamp]0.0
+[delay balance]-8192.0
+[operator freq]-128.0
+[operator amp]0.0
+[operator ratio]1.0
+[operator index]0.0
+[filter freq]1664.0
+[filter resonance]12800.0
+[filter amp]0.0
+[adsr attack]0.0
+[adsr decay]0.0
+[adsr sustain]0.0
+[adsr release]16384.0
+[sensitivity BP]16384.0
+[sensitivity left]-48.0
+[sensitivity right]0.0
+

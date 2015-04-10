@@ -234,6 +234,15 @@ public:
 	sequencer_class (PrologDirectory * dir, orbiter_core * core);
 };
 
+class polysequencer_class : public PrologNativeOrbiterCreator {
+private:
+	PrologDirectory * dir;
+public:
+	virtual orbiter * create_orbiter (PrologElement * parameters);
+	virtual PrologNativeOrbiter * create_native_orbiter (PrologAtom * atom, orbiter * module);
+	polysequencer_class (PrologDirectory * dir, orbiter_core * core);
+};
+
 class detector_class : public PrologNativeOrbiterCreator {
 public:
 	PrologRoot * root;

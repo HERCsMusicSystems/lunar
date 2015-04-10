@@ -697,6 +697,124 @@ public:
 	}
 };
 
+class native_polysequencer : public native_sequencer {
+public:
+	bool code (PrologElement * parameters, PrologResolution * resolution) {
+		if (parameters -> isPair ()) {
+			PrologElement * el = parameters -> getLeft ();
+			if (el -> isVar ()) {
+				polysequencer * seq = (polysequencer *) module;
+				if (seq == 0) return false;
+				polysequence_element * sqep = seq -> elements;
+				while (sqep != 0) {
+					el -> setPair ();
+					PrologElement * ell = el -> getLeft ();
+					switch (sqep -> type) {
+					case 0: ell -> setInteger (sqep -> key); break;
+					case 1:
+						ell -> setPair ();
+						ell -> getLeft () -> setAtom (keyon);
+						ell = ell -> getRight (); ell -> setPair ();
+						ell -> getLeft () -> setInteger (sqep -> channel);
+						ell = ell -> getRight (); ell -> setPair ();
+						ell -> getLeft () -> setInteger (sqep -> key);
+						break;
+					case 2:
+						ell -> setPair ();
+						ell -> getLeft () -> setAtom (keyon);
+						ell = ell -> getRight (); ell -> setPair ();
+						ell -> getLeft () -> setInteger (sqep -> channel);
+						ell = ell -> getRight (); ell -> setPair ();
+						ell -> getLeft () -> setInteger (sqep -> key);
+						ell = ell -> getRight (); ell -> setPair ();
+						ell -> getLeft () -> setInteger (sqep -> velocity);
+						break;
+					case 3:
+						ell -> setPair ();
+						ell -> getLeft () -> setAtom (keyoff);
+						ell = ell -> getRight (); ell -> setPair ();
+						ell -> getLeft () -> setInteger (sqep -> channel);
+						break;
+					case 4:
+						ell -> setPair ();
+						ell -> getLeft () -> setAtom (keyoff);
+						ell = ell -> getRight (); ell -> setPair ();
+						ell -> getLeft () -> setInteger (sqep -> channel);
+						ell = ell -> getRight (); ell -> setPair ();
+						ell -> getLeft () -> setInteger (sqep -> key);
+						break;
+					case 5:
+						ell -> setPair ();
+						ell -> getLeft () -> setAtom (control);
+						ell = ell -> getRight (); ell -> setPair ();
+						ell -> getLeft () -> setInteger (sqep -> channel);
+						ell = ell -> getRight (); ell -> setPair ();
+						ell -> getLeft () -> setInteger (sqep -> key);
+						ell = ell -> getRight (); ell -> setPair ();
+						ell -> getLeft () -> setInteger (sqep -> velocity);
+						break;
+					case 6: ell -> setAtom (keyoff); break;
+					default: break;
+					}
+					el = el -> getRight ();
+					sqep = sqep -> next;
+				}
+				if (! el -> isEarth ()) el -> setPair ();
+				return true;
+			}
+			if (el -> isPair ()) {
+				polysequencer * seq = (polysequencer *) module;
+				if (seq == 0) return false;
+				if (seq -> elements != 0) delete seq -> elements; seq -> elements = 0;
+				polysequence_element * * sqep = & seq -> elements;
+				while (el -> isPair ()) {
+					PrologElement * atom = 0;
+					PrologElement * channel = 0;
+					PrologElement * key = 0;
+					PrologElement * velocity = 0;
+					PrologElement * ticks = 0;
+					PrologElement * eq = el -> getLeft ();
+					if (eq -> isInteger ()) {* sqep = new polysequence_element (0, 0, eq -> getInteger ()); sqep = & (* sqep) -> next;}
+					if (eq -> isAtom () && eq -> getAtom () == keyoff) {* sqep = new polysequence_element (6); sqep = & (* sqep) -> next;}
+					if (eq -> isPair ()) {
+						while (eq -> isPair ()) {
+							PrologElement * eqq = eq -> getLeft ();
+							if (eqq -> isAtom ()) atom = eqq;
+							if (eqq -> isInteger ()) if (channel == 0) channel = eqq; else if (key == 0) key = eqq; else velocity = eqq;
+							eq = eq -> getRight ();
+						}
+						if (channel != 0 && channel -> getInteger () >= 0 && channel -> getInteger () < seq -> numberOfBases ()) {
+							if (atom -> getAtom () == keyon && key != 0) {
+								if (velocity == 0) * sqep = new polysequence_element (1, channel -> getInteger (), key -> getInteger ());
+								else * sqep = new polysequence_element (2, channel -> getInteger (), key -> getInteger (), velocity -> getInteger ());
+								sqep = & (* sqep) -> next;
+							}
+							if (atom -> getAtom () == keyoff) {
+								if (key == 0) * sqep = new polysequence_element (3, channel -> getInteger ());
+								else * sqep = new polysequence_element (4, channel -> getInteger (), key -> getInteger ());
+								sqep = & (* sqep) -> next;
+							}
+							if (atom -> getAtom () == control && key != 0 && velocity != 0) {
+								* sqep = new polysequence_element (5, channel -> getInteger (), key -> getInteger (), velocity -> getInteger ());
+								sqep = & (* sqep) -> next;
+							}
+						} else {
+							if (atom -> getAtom () == keyoff) {
+								* sqep = new polysequence_element (6);
+								sqep = & (* sqep) -> next;
+							}
+						}
+					}
+					el = el -> getRight ();
+				}
+				return true;
+			}
+		}
+		return native_moonbase :: code (parameters, resolution);
+	}
+	native_polysequencer (PrologDirectory * dir, PrologAtom * atom, orbiter_core * core, orbiter * module) : native_sequencer (dir, atom, core, module) {}
+};
+
 orbiter * sequencer_class :: create_orbiter (PrologElement * parameters) {
 	PrologElement * base = 0;
 	while (parameters -> isPair ()) {
@@ -712,6 +830,31 @@ orbiter * sequencer_class :: create_orbiter (PrologElement * parameters) {
 }
 PrologNativeOrbiter * sequencer_class :: create_native_orbiter (PrologAtom * atom, orbiter * module) {return new native_sequencer (dir, atom, core, module);}
 sequencer_class :: sequencer_class (PrologDirectory * dir, orbiter_core * core) : PrologNativeOrbiterCreator (core) {this -> dir = dir;}
+
+orbiter * polysequencer_class :: create_orbiter (PrologElement * parameters) {
+	PrologElement * pb = parameters;
+	int number_of_bases = 0;
+	while (pb -> isPair ()) {
+		PrologElement * el = pb -> getLeft ();
+		if (el -> isAtom ()) {
+			PrologNativeCode * machine = el -> getAtom () -> getMachine ();
+			if (machine != 0 && machine -> isTypeOf (native_moonbase :: name ())) number_of_bases++;
+		}
+		pb = pb -> getRight ();
+	}
+	polysequencer * poly_seq = new polysequencer (core, number_of_bases);
+	while (parameters -> isPair ()) {
+		PrologElement * el = parameters -> getLeft ();
+		if (el -> isAtom ()) {
+			PrologNativeCode * machine = el -> getAtom () -> getMachine ();
+			if (machine != 0 && machine -> isTypeOf (native_moonbase :: name ())) poly_seq -> add_base ((moonbase *) ((native_moonbase *) machine) -> module);
+		}
+		parameters = parameters -> getRight ();
+	}
+	return poly_seq;
+}
+PrologNativeOrbiter * polysequencer_class :: create_native_orbiter (PrologAtom * atom, orbiter * module) {return new native_polysequencer (dir, atom, core, module);}
+polysequencer_class :: polysequencer_class (PrologDirectory * dir, orbiter_core * core) : PrologNativeOrbiterCreator (core) {this -> dir = dir;}
 
 class lunar_detector : public orbiter {
 private:

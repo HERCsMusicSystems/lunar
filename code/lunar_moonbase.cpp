@@ -672,6 +672,10 @@ arpeggiator :: arpeggiator (orbiter_core * core, CommandModule * base) : Command
 
 arpeggiator :: ~ arpeggiator (void) {pthread_mutex_destroy (& critical);}
 
+///////////////
+// SEQUENCER //
+///////////////
+
 sequence_element :: sequence_element (int type, int key, int velocity) {
 	this -> type = type;
 	this -> key = key;
@@ -718,21 +722,24 @@ void sequencer :: propagate_signals (void) {
 	while (time >= 1.0) {time -= 1.0; pthread_mutex_lock (& critical); private_signal (); pthread_mutex_unlock (& critical);}
 	time += core -> sample_duration * tempo * 0.4;
 }
-#include <stdio.h>
+
 void sequencer :: private_signal (void) {
 	if (current_frame == 0 || base == 0) return;
 	while (tick < 1) {
 		switch (current_frame -> type) {
 		case 0: tick = current_frame -> key; break;
-		case 1: printf ("keyon [%i]\n", current_frame -> key); base -> keyon (current_frame -> key); break;
-		case 2: printf ("keyon [%i %i]\n", current_frame -> key, current_frame -> velocity); base -> keyon (current_frame -> key, current_frame -> velocity); break;
-		case 3: printf ("keyoff []\n"); base -> keyoff (); break;
-		case 4: printf ("keyoff [%i]\n", current_frame -> key); base -> keyoff (current_frame -> key); break;
-		case 5: printf ("ctrl [%i %i]\n", current_frame -> key, current_frame -> velocity); base -> control (current_frame -> key, current_frame -> velocity); break;
+		case 1: base -> keyon (current_frame -> key); break;
+		case 2: base -> keyon (current_frame -> key, current_frame -> velocity); break;
+		case 3: base -> keyoff (); break;
+		case 4: base -> keyoff (current_frame -> key); break;
+		case 5: base -> control (current_frame -> key, current_frame -> velocity); break;
 		default: break;
 		}
 		current_frame = current_frame -> next;
-		if (current_frame == 0 && trigger > 1.0) current_frame = elements;
+		if (current_frame == 0) {
+			if (trigger > 1.0) current_frame = elements;
+			else return;
+		}
 	}
 	tick--;
 }
@@ -780,3 +787,122 @@ sequencer :: sequencer (orbiter_core * core, CommandModule * base) : CommandModu
 }
 
 sequencer :: ~ sequencer (void) {pthread_mutex_destroy (& critical); if (elements != 0) delete elements;}
+
+///////////////////
+// POLYSEQUENCER //
+///////////////////
+
+polysequence_element :: polysequence_element (int type, int channel, int key, int velocity) {
+	this -> type = type;
+	this -> channel = channel;
+	this -> key = key;
+	this -> velocity = velocity;
+	this -> next = 0;
+}
+
+polysequence_element :: ~ polysequence_element (void) {if (next != 0) delete next;}
+
+int polysequencer :: numberOfInputs (void) {return 2;}
+char * polysequencer :: inputName (int ind) {
+	switch (ind) {
+	case 0: return "SPEED"; break;
+	case 1: return "TRIGGER"; break;
+	default: break;
+	}
+	return orbiter :: inputName (ind);
+}
+double * polysequencer :: inputAddress (int ind) {
+	switch (ind) {
+	case 0: return & tempo; break;
+	case 1: return & trigger; break;
+	default: break;
+	}
+	return orbiter :: inputAddress (ind);
+}
+int polysequencer :: numberOfOutputs (void) {return 0;}
+bool polysequencer :: release (void) {
+	CommandModulePointer * bases_to_delete = bases;
+	int number_of_bases_to_delete = base_pointer;
+	bool ret = orbiter :: release ();
+	if (ret && bases_to_delete != 0) {
+		for (int ind = 0; ind < number_of_bases_to_delete; ind++) bases_to_delete [ind] -> release ();
+		delete [] bases_to_delete;
+	}
+	return ret;
+}
+
+void polysequencer :: propagate_signals (void) {
+	orbiter :: propagate_signals ();
+	if (trigger < 1.0) {
+		if (time < 0.0) return;
+		time = -1.0;
+		for (int ind = 0; ind < base_pointer; ind++) bases [ind] -> keyoff ();
+		return;
+	}
+	if (time < 0.0) {time = 1.0; tick = 0; current_frame = elements;}
+	while (time >= 1.0) {time -= 1.0; pthread_mutex_lock (& critical); private_signal (); pthread_mutex_unlock (& critical);}
+	time += core -> sample_duration * tempo * 0.4;
+}
+
+void polysequencer :: private_signal (void) {
+	if (current_frame == 0) return;
+	while (tick < 1) {
+		switch (current_frame -> type) {
+		case 0: tick = current_frame -> key; break;
+		case 1: if (current_frame -> channel >= 0 && current_frame -> channel < base_pointer) bases [current_frame -> channel] -> keyon (current_frame -> key); break;
+		case 2: if (current_frame -> channel >= 0 && current_frame -> channel < base_pointer) bases [current_frame -> channel] -> keyon (current_frame -> key, current_frame -> velocity); break;
+		case 3: if (current_frame -> channel >= 0 && current_frame -> channel < base_pointer) bases [current_frame -> channel] -> keyoff (); break;
+		case 4: if (current_frame -> channel >= 0 && current_frame -> channel < base_pointer) bases [current_frame -> channel] -> keyoff (current_frame -> key); break;
+		case 5: if (current_frame -> channel >= 0 && current_frame -> channel < base_pointer) bases [current_frame -> channel] -> control (current_frame -> key, current_frame -> velocity); break;
+		case 6: for (int ind = 0; ind < base_pointer; ind++) bases [ind] -> keyoff (); break;
+		default: break;
+		}
+		current_frame = current_frame -> next;
+		if (current_frame == 0) {
+			if (trigger > 1.0) current_frame = elements;
+			else return;
+		}
+	}
+	tick--;
+}
+
+bool polysequencer :: insert_trigger (lunar_trigger * trigger) {return false;}
+bool polysequencer :: insert_controller (orbiter * controller, int location, int shift) {return false;}
+
+void polysequencer :: keyon (int key) {}
+void polysequencer :: keyon (int key, int velocity) {}
+void polysequencer :: keyoff (void) {}
+void polysequencer :: keyoff (int key, int velocity) {}
+void polysequencer :: mono (void) {}
+void polysequencer :: poly (void) {}
+bool polysequencer :: isMonoMode (void) {return false;}
+void polysequencer :: control (int ctrl, int value) {}
+double polysequencer :: getControl (int ctrl) {return 0.0;}
+
+void polysequencer :: timing_clock (void) {
+	pthread_mutex_lock (& critical);
+	private_signal ();
+	pthread_mutex_unlock (& critical);
+}
+
+void polysequencer :: add_base (CommandModule * module) {
+	if (base_pointer >= number_of_bases) return;
+	bases [base_pointer++] = module;
+	module -> hold ();
+}
+int polysequencer :: numberOfBases (void) {return base_pointer;}
+
+polysequencer :: polysequencer (orbiter_core * core, int number_of_bases) : CommandModule (core) {
+	if (number_of_bases < 1) number_of_bases = 1;
+	this -> number_of_bases = number_of_bases;
+	base_pointer = 0;
+	pthread_mutex_init (& critical, 0);
+	tempo = 140.0;
+	trigger = 0.0; time = -1.0;
+	tick = 0;
+	bases = new CommandModulePointer [number_of_bases];
+	elements = current_frame = 0;
+	initialise (); activate ();
+}
+
+polysequencer :: ~ polysequencer (void) {pthread_mutex_destroy (& critical); if (elements != 0) delete elements;}

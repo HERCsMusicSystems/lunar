@@ -7,8 +7,8 @@ import studio
 program lunar #machine := "prolog.lunar"
 			[
 				small_keyboard keyboard big_keyboard oscilloscope vector CommandCentre detector
-				noise orbiter X Y modulation vibrato tremolo wahwah
-				core moonbase arpeggiator sequencer operator parameter_block auto auto_data key_map velocity_map impulse
+				noise orbiter X Y modulation vibrato tremolo wahwah range
+				core moonbase arpeggiator sequencer polysequencer operator parameter_block auto auto_data key_map velocity_map impulse
 				trigger inactive_trigger delay1 delay2 mixer stereo_mixer gateway stereo_gateway amplifier stereo_amplifier volume mono_volume
 				lfo adsr eg egscaling egscal vco
 				index shift bias
@@ -42,6 +42,7 @@ program lunar #machine := "prolog.lunar"
 				LoopWave unicar
 				MIDI_CHANNELS MIDI_BACK income_midi
 				GenerateInstrumentName InstrumentIndex
+				radar reactor commander
 			]
 
 #machine small_keyboard := "small_keyboard"
@@ -85,6 +86,7 @@ program lunar #machine := "prolog.lunar"
 #machine moonbase := "moonbase"
 #machine arpeggiator := "arpeggiator"
 #machine sequencer := "sequencer"
+#machine polysequencer := "polysequencer"
 #machine detector := "detector"
 
 #machine core := "core"
@@ -398,7 +400,7 @@ program lunar #machine := "prolog.lunar"
 ]
 
 [[InsertIO *parameters *filter *selector [["ENTER" "FREQ" "RESONANCE" "AMP" : *] *]]
-	[AddParameterBlock *parameters freq *filter *selector 0 "freq"]
+	[AddParameterBlock *parameters freq *filter *selector 5120 "freq"]
 	[AddParameterBlock *parameters resonance *filter *selector 0 "index"]
 	[AddParameterBlock *parameters amp *filter *selector 0 "amp"]
 ]
@@ -677,7 +679,6 @@ program lunar #machine := "prolog.lunar"
 	[text_term *pather *processed]
 	[*parameters *pb : *path] [*pb : *v]
 	[add *program *pather " = " *v]
-	[show [*moon : *path]]
 	[cb_path [*moon : *path]]
 	[cb_edit_path *processed]
 	[*moon * * *moon_callback : *]

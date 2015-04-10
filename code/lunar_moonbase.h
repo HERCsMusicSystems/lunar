@@ -201,5 +201,58 @@ public:
 	~ sequencer (void);
 };
 
+class polysequence_element {
+public:
+	int type; // 0 = wait, 1 = keyon [channel key], 2 = keyon [channel key velocity] 3 = keyoff [channel], 4 = keyoff [channel key], 5 = control, 6 = keyoff []
+	int channel;
+	int key;
+	int velocity;
+	polysequence_element * next;
+	polysequence_element (int type, int channel = 0, int key = 0, int velocity = 0);
+	~ polysequence_element (void);
+};
+
+typedef CommandModule * CommandModulePointer;
+class polysequencer : public CommandModule {
+private:
+	double tempo;
+	double trigger;
+	double time;
+	int tick;
+	polysequence_element * current_frame;
+	CommandModulePointer * bases;
+	int base_pointer;
+	int number_of_bases;
+	pthread_mutex_t critical;
+	void private_signal (void);
+public:
+	polysequence_element * elements;
+public:
+	bool insert_trigger (lunar_trigger * trigger);
+	bool insert_controller (orbiter * controller, int location, int shift);
+	void keyon (int key);
+	void keyon (int key, int velocity);
+	void keyoff (void);
+	void keyoff (int key, int velocity = 0);
+	void mono (void);
+	void poly (void);
+	bool isMonoMode (void);
+	void control (int ctrl, int value);
+	double getControl (int ctrl);
+	void timing_clock (void);
+	void add_base (CommandModule * base);
+	int numberOfBases (void);
+public:
+	virtual int numberOfInputs (void);
+	virtual char * inputName (int ind);
+	virtual double * inputAddress (int ind);
+	virtual int numberOfOutputs (void);
+	virtual bool release (void);
+	virtual void propagate_signals (void);
+public:
+	polysequencer (orbiter_core * core, int number_of_bases);
+	~ polysequencer (void);
+};
+
 #endif
 

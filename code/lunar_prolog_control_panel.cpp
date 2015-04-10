@@ -206,7 +206,6 @@ public:
 					cwd (area, sizeof (area)); area_cat (area, area_cat (area, "/"), el -> getText ());
 					char * cp = strstr (area, " : ");
 					if (cp != 0) * cp = '\0';
-					printf ("setting instrument to: [%s]\n", area);
 				}
 			}
 		}

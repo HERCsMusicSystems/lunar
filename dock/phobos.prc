@@ -142,7 +142,6 @@ program phobos [Phobos PhobosEditor BuildPhobos BuildPhobosPart Operator-1 Opera
 	[Lunar 128 *Phobos operator 4 sens vibrato]
 	[Lunar 1792 *Phobos lfo 1 speed]
 	[Lunar -16384 *Phobos noise amp]
-	[Lunar 5120 *Phobos filter freq]
 	[Lunar -8192 *Phobos core balance]
 	[Lunar 1 *Phobos portamento porta]
 	[*PhobosCB mono]

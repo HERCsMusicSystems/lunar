@@ -170,6 +170,7 @@ private:
 	double trigger;
 	double time;
 	int tick;
+	bool busy_request;
 	sequence_element * current_frame;
 	CommandModule * base;
 	pthread_mutex_t critical;
@@ -193,9 +194,10 @@ public:
 	virtual int numberOfInputs (void);
 	virtual char * inputName (int ind);
 	virtual double * inputAddress (int ind);
-	virtual int numberOfOutputs (void);
+	virtual char * outputName (int ind);
 	virtual bool release (void);
 	virtual void propagate_signals (void);
+	virtual void move (void);
 public:
 	sequencer (orbiter_core * core, CommandModule * base);
 	~ sequencer (void);
@@ -219,6 +221,7 @@ private:
 	double trigger;
 	double time;
 	int tick;
+	bool busy_request;
 	polysequence_element * current_frame;
 	CommandModulePointer * bases;
 	int base_pointer;
@@ -246,9 +249,10 @@ public:
 	virtual int numberOfInputs (void);
 	virtual char * inputName (int ind);
 	virtual double * inputAddress (int ind);
-	virtual int numberOfOutputs (void);
+	virtual char * outputName (int ind);
 	virtual bool release (void);
 	virtual void propagate_signals (void);
+	virtual void move (void);
 public:
 	polysequencer (orbiter_core * core, int number_of_bases);
 	~ polysequencer (void);

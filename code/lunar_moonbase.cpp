@@ -702,7 +702,7 @@ double * sequencer :: inputAddress (int ind) {
 	}
 	return orbiter :: inputAddress (ind);
 }
-int sequencer :: numberOfOutputs (void) {return 0;}
+char * sequencer :: outputName (int ind) {if (ind == 0) return "BUSY"; return orbiter :: outputName (ind);}
 bool sequencer :: release (void) {
 	CommandModule * base_to_delete = base;
 	bool ret = orbiter :: release ();
@@ -737,11 +737,17 @@ void sequencer :: private_signal (void) {
 		}
 		current_frame = current_frame -> next;
 		if (current_frame == 0) {
+			busy_request = true;
 			if (trigger > 1.0) current_frame = elements;
 			else return;
 		}
 	}
 	tick--;
+}
+
+void sequencer :: move (void) {
+	if (busy_request) {signal = 0.0; busy_request = false; return;}
+	signal = current_frame != 0 ? 1.0 : 0.0;
 }
 
 bool sequencer :: insert_trigger (lunar_trigger * trigger) {
@@ -777,6 +783,7 @@ void sequencer :: timing_clock (void) {
 }
 
 sequencer :: sequencer (orbiter_core * core, CommandModule * base) : CommandModule (core) {
+	busy_request = false;
 	pthread_mutex_init (& critical, 0);
 	tempo = 140.0;
 	trigger = 0.0; time = -1.0;
@@ -819,7 +826,7 @@ double * polysequencer :: inputAddress (int ind) {
 	}
 	return orbiter :: inputAddress (ind);
 }
-int polysequencer :: numberOfOutputs (void) {return 0;}
+char * polysequencer :: outputName (int ind) {if (ind == 0) return "BUSY"; return orbiter :: outputName (ind);}
 bool polysequencer :: release (void) {
 	CommandModulePointer * bases_to_delete = bases;
 	int number_of_bases_to_delete = base_pointer;
@@ -870,11 +877,17 @@ void polysequencer :: private_signal (void) {
 		}
 		current_frame = current_frame -> next;
 		if (current_frame == 0) {
+			busy_request = true;
 			if (trigger > 1.0) current_frame = elements;
 			else return;
 		}
 	}
 	tick--;
+}
+
+void polysequencer :: move (void) {
+	if (busy_request) {signal = 0.0; busy_request = false; return;}
+	signal = current_frame != 0 ? 1.0 : 0.0;
 }
 
 bool polysequencer :: insert_trigger (lunar_trigger * trigger) {return false;}
@@ -904,6 +917,7 @@ void polysequencer :: add_base (CommandModule * module) {
 int polysequencer :: numberOfBases (void) {return base_pointer;}
 
 polysequencer :: polysequencer (orbiter_core * core, int number_of_bases) : CommandModule (core) {
+	busy_request = false;
 	if (number_of_bases < 1) number_of_bases = 1;
 	this -> number_of_bases = number_of_bases;
 	base_pointer = 0;

@@ -849,11 +849,22 @@ void polysequencer :: private_signal (void) {
 	while (tick < 1) {
 		switch (current_frame -> type) {
 		case 0: tick = current_frame -> key; break;
-		case 1: if (current_frame -> channel >= 0 && current_frame -> channel < base_pointer) bases [current_frame -> channel] -> keyon (current_frame -> key); break;
-		case 2: if (current_frame -> channel >= 0 && current_frame -> channel < base_pointer) bases [current_frame -> channel] -> keyon (current_frame -> key, current_frame -> velocity); break;
+		case 1:
+			if (current_frame -> channel >= 0 && current_frame -> channel < base_pointer)
+				bases [current_frame -> channel] -> keyon (current_frame -> key);
+			break;
+		case 2:
+			if (current_frame -> channel >= 0 && current_frame -> channel < base_pointer)
+				bases [current_frame -> channel] -> keyon (current_frame -> key, current_frame -> velocity);
+			break;
 		case 3: if (current_frame -> channel >= 0 && current_frame -> channel < base_pointer) bases [current_frame -> channel] -> keyoff (); break;
-		case 4: if (current_frame -> channel >= 0 && current_frame -> channel < base_pointer) bases [current_frame -> channel] -> keyoff (current_frame -> key); break;
-		case 5: if (current_frame -> channel >= 0 && current_frame -> channel < base_pointer) bases [current_frame -> channel] -> control (current_frame -> key, current_frame -> velocity); break;
+		case 4:
+			if (current_frame -> channel >= 0 && current_frame -> channel < base_pointer) bases [current_frame -> channel] -> keyoff (current_frame -> key);
+			break;
+		case 5:
+			if (current_frame -> channel >= 0 && current_frame -> channel < base_pointer)
+				bases [current_frame -> channel] -> control (current_frame -> key, current_frame -> velocity);
+			break;
 		case 6: for (int ind = 0; ind < base_pointer; ind++) bases [ind] -> keyoff (); break;
 		default: break;
 		}
@@ -906,3 +917,4 @@ polysequencer :: polysequencer (orbiter_core * core, int number_of_bases) : Comm
 }
 
 polysequencer :: ~ polysequencer (void) {pthread_mutex_destroy (& critical); if (elements != 0) delete elements;}
+

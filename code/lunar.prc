@@ -243,7 +243,7 @@ program lunar #machine := "prolog.lunar"
 ]
 
 [[Moonbase *base *distributor *type]
-	[create_atoms *base *modules *parameters *blocks]
+	[create_atoms *base *distributor *modules *parameters *blocks]
 	[addcl [[*base *parameters *modules *distributor *type *blocks]]]
 ]
 

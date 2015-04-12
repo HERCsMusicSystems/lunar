@@ -5,11 +5,11 @@ import lunar
 program phobos [Phobos PhobosEditor BuildPhobos BuildPhobosPart Operator-1 Operator-2 Operator-3 Operator-4 Operators]
 
 [[PhobosEditor *phobos]
-	[BuildEGPanel Operator-1 Phobos operator 1 eg amp] [Operator-1 10 10]
-	[BuildEGPanel Operator-2 Phobos operator 2 eg amp] [Operator-2 300 10]
-	[BuildEGPanel Operator-3 Phobos operator 3 eg amp] [Operator-3 10 200]
-	[BuildEGPanel Operator-4 Phobos operator 4 eg amp] [Operator-4 300 200]
-	[BuildFM4Panel Operators Phobos operator] [Operators 10 400]
+	[BuildEGPanel Operator-1 *phobos operator 1 eg amp] [Operator-1 10 10]
+	[BuildEGPanel Operator-2 *phobos operator 2 eg amp] [Operator-2 300 10]
+	[BuildEGPanel Operator-3 *phobos operator 3 eg amp] [Operator-3 10 200]
+	[BuildEGPanel Operator-4 *phobos operator 4 eg amp] [Operator-4 300 200]
+	[BuildFM4Panel Operators *phobos operator] [Operators 10 400]
 ]
 [[PhobosEditor] [TRY [Operator-1] [Operator-2] [Operator-3] [Operator-4] [Operators]]]
 

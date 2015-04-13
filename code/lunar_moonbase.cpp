@@ -133,7 +133,7 @@ double moonbase :: getControl (int ctrl) {
 	case 128: return 64.0; break;
 	default: break;
 	}
-	return 8192.0;
+	return 64.0;
 }
 void moonbase :: timing_clock (void) {}
 bool moonbase :: release (void) {

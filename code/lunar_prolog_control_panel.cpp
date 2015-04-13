@@ -61,6 +61,7 @@ public:
 	slider_active_graphics pitch, modulation;
 	cairo_surface_t * command_centre_image;
 	point captured;
+	int captured_button;
 	int programs [10];
 	int current_program;
 	int current_delta;
@@ -397,6 +398,7 @@ public:
 	restore (point (987.0, 71.0), 602, resources, active),
 	voice_init (point (1027.0, 71.0), 603, resources, active)
 	{
+		captured_button = 0;
 		cwd (area, sizeof (AREA));
 		command_centre_image = resources != 0 ? resources -> command_centre : 0;
 		pitch . position = 0.5;
@@ -591,6 +593,7 @@ static gboolean ControlPanelButtonOn (GtkWidget * viewport, GdkEventKey * event,
 	return FALSE;
 }
 static gint ControlPanelKeyon (GtkWidget * viewport, GdkEventButton * event, control_panel_action * action) {
+	action -> captured_button = event -> button;
 	point location (event -> x, event -> y);
 	action -> captured = location;
 	if (action -> keyboard . keyon (location)) {action -> key_action (action -> keyboard . key, event -> button == 1 ? 100 : 0); return TRUE;}
@@ -702,6 +705,7 @@ static gint ControlPanelKeyoff (GtkWidget * viewport, GdkEventButton * event, co
 static gint ControlPanelMove (GtkWidget * viewport, GdkEventButton * event, control_panel_action * action) {
 	point location (event -> x, event -> y);
 	point delta = location - action -> captured;
+	if (action -> captured_button > 1) delta *= 0.0078125;
 	action -> captured = location;
 	bool redraw = false;
 	if (action -> ctrl_volume . move (delta)) {action -> action (action -> ctrl_volume . id, action -> ctrl_volume . angle); redraw = true;}

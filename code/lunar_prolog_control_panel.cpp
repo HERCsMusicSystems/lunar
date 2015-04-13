@@ -96,35 +96,35 @@ public:
 		if (! var -> isPair ()) {delete query; return;}
 		el = var -> getLeft (); if (el -> isDouble ()) porta_on_off . engaged = el -> getDouble () != 0.0; var = var -> getRight ();
 		if (! var -> isPair ()) {delete query; return;} el = var -> getLeft ();
-		if (el -> isDouble ()) {x = el -> getDouble () / 16384.0; if (x < 0.0) x = 0.0; if (x > 1.0) x = 1.0; pitch . position = x;}
+		if (el -> isDouble ()) {x = el -> getDouble () * 0.0078125; if (x < 0.0) x = 0.0; if (x > 1.0) x = 1.0; pitch . position = x;}
 		var = var -> getRight (); if (! var -> isPair ()) {delete query; return;} el = var -> getLeft ();
-		if (el -> isDouble ()) {x = el -> getDouble () / 16384.0; if (x < 0.0) x = 0.0; if (x > 1.0) x = 1.0; modulation . position = x;}
+		if (el -> isDouble ()) {x = el -> getDouble () * 0.0078125; if (x < 0.0) x = 0.0; if (x > 1.0) x = 1.0; modulation . position = x;}
 		var = var -> getRight (); if (! var -> isPair ()) {delete query; return;} el = var -> getLeft ();
-		if (el -> isDouble ()) {x = el -> getDouble () / 8192.0; x -= 1.0; if (x < -1.0) x = -1.0; if (x > 1.0) x = 1.0; vector . position . x = x;}
+		if (el -> isDouble ()) {x = el -> getDouble () * 0.015625; x -= 1.0; if (x < -1.0) x = -1.0; if (x > 1.0) x = 1.0; vector . position . x = x;}
 		var = var -> getRight (); if (! var -> isPair ()) {delete query; return;} el = var -> getLeft ();
-		if (el -> isDouble ()) {x = el -> getDouble () / 8192.0; x -= 1.0; if (x < -1.0) x = -1.0; if (x > 1.0) x = 1.0; vector . position . y = x;}
+		if (el -> isDouble ()) {x = el -> getDouble () * 0.015625; x -= 1.0; if (x < -1.0) x = -1.0; if (x > 1.0) x = 1.0; vector . position . y = x;}
 		var = var -> getRight (); if (! var -> isPair ()) {delete query; return;} el = var -> getLeft ();
-		if (el -> isDouble ()) {x = el -> getDouble () / 16384.0; if (x < -1.0) x = -1.0; if (x > 1.0) x = 1.0; ctrl_volume . angle = x;}
+		if (el -> isDouble ()) {x = el -> getDouble () * 0.0078125; if (x < -1.0) x = -1.0; if (x > 1.0) x = 1.0; ctrl_volume . angle = x;}
 		var = var -> getRight (); if (! var -> isPair ()) {delete query; return;} el = var -> getLeft ();
-		if (el -> isDouble ()) {x = el -> getDouble () / 16384.0; if (x < 0.0) x = 0.0; if (x > 1.0) x = 1.0; ctrl_attack . angle = x;}
+		if (el -> isDouble ()) {x = el -> getDouble () * 0.0078125; if (x < 0.0) x = 0.0; if (x > 1.0) x = 1.0; ctrl_attack . angle = x;}
 		var = var -> getRight (); if (! var -> isPair ()) {delete query; return;} el = var -> getLeft ();
-		if (el -> isDouble ()) {x = el -> getDouble () / 16384.0; if (x < 0.0) x = 0.0; if (x > 1.0) x = 1.0; ctrl_decay . angle = x;}
+		if (el -> isDouble ()) {x = el -> getDouble () * 0.0078125; if (x < 0.0) x = 0.0; if (x > 1.0) x = 1.0; ctrl_decay . angle = x;}
 		var = var -> getRight (); if (! var -> isPair ()) {delete query; return;} el = var -> getLeft ();
-		if (el -> isDouble ()) {x = el -> getDouble () / 16384.0; if (x < 0.0) x = 0.0; if (x > 1.0) x = 1.0; ctrl_sustain . angle = x;}
+		if (el -> isDouble ()) {x = el -> getDouble () * 0.0078125; if (x < 0.0) x = 0.0; if (x > 1.0) x = 1.0; ctrl_sustain . angle = x;}
 		var = var -> getRight (); if (! var -> isPair ()) {delete query; return;} el = var -> getLeft ();
-		if (el -> isDouble ()) {x = el -> getDouble () / 16384.0; if (x < 0.0) x = 0.0; if (x > 1.0) x = 1.0; ctrl_release . angle = x;}
+		if (el -> isDouble ()) {x = el -> getDouble () * 0.0078125; if (x < 0.0) x = 0.0; if (x > 1.0) x = 1.0; ctrl_release . angle = x;}
 		var = var -> getRight (); if (! var -> isPair ()) {delete query; return;} el = var -> getLeft ();
-		if (el -> isDouble ()) {x = el -> getDouble () / 16384.0; if (x < 0.0) x = 0.0; if (x > 1.0) x = 1.0; ctrl_freq . angle = x;}
+		if (el -> isDouble ()) {x = el -> getDouble () * 0.0078125; if (x < 0.0) x = 0.0; if (x > 1.0) x = 1.0; ctrl_freq . angle = x;}
 		var = var -> getRight (); if (! var -> isPair ()) {delete query; return;} el = var -> getLeft ();
-		if (el -> isDouble ()) {x = el -> getDouble () / 16384.0; if (x < 0.0) x = 0.0; if (x > 1.0) x = 1.0; ctrl_drywet . angle = x;}
+		if (el -> isDouble ()) {x = el -> getDouble () * 0.0078125; if (x < 0.0) x = 0.0; if (x > 1.0) x = 1.0; ctrl_drywet . angle = x;}
 		var = var -> getRight (); if (! var -> isPair ()) {delete query; return;} el = var -> getLeft ();
-		if (el -> isDouble ()) {x = el -> getDouble () / 16384.0; if (x < 0.0) x = 0.0; if (x > 1.0) x = 1.0; ctrl_pan . angle = x;}
+		if (el -> isDouble ()) {x = el -> getDouble () * 0.0078125; if (x < 0.0) x = 0.0; if (x > 1.0) x = 1.0; ctrl_pan . angle = x;}
 		var = var -> getRight (); if (! var -> isPair ()) {delete query; return;} el = var -> getLeft ();
-		if (el -> isDouble ()) {x = el -> getDouble () / 16384.0; if (x < 0.0) x = 0.0; if (x > 1.0) x = 1.0; ctrl_porta . angle = x;}
+		if (el -> isDouble ()) {x = el -> getDouble () * 0.0078125; if (x < 0.0) x = 0.0; if (x > 1.0) x = 1.0; ctrl_porta . angle = x;}
 		var = var -> getRight (); if (! var -> isPair ()) {delete query; return;} el = var -> getLeft ();
-		if (el -> isDouble ()) {x = el -> getDouble () / 16384.0; if (x < 0.0) x = 0.0; if (x > 1.0) x = 1.0; ctrl_speed . angle = x;}
+		if (el -> isDouble ()) {x = el -> getDouble () * 0.0078125; if (x < 0.0) x = 0.0; if (x > 1.0) x = 1.0; ctrl_speed . angle = x;}
 		var = var -> getRight (); if (! var -> isPair ()) {delete query; return;} el = var -> getLeft ();
-		if (el -> isDouble ()) {x = el -> getDouble () / 16384.0; if (x < 0.0) x = 0.0; if (x > 1.0) x = 1.0; ctrl_vibrato . angle = x;}
+		if (el -> isDouble ()) {x = el -> getDouble () * 0.0078125; if (x < 0.0) x = 0.0; if (x > 1.0) x = 1.0; ctrl_vibrato . angle = x;}
 		delete query;
 	}
 	void reset_selectors (void) {
@@ -242,7 +242,7 @@ public:
 		PrologElement * query = root -> pair (root -> atom (command),
 								root -> pair (root -> var (0),
 								root -> pair (root -> integer (ind),
-								root -> pair (root -> integer ((int) (value * 128.0)),
+								root -> pair (root -> Double (value * 128.0),
 								root -> earth ()))));
 		query = root -> pair (root -> var (0), root -> pair (query, root -> earth ()));
 		if (root -> resolution (query) == 1) {
@@ -256,8 +256,8 @@ public:
 		PrologElement * query = root -> pair (root -> atom (command),
 								root -> pair (root -> var (0),
 								root -> pair (root -> integer (ind),
-								root -> pair (root -> integer ((int) (x * 64.0 + 64.0)),
-								root -> pair (root -> integer ((int) (y * 64.0 + 64.0)),
+								root -> pair (root -> Double (x * 64.0 + 64.0),
+								root -> pair (root -> Double (y * 64.0 + 64.0),
 								root -> earth ())))));
 		query = root -> pair (root -> var (0), root -> pair (query, root -> earth ()));
 		if (root -> resolution (query) == 1) {

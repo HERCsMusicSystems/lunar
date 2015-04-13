@@ -36,7 +36,7 @@ bool moonbase :: insert_trigger (lunar_trigger * trigger) {
 	trigger -> hold ();
 	return true;
 }
-bool moonbase :: insert_controller (orbiter * controller, int location, int shift) {
+bool moonbase :: insert_controller (orbiter * controller, int location, double shift) {
 	if (location < 0 || location > 128) return false;
 	if (controller != 0 && controller -> numberOfInputs () < 1) return false;
 	if (controllers [location] != 0) controllers [location] -> release ();
@@ -111,10 +111,10 @@ void moonbase :: keyoff (int key, int velocity) {
 void moonbase :: mono (void) {mono_mode = true; signal = 0.0; keyoff (); base_key = 64; previous_key = -1;}
 void moonbase :: poly (void) {mono_mode = false; signal = 1.0; keyoff (); base_key = 64; previous_key = -1;}
 bool moonbase :: isMonoMode (void) {return mono_mode;}
-void moonbase :: control (int ctrl, int value) {
+void moonbase :: control (int ctrl, double value) {
 	if (ctrl < 0 || ctrl > 128) return;
 	if (controllers [ctrl] != 0) {
-		* (controllers [ctrl] -> inputAddress (0)) = (double) (((value + shifts [ctrl]) << 7) + ctrl_lsbs [ctrl]);
+		* (controllers [ctrl] -> inputAddress (0)) = (value + shifts [ctrl]) * 128.0 + ctrl_lsbs [ctrl];
 		ctrl_lsbs [ctrl] = 0;
 	} else if (ctrl > 31) ctrl_lsbs [ctrl - 32] = value;
 	if (ctrl == 126) mono ();
@@ -122,15 +122,15 @@ void moonbase :: control (int ctrl, int value) {
 }
 double moonbase :: getControl (int ctrl) {
 	if (ctrl < 0 || ctrl > 128) return 0.0;
-	if (controllers [ctrl] != 0) return * (controllers [ctrl] -> outputAddress (0)) - (double) shifts [ctrl] * 128.0;
+	if (controllers [ctrl] != 0) return * (controllers [ctrl] -> outputAddress (0)) * 0.0078125 - (double) shifts [ctrl];
 	switch (ctrl) {
 	case 0: return 0.0; break;
 	case 1: return 0.0; break;
-	case 7: return 12800.0; break;
+	case 7: return 100.0; break;
 	case 65: return 0.0; break;
 	case 126: return mono_mode ? 1.0 : 0.0; break;
 	case 127: return mono_mode ? 0.0 : 1.0; break;
-	case 128: return 8192.0; break;
+	case 128: return 64.0; break;
 	default: break;
 	}
 	return 8192.0;
@@ -599,7 +599,7 @@ bool arpeggiator :: insert_trigger (lunar_trigger * trigger) {
 	if (base != 0) return base -> insert_trigger (trigger);
 	return false;
 }
-bool arpeggiator :: insert_controller (orbiter * controller, int location, int shift) {
+bool arpeggiator :: insert_controller (orbiter * controller, int location, double shift) {
 	if (base != 0) return base -> insert_controller (controller, location, shift);
 	return false;
 }
@@ -641,9 +641,7 @@ bool arpeggiator :: isMonoMode (void) {
 	return false;
 }
 
-void arpeggiator :: control (int ctrl, int value) {
-	if (base != 0) base -> control (ctrl, value);
-}
+void arpeggiator :: control (int ctrl, double value) {if (base != 0) base -> control (ctrl, value);}
 
 double arpeggiator :: getControl (int ctrl) {
 	if (base != 0) return base -> getControl (ctrl);
@@ -676,7 +674,7 @@ arpeggiator :: ~ arpeggiator (void) {pthread_mutex_destroy (& critical);}
 // SEQUENCER //
 ///////////////
 
-sequence_element :: sequence_element (int type, int key, int velocity) {
+sequence_element :: sequence_element (int type, int key, double velocity) {
 	this -> type = type;
 	this -> key = key;
 	this -> velocity = velocity;
@@ -729,7 +727,7 @@ void sequencer :: private_signal (void) {
 		switch (current_frame -> type) {
 		case 0: tick = current_frame -> key; break;
 		case 1: base -> keyon (current_frame -> key); break;
-		case 2: base -> keyon (current_frame -> key, current_frame -> velocity); break;
+		case 2: base -> keyon (current_frame -> key, (int) current_frame -> velocity); break;
 		case 3: base -> keyoff (); break;
 		case 4: base -> keyoff (current_frame -> key); break;
 		case 5: base -> control (current_frame -> key, current_frame -> velocity); break;
@@ -755,7 +753,7 @@ bool sequencer :: insert_trigger (lunar_trigger * trigger) {
 	return false;
 }
 
-bool sequencer :: insert_controller (orbiter * controller, int location, int shift) {
+bool sequencer :: insert_controller (orbiter * controller, int location, double shift) {
 	if (base != 0) return base -> insert_controller (controller, location, shift);
 	return false;
 }
@@ -770,7 +768,7 @@ bool sequencer :: isMonoMode (void) {
 	if (base != 0) return base -> isMonoMode ();
 	return false;
 }
-void sequencer :: control (int ctrl, int value) {}
+void sequencer :: control (int ctrl, double value) {if (base != 0) base -> control (ctrl, value);}
 double sequencer :: getControl (int ctrl) {
 	if (base != 0) return base -> getControl (ctrl);
 	return 0.0;
@@ -799,7 +797,7 @@ sequencer :: ~ sequencer (void) {pthread_mutex_destroy (& critical); if (element
 // POLYSEQUENCER //
 ///////////////////
 
-polysequence_element :: polysequence_element (int type, int channel, int key, int velocity) {
+polysequence_element :: polysequence_element (int type, int channel, int key, double velocity) {
 	this -> type = type;
 	this -> channel = channel;
 	this -> key = key;
@@ -862,7 +860,7 @@ void polysequencer :: private_signal (void) {
 			break;
 		case 2:
 			if (current_frame -> channel >= 0 && current_frame -> channel < base_pointer)
-				bases [current_frame -> channel] -> keyon (current_frame -> key, current_frame -> velocity);
+				bases [current_frame -> channel] -> keyon (current_frame -> key, (int) current_frame -> velocity);
 			break;
 		case 3: if (current_frame -> channel >= 0 && current_frame -> channel < base_pointer) bases [current_frame -> channel] -> keyoff (); break;
 		case 4:
@@ -891,7 +889,7 @@ void polysequencer :: move (void) {
 }
 
 bool polysequencer :: insert_trigger (lunar_trigger * trigger) {return false;}
-bool polysequencer :: insert_controller (orbiter * controller, int location, int shift) {return false;}
+bool polysequencer :: insert_controller (orbiter * controller, int location, double shift) {return false;}
 
 void polysequencer :: keyon (int key) {}
 void polysequencer :: keyon (int key, int velocity) {}
@@ -900,7 +898,7 @@ void polysequencer :: keyoff (int key, int velocity) {}
 void polysequencer :: mono (void) {}
 void polysequencer :: poly (void) {}
 bool polysequencer :: isMonoMode (void) {return false;}
-void polysequencer :: control (int ctrl, int value) {}
+void polysequencer :: control (int ctrl, double value) {}
 double polysequencer :: getControl (int ctrl) {return 0.0;}
 
 void polysequencer :: timing_clock (void) {

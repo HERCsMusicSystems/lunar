@@ -33,7 +33,7 @@
 class CommandModule : public orbiter {
 public:
 	virtual bool insert_trigger (lunar_trigger * trigger) = 0;
-	virtual bool insert_controller (orbiter * controller, int location, int shift) = 0;
+	virtual bool insert_controller (orbiter * controller, int location, double shift) = 0;
 	virtual void keyon (int key) = 0;
 	virtual void keyon (int key, int velocity) = 0;
 	virtual void keyoff (void) = 0;
@@ -41,7 +41,7 @@ public:
 	virtual void mono (void) = 0;
 	virtual void poly (void) = 0;
 	virtual bool isMonoMode (void) = 0;
-	virtual void control (int ctrl, int value) = 0;
+	virtual void control (int ctrl, double value) = 0;
 	virtual double getControl (int ctrl) = 0;
 	virtual void timing_clock (void) = 0;
 	CommandModule (orbiter_core * core);
@@ -54,8 +54,8 @@ private:
 	lunar_trigger * select (void);
 	lunar_trigger * select (int key);
 	orbiter * controllers [129];
-	int ctrl_lsbs [129];
-	int shifts [129];
+	double ctrl_lsbs [129];
+	double shifts [129];
 	bool mono_mode;
 	int previous_key;
 	int base_key;
@@ -65,7 +65,7 @@ public:
 	virtual int numberOfOutputs (void);
 	virtual bool release (void);
 	bool insert_trigger (lunar_trigger * trigger);
-	bool insert_controller (orbiter * controller, int location, int shift);
+	bool insert_controller (orbiter * controller, int location, double shift);
 	void keyon (int key);
 	void keyon (int key, int velocity);
 	void keyoff (void);
@@ -73,7 +73,7 @@ public:
 	void mono (void);
 	void poly (void);
 	bool isMonoMode (void);
-	void control (int ctrl, int value);
+	void control (int ctrl, double value);
 	double getControl (int ctrl);
 	void timing_clock (void);
 	moonbase (orbiter_core * core);
@@ -132,7 +132,7 @@ private:
 	void private_signal (void);
 public:
 	bool insert_trigger (lunar_trigger * trigger);
-	bool insert_controller (orbiter * controller, int location, int shift);
+	bool insert_controller (orbiter * controller, int location, double shift);
 	void keyon (int key);
 	void keyon (int key, int velocity);
 	void keyoff (void);
@@ -140,7 +140,7 @@ public:
 	void mono (void);
 	void poly (void);
 	bool isMonoMode (void);
-	void control (int ctrl, int value);
+	void control (int ctrl, double value);
 	double getControl (int ctrl);
 	void timing_clock (void);
 public:
@@ -158,9 +158,9 @@ class sequence_element {
 public:
 	int type; // 0 = wait, 1 = keyon [key], 2 = keyon [key velocity] 3 = keyoff [], 4 = keyoff [key], 5 = control
 	int key;
-	int velocity;
+	double velocity;
 	sequence_element * next;
-	sequence_element (int type, int key = 0, int velocity = 0);
+	sequence_element (int type, int key = 0, double velocity = 0);
 	~ sequence_element (void);
 };
 
@@ -179,7 +179,7 @@ public:
 	sequence_element * elements;
 public:
 	bool insert_trigger (lunar_trigger * trigger);
-	bool insert_controller (orbiter * controller, int location, int shift);
+	bool insert_controller (orbiter * controller, int location, double shift);
 	void keyon (int key);
 	void keyon (int key, int velocity);
 	void keyoff (void);
@@ -187,7 +187,7 @@ public:
 	void mono (void);
 	void poly (void);
 	bool isMonoMode (void);
-	void control (int ctrl, int value);
+	void control (int ctrl, double value);
 	double getControl (int ctrl);
 	void timing_clock (void);
 public:
@@ -208,9 +208,9 @@ public:
 	int type; // 0 = wait, 1 = keyon [channel key], 2 = keyon [channel key velocity] 3 = keyoff [channel], 4 = keyoff [channel key], 5 = control, 6 = keyoff []
 	int channel;
 	int key;
-	int velocity;
+	double velocity;
 	polysequence_element * next;
-	polysequence_element (int type, int channel = 0, int key = 0, int velocity = 0);
+	polysequence_element (int type, int channel = 0, int key = 0, double velocity = 0);
 	~ polysequence_element (void);
 };
 
@@ -232,7 +232,7 @@ public:
 	polysequence_element * elements;
 public:
 	bool insert_trigger (lunar_trigger * trigger);
-	bool insert_controller (orbiter * controller, int location, int shift);
+	bool insert_controller (orbiter * controller, int location, double shift);
 	void keyon (int key);
 	void keyon (int key, int velocity);
 	void keyoff (void);
@@ -240,7 +240,7 @@ public:
 	void mono (void);
 	void poly (void);
 	bool isMonoMode (void);
-	void control (int ctrl, int value);
+	void control (int ctrl, double value);
 	double getControl (int ctrl);
 	void timing_clock (void);
 	void add_base (CommandModule * base);

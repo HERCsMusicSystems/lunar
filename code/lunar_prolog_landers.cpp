@@ -516,7 +516,7 @@ public:
 				if (a == control) {
 					if (key != 0) {
 						if (var != 0) {var -> setDouble (trigger -> getControl ((int) key -> getNumber ())); return true;}
-						if (velocity != 0) {trigger -> control ((int) key -> getNumber (), (int) velocity -> getNumber ()); return true;}
+						if (velocity != 0) {trigger -> control ((int) key -> getNumber (), velocity -> getNumber ()); return true;}
 					}
 					if (var != 0) {var -> setAtom (trigger -> isMonoMode () ? mono : poly); return true;}
 					return false;
@@ -525,8 +525,8 @@ public:
 					if (key != 0 && velocity != 0) {
 						int lsb = (int) key -> getNumber ();
 						int msb = (int) velocity -> getNumber ();
-						if (msb == 127 && lsb == 127) msb = 128;
-						trigger -> control (128, msb);
+						if (msb == 127 && lsb == 127) {msb = 128; lsb = 0;}
+						trigger -> control (128, (double) msb + (double) lsb * 0.0078125);
 						return true;
 					}
 					if (var != 0) {var -> setDouble (trigger -> getControl (128)); return true;}
@@ -621,7 +621,7 @@ public:
 						ell = ell -> getRight (); ell -> setPair ();
 						ell -> getLeft () -> setInteger (sqep -> key);
 						ell = ell -> getRight (); ell -> setPair ();
-						ell -> getLeft () -> setInteger (sqep -> velocity);
+						ell -> getLeft () -> setInteger ((int) sqep -> velocity);
 						break;
 					case 3: ell -> setAtom (keyoff); break;
 					case 4:
@@ -636,7 +636,7 @@ public:
 						ell = ell -> getRight (); ell -> setPair ();
 						ell -> getLeft () -> setInteger (sqep -> key);
 						ell = ell -> getRight (); ell -> setPair ();
-						ell -> getLeft () -> setInteger (sqep -> velocity);
+						ell -> getLeft () -> setDouble (sqep -> velocity);
 						break;
 					default: break;
 					}
@@ -664,11 +664,12 @@ public:
 							PrologElement * eqq = eq -> getLeft ();
 							if (eqq -> isAtom ()) atom = eqq;
 							if (eqq -> isInteger ()) if (key == 0) key = eqq; else velocity = eqq;
+							if (eqq -> isDouble ()) velocity = eqq;
 							eq = eq -> getRight ();
 						}
 						if (atom -> getAtom () == keyon && key != 0) {
 							if (velocity == 0) * sqep = new sequence_element (1, key -> getInteger ());
-							else * sqep = new sequence_element (2, key -> getInteger (), velocity -> getInteger ());
+							else * sqep = new sequence_element (2, key -> getInteger (), velocity -> getNumber ());
 							sqep = & (* sqep) -> next;
 						}
 						if (atom -> getAtom () == keyoff) {
@@ -677,7 +678,7 @@ public:
 							sqep = & (* sqep) -> next;
 						}
 						if (atom -> getAtom () == control && key != 0 && velocity != 0) {
-							* sqep = new sequence_element (5, key -> getInteger (), velocity -> getInteger ());
+							* sqep = new sequence_element (5, key -> getInteger (), velocity -> getNumber ());
 							sqep = & (* sqep) -> next;
 						}
 					}
@@ -727,7 +728,7 @@ public:
 						ell = ell -> getRight (); ell -> setPair ();
 						ell -> getLeft () -> setInteger (sqep -> key);
 						ell = ell -> getRight (); ell -> setPair ();
-						ell -> getLeft () -> setInteger (sqep -> velocity);
+						ell -> getLeft () -> setInteger ((int) sqep -> velocity);
 						break;
 					case 3:
 						ell -> setPair ();
@@ -751,7 +752,7 @@ public:
 						ell = ell -> getRight (); ell -> setPair ();
 						ell -> getLeft () -> setInteger (sqep -> key);
 						ell = ell -> getRight (); ell -> setPair ();
-						ell -> getLeft () -> setInteger (sqep -> velocity);
+						ell -> getLeft () -> setDouble (sqep -> velocity);
 						break;
 					case 6: ell -> setAtom (keyoff); break;
 					default: break;
@@ -781,12 +782,13 @@ public:
 							PrologElement * eqq = eq -> getLeft ();
 							if (eqq -> isAtom ()) atom = eqq;
 							if (eqq -> isInteger ()) if (channel == 0) channel = eqq; else if (key == 0) key = eqq; else velocity = eqq;
+							if (eqq -> isDouble ()) velocity = eqq;
 							eq = eq -> getRight ();
 						}
 						if (channel != 0 && channel -> getInteger () >= 0 && channel -> getInteger () < seq -> numberOfBases ()) {
 							if (atom -> getAtom () == keyon && key != 0) {
 								if (velocity == 0) * sqep = new polysequence_element (1, channel -> getInteger (), key -> getInteger ());
-								else * sqep = new polysequence_element (2, channel -> getInteger (), key -> getInteger (), velocity -> getInteger ());
+								else * sqep = new polysequence_element (2, channel -> getInteger (), key -> getInteger (), velocity -> getNumber ());
 								sqep = & (* sqep) -> next;
 							}
 							if (atom -> getAtom () == keyoff) {
@@ -795,7 +797,7 @@ public:
 								sqep = & (* sqep) -> next;
 							}
 							if (atom -> getAtom () == control && key != 0 && velocity != 0) {
-								* sqep = new polysequence_element (5, channel -> getInteger (), key -> getInteger (), velocity -> getInteger ());
+								* sqep = new polysequence_element (5, channel -> getInteger (), key -> getInteger (), velocity -> getNumber ());
 								sqep = & (* sqep) -> next;
 							}
 						} else {

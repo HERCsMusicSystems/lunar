@@ -106,11 +106,12 @@ public:
 class vector_active_graphics : public active_graphics {
 public:
 	point position;
+	point precision;
 	cairo_surface_t * surface;
 	cairo_surface_t * handle;
 	bool move (point delta);
 	void draw (cairo_t * cr);
-	vector_active_graphics (point location, int id, GraphicResources * resources, bool active_surface = false);
+	vector_active_graphics (point location, int id, GraphicResources * resources, double precision = 1.0, bool active_surface = false);
 };
 
 class keyboard_active_graphics : public active_graphics {

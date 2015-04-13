@@ -324,7 +324,7 @@ slider_active_graphics :: slider_active_graphics (point location, int id, bool s
 
 bool vector_active_graphics :: move (point delta) {
 	if (! on) return false;
-	position += delta * point (0.00390625, -0.00390625);
+	position += delta * precision;
 	if (position . x < -1.0) position . x = -1.0; if (position . x > 1.0) position . x = 1.0;
 	if (position . y < -1.0) position . y = -1.0; if (position . y > 1.0) position . y = 1.0;
 	return true;
@@ -344,7 +344,10 @@ void vector_active_graphics :: draw (cairo_t * cr) {
 	}
 }
 
-vector_active_graphics :: vector_active_graphics (point location, int id, GraphicResources * resources, bool active_surface) : active_graphics (location, id) {
+vector_active_graphics :: vector_active_graphics (point location, int id, GraphicResources * resources, double precision, bool active_surface) :
+	active_graphics (location, id) {
+	precision *= 0.015625;
+	this -> precision = point (precision, - precision);
 	surface = handle = 0;
 	if (resources == 0) return;
 	surface = active_surface ? resources -> vector_surface : 0;

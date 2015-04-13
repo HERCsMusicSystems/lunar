@@ -360,7 +360,7 @@ public:
 	ctrl_porta (point (442.0, 90.0), 11, resources, active),
 	ctrl_speed (point (512.0, 90.0), 95, resources, active),
 	ctrl_vibrato (point (582.0, 90.0), 71, resources, active),
-	vector (point (12.0, -2.0), 12, resources, active),
+	vector (point (12.0, -2.0), 12, resources, 0.25, active),
 	keyboard (point (114.0, 194.0), 2, 6, resources, active),
 	display (point (542.0, -7.0), 7, resources, active),
 	selector0 (point (667.0, 112.0), 200, resources, active),

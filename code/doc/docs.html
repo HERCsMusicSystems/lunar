@@ -23,25 +23,41 @@
         <a href="#predicate_chorus">chorus</a>
         <a href="#predicate_control">control</a>
         <a href="#predicate_delay">delay</a>
+        <a href="#predicate_drywet">drywet</a>
+        <a href="#predicate_drywet_mono">drywet_mono</a>
         <a href="#predicate_eg">eg</a>
         <a href="#predicate_gateway">gateway</a>
         <a href="#predicate_impulse">impulse</a>
         <a href="#predicate_inactive_trigger">inactive_trigger</a>
         <a href="#predicate_key_map">key_map</a>
         <a href="#predicate_lfo">lfo</a>
+        <a href="#predicate_linear_pan">linear_pan</a>
         <a href="#predicate_mixer">mixer</a>
         <a href="#predicate_mono_volume">mono_volume</a>
         <a href="#predicate_oscilloscope">oscilloscope</a>
+        <a href="#predicate_pan">pan</a>
         <a href="#predicate_parameter_block">parameter_block</a>
+        <a href="#predicate_power_pan">power_pan</a>
+        <a href="#predicate_sensitivity">sensitivity</a>
         <a href="#predicate_stereo_amplifier">stereo_amplifier</a>
         <a href="#predicate_stereo_gateway">stereo_gateway</a>
+        <a href="#predicate_stereo_linear_pan">stereo_linear_pan</a>
         <a href="#predicate_stereo_mixer">stereo_mixer</a>
+        <a href="#predicate_stereo_pan">stereo_pan</a>
+        <a href="#predicate_stereo_power_pan">stereo_power_pan</a>
         <a href="#predicate_trigger">trigger</a>
         <a href="#predicate_velocity_map">velocity_map</a>
         <a href="#predicate_volume">volume</a>
         <a href="#predicate_wave">wave</a>
     </li>
-    <li><a href="#superstructure">Superstructure</a></li>
+    <li><a href="#superstructure">Superstructure</a><br />
+        <a href="#predicate_arpeggiator">arpeggiator</a>
+        <a href="#predicate_base">base</a>
+        <a href="#predicate_detector">detector</a>
+        <a href="#predicate_base">moonbase</a>
+        <a href="#predicate_polysequencer">polysequencer</a>
+        <a href="#predicate_sequencer">sequencer</a>
+    </li>
     <li><a href="#utilities">Utilities</a>
         <br />
         <a href="#predicate_Connect">Connect</a>
@@ -244,6 +260,36 @@
 </div>
 
 <div class="doc_predicate">
+    <a id="predicate_drywet">
+        <div class="doc_predicate_header">
+            [drywet module] => Creates a stereo dry/wet module.<br />
+            <b>Note:</b> module adheres to <a href="#common_behaviour_of_predicates">Common Behaviour</a>.<br />
+        </div>
+        <div class="doc_predicate_body">
+            <b>Signals:</b> [["DRYLEFT" "DRYRIGHT" "WETLEFT" "WETRIGHT" "BALANCE"] ["LEFT" "RIGHT"]]<br />
+            Mixes two stereo signals together, typically dry and wet (comming from audio processing).
+            Balance range from -8192.0 to 8192.0 with shelving-linear response.
+            <b>Note:</b> use <a href="#predicate_ConnectDryWet">ConnectDryWet</a> and <a href="#predicate_DisconnectDryWet">DisconnectDryWet</a>
+            to connect with stereo modules, such as pan, chorus, delay, etc.
+        </div>
+    </a>
+</div>
+
+<div class="doc_predicate">
+    <a id="predicate_drywet_mono">
+        <div class="doc_predicate_header">
+            [drywet_mono module] => Creates a mono dry/wet module.<br />
+            <b>Note:</b> module adheres to <a href="#common_behaviour_of_predicates">Common Behaviour</a>.<br />
+        </div>
+        <div class="doc_predicate_body">
+            <b>Signals:</b> [["DRYLEFT" "DRYRIGHT" "WETLEFT" "WETRIGHT" "BALANCE"] ["LEFT" "RIGHT"]]<br />
+            Mixes two mono signals together, typically dry and wet (comming from audio processing).
+            Balance range from -8192.0 to 8192.0 with shelving-linear response.
+        </div>
+    </a>
+</div>
+
+<div class="doc_predicate">
     <a id="predicate_eg">
         <div class="doc_predicate_header">
             [eg module] => Creates a 4-stage envelope generator module.<br />
@@ -354,6 +400,19 @@
 </div>
 
 <div class="doc_predicate">
+    <a id="predicate_linear_pan">
+        <div class="doc_predicate_header">
+            [linear_pan module] => Creates a pan module with linear response.<br />
+            <b>Note:</b> module adheres to <a href="#common_behaviour_of_predicates">Common Behaviour</a>.<br />
+        </div>
+        <div class="doc_predicate_body">
+            <b>Signals:</b> [["SIGNAL" "PAN"] ["LEFT" "RIGHT"]]<br />
+            Splits mono signal into left and right channels. Range from -8192.0 to 8192.0 with linear response.
+        </div>
+    </a>
+</div>
+
+<div class="doc_predicate">
     <a id="predicate_mixer">
         <div class="doc_predicate_header">
             [mixer module] => Creates a simple mixer.<br />
@@ -393,6 +452,19 @@
 </div>
 
 <div class="doc_predicate">
+    <a id="predicate_pan">
+        <div class="doc_predicate_header">
+            [pan module] => Creates a pan module.<br />
+            <b>Note:</b> module adheres to <a href="#common_behaviour_of_predicates">Common Behaviour</a>.<br />
+        </div>
+        <div class="doc_predicate_body">
+            <b>Signals:</b> [["SIGNAL" "PAN"] ["LEFT" "RIGHT"]]<br />
+            Splits mono signal into left and right channels. Range from -8192.0 to 8192.0 with trigonometrical response.
+        </div>
+    </a>
+</div>
+
+<div class="doc_predicate">
     <a id="predicate_parameter_block">
         <div class="doc_predicate_header">
             [parameter_block module "style" maximum_change] => Creates a parameter block (parameter optional).<br />
@@ -413,6 +485,37 @@
             Parameter blocks can have their output values formatted into a text.
             To activate this feature a style parameter needs to be passed.
             It can have one of several pre-defined values: "index", "freq", "amp", "time", "onoff", "wave", "ratio" or "fm4algo".
+        </div>
+    </a>
+</div>
+
+<div class="doc_predicate">
+    <a id="predicate_power_pan">
+        <div class="doc_predicate_header">
+            [power_pan module] => Creates a pan module with power response.<br />
+            <b>Note:</b> module adheres to <a href="#common_behaviour_of_predicates">Common Behaviour</a>.<br />
+        </div>
+        <div class="doc_predicate_body">
+            <b>Signals:</b> [["SIGNAL" "PAN"] ["LEFT" "RIGHT"]]<br />
+            Splits mono signal into left and right channels. Range from -8192.0 to 8192.0 with power response.
+        </div>
+    </a>
+</div>
+
+<div class="doc_predicate">
+    <a id="predicate_sensitivity">
+        <div class="doc_predicate_header">
+            [sensitivity module] => Creates a sensitivity processing module.<br />
+            <b>Note:</b> module adheres to <a href="#common_behaviour_of_predicates">Common Behaviour</a>.<br />
+        </div>
+        <div class="doc_predicate_body">
+            <b>Signals:</b> [["SIGNAL" "BREAKPOINT" "LEFT" "RIGHT"] ["SIGNAL"]]<br />
+            Processes the input signal to form two slopes with a breakpoint.
+            The input signal value equal to <b>breakpoint</b> produces ZERO.
+            Lower values form left slope while higher values form right slope.
+            Both <b>left</b> and <b>right</b> inputs determine the slope step per 128.
+            In other words, the value of 128 at either <b>left</b> or <b>right</b> input
+            generate 45 degrees slopes.
         </div>
     </a>
 </div>
@@ -446,6 +549,19 @@
 </div>
 
 <div class="doc_predicate">
+    <a id="predicate_stereo_linear_pan">
+        <div class="doc_predicate_header">
+            [stereo_linear_pan module] => Creates a stereo pan module with linear response.<br />
+            <b>Note:</b> module adheres to <a href="#common_behaviour_of_predicates">Common Behaviour</a>.<br />
+        </div>
+        <div class="doc_predicate_body">
+            <b>Signals:</b> [["LEFT" "RIGHT" "PAN"] ["LEFT" "RIGHT"]]<br />
+            Adjusts the pan position of left and right signals. Range from -8192.0 to 8192.0 with linear response.
+        </div>
+    </a>
+</div>
+
+<div class="doc_predicate">
     <a id="predicate_stereo_mixer">
         <div class="doc_predicate_header">
             [stereo_mixer module] => Creates a simple mixer for stereo channels.<br />
@@ -456,6 +572,32 @@
             Mixer copies its inputs signal to its outputs. Mixing is achieved by connecting several signals to mixer's inputs.
             <b>Note:</b> use <a href="#predicate_ConnectStereo>ConnectStereo</a> and <a href="#predicate_DisconnectStereo">DisconnectStereo</a>
             for connecting stereo modules.
+        </div>
+    </a>
+</div>
+
+<div class="doc_predicate">
+    <a id="predicate_stereo_pan">
+        <div class="doc_predicate_header">
+            [stereo_pan module] => Creates a stereo pan module with trigonometrical response.<br />
+            <b>Note:</b> module adheres to <a href="#common_behaviour_of_predicates">Common Behaviour</a>.<br />
+        </div>
+        <div class="doc_predicate_body">
+            <b>Signals:</b> [["LEFT" "RIGHT" "PAN"] ["LEFT" "RIGHT"]]<br />
+            Adjusts the pan position of left and right signals. Range from -8192.0 to 8192.0 with trigonometrical response.
+        </div>
+    </a>
+</div>
+
+<div class="doc_predicate">
+    <a id="predicate_stereo_power_pan">
+        <div class="doc_predicate_header">
+            [stereo_power_pan module] => Creates a stereo pan module with power response.<br />
+            <b>Note:</b> module adheres to <a href="#common_behaviour_of_predicates">Common Behaviour</a>.<br />
+        </div>
+        <div class="doc_predicate_body">
+            <b>Signals:</b> [["LEFT" "RIGHT" "PAN"] ["LEFT" "RIGHT"]]<br />
+            Adjusts the pan position of left and right signals. Range from -8192.0 to 8192.0 with power response.
         </div>
     </a>
 </div>
@@ -545,6 +687,147 @@
 </div>
 
 <div class="doc_library_section"><a id="superstructure">Superstructure</a></div>
+
+<div class="doc_predicate">
+    <a id="predicate_arpeggiator">
+        <div class="doc_predicate_header">
+            [arpeggiator module base] => Creates an arpeggiator module connected to a base module.<br />
+            <b>Note:</b> module adheres to the behaviour of a <a href="#predicate_base">base</a> module.<br />
+        </div>
+        <div class="doc_predicate_body">
+            <b>Signals:</b> [["SPEED" "DIVISION" "ACTIVE" "ALGO" "HOLD"] []]<br />
+            Plays arpeggios on the connected (moon)base module.<br />
+            <b>INPUTS:</b><br />
+            <b>Speed:</b> determines beats per minute (assuming 24 ticks in a beat).<br />
+            <b>Division:</b> determines number of ticks per beat.<br />
+            <b>Active:</b> starts or stops the arpeggiator.<br />
+            <b>Algo:</b> determines the arpeggio pattern to be played.<br />
+            <b>Hold:</b> keeps playing even if keys are no longer pressed.<br />
+        </div>
+    </a>
+</div>
+
+<div class="doc_predicate">
+    <a id="predicate_base">
+        <div class="doc_predicate_header">
+            [base module] => Creates a base module.<br />
+            [moonbase module] => Creates a base module.<br />
+            <b>Note:</b> module adheres to <a href="#common_behaviour_of_predicates">Common Behaviour</a>.<br />
+            <b>Additional usage:</b><br />
+            [module keyon key velocity] => MIDI keyon message. Velocity is optional.<br />
+            [module keyon [note octave] velocity] => MIDI keyon message. Velocity is optional.<br />
+            [module keyoff] => MIDI all keys off message.<br />
+            [module keyoff key velocity] => MIDI keyoff message. Velocity is optional.<br />
+            [module control index value] => MIDI control message. Value can be double.<br />
+            [module pitch lsb msb] => MIDI pitch message. Equivalent to [module control 128 (msb + lsb / 128)].<br />
+            [module timingclock] => MIDI timingclock message. Important for arpeggiators and sequencers.<br />
+            [module mono] => Changes mode to mono.<br />
+            [module poly] => changes mode to poly.<br />
+            [module control *x] => Returns either mono or poly depending on the current mode.<br />
+            [module control index *x] => Returns the current value of the controlled parameter block.<br />
+            [module pitch *x] => Equivalent to [module control 128 *x].<br />
+            [module trigger] => Connects trigger to the base.<br />
+            [module index controller] => Connects an audio module (most likely a parameter block) as a controller.<br />
+            [module index []] => Removes controllable audio module.<br />
+            Otherwise defaults to common behaviour.
+        </div>
+        <div class="doc_predicate_body">
+            <b>Signals:</b> [[] []]<br />
+            The purpose of the (moon)base module is to translate MIDI messages (or prolog commands) into contrilling signals
+            for triggers and parameter blocks (or more general audio modules).
+            The (moon)base can be either in either <b>poly</b> or <b>mono</b> mode.<br />
+            In <b>poly</b> mode every new keyon message selects a trigger with its <b>busy</b> signal equal to zero.
+            If no such trigger is available then it steals one of the busy triggers, most likely the one,
+            which was busy for a while.<br />
+            In <b>mono</b> mode all keyon messages are send to one selected (in fact the first one) trigger.<br />
+            The MIDI control messages are translated into numeric values and applied to the first input of connected audio modules.
+            In most cases these audio modules will be, in fact parameter block with just one single input.
+            The value of a controller can be fractional.<br />
+            <b>Note:</b><br />
+            1. If the index is greater than 31 and there is no connected audio module at index,
+            then the value is treated as the <b>lsb</b> (i.e. value / 128) of a controller at index - 32.<br />
+            2. If there is no audio module at index 126, then it is considered as mono switch.<br />
+            3. If there is no audio module at index 127, then it is considered as poly switch.<br />
+            4. Index 128 is also used by pitch MIDI command.<br />
+        </div>
+    </a>
+</div>
+
+<div class="doc_predicate">
+    <a id="predicate_detector">
+        <div class="doc_predicate_header">
+            [detector module commands ....] => Creates a detector module, which triggers at zero.<br />
+            [detector module value commands ....] => Creates a detector module with specified trigger value.<br />
+            <b>Note:</b> module adheres to <a href="#common_behaviour_of_predicates">Common Behaviour</a>.<br />
+        </div>
+        <div class="doc_predicate_body">
+            <b>Signals:</b> [["SIGNAL"] ["SIGNAL"]]<br />
+            Detector calls the stored command sequence every time the input signal becomes equal to its internal trigger value.
+            The default trigger is zero. Detector is useful to detect if some modules are no longer busy (adsr, sequencer, etc.).<br />
+            <b>Note:</b> similar to <a href=#predicate_parameter_block>inactive parameter block</a>
+            the input signal is in fact the same memory address as the output signal.
+        </div>
+    </a>
+</div>
+
+<div class="doc_predicate">
+    <a id="predicate_polysequencer">
+        <div class="doc_predicate_header">
+            [polysequencer module base-1 base-2 .... base-n] => Creates a polysequencer module connected to several base modules.<br />
+            <b>Note:</b> module adheres to the behaviour of a <a href="#predicate_base">base</a> module.<br />
+            <b>Additional usage:</b><br />
+            [module [[]]] => Deletes the sequence.<br />
+            [module [command-1 command-2 .... command-n]] => Enters a new sequence.<br />
+            [module *x] => Returns the current sequence.<br />
+        </div>
+        <div class="doc_predicate_body">
+            <b>Signals:</b> [["SPEED" "TRIGGER"] ["BUSY"]]<br />
+            Plays sequences on the connected (moon)base modules.<br />
+            <b>INPUTS:</b><br />
+            <b>Speed:</b> determines beats per minute (assuming 24 ticks in a beat).<br />
+            <b>Trigger:</b> starts playing sequence if greated than zero. If equals 2.0 then plays in a loop.<br />
+            <b>OUTPUTS:</b><br />
+            <b>Busy:</b> active if a sequence is played. If looped then it becomes zero for the duration of one audio sample when reached the end of sequence.<br />
+            <b>COMMANDS:</b>
+            <b>[keyon channel key velocity]</b> => play key with velocity on selected channel<br />
+            <b>[keyon channel key]</b> => play key without velocity on selected channel<br />
+            <b>keyoff</b> => all keys off on all channels<br />
+            <b>[keyoff]</b> => all keys off on all channels<br />
+            <b>[keyoff channel]</b> => all keys off on selected channel<br />
+            <b>[keyoff channel key]</b> => keyoff one key on selected channel<br />
+            <b>[control channel index value]</b> => control change on selected channel (value can be fractional)<br />
+        </div>
+    </a>
+</div>
+
+<div class="doc_predicate">
+    <a id="predicate_sequencer">
+        <div class="doc_predicate_header">
+            [sequencer module base] => Creates a sequencer module connected to a base module.<br />
+            <b>Note:</b> module adheres to the behaviour of a <a href="#predicate_base">base</a> module.<br />
+            <b>Additional usage:</b><br />
+            [module [[]]] => Deletes the sequence.<br />
+            [module [command-1 command-2 .... command-n]] => Enters a new sequence.<br />
+            [module *x] => Returns the current sequence.<br />
+        </div>
+        <div class="doc_predicate_body">
+            <b>Signals:</b> [["SPEED" "TRIGGER"] ["BUSY"]]<br />
+            Plays sequences on the connected (moon)base module.<br />
+            <b>INPUTS:</b><br />
+            <b>Speed:</b> determines beats per minute (assuming 24 ticks in a beat).<br />
+            <b>Trigger:</b> starts playing sequence if greated than zero. If equals 2.0 then plays in a loop.<br />
+            <b>OUTPUTS:</b><br />
+            <b>Busy:</b> active if a sequence is played. If looped then it becomes zero for the duration of one audio sample when reached the end of sequence.<br />
+            <b>COMMANDS:</b>
+            <b>[keyon key velocity]</b> => play key with velocity<br />
+            <b>[keyon key]</b> => play key without velocity<br />
+            <b>keyoff</b> => all keys off<br />
+            <b>[keyoff]</b> => all keys off<br />
+            <b>[keyoff key]</b> => keyoff one key<br />
+            <b>[control index value]</b> => control change (value can be fractional)<br />
+        </div>
+    </a>
+</div>
 
 <div class="doc_library_section"><a id="utilities">Utilities</a></div>
 

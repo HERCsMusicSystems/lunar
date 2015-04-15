@@ -75,6 +75,10 @@ public:
 	double DSP_time_fraction;
 	double DSP_CHORUS_time_fraction;
 	int noise24b;
+	int left_freeverb_comb_sizes [8];
+	int right_freeverb_comb_sizes [8];
+	int left_freeverb_allpass_sizes [4];
+	int right_freeverb_allpass_sizes [4];
 	pthread_mutex_t main_mutex;
 	orbiter * root;
 	orbiter * * actives;
@@ -92,6 +96,7 @@ public:
 	double WaitingTime16384 (double time);
 	double MinBlep (int index);
 	void recalculate (void);
+	int size_limit (int size, int limit);
 	void move_modules (void);
 	void propagate_signals (void);
 	void activate (orbiter * module);

@@ -406,6 +406,9 @@ eg_class :: eg_class (orbiter_core * core) : PrologNativeOrbiterCreator (core) {
 orbiter * delay_class :: create_orbiter (PrologElement * parameters) {return new lunar_delay (core);}
 delay_class :: delay_class (orbiter_core * core) : PrologNativeOrbiterCreator (core) {}
 
+orbiter * freeverb_class :: create_orbiter (PrologElement * parameters) {return new lunar_freeverb (core);}
+freeverb_class :: freeverb_class (orbiter_core * core) : PrologNativeOrbiterCreator (core) {}
+
 orbiter * chorus_class :: create_orbiter (PrologElement * parameters) {return new lunar_chorus (core);}
 chorus_class :: chorus_class (orbiter_core * core) : PrologNativeOrbiterCreator (core) {}
 

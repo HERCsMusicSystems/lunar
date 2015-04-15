@@ -176,6 +176,12 @@ public:
 	delay_class (orbiter_core * core);
 };
 
+class freeverb_class : public PrologNativeOrbiterCreator {
+public:
+	virtual orbiter * create_orbiter (PrologElement * parameters);
+	freeverb_class (orbiter_core * core);
+};
+
 class chorus_class : public PrologNativeOrbiterCreator {
 public:
 	virtual orbiter * create_orbiter (PrologElement * parameters);

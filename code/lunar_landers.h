@@ -331,6 +331,48 @@ public:
 	lunar_delay (orbiter_core * core);
 };
 
+class lunar_comb {
+private:
+	int * size_pointer;
+public:
+	friend class lunar_freeverb;
+	double line [4096];
+	double filtered;
+	double move (double enter);
+	lunar_comb (void);
+};
+
+class lunar_allpass {
+private:
+	int * size_pointer;
+public:
+	friend class lunar_freeverb;
+	double line [1536];
+	double move (double enter);
+	lunar_allpass (void);
+};
+
+class lunar_freeverb : public orbiter {
+private:
+	double enter;
+	double left, right;
+	double signal_right;
+	double roomsize, roomwidth, highdamp, balance;
+	lunar_comb left_combs [8];
+	lunar_comb right_combs [8];
+	lunar_allpass left_allpasses [4];
+	lunar_allpass right_allpasses [4];
+public:
+	virtual int numberOfInputs (void);
+	virtual char * inputName (int ind);
+	virtual double * inputAddress (int ind);
+	virtual int numberOfOutputs (void);
+	virtual char * outputName (int ind);
+	virtual double * outputAddress (int ind);
+	virtual void move (void);
+	lunar_freeverb (orbiter_core * core);
+};
+
 class lunar_chorus : public orbiter {
 private:
 	double enter;

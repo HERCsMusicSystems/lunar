@@ -72,6 +72,13 @@ orbiter_core :: orbiter_core (void) {
 
 orbiter_core :: ~ orbiter_core (void) {pthread_mutex_destroy (& main_mutex); if (actives != 0) delete [] actives; actives = 0;}
 
+int orbiter_core :: size_limit (int size, int limit) {
+	size = (int) ((double) size * sampling_frequency / 44100.0);
+	if (size < 1) return 1;
+	if (size > limit) return limit;
+	return size;
+}
+
 void orbiter_core :: recalculate (void) {
 	pthread_mutex_lock (& main_mutex);
 	// ACTIVES ....
@@ -100,6 +107,32 @@ void orbiter_core :: recalculate (void) {
 	for (int ind = 0; ind < 16384; ind++) waiting_times_16384 [ind] = 16384.0 * (waiting_times [ind] = delay * pow (2.0, ((double) (ind - 8192) / -768.0)));
 	for (int ind = 0; ind < 16384; ind++) filter_freqs [ind] = 2.0 * sin (M_PI * 0.5 * centre_frequency * pow (2.0, (double) (ind - 8192) / 1536.0) / sampling_frequency);
 	for (int ind = 0; ind < 16384; ind++) if (filter_freqs [ind] > 0.996) filter_freqs [ind] = 0.996;
+	// .... FREEVERB SIZES
+	int stereo_offset = (int) (23.0 * sampling_frequency / 44100.0);
+	left_freeverb_comb_sizes [0] = size_limit (1116, 4096);
+	right_freeverb_comb_sizes [0] = size_limit (1116 + stereo_offset, 4096);
+	left_freeverb_comb_sizes [1] = size_limit (1188, 4096);
+	right_freeverb_comb_sizes [1] = size_limit (1188 + stereo_offset, 4096);
+	left_freeverb_comb_sizes [2] = size_limit (1277, 4096);
+	right_freeverb_comb_sizes [2] = size_limit (1277 + stereo_offset, 4096);
+	left_freeverb_comb_sizes [3] = size_limit (1356, 4096);
+	right_freeverb_comb_sizes [3] = size_limit (1356 + stereo_offset, 4096);
+	left_freeverb_comb_sizes [4] = size_limit (1422, 4096);
+	right_freeverb_comb_sizes [4] = size_limit (1422 + stereo_offset, 4096);
+	left_freeverb_comb_sizes [5] = size_limit (1491, 4096);
+	right_freeverb_comb_sizes [5] = size_limit (1491 + stereo_offset, 4096);
+	left_freeverb_comb_sizes [6] = size_limit (1557, 4096);
+	right_freeverb_comb_sizes [6] = size_limit (1557 + stereo_offset, 4096);
+	left_freeverb_comb_sizes [7] = size_limit (1617, 4096);
+	right_freeverb_comb_sizes [7] = size_limit (1617 + stereo_offset, 4096);
+	left_freeverb_allpass_sizes [0] = size_limit (556, 1536);
+	right_freeverb_allpass_sizes [0] = size_limit (556 + stereo_offset, 1536);
+	left_freeverb_allpass_sizes [1] = size_limit (441, 1536);
+	right_freeverb_allpass_sizes [1] = size_limit (441 + stereo_offset, 1536);
+	left_freeverb_allpass_sizes [2] = size_limit (341, 1536);
+	right_freeverb_allpass_sizes [2] = size_limit (341 + stereo_offset, 1536);
+	left_freeverb_allpass_sizes [3] = size_limit (225, 1536);
+	right_freeverb_allpass_sizes [3] = size_limit (225 + stereo_offset, 1536);
 	pthread_mutex_unlock (& main_mutex);
 }
 

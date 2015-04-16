@@ -334,10 +334,12 @@ public:
 class lunar_comb {
 private:
 	int * size_pointer;
-public:
+	int index;
 	friend class lunar_freeverb;
 	double line [4096];
-	double filtered;
+	double filter, feedback;
+	double A, B;
+public:
 	double move (double enter);
 	lunar_comb (void);
 };
@@ -345,19 +347,22 @@ public:
 class lunar_allpass {
 private:
 	int * size_pointer;
-public:
+	int index;
 	friend class lunar_freeverb;
 	double line [1536];
+	double feedback;
+public:
 	double move (double enter);
 	lunar_allpass (void);
 };
 
 class lunar_freeverb : public orbiter {
 private:
-	double enter;
-	double left, right;
+	double mono, left, right;
 	double signal_right;
-	double roomsize, roomwidth, highdamp, balance;
+	double feedback, diffusion, highdamp, dry, wet;
+	double previous_feedback, previous_diffusion, previous_highdamp, previous_dry, previous_wet;
+	double d1, w1, w2;
 	lunar_comb left_combs [8];
 	lunar_comb right_combs [8];
 	lunar_allpass left_allpasses [4];

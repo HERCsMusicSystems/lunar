@@ -124,8 +124,8 @@ void alpha_callback (int frames, AudioBuffers * data, void * source) {
 	double * right_moon = base -> module -> inputAddress (2);
 	pthread_mutex_lock (& core -> main_mutex);
 	for (int ind = 0; ind < frames; ind++) {
-		core -> move_modules ();
 		core -> propagate_signals ();
+		core -> move_modules ();
 		data -> insertStereo (((* moon) + (* left_moon)) * HEADROOM_FRACTION, ((* moon) + (* right_moon)) * HEADROOM_FRACTION);
 	}
 	pthread_mutex_unlock (& core -> main_mutex);

@@ -905,47 +905,62 @@ lunar_delay :: lunar_delay (orbiter_core * core) : orbiter (core) {
 }
 
 double lunar_comb :: move (double enter) {
-	return 0.0;
+	double value = line [index];
+	filter = A * value + B * filter;
+	line [index++] = enter + filter * feedback;
+	if (index >= * size_pointer) index = 0;
+	return value;
 }
 
 lunar_comb :: lunar_comb (void) {
-	filtered = 0.0;
 	size_pointer = 0;
+	index = 0;
+	filter = 0.0;
+	feedback = 0.5;
+	A = 1.0; B = 0.0;
 	for (int ind = 0; ind < 4096; ind++) line [ind] = 0.0;
 }
 
 double lunar_allpass :: move (double enter) {
-	return 0.0;
+	double buffer = line [index];
+	double value = buffer - enter;
+	line [index++] = enter + buffer * feedback;
+	if (index >= * size_pointer) index = 0;
+	return value;
 }
 
 lunar_allpass :: lunar_allpass (void) {
 	size_pointer = 0;
+	index = 0;
+	feedback = 0.5;
 	for (int ind = 0; ind < 1536; ind++) line [ind] = 0.0;
 }
 
-int lunar_freeverb :: numberOfInputs (void) {return 7;}
+int lunar_freeverb :: numberOfInputs (void) {return 8;}
 char * lunar_freeverb :: inputName (int ind) {
 	switch (ind) {
-	case 0: return "ENTER"; break;
+	case 0: return "MONO"; break;
 	case 1: return "LEFT"; break;
 	case 2: return "RIGHT"; break;
-	case 3: return "ROOMSIZE"; break;
-	case 4: return "ROOMWIDTH"; break;
+	case 3: return "FEEDBACK"; break;
+	case 4: return "DIFFUSION"; break;
 	case 5: return "HIGHDAMP"; break;
-	case 6: return "BALANCE"; break;
+	case 6: return "DRY"; break;
+	case 7: return "WET"; break;
 	default: break;
 	}
 	return orbiter :: inputName (ind);
 }
 double * lunar_freeverb :: inputAddress (int ind) {
 	switch (ind) {
-	case 0: return & enter; break;
+	case 0: return & mono; break;
 	case 1: return & left; break;
 	case 2: return & right; break;
-	case 3: return & roomsize; break;
-	case 4: return & roomwidth; break;
+	case 3: return & feedback; break;
+	case 4: return & diffusion; break;
 	case 5: return & highdamp; break;
-	case 6: return & balance; break;
+	case 6: return & dry; break;
+	case 7: return & wet; break;
 	default: break;
 	}
 	return orbiter :: inputAddress (ind);
@@ -968,29 +983,60 @@ double * lunar_freeverb :: outputAddress (int ind) {
 	return orbiter :: outputAddress (ind);
 }
 void lunar_freeverb :: move (void) {
-	double in_left = left + enter;
-	double in_right = right + enter;
+	if (feedback != previous_feedback) {
+		previous_feedback = feedback;
+		double feed = feedback * DIV_16384;
+		for (int ind = 0; ind < 8; ind++) left_combs [ind] . feedback = right_combs [ind] . feedback = feed;
+	}
+	if (highdamp != previous_highdamp) {
+		previous_highdamp = highdamp;
+		double B = highdamp > 0.0 ? exp (-48000000.0 / (core -> sampling_frequency * highdamp)) : 0.0;
+		double A = 1.0 - B;
+		for (int ind = 0; ind < 4; ind++) {
+			left_combs [ind] . A = right_combs [ind] . A = A;
+			left_combs [ind] . B = right_combs [ind] . B = B;
+		}
+	}
+	double in_left = left + mono;
+	double in_right = right + mono;
+	double in_left_gained = in_left * 0.015625;
+	double in_right_gained = in_right * 0.015625;
 	// according to the original it should be
 	// double in_left = left + right + enter;
 	// double in_right = in_left;
 	double ll = 0.0, rr = 0.0;
 	for (int ind = 0; ind < 8; ind++) {
-		ll += left_combs [ind] . move (in_left);
-		rr += right_combs [ind] . move (in_right);
+		ll += left_combs [ind] . move (in_left_gained);
+		rr += right_combs [ind] . move (in_right_gained);
 	}
 	for (int ind = 0; ind < 4; ind++) {
 		ll = left_allpasses [ind] . move (ll);
 		rr = right_allpasses [ind] . move (rr);
 	}
-	double bal = balance * 0.0001220703125;
-	double dry = balance <= 0.0 ? 1.0 : 1.0 - bal;
-	double wet = balance >= 0.0 ? 1.0 : 1.0 + bal;
-	double w1 = wet * roomwidth;
-	double w2 = wet - w1;
-	signal = ll * w1 + rr * w2 + left * dry;
-	signal_right = rr * w1 + ll * w2 + right * dry;
+	if (dry != previous_dry) {
+		previous_dry = dry;
+		d1 = dry * DIV_16384;
+	}
+	if (wet != previous_wet) {
+		double w = wet * DIV_16384;
+		previous_diffusion = diffusion;
+		w1 = w * diffusion * DIV_16384;
+		w2 = w - w1;
+	} else if (diffusion != previous_diffusion) {
+		double w = wet * DIV_16384;
+		previous_diffusion = diffusion;
+		w1 = w * diffusion * DIV_16384;
+		w2 = w - w1;
+	}
+	signal = ll * w1 + rr * w2 + in_left * d1;
+	signal_right = rr * w1 + ll * w2 + in_right * d1;
 }
 lunar_freeverb :: lunar_freeverb (orbiter_core * core) : orbiter (core) {
+	mono = left = right = signal_right = 0.0;
+	feedback = diffusion = highdamp = 0.0;
+	dry = wet = 16384.0;
+	d1 = w1 = w2 = 1.0;
+	previous_feedback = previous_diffusion = previous_highdamp = previous_dry = previous_wet = 1.0;
 	for (int ind = 0; ind < 8; ind++) {
 		left_combs [ind] . size_pointer = core -> left_freeverb_comb_sizes + ind;
 		right_combs [ind] . size_pointer = core -> right_freeverb_comb_sizes + ind;
@@ -999,7 +1045,6 @@ lunar_freeverb :: lunar_freeverb (orbiter_core * core) : orbiter (core) {
 		left_allpasses [ind] . size_pointer = core -> left_freeverb_allpass_sizes + ind;
 		right_allpasses [ind] . size_pointer = core -> right_freeverb_allpass_sizes + ind;
 	}
-	left_combs [0] . size_pointer = 0;
 	initialise (); activate ();
 };
 

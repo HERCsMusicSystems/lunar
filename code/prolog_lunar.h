@@ -118,6 +118,14 @@ public:
 	fm4_panel_class (PrologLunarServiceClass * servo);
 };
 
+class core_panel_class : public PrologNativeCode {
+public:
+	PrologRoot * root;
+	GraphicResources * resources;
+	bool code (PrologElement * parameters, PrologResolution * resolution);
+	core_panel_class (PrologLunarServiceClass * servo);
+};
+
 class oscilloscope_class : public PrologNativeOrbiterCreator {
 public:
 	virtual orbiter * create_orbiter (PrologElement * parameters);

@@ -34,7 +34,7 @@ program lunar #machine := "prolog.lunar"
 				Abb Ab A A# Ax
 				Bbb Bb B B# Bx
 				midi
-				ParameterBlockPanel AdsrPanel EGPanel FEGPanel FM4Panel
+				ParameterBlockPanel AdsrPanel EGPanel FEGPanel FM4Panel CorePanel
 				BuildParameterBlockPanel BuildAdsrPanel BuildEGPanel BuildFEGPanel BuildFM4Panel
 				MoveModules PropagateSignals MoveCore LunarDrop FUNCTION_KEY
 				CreateDistributor CloseDistributor Distribute Redistribute
@@ -110,6 +110,7 @@ program lunar #machine := "prolog.lunar"
 #machine EGPanel := "EGPanel"
 #machine FEGPanel := "FEGPanel"
 #machine FM4Panel := "FM4Panel"
+#machine CorePanel := "CorePanel"
 
 #machine MoveModules := "MoveModules"
 #machine PropagateSignals := "PropagateSignals"

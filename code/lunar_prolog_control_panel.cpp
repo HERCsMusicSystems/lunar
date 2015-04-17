@@ -789,18 +789,23 @@ static gboolean CreateControlPanelIdleCode (control_panel_action * action) {
 
 bool control_panel_class :: code (PrologElement * parameters, PrologResolution * resolution) {
 	PrologElement * atom = 0;
-	PrologElement * command = 0;
+	PrologAtom * command = 0;
 	while (parameters -> isPair ()) {
 		PrologElement * el = parameters -> getLeft ();
-		if (el -> isAtom ()) {if (atom == 0) atom = el; else command = el;}
-		if (el -> isVar ()) {if (atom != 0) command = atom; atom = el;}
+		if (el -> isVar ()) atom = el;
+		if (el -> isAtom ()) {if (atom == 0) atom = el; else command = el -> getAtom ();}
 		parameters = parameters -> getRight ();
+	}
+	if (command == 0) {
+		PrologDirectory * dir = root -> searchDirectory ("lunar");
+		if (dir == 0) return false;
+		command = dir -> searchAtom ("CCCB");
 	}
 	if (atom == 0 || command == 0) return false;
 	if (atom -> isVar ()) atom -> setAtom (new PrologAtom ());
 	if (! atom -> isAtom ()) return false;
 	if (atom -> getAtom () -> getMachine () != 0) return false;
-	control_panel_action * machine = new control_panel_action (resources, root, directory, atom -> getAtom (), command -> getAtom (), false);
+	control_panel_action * machine = new control_panel_action (resources, root, directory, atom -> getAtom (), command, false);
 	if (! atom -> getAtom () -> setMachine (machine)) {delete machine; return false;}
 	g_idle_add ((GSourceFunc) CreateControlPanelIdleCode, machine);
 	return true;

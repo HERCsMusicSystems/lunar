@@ -86,7 +86,7 @@ lunar_prolog_fm4_panel.o: ../code/lunar_prolog_fm4_panel.cpp ../code/lunar.h ../
 	g++ -Wno-write-strings -I. -I$(pc) ../code/lunar_prolog_fm4_panel.cpp -c -o lunar_prolog_fm4_panel.o `pkg-config --cflags gtk+-2.0`
 
 lunar_prolog_core_panel.o: ../code/lunar_prolog_core_panel.cpp ../code/lunar.h ../code/prolog_lunar.h $(pc)prolog.h\
-			$(pc)graphics2d.h ../code/graphic_resource.h
+			$(pc)graphics2d.h ../code/graphic_resources.h
 	g++ -Wno-write-strings -I. -I$(pc) ../code/lunar_prolog_core_panel.cpp -c -o lunar_prolog_core_panel.o `pkg-config --cflags gtk+-2.0`
 
 prolog_lunar.o: ../code/prolog_lunar.h ../code/prolog_lunar.cpp ../code/lunar.h $(pc)prolog.h ../code/lunar_linux_midi.h ../code/lunar_prolog_landers.h

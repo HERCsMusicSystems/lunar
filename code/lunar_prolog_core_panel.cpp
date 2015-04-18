@@ -26,6 +26,7 @@
 
 #include "prolog_lunar.h"
 #include "graphic_resources.h"
+#include <string.h>
 
 class core_panel_action : public PrologNativeCode {
 public:

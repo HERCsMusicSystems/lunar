@@ -1,14 +1,14 @@
 Phobos
 poly
 [core volume]12800.0
-[core pan]0.0
-[core balance]-8192.0
-[core chorus level]0.0
-[core chorus time]1024.0
-[core chorus speed]0.0
-[core chorus amp]8192.0
+[core pan]-8192.0
+[core balance]-4864.0
+[core chorus level]3584.0
+[core chorus time]384.0
+[core chorus speed]128.0
+[core chorus amp]6656.0
 [core delay feedback]8192.0
-[core delay time]8192.0
+[core delay time]9472.0
 [core delay highdamp]0.0
 [core X]0.0
 [core Y]0.0
@@ -25,12 +25,12 @@ poly
 [lfo 1 phase]0.0
 [lfo 1 sync]0.0
 [lfo 1 vibrato]0.0
-[lfo 2 speed]0.0
+[lfo 2 speed]-2048.0
 [lfo 2 wave]0.0
 [lfo 2 pulse]0.0
 [lfo 2 phase]0.0
 [lfo 2 sync]0.0
-[lfo 2 vibrato]0.0
+[lfo 2 vibrato]1536.0
 [lfo 2 tremolo]0.0
 [lfo 2 pan]0.0
 [operator algo]4.0
@@ -71,11 +71,14 @@ poly
 [operator 3 key amp BP]0.0
 [operator 3 key amp left]0.0
 [operator 3 key amp right]0.0
+[operator 4 key amp BP]0.0
+[operator 4 key amp left]0.0
+[operator 4 key amp right]0.0
 [operator 1 key egscal BP]0.0
 [operator 1 key egscal left]0.0
 [operator 1 key egscal right]0.0
-[operator 2 key egscal BP]0.0
-[operator 2 key egscal left]0.0
+[operator 2 key egscal BP]-2176.0
+[operator 2 key egscal left]128.0
 [operator 2 key egscal right]0.0
 [operator 3 key egscal BP]0.0
 [operator 3 key egscal left]0.0
@@ -164,14 +167,14 @@ poly
 [operator 2 eg freq]0.0
 [operator 3 eg freq]0.0
 [operator 4 eg freq]0.0
-[filter freq]5120.0
-[filter resonance]0.0
+[filter freq]1536.0
+[filter resonance]14848.0
 [filter amp]0.0
 [filter eg]0.0
 [filter key BP]0.0
 [filter key left]0.0
 [filter key right]0.0
-[adsr 1 attack]512.0
+[adsr 1 attack]5760.0
 [adsr 1 decay]9216.0
 [adsr 1 sustain]-16384.0
 [adsr 1 release]9216.0
@@ -211,7 +214,7 @@ poly
 [operator 4 sens lfo tremolo]0.0
 [filter pitch]0.0
 [filter lfo 1]0.0
-[filter lfo 2]0.0
+[filter lfo 2]16384.0
 [vector X][]
 [vector Y][]
 [key_map][[]]

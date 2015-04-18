@@ -235,7 +235,7 @@ program phobos [Phobos PhobosEditor BuildPhobos BuildPhobosPart Operator-1 Opera
 	[Insert *key1 *Phobos operator 1 key amp]
 	[Insert *key2 *Phobos operator 2 key amp]
 	[Insert *key3 *Phobos operator 3 key amp]
-	[Insert *key4 *Phobos operator 3 key amp]
+	[Insert *key4 *Phobos operator 4 key amp]
 	[Insert *egscal1 *Phobos operator 1 key egscal]
 	[Insert *egscal2 *Phobos operator 2 key egscal]
 	[Insert *egscal3 *Phobos operator 3 key egscal]

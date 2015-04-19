@@ -114,6 +114,7 @@ program lunar #machine := "prolog.lunar"
 
 #machine MoveModules := "MoveModules"
 #machine PropagateSignals := "PropagateSignals"
+#machine MoveCore := "MoveCore"
 
 #machine LoopWave := "LoopWave"
 
@@ -185,8 +186,6 @@ program lunar #machine := "prolog.lunar"
 		*freq4 *amp4 *ratio4 *feedback4
 	]
 ]
-
-[[MoveCore] [MoveModules] [PropagateSignals]]
 
 [[CreateDistributor *distributor]
 	[create_atom *distributor]

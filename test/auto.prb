@@ -61,13 +61,5 @@
 [TestEq "Loop (10)" 127.0 *x [MoveCore] [au *x]]
 [TestEq "Loop (11)" 128.0 *x [MoveCore] [au *x]]
 
-
-[nl]
-[TestSummary]
-[nl]
-;[FailedTestSummary]
-;[nl]
-[foreground 0xffff00]
-
-
+[exit]
 

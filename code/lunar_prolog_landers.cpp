@@ -599,7 +599,7 @@ arpeggiator_class :: arpeggiator_class (PrologDirectory * dir, orbiter_core * co
 
 class native_sequencer : public native_moonbase {
 public:
-	PrologAtom * keyon, * keyoff, * control;
+	PrologAtom * keyon, * keyoff, * control, * busy, * impulse;
 	bool code (PrologElement * parameters, PrologResolution * resolution) {
 		if (parameters -> isPair ()) {
 			PrologElement * el = parameters -> getLeft ();
@@ -638,6 +638,18 @@ public:
 						ell -> getLeft () -> setAtom (control);
 						ell = ell -> getRight (); ell -> setPair ();
 						ell -> getLeft () -> setInteger (sqep -> key);
+						ell = ell -> getRight (); ell -> setPair ();
+						ell -> getLeft () -> setDouble (sqep -> velocity);
+						break;
+					case 8:
+						ell -> setPair ();
+						ell -> getLeft () -> setAtom (busy);
+						ell = ell -> getRight (); ell -> setPair ();
+						ell -> getLeft () -> setDouble (sqep -> velocity);
+						break;
+					case 9:
+						ell -> setPair ();
+						ell -> getLeft () -> setAtom (impulse);
 						ell = ell -> getRight (); ell -> setPair ();
 						ell -> getLeft () -> setDouble (sqep -> velocity);
 						break;
@@ -684,6 +696,14 @@ public:
 							* sqep = new sequence_element (5, key -> getInteger (), velocity -> getNumber ());
 							sqep = & (* sqep) -> next;
 						}
+						if (atom -> getAtom () == busy && (key != 0 || velocity != 0)) {
+							* sqep = new sequence_element (8, 0, key != 0 ? key -> getNumber () : velocity -> getNumber ());
+							sqep = & (* sqep) -> next;
+						}
+						if (atom -> getAtom () == impulse && (key != 0 || velocity != 0)) {
+							* sqep = new sequence_element (9, 0, key != 0 ? key -> getNumber () : velocity -> getNumber ());
+							sqep = & (* sqep) -> next;
+						}
 					}
 					el = el -> getRight ();
 				}
@@ -698,6 +718,8 @@ public:
 		keyon = dir -> searchAtom ("keyon");
 		keyoff = dir -> searchAtom ("keyoff");
 		control = dir -> searchAtom ("control");
+		busy = dir -> searchAtom ("busy");
+		impulse = dir -> searchAtom ("impulse");
 	}
 };
 
@@ -758,6 +780,18 @@ public:
 						ell -> getLeft () -> setDouble (sqep -> velocity);
 						break;
 					case 6: ell -> setAtom (keyoff); break;
+					case 8:
+						ell -> setPair ();
+						ell -> getLeft () -> setAtom (busy);
+						ell = ell -> getRight (); ell -> setPair ();
+						ell -> getLeft () -> setDouble (sqep -> velocity);
+						break;
+					case 9:
+						ell -> setPair ();
+						ell -> getLeft () -> setAtom (impulse);
+						ell = ell -> getRight (); ell -> setPair ();
+						ell -> getLeft () -> setDouble (sqep -> velocity);
+						break;
 					default: break;
 					}
 					el = el -> getRight ();
@@ -806,6 +840,14 @@ public:
 						} else {
 							if (atom -> getAtom () == keyoff) {
 								* sqep = new polysequence_element (6);
+								sqep = & (* sqep) -> next;
+							}
+							if (atom -> getAtom () == busy && (channel != 0 || velocity != 0)) {
+								* sqep = new polysequence_element (8, 0, 0, channel != 0 ? channel -> getNumber () : velocity -> getNumber ());
+								sqep = & (* sqep) -> next;
+							}
+							if (atom -> getAtom () == impulse && (channel != 0 || velocity != 0)) {
+								* sqep = new polysequence_element (9, 0, 0, channel != 0 ? channel -> getNumber () : velocity -> getNumber ());
 								sqep = & (* sqep) -> next;
 							}
 						}

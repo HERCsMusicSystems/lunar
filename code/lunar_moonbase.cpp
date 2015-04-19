@@ -722,7 +722,8 @@ void sequencer :: propagate_signals (void) {
 }
 
 void sequencer :: private_signal (void) {
-	if (current_frame == 0 || base == 0) return;
+	if (current_frame == 0 || base == 0) {impulse_level = busy_level = 0.0; return;}
+	if (current_frame == elements) {impulse_level = 0.0; busy_level = 1.0;}
 	while (tick < 1) {
 		switch (current_frame -> type) {
 		case 0: tick = current_frame -> key; break;
@@ -731,11 +732,12 @@ void sequencer :: private_signal (void) {
 		case 3: base -> keyoff (); break;
 		case 4: base -> keyoff (current_frame -> key); break;
 		case 5: base -> control (current_frame -> key, current_frame -> velocity); break;
+		case 8: impulse_level = busy_level = current_frame -> velocity; break;
+		case 9: impulse_level = current_frame -> velocity; break;
 		default: break;
 		}
 		current_frame = current_frame -> next;
 		if (current_frame == 0) {
-			busy_request = true;
 			if (trigger > 1.0) current_frame = elements;
 			else return;
 		}
@@ -743,10 +745,7 @@ void sequencer :: private_signal (void) {
 	tick--;
 }
 
-void sequencer :: move (void) {
-	if (busy_request) {signal = 0.0; busy_request = false; return;}
-	signal = current_frame != 0 ? 1.0 : 0.0;
-}
+void sequencer :: move (void) {signal = impulse_level; impulse_level = busy_level;}
 
 bool sequencer :: insert_trigger (lunar_trigger * trigger) {
 	if (base != 0) return base -> insert_trigger (trigger);
@@ -781,7 +780,7 @@ void sequencer :: timing_clock (void) {
 }
 
 sequencer :: sequencer (orbiter_core * core, CommandModule * base) : CommandModule (core) {
-	busy_request = false;
+	impulse_level = busy_level = 0.0;
 	pthread_mutex_init (& critical, 0);
 	tempo = 140.0;
 	trigger = 0.0; time = -1.0;
@@ -850,7 +849,8 @@ void polysequencer :: propagate_signals (void) {
 }
 
 void polysequencer :: private_signal (void) {
-	if (current_frame == 0) return;
+	if (current_frame == 0) {impulse_level = busy_level = 0.0; return;}
+	if (current_frame == elements) {impulse_level = 0.0; busy_level = 1.0;}
 	while (tick < 1) {
 		switch (current_frame -> type) {
 		case 0: tick = current_frame -> key; break;
@@ -871,11 +871,12 @@ void polysequencer :: private_signal (void) {
 				bases [current_frame -> channel] -> control (current_frame -> key, current_frame -> velocity);
 			break;
 		case 6: for (int ind = 0; ind < base_pointer; ind++) bases [ind] -> keyoff (); break;
+		case 8: impulse_level = busy_level = current_frame -> velocity; break;
+		case 9: impulse_level = current_frame -> velocity; break;
 		default: break;
 		}
 		current_frame = current_frame -> next;
 		if (current_frame == 0) {
-			busy_request = true;
 			if (trigger > 1.0) current_frame = elements;
 			else return;
 		}
@@ -883,10 +884,7 @@ void polysequencer :: private_signal (void) {
 	tick--;
 }
 
-void polysequencer :: move (void) {
-	if (busy_request) {signal = 0.0; busy_request = false; return;}
-	signal = current_frame != 0 ? 1.0 : 0.0;
-}
+void polysequencer :: move (void) {signal = impulse_level; impulse_level = busy_level;}
 
 bool polysequencer :: insert_trigger (lunar_trigger * trigger) {return false;}
 bool polysequencer :: insert_controller (orbiter * controller, int location, double shift) {return false;}
@@ -915,7 +913,7 @@ void polysequencer :: add_base (CommandModule * module) {
 int polysequencer :: numberOfBases (void) {return base_pointer;}
 
 polysequencer :: polysequencer (orbiter_core * core, int number_of_bases) : CommandModule (core) {
-	busy_request = false;
+	impulse_level = busy_level = 0.0;
 	if (number_of_bases < 1) number_of_bases = 1;
 	this -> number_of_bases = number_of_bases;
 	base_pointer = 0;

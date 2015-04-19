@@ -157,6 +157,7 @@ public:
 class sequence_element {
 public:
 	int type; // 0 = wait, 1 = keyon [key], 2 = keyon [key velocity] 3 = keyoff [], 4 = keyoff [key], 5 = control
+	// 8 = busy [x], 9 = impulse [x]
 	int key;
 	double velocity;
 	sequence_element * next;
@@ -170,7 +171,7 @@ private:
 	double trigger;
 	double time;
 	int tick;
-	bool busy_request;
+	double impulse_level, busy_level;
 	sequence_element * current_frame;
 	CommandModule * base;
 	pthread_mutex_t critical;
@@ -206,6 +207,7 @@ public:
 class polysequence_element {
 public:
 	int type; // 0 = wait, 1 = keyon [channel key], 2 = keyon [channel key velocity] 3 = keyoff [channel], 4 = keyoff [channel key], 5 = control, 6 = keyoff []
+	// 8 = busy [x], 9 = impules [x]
 	int channel;
 	int key;
 	double velocity;
@@ -221,7 +223,7 @@ private:
 	double trigger;
 	double time;
 	int tick;
-	bool busy_request;
+	double impulse_level, busy_level;
 	polysequence_element * current_frame;
 	CommandModulePointer * bases;
 	int base_pointer;

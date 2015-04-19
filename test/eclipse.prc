@@ -4,5 +4,14 @@ import lunar
 
 program eclipse []
 
-end := [[batch "auto.prb"]] .
+end := [
+		[batch "sequencer.prb"]
+		[batch "auto.prb"]
+		[nl]
+		;[TestSummary]
+		;[nl]
+		[FailedTestSummary]
+		[nl]
+		[foreground 0xffff00]
+] .
 

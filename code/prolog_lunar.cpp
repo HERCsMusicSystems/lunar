@@ -205,6 +205,22 @@ public:
 	propagate_signals_class (orbiter_core * core) {this -> core = core;}
 };
 
+class move_core_class : public PrologNativeCode {
+public:
+	orbiter_core * core;
+	bool code (PrologElement * parameters, PrologResolution * resolution) {
+		if (core == 0) return false;
+		int cycles = 1;
+		if (parameters -> isPair ()) {
+			parameters = parameters -> getLeft ();
+			if (parameters -> isInteger ()) cycles = parameters -> getInteger ();
+		}
+		while (cycles-- > 0) {core -> propagate_signals (); core -> move_modules ();}
+		return true;
+	}
+	move_core_class (orbiter_core * core) {this -> core = core;}
+};
+
 class unicar_code : public PrologNativeCode {
 public:
 	PrologAtom * atom;
@@ -315,6 +331,7 @@ PrologNativeCode * PrologLunarServiceClass :: getNativeCode (char * name) {
 	if (strcmp (name, "CorePanel") == 0) return new core_panel_class (this);
 	if (strcmp (name, "MoveModules") == 0) return new move_modules_class (& core);
 	if (strcmp (name, "PropagateSignals") == 0) return new propagate_signals_class (& core);
+	if (strcmp (name, "MoveCore") == 0) return new move_core_class (& core);
 	if (strcmp (name, "LoopWave") == 0) return new LoopWaveClass ();
 	if (strcmp (name, "unicar") == 0) return new unicar ();
 	return 0;

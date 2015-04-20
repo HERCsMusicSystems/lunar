@@ -42,6 +42,7 @@ public:
 	point location;
 	point captured;
 	int captured_button;
+	GdkEventType captured_type;
 	button_active_graphics START;
 	button_active_graphics STOP;
 	button_active_graphics RECORD;
@@ -58,6 +59,7 @@ public:
 	{
 		this -> root = root;
 		captured_button = 0;
+		captured_type = (GdkEventType) 0;
 		background_image = resources != 0 ? resources -> adsr_panel_surface : 0;
 		this -> atom = atom; COLLECTOR_REFERENCE_INC (atom);
 		this -> core = core; COLLECTOR_REFERENCE_INC (core);
@@ -171,7 +173,8 @@ static gboolean RedrawEGPanel (GtkWidget * viewport, GdkEvent * event, eg_panel_
 */
 
 static gint CorePanelKeyon (GtkWidget * viewport, GdkEventButton * event, core_panel_action * action) {
-	printf ("clicked....\n");
+	printf ("clicked....[%i]\n", (int) event -> type);
+	action -> captured_type = event -> type;
 	action -> captured_button = event -> button;
 	point location (event -> x, event -> y);
 	action -> captured = location;
@@ -179,24 +182,27 @@ static gint CorePanelKeyon (GtkWidget * viewport, GdkEventButton * event, core_p
 	if (action -> STOP . keyon (location)) {
 		action -> STOP . engaged = true;
 		action -> START . engaged = false;
-		action -> RECORD . engaged = false;
 		redraw = true;
 	}
 	if (action -> START . keyon (location)) {
 		action -> START . engaged = true;
 		redraw = true;
 	}
-	if (action -> RECORD . keyon (location)) {
-		action -> RECORD . engaged = true;
-		redraw = true;
-	}
 	if (redraw) gtk_widget_queue_draw (viewport);
 	return TRUE;
 }
 static gint CorePanelKeyoff (GtkWidget * viewport, GdkEventButton * event, core_panel_action * action) {
+	printf (".... [%i]\n", (int) event -> type);
 	point location (event -> x, event -> y);
 	bool redraw = false;
 	if (action -> STOP . keyoff (location)) {action -> STOP . engaged = false; redraw = true;}
+	if (action -> RECORD . keyoff (location)) {
+		if (action -> captured_type == GDK_BUTTON_PRESS) {
+			printf ("change record....\n");
+			action -> RECORD . engaged = ! action -> RECORD . engaged;
+			redraw = true;
+		}
+	}
 	if (redraw) gtk_widget_queue_draw (viewport);
 	return TRUE;
 }
@@ -269,12 +275,14 @@ static gboolean CreateCorePanelIdleCode (core_panel_action * action) {
 	for (int ind = 0; ind < audio . getNumberOfInputDevices (); ind++) {
 		gtk_combo_box_append_text (GTK_COMBO_BOX (input_combo), audio . getInputDeviceName (ind));
 	}
+	gtk_combo_box_set_active (GTK_COMBO_BOX (input_combo), audio . getSelectedInputDevice () + 1);
 	gtk_fixed_put (GTK_FIXED (area), input_combo, 10, 10);
 	GtkWidget * output_combo = gtk_combo_box_new_text ();
 	gtk_combo_box_append_text (GTK_COMBO_BOX (output_combo), "Inactive");
 	for (int ind = 0; ind < audio . getNumberOfOutputDevices (); ind++) {
 		gtk_combo_box_append_text (GTK_COMBO_BOX (output_combo), audio . getOutputDeviceName (ind));
 	}
+	gtk_combo_box_set_active (GTK_COMBO_BOX (output_combo), audio . getSelectedOutputDevice () + 1);
 	gtk_fixed_put (GTK_FIXED (area), output_combo, 10, 30);
 	GtkWidget * sampling_combo = gtk_combo_box_new_text();
 	gtk_combo_box_append_text (GTK_COMBO_BOX (sampling_combo), "8,000 Hz [Telephone]");
@@ -295,6 +303,11 @@ static gboolean CreateCorePanelIdleCode (core_panel_action * action) {
 	gtk_combo_box_append_text (GTK_COMBO_BOX (sampling_combo), "362,800 Hz [eXtreme]");
 	gtk_combo_box_append_text (GTK_COMBO_BOX (sampling_combo), "2,822,400 Hz [SACD]");
 	gtk_combo_box_append_text (GTK_COMBO_BOX (sampling_combo), "5,644,800 Hz [DSD]");
+	gtk_combo_box_set_active (GTK_COMBO_BOX (sampling_combo), 8);
+	GdkColor red = {0, 0xffff, 0, 0};
+	gtk_widget_modify_bg (sampling_combo, GTK_STATE_NORMAL, & red);
+	gtk_widget_modify_bg (sampling_combo, GTK_STATE_PRELIGHT, & red);
+	gtk_widget_modify_bg (sampling_combo, GTK_STATE_ACTIVE, & red);
 	g_signal_connect (G_OBJECT (sampling_combo), "changed", G_CALLBACK (SamplingRateChanged), 0);
 	gtk_fixed_put (GTK_FIXED (area), sampling_combo, 140, 10);
 	gtk_container_add (GTK_CONTAINER (action -> viewport), area);

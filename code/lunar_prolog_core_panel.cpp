@@ -27,6 +27,9 @@
 #include "prolog_lunar.h"
 #include "graphic_resources.h"
 #include <string.h>
+#include "multiplatform_audio.h"
+
+extern MultiplatformAudio audio;
 
 class core_panel_action : public PrologNativeCode {
 public:
@@ -39,13 +42,20 @@ public:
 	point location;
 	point captured;
 	int captured_button;
+	button_active_graphics START;
+	button_active_graphics STOP;
+	button_active_graphics RECORD;
 	bool remove (bool remove_gtk = true) {
 		if (remove_gtk) g_idle_add ((GSourceFunc) RemoveViewportIdleCode, viewport);
 		delete this;
 		return true;
 	}
 	bool code (PrologElement * parameters, PrologResolution * resolution);
-	core_panel_action (GraphicResources * resources, PrologRoot * root, PrologAtom * atom, PrologAtom * core, PrologAtom * reactor) {
+	core_panel_action (GraphicResources * resources, PrologRoot * root, PrologAtom * atom, PrologAtom * core, PrologAtom * reactor) :
+		STOP (point (10.0, 92.0), 1, resources, true),
+		START (point (40.0, 92.0), 2, resources, true),
+		RECORD (point (90.0, 92.0), 3, resources, true)
+	{
 		this -> root = root;
 		captured_button = 0;
 		background_image = resources != 0 ? resources -> adsr_panel_surface : 0;
@@ -161,13 +171,33 @@ static gboolean RedrawEGPanel (GtkWidget * viewport, GdkEvent * event, eg_panel_
 */
 
 static gint CorePanelKeyon (GtkWidget * viewport, GdkEventButton * event, core_panel_action * action) {
+	printf ("clicked....\n");
 	action -> captured_button = event -> button;
 	point location (event -> x, event -> y);
 	action -> captured = location;
+	bool redraw = false;
+	if (action -> STOP . keyon (location)) {
+		action -> STOP . engaged = true;
+		action -> START . engaged = false;
+		action -> RECORD . engaged = false;
+		redraw = true;
+	}
+	if (action -> START . keyon (location)) {
+		action -> START . engaged = true;
+		redraw = true;
+	}
+	if (action -> RECORD . keyon (location)) {
+		action -> RECORD . engaged = true;
+		redraw = true;
+	}
+	if (redraw) gtk_widget_queue_draw (viewport);
 	return TRUE;
 }
 static gint CorePanelKeyoff (GtkWidget * viewport, GdkEventButton * event, core_panel_action * action) {
 	point location (event -> x, event -> y);
+	bool redraw = false;
+	if (action -> STOP . keyoff (location)) {action -> STOP . engaged = false; redraw = true;}
+	if (redraw) gtk_widget_queue_draw (viewport);
 	return TRUE;
 }
 static gint CorePanelMove (GtkWidget * viewport, GdkEventButton * event, core_panel_action * action) {
@@ -182,6 +212,9 @@ static gint CorePanelMove (GtkWidget * viewport, GdkEventButton * event, core_pa
 static gboolean RedrawCorePanel (GtkWidget * viewport, GdkEvent * event, core_panel_action * action) {
 	cairo_t * cr = gdk_cairo_create (gtk_widget_get_window (viewport));
 	if (action -> background_image != 0) {cairo_set_source_surface (cr, action -> background_image, 0, 0); cairo_paint (cr);}
+	action -> STOP . draw (cr);
+	action -> START . draw (cr);
+	action -> RECORD . draw (cr);
 	cairo_destroy (cr);
 	return FALSE;
 }
@@ -222,11 +255,48 @@ static void dnd_receive (GtkWidget * widget, GdkDragContext * context, gint x, g
 	root -> resolution (query);
 	delete query;
 }
+static void SamplingRateChanged (GtkWidget * combo, gpointer data) {
+	int index = gtk_combo_box_get_active (GTK_COMBO_BOX (combo));
+	printf ("selected [%i]\n", index);
+}
 static gboolean CreateCorePanelIdleCode (core_panel_action * action) {
 	action -> viewport = gtk_window_new (GTK_WINDOW_TOPLEVEL);
 	gtk_window_set_title (GTK_WINDOW (action -> viewport), action -> atom -> name ());
 	g_signal_connect (action -> viewport, "delete-event", G_CALLBACK (CorePanelDeleteEvent), action);
-	GtkWidget * area = gtk_drawing_area_new ();
+	GtkWidget * area = gtk_fixed_new ();
+	GtkWidget * input_combo = gtk_combo_box_new_text ();
+	gtk_combo_box_append_text (GTK_COMBO_BOX (input_combo), "Inactive");
+	for (int ind = 0; ind < audio . getNumberOfInputDevices (); ind++) {
+		gtk_combo_box_append_text (GTK_COMBO_BOX (input_combo), audio . getInputDeviceName (ind));
+	}
+	gtk_fixed_put (GTK_FIXED (area), input_combo, 10, 10);
+	GtkWidget * output_combo = gtk_combo_box_new_text ();
+	gtk_combo_box_append_text (GTK_COMBO_BOX (output_combo), "Inactive");
+	for (int ind = 0; ind < audio . getNumberOfOutputDevices (); ind++) {
+		gtk_combo_box_append_text (GTK_COMBO_BOX (output_combo), audio . getOutputDeviceName (ind));
+	}
+	gtk_fixed_put (GTK_FIXED (area), output_combo, 10, 30);
+	GtkWidget * sampling_combo = gtk_combo_box_new_text();
+	gtk_combo_box_append_text (GTK_COMBO_BOX (sampling_combo), "8,000 Hz [Telephone]");
+	gtk_combo_box_append_text (GTK_COMBO_BOX (sampling_combo), "11,025 Hz [PCM MPEG]");
+	gtk_combo_box_append_text (GTK_COMBO_BOX (sampling_combo), "16,000 Hz [VoIP]");
+	gtk_combo_box_append_text (GTK_COMBO_BOX (sampling_combo), "22,050 Hz [PCM MPEG]");
+	gtk_combo_box_append_text (GTK_COMBO_BOX (sampling_combo), "32,000 Hz [miniDV]");
+	gtk_combo_box_append_text (GTK_COMBO_BOX (sampling_combo), "37,800 Hz [CD-XA]");
+	gtk_combo_box_append_text (GTK_COMBO_BOX (sampling_combo), "44,056 Hz [NTSC]");
+	gtk_combo_box_append_text (GTK_COMBO_BOX (sampling_combo), "44,100 Hz [Audio CD]");
+	gtk_combo_box_append_text (GTK_COMBO_BOX (sampling_combo), "48,000 Hz [HD-SDI]");
+	gtk_combo_box_append_text (GTK_COMBO_BOX (sampling_combo), "50,000 Hz [3M]");
+	gtk_combo_box_append_text (GTK_COMBO_BOX (sampling_combo), "50,400 Hz [X-80]");
+	gtk_combo_box_append_text (GTK_COMBO_BOX (sampling_combo), "88,200 Hz [CD]");
+	gtk_combo_box_append_text (GTK_COMBO_BOX (sampling_combo), "96,000 Hz [DVD-Audio]");
+	gtk_combo_box_append_text (GTK_COMBO_BOX (sampling_combo), "176,400 Hz [HDCD]");
+	gtk_combo_box_append_text (GTK_COMBO_BOX (sampling_combo), "192,000 Hz [DVD-Audio]");
+	gtk_combo_box_append_text (GTK_COMBO_BOX (sampling_combo), "362,800 Hz [eXtreme]");
+	gtk_combo_box_append_text (GTK_COMBO_BOX (sampling_combo), "2,822,400 Hz [SACD]");
+	gtk_combo_box_append_text (GTK_COMBO_BOX (sampling_combo), "5,644,800 Hz [DSD]");
+	g_signal_connect (G_OBJECT (sampling_combo), "changed", G_CALLBACK (SamplingRateChanged), 0);
+	gtk_fixed_put (GTK_FIXED (area), sampling_combo, 140, 10);
 	gtk_container_add (GTK_CONTAINER (action -> viewport), area);
 
 	g_signal_connect (G_OBJECT (area), "expose-event", G_CALLBACK (RedrawCorePanel), action);

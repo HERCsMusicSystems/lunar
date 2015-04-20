@@ -67,7 +67,7 @@ class audio_dx_stereo_buffers;
 static audio_dx_stereo_buffers * record_root = 0;
 static audio_dx_stereo_buffers * record_current = 0;
 static int record_sampling_freq = 127;
-static char output_file_name [1024] = "";
+static char * output_file_name = 0;
 static void insert_long (FILE * tc, int ind) {
 	fputc (ind & 0xff, tc);
 	ind >>= 8;
@@ -84,13 +84,25 @@ static void insert_short (FILE * tc, int ind) {
 }
 void MultiplatformAudio :: selectOutputFile (double seconds, char * file_name) {
 	if (record_frames > 0) {printf ("currently recording....\n"); return;}
-	strcpy (output_file_name, file_name);
-	record_frames = (int) (seconds * (double) record_sampling_freq);
+	int to_record = (int) (seconds * (double) record_sampling_freq);
+	if (to_record < 1) return;
+	if (output_file_name == 0 && file_name != 0) {
+		output_file_name = new char [strlen (file_name) + 4];
+		strcpy (output_file_name, file_name);
+	}
 	recorded_frames = 0;
 	stop_recording = false;
-	printf ("%s for %i frames (%i %i).\n", file_name, record_frames, (int) seconds, record_sampling_freq);
+	record_frames = to_record;
+	printf ("Recording started (frames = %i, seconds = %f, file = %s).\n", record_frames, seconds, output_file_name != 0 ? output_file_name : "<unknown>");
 }
-void MultiplatformAudio :: stopRecording (void) {printf ("stopping record....\n"); stop_recording = true;}
+void MultiplatformAudio :: stopRecording (char * file_name) {
+	if (output_file_name == 0 && file_name != 0) {
+		output_file_name = new char [strlen (file_name) + 4];
+		strcpy (output_file_name, file_name);
+	}
+	printf ("stopping recording....\n");
+	stop_recording = true;
+}
 
 bool MultiplatformAudio :: inputFileActive (void) {return input_file != NULL;}
 bool MultiplatformAudio :: outputFileActive (void) {return record_frames > 0;}
@@ -161,24 +173,30 @@ static void delete_record_root (FILE * tc) {
 }
 
 static void * drop_audio_file (void * empty) {
-	printf ("writing audio file [%s]\n", output_file_name);
-	FILE * output_file = fopen (output_file_name, "wb");
-	if (output_file == 0) {delete_record_root (0); return 0;}
-	fprintf (output_file, "RIFF");
-	insert_long (output_file, 36 + (recorded_frames << 2));
-	fprintf (output_file, "WAVEfmt ");
-	insert_long (output_file, 16);
-	insert_short (output_file, 1);
-	insert_short (output_file, 2);
-	insert_long (output_file, record_sampling_freq);
-	insert_long (output_file, record_sampling_freq << 2);
-	insert_short (output_file, 4);
-	insert_short (output_file, 16);
-	fprintf (output_file, "data");
-	insert_long (output_file, recorded_frames << 2);
-
-	delete_record_root (output_file);
-	fclose (output_file);
+	if (output_file_name != 0) {
+		printf ("writing audio file [%s]\n", output_file_name);
+		FILE * output_file = fopen (output_file_name, "wb");
+		delete [] output_file_name;
+		output_file_name = 0;
+		if (output_file == 0) {delete_record_root (0); return 0;}
+		fprintf (output_file, "RIFF");
+		insert_long (output_file, 36 + (recorded_frames << 2));
+		fprintf (output_file, "WAVEfmt ");
+		insert_long (output_file, 16);
+		insert_short (output_file, 1);
+		insert_short (output_file, 2);
+		insert_long (output_file, record_sampling_freq);
+		insert_long (output_file, record_sampling_freq << 2);
+		insert_short (output_file, 4);
+		insert_short (output_file, 16);
+		fprintf (output_file, "data");
+		insert_long (output_file, recorded_frames << 2);
+		delete_record_root (output_file);
+		fclose (output_file);
+	} else {
+		delete_record_root (0);
+		printf ("Recording forgot => no output file name provided.\n");
+	}
 	record_frames = recorded_frames = 0;
 	stop_recording = false;
 	return 0;

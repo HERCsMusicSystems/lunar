@@ -84,7 +84,7 @@ public:
 	}
 };
 
-static MultiplatformAudio audio (0);
+MultiplatformAudio audio (0);
 
 class core_action : public PrologNativeOrbiter {
 public:
@@ -143,25 +143,9 @@ void beta_callback (int frames, AudioBuffers * data, void * source) {
 	pthread_mutex_unlock (& core -> main_mutex);
 }
 
-static bool recorder (PrologElement * parameters) {
-	if (parameters -> isEarth ()) {audio . stopRecording (); return true;}
-	PrologElement * seconds = 0;
-	PrologElement * path = 0;
-	while (parameters -> isPair ()) {
-		PrologElement * el = parameters -> getLeft ();
-		if (el -> isNumber ()) seconds = el;
-		if (el -> isText ()) path = el;
-		parameters = parameters -> getRight ();
-	}
-	if (path == 0) return false;
-	double sec = seconds != 0 ? seconds -> getNumber () : 60.0;
-	if (sec < 0.0) sec = 1.0; if (sec > 3600.0) sec = 3600.0;
-	audio . selectOutputFile (sec, path -> getText ());
-	return true;
-}
-
 bool core_class :: code (PrologElement * parameters, PrologResolution * resolution) {
-	if (parameters -> isEarth () && ! audio . outputFileActive ()) {
+	if (parameters -> isEarth ()) {
+		if (audio . outputFileActive ()) {audio . stopRecording (); return true;}
 		int outputs = audio . getNumberOfOutputDevices ();
 		printf ("Number of outputs = %i\n", outputs);
 		for (int ind = 0; ind < outputs; ind++) printf ("	device %i [%s]\n", ind, audio . getOutputDeviceName (ind));
@@ -170,9 +154,8 @@ bool core_class :: code (PrologElement * parameters, PrologResolution * resoluti
 		for (int ind = 0; ind < inputs; ind++) printf ("	device %i [%s]\n", ind, audio . getInputDeviceName (ind));
 		return true;
 	}
-	if (recorder (parameters)) return true;
-	if (cores > 0) return false;
 	PrologElement * atom = 0;
+	PrologElement * file_name = 0;
 	double centre_frequency = -1;
 	double sampling_frequency = -1;
 	int latency_block_size = -1;
@@ -182,6 +165,7 @@ bool core_class :: code (PrologElement * parameters, PrologResolution * resoluti
 	while (parameters -> isPair ()) {
 		PrologElement * el = parameters -> getLeft ();
 		if (el -> isAtom ()) atom = el;
+		if (el -> isText ()) file_name = el;
 		if (el -> isVar ()) atom = el;
 		if (el -> isInteger ()) {
 			if (centre_frequency < 0.0) centre_frequency = (double) el -> getInteger ();
@@ -194,11 +178,19 @@ bool core_class :: code (PrologElement * parameters, PrologResolution * resoluti
 		if (el -> isDouble ()) centre_frequency = el -> getDouble ();
 		parameters = parameters -> getRight ();
 	}
+	if (atom == 0) {
+		if (centre_frequency > 0.0) {
+			audio . selectOutputFile (centre_frequency, file_name != 0 ? file_name -> getText () : 0);
+			return true;
+		}
+		if (file_name != 0) {audio . stopRecording (file_name -> getText ()); return true;}
+		return false;
+	}
+	if (cores > 0) return false;
 	if (centre_frequency < 0.0) centre_frequency = core -> centre_frequency;
 	if (sampling_frequency < 0.0) sampling_frequency = core -> sampling_frequency;
 	if (latency_block_size < 16) latency_block_size = core -> latency_block_size;
 	if (requested_number_of_actives < 0) requested_number_of_actives = core -> requested_active_size;
-	if (atom == 0) return false;
 	if (atom -> isVar ()) atom -> setAtom (new PrologAtom ());
 	if (! atom -> isAtom ()) return false;
 	if (atom -> getAtom () -> getMachine () != 0) return false;

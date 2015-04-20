@@ -55,7 +55,7 @@ public:
 	~ MultiplatformAudio (void);
 	void selectInputFile (char * file_name);
 	void selectOutputFile (double seconds, char * file_name);
-	void stopRecording (void);
+	void stopRecording (char * file_name = 0);
 	bool inputFileActive (void);
 	bool outputFileActive (void);
 };

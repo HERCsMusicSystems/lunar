@@ -50,6 +50,7 @@ public:
 	cairo_surface_t * adsr_panel_surface;
 	cairo_surface_t * eg_panel_surface;
 	cairo_surface_t * fm4_panel_surface;
+	cairo_surface_t * core_panel_surface;
 	GraphicResources (void);
 	~ GraphicResources (void);
 };

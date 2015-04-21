@@ -75,6 +75,8 @@ extern char resource_eg_panel_start;
 extern char resource_eg_panel_end;
 extern char resource_fm4_panel_start;
 extern char resource_fm4_panel_end;
+extern char resource_core_panel_start;
+extern char resource_core_panel_end;
 #endif
 
 class png_closure {
@@ -118,6 +120,7 @@ GraphicResources :: GraphicResources (void) {
 	png_closure adsr_panel_surface_closure (GetResource (ADSR_PANEL_PNG), ADSR_PANEL_SIZE);
 	png_closure eg_panel_surface_closure (GetResource (EG_PANEL_PNG), EG_PANEL_SIZE);
 	png_closure fm4_panel_surface_closure (GetResource (FM4_PANEL_PNG), FM4_PANEL_SIZE);
+	png_closure core_panel_surface_closure (GetREsource (CORE_PANEL_PNG), CORE_PANEL_SIZE);
 #else
 	png_closure frame_closure (& resource_vector_frame_start, & resource_vector_frame_end);
 	png_closure handle_closure (& resource_vector_handle_start, & resource_vector_handle_end);
@@ -138,6 +141,7 @@ GraphicResources :: GraphicResources (void) {
 	png_closure adsr_panel_surface_closure (& resource_adsr_panel_start, & resource_adsr_panel_end);
 	png_closure eg_panel_surface_closure (& resource_eg_panel_start, & resource_eg_panel_end);
 	png_closure fm4_panel_surface_closure (& resource_fm4_panel_start, & resource_fm4_panel_end);
+	png_closure core_panel_surface_closure (& resource_core_panel_start, & resource_core_panel_end);
 #endif
 	vector_surface = cairo_image_surface_create_from_png_stream (png_reader, & frame_closure);
 	vector_handle = cairo_image_surface_create_from_png_stream (png_reader, & handle_closure);
@@ -158,6 +162,7 @@ GraphicResources :: GraphicResources (void) {
 	adsr_panel_surface = cairo_image_surface_create_from_png_stream (png_reader, & adsr_panel_surface_closure);
 	eg_panel_surface = cairo_image_surface_create_from_png_stream (png_reader, & eg_panel_surface_closure);
 	fm4_panel_surface = cairo_image_surface_create_from_png_stream (png_reader, & fm4_panel_surface_closure);
+	core_panel_surface = cairo_image_surface_create_from_png_stream (png_reader, & core_panel_surface_closure);
 }
 
 GraphicResources :: ~ GraphicResources (void) {
@@ -180,6 +185,7 @@ GraphicResources :: ~ GraphicResources (void) {
 	if (adsr_panel_surface != 0) cairo_surface_destroy (adsr_panel_surface);
 	if (eg_panel_surface != 0) cairo_surface_destroy (eg_panel_surface);
 	if (fm4_panel_surface != 0) cairo_surface_destroy (fm4_panel_surface);
+	if (core_panel_surface != 0) cairo_surface_destroy (core_panel_surface);
 }
 
 GraphicResources * create_graphic_resources (void) {return new GraphicResources ();}

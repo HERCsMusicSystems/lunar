@@ -60,7 +60,7 @@ public:
 		this -> root = root;
 		captured_button = 0;
 		captured_type = (GdkEventType) 0;
-		background_image = resources != 0 ? resources -> adsr_panel_surface : 0;
+		background_image = resources != 0 ? resources -> core_panel_surface : 0;
 		this -> atom = atom; COLLECTOR_REFERENCE_INC (atom);
 		this -> core = core; COLLECTOR_REFERENCE_INC (core);
 		this -> reactor = reactor; COLLECTOR_REFERENCE_INC (reactor);
@@ -304,10 +304,6 @@ static gboolean CreateCorePanelIdleCode (core_panel_action * action) {
 	gtk_combo_box_append_text (GTK_COMBO_BOX (sampling_combo), "2,822,400 Hz [SACD]");
 	gtk_combo_box_append_text (GTK_COMBO_BOX (sampling_combo), "5,644,800 Hz [DSD]");
 	gtk_combo_box_set_active (GTK_COMBO_BOX (sampling_combo), 8);
-	GdkColor red = {0, 0xffff, 0, 0};
-	gtk_widget_modify_bg (sampling_combo, GTK_STATE_NORMAL, & red);
-	gtk_widget_modify_bg (sampling_combo, GTK_STATE_PRELIGHT, & red);
-	gtk_widget_modify_bg (sampling_combo, GTK_STATE_ACTIVE, & red);
 	g_signal_connect (G_OBJECT (sampling_combo), "changed", G_CALLBACK (SamplingRateChanged), 0);
 	gtk_fixed_put (GTK_FIXED (area), sampling_combo, 140, 10);
 	gtk_container_add (GTK_CONTAINER (action -> viewport), area);

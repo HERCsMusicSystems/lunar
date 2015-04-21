@@ -226,18 +226,28 @@ adsr_panel.o: ../graphics/adsr_panel.png
 		--redefine-sym _binary____graphics_adsr_panel_png_start=resource_adsr_panel_start\
 		--redefine-sym _binary____graphics_adsr_panel_png_end=resource_adsr_panel_end\
 		../graphics/adsr_panel.png adsr_panel.o
+	objdump -t adsr_panel.o
 
 eg_panel.o: ../graphics/eg_panel.png
 	objcopy --input binary --output elf64-x86-64 --binary-architecture i386\
 		--redefine-sym _binary____graphics_eg_panel_png_start=resource_eg_panel_start\
 		--redefine-sym _binary____graphics_eg_panel_png_end=resource_eg_panel_end\
 		../graphics/eg_panel.png eg_panel.o
+	objdump -t eg_panel.o
 
 fm4_panel.o: ../graphics/fm4_panel.png
 	objcopy --input binary --output elf64-x86-64 --binary-architecture i386\
 		--redefine-sym _binary____graphics_fm4_panel_png_start=resource_fm4_panel_start\
 		--redefine-sym _binary____graphics_fm4_panel_png_end=resource_fm4_panel_end\
 		../graphics/fm4_panel.png fm4_panel.o
+	objdump -t fm4_panel.o
+
+core_panel.o: ../graphics/core_panel.png
+	objcopy --input binary --output elf64-x86-64 --binary-architecture i386\
+		--redefine-sym _binary____graphics_core_panel_png_start=resource_core_panel_start\
+		--redefine-sym _binary____graphics_core_panel_png_end=resource_core_panel_end\
+		../graphics/core_panel.png core_panel.o
+	objdump -t core_panel.o
 
 lunar_prc.o: ../code/lunar.prc
 	objcopy --input binary --output elf64-x86-64 --binary-architecture i386\
@@ -252,7 +262,7 @@ prcgtk.o: ../code/prcgtk.cpp ../code/prolog_lunar.h ../code/lunar.h\
 
 graphics = small_keyboard.o keyboard.o big_keyboard.o vector_frame.o vector_handle.o knob.o knob_surface.o\
 	knob_handle.o display.o button_on.o button_off.o encoder_surface.o encoder_handle.o slider_surface.o slider_handle.o\
-	command_centre.o adsr_panel.o eg_panel.o fm4_panel.o
+	command_centre.o adsr_panel.o eg_panel.o fm4_panel.o core_panel.o
 
 ~/bin/lunar: $(lunar_objects) $(objects) $(graphics) $(prc_resources)
 	g++ $(lunar_objects) $(objects) $(prc_resources) $(graphics) \

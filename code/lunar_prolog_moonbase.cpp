@@ -59,7 +59,7 @@ public:
 		}
 		return orbiter :: inputAddress (ind);
 	}
-	virtual int numberOfOutputs (int ind) {return numberOfInputs ();}
+	virtual int numberOfOutputs (void) {return numberOfInputs ();}
 	virtual char * outputName (int ind) {return inputName (ind);}
 	virtual double * outputAddress (int ind) {
 		switch (ind) {
@@ -72,7 +72,9 @@ public:
 	}
 	virtual void move (void) {
 		if (line_read == line_write) return;
-		input_mono = line [line_read++];
+		input_left = line [line_read++];
+		input_right = line [line_read++];
+		input_mono = (input_left + input_right) * 0.5;
 		if (line_read >= 16384) line_read = 0;
 	}
 	lunar_core (orbiter_core * core) : orbiter (core) {
@@ -137,7 +139,8 @@ void beta_callback (int frames, AudioBuffers * data, void * source) {
 	lunar_core * moon = (lunar_core *) base -> module;
 	pthread_mutex_lock (& core -> main_mutex);
 	for (int ind = 0; ind < frames; ind++) {
-		moon -> line [moon -> line_write++] = data -> getMono ();
+		moon -> line [moon -> line_write++] = data -> getStereoLeftRight ();
+		moon -> line [moon -> line_write++] = data -> getStereoLeftRight ();
 		if (moon -> line_write >= 16384) moon -> line_write = 0;
 	}
 	pthread_mutex_unlock (& core -> main_mutex);

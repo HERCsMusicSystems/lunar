@@ -149,13 +149,13 @@ public:
 	}
 	virtual double getStereoLeftRight (void) {
 		double out = (double) (* from++);
-		out /= 32768.0;
+		out *= 0.000030517578125; // /= 32768.0;
 		return out;
 	}
 	virtual double getMono (void) {
 		double out = (double) * from++;
 		out += (double) * from++;
-		return out / 65536.0;
+		return out * 0.0000152587890625; // / 65536.0;
 	}
 	virtual void * getRawData (void) {return from;}
 };
@@ -219,7 +219,7 @@ public:
 	}
 	virtual double getStereoLeftRight (void) {
 		double out = (double) * from;
-		out /= 32768.0;
+		out *= 0.000030517578125; // /= 32768.0;
 		if (right) from++;
 		right = ! right;
 		return out;

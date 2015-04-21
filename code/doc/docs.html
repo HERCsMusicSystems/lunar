@@ -26,6 +26,7 @@
         <a href="#predicate_drywet">drywet</a>
         <a href="#predicate_drywet_mono">drywet_mono</a>
         <a href="#predicate_eg">eg</a>
+        <a href="#predicate_freeverb">freeverb</a>
         <a href="#predicate_gateway">gateway</a>
         <a href="#predicate_impulse">impulse</a>
         <a href="#predicate_inactive_trigger">inactive_trigger</a>
@@ -34,7 +35,7 @@
         <a href="#predicate_linear_pan">linear_pan</a>
         <a href="#predicate_mixer">mixer</a>
         <a href="#predicate_mono_volume">mono_volume</a>
-        <a href="#predicate_oscilloscope">oscilloscope</a>
+        <a href="#predicate_operator">operator</a>
         <a href="#predicate_pan">pan</a>
         <a href="#predicate_parameter_block">parameter_block</a>
         <a href="#predicate_power_pan">power_pan</a>
@@ -66,12 +67,16 @@
         <a href="#predicate_DisconnectDryWet">DisconnectDryWet</a>
         <a href="#predicate_DisconnectStereo">DisconnectStereo</a>
     </li>
-    <li><a href="#midi">Midi</a></li>
+    <li><a href="#hardware">Communication with hardware</a>
+        <br />
+        <a href="#predicate_core">core</a>
+    </li>
     <li><a href="#panels">Panels</a>
         <br />
         <a href="#predicate_big_keyboard">big_keyboard</a>
         <a href="#predicate_command_centre">CommandCentre</a>
         <a href="#predicate_keyboard">keyboard</a>
+        <a href="#predicate_oscilloscope">oscilloscope</a>
         <a href="#predicate_small_keyboard">small_keyboard</a>
         <a href="#predicate_vector">vector</a>
     </li>
@@ -314,6 +319,31 @@
 </div>
 
 <div class="doc_predicate">
+    <a id="predicate_freeverb">
+        <div class="doc_predicate_header">
+            [freeverb module] => Creates a freeverb module.<br />
+            <b>Note:</b> module adheres to <a href="#common_behaviour_of_predicates">Common Behaviour</a>.<br />
+        </div>
+        <div class="doc_predicate_body">
+            <b>Signals:</b> [["MONO" "LEFT" "RIGHT" "FEEDBACK" "DIFFUSION" "HIGHDAMP" "DRY" "WET"] ["LEFT" "RIGHT"]]<br />
+            Reverb effect implementation using Freeverb algorithm.<br />
+            <b>INPUTS:</b><br />
+            <b>Mono:</b> input.<br />
+            <b>Left:</b> input.<br />
+            <b>Right:</b> input.<br />
+            <b>Feedback:</b> level, makes the effect longer. Range between 0.0 .. 16384.0.<br />
+            <b>Diffusion:</b> between left and right channels. Range between 0.0 .. 8192.0. (Higher values reverse channels.)<br />
+            <b>Highdamp:</b> level of damping high frequencies. Range between 0.0 .. 16384.0.<br />
+            <b>Dry:</b> level. Range between 0.0 .. 16384.0 linear.<br />
+            <b>Wet:</b> level. Range between 0.0 .. 16384.0 linear.<br />
+            <b>OUTPUTS:</b><br />
+            <b>Left:</b> output.<br />
+            <b>Right:</b> output.<br />
+        </div>
+    </a>
+</div>
+
+<div class="doc_predicate">
     <a id="predicate_gateway">
         <div class="doc_predicate_header">
             [gateway module] => Creates a gateway module.<br />
@@ -439,14 +469,22 @@
 </div>
 
 <div class="doc_predicate">
-    <a id="predicate_oscilloscope">
+    <a id="predicate_operator">
         <div class="doc_predicate_header">
-            [oscilloscope module] => Creates an oscilloscope window.<br />
-            <b>Note:</b> module adheres to <a href="#common_behaviour_of_predicates">Common Behaviour</a>.
+            [operator module] => Creates an FM operator module.<br />
+            <b>Note:</b> module adheres to <a href="#common_behaviour_of_predicates">Common Behaviour</a>.<br />
         </div>
         <div class="doc_predicate_body">
-            <b>Signals:</b> [["SIGNAL"] ["SIGNAL"]]<br />
-            Displays the input signal. Range of the signal is from -1.0 to 1.0.
+            <b>Signals:</b> [["FREQ" "AMP" "RATIO" "TRIGGER" "SHIFT"] ["SIGNAL"]]<br />
+            Sine wave generator, which may be frequency modulated by shifting its phase.
+            <b>INPUTS:</b><br />
+            <b>Freq:</b> signal's frequency. Rnage between -8192.0 .. 8192.0 exponential. Zero = middle E with 128 steps per semitone.<br />
+            <b>Amp:</b> signal's amplitude. Range between -16384.0 .. 0.0 exponential. Zero = 0 dB. Every 1536 divides the amplitude by half.<br />
+            <b>Ratio:</b> frequency multiplier (literally).<br />
+            <b>Trigger:</b> value of 16384.0 or higher keeps the internal clock at time = ZERO.<br />
+            <b>Shift:</b> moves the signal's phase. Expected range between -1.0 .. 1.0 (but can be more) produces phase shifts from -2PI to 2PI.<br />
+            <b>OUTPUTS:</b><br />
+            <b>Signal:</b> output signal in range between -1.0 .. 1.0.<br />
         </div>
     </a>
 </div>
@@ -905,7 +943,43 @@
     </a>
 </div>
 
-<div class="doc_library_section"><a id="midi">Midi</a></div>
+<div class="doc_library_section"><a id="hardware">Communication with hardware</a></div>
+
+<div class="doc_predicate">
+    <a id="predicate_core">
+        <div class="doc_predicate_header">
+            [core] => Stops recording if previously started, otherwise....<br />
+            [core] => Shows available audio hardware inputs and outputs.<br />
+            [core seconds] => Starts recording.<br />
+            [core "file_name.wav"] => Stops recording.<br />
+            [core seconds "file_name.wav"] => Starts recording.<br />
+            [core module centre_frequency sampling_rate buffer_size output_device input_device capacity] => Creates a hardware connection.<br />
+            [core module 330 48000 128 0 0 4096] => default values.<br />
+            <b>Note:</b> module adheres to <a href="#common_behaviour_of_predicates">Common Behaviour</a>.<br />
+        </div>
+        <div class="doc_predicate_body">
+            <b>Signals:</b> [["MONO" "LEFT" "RIGHT"] ["MONO" "LEFT" "RIGHT"]]<br />
+            Core creates an audio module, which connects directly to the underlying audio hardware.
+            It can also record currently played audio to WAV files.<br />
+            To create a hardware connection, it is necessary to provide at least a symbol.
+            All numeric values (either integer or double) are optional.
+            The chardware connection can be closed in the same way as every other audio module.<br />
+            <b>Parameters:</b><br />
+            <b>module:</b> a symbol representing audio module connected directly to the audio hardware.<br />
+            <b>centre_frequency:</b> of middle E (Midi key number = 64). Default = 330.0.<br />
+            <b>sampling_rate:</b> intended sampling frequency. Default = 48 kHz.<br />
+            <b>buffer_size:</b> directly responsible for latency. Default = 128.<br />
+            <b>output_device:</b> port number. Default = 0.<br />
+            <b>input_device:</b> port number. Default = 0.<br />
+            <b>capacity:</b> specifies the maximum number of expected modules, which can be active at the same time. Default = 4096.<br />
+            To start audio recording it is necessary to provide at least its intended duration (in seconds).
+            If the file name was not provided and the recording completes, then it will be lost.
+            However, the recording can be stopped prematurely (by either [core] or [core "file_name.wav"]).
+            If the recording is stopped and file name was not provided at the beginning,
+            then it has to be provided at stopping (otherwise, the recording will be lost).
+        </div>
+    </a>
+</div>
 
 <div class="doc_library_section"><a id="panels">Panels</a></div>
 
@@ -956,6 +1030,20 @@
         <div class="doc_predicate_body">
             Creates a panel containing a keyboard.<br />
             <img src="../../graphics/keyboard.png" />
+        </div>
+    </a>
+</div>
+
+<div class="doc_predicate">
+    <a id="predicate_oscilloscope">
+        <div class="doc_predicate_header">
+            [oscilloscope module] => Creates an oscilloscope window.<br />
+            <b>Note:</b> module adheres to <a href="#common_behaviour_of_predicates">Common Behaviour</a>.
+        </div>
+        <div class="doc_predicate_body">
+            <b>Signals:</b> [["SIGNAL"] ["SIGNAL"]]<br />
+            Displays the input signal. Range of the signal is from -1.0 to 1.0.<br />
+            <img src="radar.png" />
         </div>
     </a>
 </div>

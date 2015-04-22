@@ -35,6 +35,8 @@ public:
 	unsigned char channel;
 	unsigned char v1, v2;
 	int fd;
+	int tc;
+	int running_command;
 	pthread_t thread;
 	bool should_continue;
 	PrologAtom * atom;
@@ -42,10 +44,14 @@ public:
 	PrologRoot * root;
 	PrologAtom * keyoff, * keyon, * polyaftertouch, * control, * programchange, * aftertouch, * pitch;
 	PrologAtom * sysex, * timingclock, * start, * cont, * stop, * activesensing;
+	pthread_mutex_t locker;
 	void run (void);
 	void one_parameter (void);
 	void two_parameters (void);
 	void many_parameter (void);
+	void send_one (int command);
+	void send_two (int command, int key);
+	void send_three (int command, int key, int velocity);
 	bool code (PrologElement * parameters, PrologResolution * resolution);
 	midi_code (PrologRoot * root, PrologDirectory * directory, PrologAtom * atom, PrologAtom * callback, char * location);
 	~ midi_code (void);

@@ -120,7 +120,7 @@ GraphicResources :: GraphicResources (void) {
 	png_closure adsr_panel_surface_closure (GetResource (ADSR_PANEL_PNG), ADSR_PANEL_SIZE);
 	png_closure eg_panel_surface_closure (GetResource (EG_PANEL_PNG), EG_PANEL_SIZE);
 	png_closure fm4_panel_surface_closure (GetResource (FM4_PANEL_PNG), FM4_PANEL_SIZE);
-	png_closure core_panel_surface_closure (GetREsource (CORE_PANEL_PNG), CORE_PANEL_SIZE);
+	png_closure core_panel_surface_closure (GetResource (CORE_PANEL_PNG), CORE_PANEL_SIZE);
 #else
 	png_closure frame_closure (& resource_vector_frame_start, & resource_vector_frame_end);
 	png_closure handle_closure (& resource_vector_handle_start, & resource_vector_handle_end);

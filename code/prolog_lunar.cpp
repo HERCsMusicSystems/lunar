@@ -165,15 +165,19 @@ public:
 	bool code (PrologElement * parameters, PrologResolution * resolution) {
 		if (directory == 0) return false;
 		PrologElement * atom = 0;
-		PrologElement * callback = 0;
+		PrologAtom * callback = 0;
 		PrologElement * location = 0;
 		while (parameters -> isPair ()) {
 			PrologElement * el = parameters -> getLeft ();
-			if (el -> isAtom ()) if (atom == 0) atom = el; else callback = el;
+			if (el -> isAtom ()) if (atom == 0) atom = el; else callback = el -> getAtom ();
+			if (el -> isVar ()) atom = el;
 			if (el -> isText ()) location = el;
 			parameters = parameters -> getRight ();
 		}
-		if (atom == 0 || callback == 0) return false;
+		if (atom == 0) return false;
+		if (atom -> isVar ()) atom -> setAtom (new PrologAtom ());
+		if (callback == 0) callback = directory -> searchAtom ("income_midi");
+		if (callback == 0) return false;
 		if (atom -> getAtom () -> getMachine () != 0) return false;
 		char * midi_location;
 		if (location != 0) midi_location = location -> getText ();
@@ -181,7 +185,7 @@ public:
 #ifdef WIN32
 		return false;
 #else
-		midi_code * mc = new midi_code (root, directory, atom -> getAtom (), callback -> getAtom (), midi_location);
+		midi_code * mc = new midi_code (root, directory, atom -> getAtom (), callback, midi_location);
 		if (mc -> fd < 0) {delete mc; return false;}
 		if (atom -> getAtom () -> setMachine (mc)) return true;
 		delete mc;

@@ -43,6 +43,7 @@ int tmread (int fd) {
 #define usleep(time)
 #define open(a, b) 0
 #define close(a) 0
+#define write(a, b, c)
 #endif
 #include <fcntl.h>
 
@@ -150,13 +151,63 @@ void midi_code :: two_parameters (void) {
 
 bool midi_code :: code (PrologElement * parameters, PrologResolution * resolution) {
 	if (parameters -> isEarth ()) {atom -> setMachine (0); delete this; return true;}
-	return true;
+	if (tc < 0) return false;
+	if (! parameters -> isPair ()) return false;
+	PrologElement * ae = parameters -> getLeft ();
+	if (! ae -> isAtom ()) return false;
+	PrologAtom * atom = ae -> getAtom ();
+	parameters = parameters -> getRight ();
+	if (atom == keyoff) {
+		if (! parameters -> isPair ()) return false;
+		PrologElement * channel = parameters -> getLeft (); if (! channel -> isInteger ()) return false; parameters = parameters -> getRight ();
+		if (parameters -> isEarth ()) {send_three (0xb0 + channel -> getInteger (), 123, 0); return true;}
+		if (! parameters -> isPair ()) return false;
+		PrologElement * key = parameters -> getLeft (); if (! key -> isInteger ()) return false; parameters = parameters -> getRight ();
+		if (parameters -> isEarth ()) {send_three (0x80 + channel -> getInteger (), key -> getInteger (), 0); return true;}
+		if (! parameters -> isPair ()) return false;
+		PrologElement * velocity = parameters -> getLeft (); if (! velocity -> isInteger ()) return false;
+		send_three (0x80 + channel -> getInteger (), key -> getInteger (), velocity -> getInteger ());
+		return true;
+	}
+	return false;
+}
+
+void midi_code :: send_two (int command, int key) {
+	unsigned char data [2];
+	pthread_mutex_lock (& locker);
+	if (command == running_command) {
+		data [0] = (unsigned char) key;
+		write (tc, data, 1);
+	} else {
+		data [0] = (unsigned char) command;
+		data [1] = (unsigned char) key;
+		write (tc, data, 2);
+	}
+	pthread_mutex_unlock (& locker);
+}
+
+void midi_code :: send_three (int command, int key, int velocity) {
+	unsigned char data [3];
+	pthread_mutex_lock (& locker);
+	if (command == running_command) {
+		data [0] = (unsigned char) key;
+		data [1] = (unsigned char) velocity;
+		write (tc, data, 2);
+	} else {
+		data [0] = (unsigned char) command;
+		data [1] = (unsigned char) key;
+		data [2] = (unsigned char) velocity;
+		running_command = command;
+		write (tc, data, 3);
+	}
+	pthread_mutex_unlock (& locker);
 }
 
 midi_code :: midi_code (PrologRoot * root, PrologDirectory * directory, PrologAtom * atom, PrologAtom * callback, char * location) {
 	command = channel = 0;
 	keyoff = keyon = polyaftertouch = control = programchange = aftertouch = pitch = 0;
 	sysex = timingclock = start = cont = stop = activesensing = 0;
+	running_command = -1;
 	if (directory != 0) {
 		keyoff = directory -> searchAtom ("keyoff");
 		keyon = directory -> searchAtom ("keyon");
@@ -178,6 +229,8 @@ midi_code :: midi_code (PrologRoot * root, PrologDirectory * directory, PrologAt
 	if (callback != 0) {COLLECTOR_REFERENCE_INC (callback);}
 	fd = open (location, O_RDONLY | O_NONBLOCK);
 	if (fd < 0) return;
+	tc = open (location, O_WRONLY);
+	if (tc >= 0) locker = PTHREAD_MUTEX_INITIALIZER;
 	pthread_create (& thread, 0, midi_runner, this);
 	pthread_detach (thread);
 }
@@ -190,6 +243,10 @@ midi_code :: ~ midi_code (void) {
 			while (! should_continue) usleep (100);
 			should_continue = false;
 		}
+	}
+	if (tc >= 0) {
+		pthread_mutex_destroy (& locker);
+		close (tc);
 	}
 	if (callback != 0) callback -> removeAtom (); callback = 0;
 }

@@ -25,6 +25,7 @@
 #define ADSR_PANEL_PNG                  218
 #define EG_PANEL_PNG                    219
 #define FM4_PANEL_PNG                   220
+#define CORE_PANEL_PNG                  221
 
 #define SMALL_KEYBOARD_SIZE             435
 #define KEYBOARD_SIZE                   579
@@ -45,10 +46,11 @@
 #define ADSR_PANEL_SIZE                 19916
 #define EG_PANEL_SIZE                   37224
 #define FM4_PANEL_SIZE                  66525
+#define CORE_PANEL_SIZE                 114617
 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        221
+#define _APS_NEXT_RESOURCE_VALUE        222
 #define _APS_NEXT_COMMAND_VALUE         40001
 #define _APS_NEXT_CONTROL_VALUE         1001
 #define _APS_NEXT_SYMED_VALUE           101

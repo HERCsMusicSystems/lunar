@@ -26,6 +26,8 @@
         <a href="#predicate_drywet">drywet</a>
         <a href="#predicate_drywet_mono">drywet_mono</a>
         <a href="#predicate_eg">eg</a>
+        <a href="#predicate_filter">filter</a>
+        <a href="#predicate_fm4">fm4</a>
         <a href="#predicate_freeverb">freeverb</a>
         <a href="#predicate_gateway">gateway</a>
         <a href="#predicate_impulse">impulse</a>
@@ -35,11 +37,15 @@
         <a href="#predicate_linear_pan">linear_pan</a>
         <a href="#predicate_mixer">mixer</a>
         <a href="#predicate_mono_volume">mono_volume</a>
+        <a href="#predicate_noise_operator">noise_operator</a>
         <a href="#predicate_operator">operator</a>
         <a href="#predicate_pan">pan</a>
         <a href="#predicate_parameter_block">parameter_block</a>
         <a href="#predicate_power_pan">power_pan</a>
+        <a href="#predicate_sampler_operator">sampler_operator</a>
+        <a href="#predicate_saw_operator">saw_operator</a>
         <a href="#predicate_sensitivity">sensitivity</a>
+        <a href="#predicate_square_operator">square_operator</a>
         <a href="#predicate_stereo_amplifier">stereo_amplifier</a>
         <a href="#predicate_stereo_gateway">stereo_gateway</a>
         <a href="#predicate_stereo_linear_pan">stereo_linear_pan</a>
@@ -47,6 +53,7 @@
         <a href="#predicate_stereo_pan">stereo_pan</a>
         <a href="#predicate_stereo_power_pan">stereo_power_pan</a>
         <a href="#predicate_trigger">trigger</a>
+        <a href="#predicate_vco">vco</a>
         <a href="#predicate_velocity_map">velocity_map</a>
         <a href="#predicate_volume">volume</a>
         <a href="#predicate_wave">wave</a>
@@ -66,10 +73,12 @@
         <a href="#predicate_ConnectStereo">ConnectStereo</a>
         <a href="#predicate_DisconnectDryWet">DisconnectDryWet</a>
         <a href="#predicate_DisconnectStereo">DisconnectStereo</a>
+        <a href="#predicate_orbiter">orbiter</a>
     </li>
     <li><a href="#hardware">Communication with hardware</a>
         <br />
         <a href="#predicate_core">core</a>
+        <a href="#predicate_midi">midi</a>
     </li>
     <li><a href="#panels">Panels</a>
         <br />
@@ -273,7 +282,7 @@
         <div class="doc_predicate_body">
             <b>Signals:</b> [["DRYLEFT" "DRYRIGHT" "WETLEFT" "WETRIGHT" "BALANCE"] ["LEFT" "RIGHT"]]<br />
             Mixes two stereo signals together, typically dry and wet (comming from audio processing).
-            Balance range from -8192.0 to 8192.0 with shelving-linear response.
+            Balance range from -8192.0 to 8192.0 with shelving-linear response.<br />
             <b>Note:</b> use <a href="#predicate_ConnectDryWet">ConnectDryWet</a> and <a href="#predicate_DisconnectDryWet">DisconnectDryWet</a>
             to connect with stereo modules, such as pan, chorus, delay, etc.
         </div>
@@ -314,6 +323,68 @@
             <b>OUTPUTS:</b><br />
             <b>Signal:</b> output value. Range between -16384.0 .. 0.0.<br />
             <b>Busy:</b> 0.0 = if reached level 4, 1.0 = otherwise.<br />
+        </div>
+    </a>
+</div>
+
+<div class="doc_predicate">
+    <a id="predicate_filter">
+        <div class="doc_predicate_header">
+            [filter module] => Creates a filter module.<br />
+            <b>Note:</b> module adheres to <a href="#common_behaviour_of_predicates">Common Behaviour</a>.<br />
+        </div>
+        <div class="doc_predicate_body">
+            <b>Signals:</b> [["ENTER" "FREQ" "RESONANCE" "AMP"] ["LOWPASS" "HIGHPASS" "BANDPASS" "BANDREJECT"]]<br />
+            Multi-purpose filter.<br />
+            <b>INPUTS:</b><br />
+            <b>Enter:</b> input signal.<br />
+            <b>Freq:</b> cutoff frequency. Range between -8192.0 .. 8192.0 exponential. Zero = middle E with 128 steps per semitone.<br />
+            <b>Resonance:</b> level. Range between 0.0 .. 16384.0.<br />
+            <b>Amp:</b> signal's amplitude. Range between -16384.0 .. 0.0 exponential. Zero = 0 dB. Every 1536 divides the amplitude by half.<br />
+            <b>OUTPUTS:</b><br />
+            <b>Lowpass:</b> output signal.<br />
+            <b>Highpass:</b> output signal.<br />
+            <b>Bandpass:</b> output signal.<br />
+            <b>Bandreject:</b> output signal.<br />
+            <img src="filter.gif" />
+        </div>
+    </a>
+</div>
+
+<div class="doc_predicate">
+    <a id="predicate_fm4">
+        <div class="doc_predicate_header">
+            [fm4 module] => Creates an FM4 block with 4 operators.<br />
+            <b>Note:</b> module adheres to <a href="#common_behaviour_of_predicates">Common Behaviour</a>.<br />
+        </div>
+        <div class="doc_predicate_body">
+            <b>Signals:</b> [["ALGO" "TRIGGER"
+            "FREQ1" "AMP1" "RATIO1" "FEEDBACK1"
+            "FREQ2" "AMP2" "RATIO2" "FEEDBACK2"
+            "FREQ3" "AMP3" "RATIO3" "FEEDBACK3"
+            "FREQ4" "AMP4" "RATIO4" "FEEDBACK4"
+            ] ["SIGNAL"]]<br />
+            FM4 Block containing 4 FM operators.<br />
+            <b>INPUTS:</b><br />
+            <b>Algo:</b> determines the interconnections between all operators.<br />
+            <b>Trigger:</b> value of 16384.0 or higher keeps the internal clock at time = ZERO.<br />
+            <b>Freq1..4:</b> signal's frequency. Range between -8192.0 .. 8192.0 exponential. Zero = middle E with 128 steps per semitone.<br />
+            <b>Amp1..4:</b> signal's amplitude. Range between -16384.0 .. 0.0 exponential. Zero = 0 dB. Every 1536 divides the amplitude by half.<br />
+            <b>Ratio1..4:</b> frequency multiplier (literally).<br />
+            <b>Feedback1..4:</b> level. Range between 0.0 .. 16384.0 linear (can be higher).<br />
+            <b>OUTPUTS:</b><br />
+            <b>Signal:</b> output signal in range between -1.0 .. 1.0.<br />
+            <b>ALGORITHMS:</b><br />
+            <div style="background:black; text-align:center;">
+                <img src="fm4_00.png" />
+                <img src="fm4_01.png" />
+                <img src="fm4_02.png" />
+                <img src="fm4_03.png" />
+                <img src="fm4_04.png" />
+                <img src="fm4_05.png" />
+                <img src="fm4_06.png" />
+                <img src="fm4_07.png" />
+            </div>
         </div>
     </a>
 </div>
@@ -412,7 +483,7 @@
         <div class="doc_predicate_body">
             <b>Signals:</b> [["TRIGGER" "SPEED" "WAVE" "PULSE" "PHASE" "SYNC"] ["SIGNAL" "NEGATIVE" "POSITIVE"]]<br />
             LFO generates low frequency oscillations, which can be used as control signals.
-            Very useful for vibrato, tremolo, wah-wah effect and many more.
+            Very useful for vibrato, tremolo, wah-wah effect and many more.<br />
             <b>INPUTS:</b><br />
             <b>Trigger:</b> positive slope resets the value <b>if sync</b> is greater than ZERO.<br />
             <b>Speed:</b> controls the frequency of LFO. Range between -8192.0 .. 8192.0.
@@ -469,6 +540,23 @@
 </div>
 
 <div class="doc_predicate">
+    <a id="predicate_noise_operator">
+        <div class="doc_predicate_header">
+            [noise_operator module] => Creates a noise generator module.<br />
+            <b>Note:</b> module adheres to <a href="#common_behaviour_of_predicates">Common Behaviour</a>.<br />
+        </div>
+        <div class="doc_predicate_body">
+            <b>Signals:</b> [["AMP"] ["SIGNAL"]]<br />
+            Noise generator.<br />
+            <b>INPUTS:</b><br />
+            <b>Amp:</b> signal's amplitude. Range between -16384.0 .. 0.0 exponential. Zero = 0 dB. Every 1536 divides the amplitude by half.<br />
+            <b>OUTPUTS:</b><br />
+            <b>Signal:</b> output signal in range between -1.0 .. 1.0.<br />
+        </div>
+    </a>
+</div>
+
+<div class="doc_predicate">
     <a id="predicate_operator">
         <div class="doc_predicate_header">
             [operator module] => Creates an FM operator module.<br />
@@ -476,9 +564,9 @@
         </div>
         <div class="doc_predicate_body">
             <b>Signals:</b> [["FREQ" "AMP" "RATIO" "TRIGGER" "SHIFT"] ["SIGNAL"]]<br />
-            Sine wave generator, which may be frequency modulated by shifting its phase.
+            Sine wave generator, which may be frequency modulated by shifting its phase.<br />
             <b>INPUTS:</b><br />
-            <b>Freq:</b> signal's frequency. Rnage between -8192.0 .. 8192.0 exponential. Zero = middle E with 128 steps per semitone.<br />
+            <b>Freq:</b> signal's frequency. Range between -8192.0 .. 8192.0 exponential. Zero = middle E with 128 steps per semitone.<br />
             <b>Amp:</b> signal's amplitude. Range between -16384.0 .. 0.0 exponential. Zero = 0 dB. Every 1536 divides the amplitude by half.<br />
             <b>Ratio:</b> frequency multiplier (literally).<br />
             <b>Trigger:</b> value of 16384.0 or higher keeps the internal clock at time = ZERO.<br />
@@ -541,6 +629,55 @@
 </div>
 
 <div class="doc_predicate">
+    <a id="predicate_sampler_operator">
+        <div class="doc_predicate_header">
+            [sampler_operator module waveforms] => Creates a sampler module playing back prerecorded waveforms.<br />
+            The mandatory <a href="#predicate_wave">waveforms</a> module contains a number of prerecorded audio waves.<br />
+            <b>Note:</b> module adheres to <a href="#common_behaviour_of_predicates">Common Behaviour</a>.<br />
+        </div>
+        <div class="doc_predicate_body">
+            <b>Signals:</b> [["FREQ" "AMP" "RATIO" "INDEX" "TRIGGER"] ["LEFT" "RIGHT" "BUSY"]]<br />
+            Sine wave generator, which may be frequency modulated by shifting its phase.<br />
+            <b>INPUTS:</b><br />
+            <b>Freq:</b> signal's frequency. Range between -8192.0 .. 8192.0 exponential. Zero = middle E with 128 steps per semitone.<br />
+            <b>Amp:</b> signal's amplitude. Range between -16384.0 .. 0.0 exponential. Zero = 0 dB. Every 1536 divides the amplitude by half.<br />
+            <b>Ratio:</b> frequency multiplier (literally).<br />
+            <b>Index:</b> selects the waveform to be played.<br />
+            <b>Trigger:</b> Value greater than ZERO activates the playback.
+            Recording can be looped if it contains the loop and the trigger is still active at the end of the loop section.
+            Otherwise the sampler plays the recording to the end.
+            Trigger value of 16384.0 or higher keeps the internal clock at time = ZERO (re-trigger).<br />
+            <b>Shift:</b> moves the signal's phase. Expected range between -1.0 .. 1.0 (but can be more) produces phase shifts from -2PI to 2PI.<br />
+            <b>OUTPUTS:</b><br />
+            <b>Left:</b> output signal (or mono if waveform is monophonic).<br />
+            <b>Right:</b> output signal.<br />
+            <b>Busy:</b> active if still playing. Otherwise ZERO.<br />
+            <b>Signal:</b> output signal in range between -1.0 .. 1.0.<br />
+        </div>
+    </a>
+</div>
+
+<div class="doc_predicate">
+    <a id="predicate_saw_operator">
+        <div class="doc_predicate_header">
+            [saw_operator module] => Creates a sawtooth wave generator module.<br />
+            <b>Note:</b> module adheres to <a href="#common_behaviour_of_predicates">Common Behaviour</a>.<br />
+        </div>
+        <div class="doc_predicate_body">
+            <b>Signals:</b> [["FREQ" "AMP" "RATIO" "TRIGGER"] ["SIGNAL"]]<br />
+            Sawtooth wave generator.<br />
+            <b>INPUTS:</b><br />
+            <b>Freq:</b> signal's frequency. Range between -8192.0 .. 8192.0 exponential. Zero = middle E with 128 steps per semitone.<br />
+            <b>Amp:</b> signal's amplitude. Range between -16384.0 .. 0.0 exponential. Zero = 0 dB. Every 1536 divides the amplitude by half.<br />
+            <b>Ratio:</b> frequency multiplier (literally).<br />
+            <b>Trigger:</b> value of 16384.0 or higher keeps the internal clock at time = ZERO.<br />
+            <b>OUTPUTS:</b><br />
+            <b>Signal:</b> output signal in range between -1.0 .. 1.0.<br />
+        </div>
+    </a>
+</div>
+
+<div class="doc_predicate">
     <a id="predicate_sensitivity">
         <div class="doc_predicate_header">
             [sensitivity module] => Creates a sensitivity processing module.<br />
@@ -554,6 +691,26 @@
             Both <b>left</b> and <b>right</b> inputs determine the slope step per 128.
             In other words, the value of 128 at either <b>left</b> or <b>right</b> input
             generate 45 degrees slopes.
+        </div>
+    </a>
+</div>
+
+<div class="doc_predicate">
+    <a id="predicate_square_operator">
+        <div class="doc_predicate_header">
+            [square_operator module] => Creates a square wave generator module.<br />
+            <b>Note:</b> module adheres to <a href="#common_behaviour_of_predicates">Common Behaviour</a>.<br />
+        </div>
+        <div class="doc_predicate_body">
+            <b>Signals:</b> [["FREQ" "AMP" "RATIO" "TRIGGER"] ["SIGNAL"]]<br />
+            Square wave generator.<br />
+            <b>INPUTS:</b><br />
+            <b>Freq:</b> signal's frequency. Range between -8192.0 .. 8192.0 exponential. Zero = middle E with 128 steps per semitone.<br />
+            <b>Amp:</b> signal's amplitude. Range between -16384.0 .. 0.0 exponential. Zero = 0 dB. Every 1536 divides the amplitude by half.<br />
+            <b>Ratio:</b> frequency multiplier (literally).<br />
+            <b>Trigger:</b> value of 16384.0 or higher keeps the internal clock at time = ZERO.<br />
+            <b>OUTPUTS:</b><br />
+            <b>Signal:</b> output signal in range between -1.0 .. 1.0.<br />
         </div>
     </a>
 </div>
@@ -607,7 +764,7 @@
         </div>
         <div class="doc_predicate_body">
             <b>Signals:</b> [["LEFT" "RIGHT"] ["LEFT" "RIGHT"]]<br />
-            Mixer copies its inputs signal to its outputs. Mixing is achieved by connecting several signals to mixer's inputs.
+            Mixer copies its inputs signal to its outputs. Mixing is achieved by connecting several signals to mixer's inputs.<br />
             <b>Note:</b> use <a href="#predicate_ConnectStereo>ConnectStereo</a> and <a href="#predicate_DisconnectStereo">DisconnectStereo</a>
             for connecting stereo modules.
         </div>
@@ -672,6 +829,27 @@
             <b>Index:</b> is the non-translated MIDI key number.<br />
             <b>Delay1:</b> is the <b>"TRIGGER"</b> value delayed by 1 sample.<br />
             <b>Delay2:</b> is the <b>"TRIGGER"</b> value delayed by 2 samples.<br />
+        </div>
+    </a>
+</div>
+
+<div class="doc_predicate">
+    <a id="predicate_vco">
+        <div class="doc_predicate_header">
+            [vco module] => Creates a Voltage-Controlled-Oscillator module.<br />
+            <b>Note:</b> module adheres to <a href="#common_behaviour_of_predicates">Common Behaviour</a>.<br />
+        </div>
+        <div class="doc_predicate_body">
+            <b>Signals:</b> [["FREQ" "AMP" "RATIO" "TRIGGER" "WAVE"] ["SIGNAL"]]<br />
+            Sine / Sawtooth / Square / Noise generator.<br />
+            <b>INPUTS:</b><br />
+            <b>Freq:</b> signal's frequency. Range between -8192.0 .. 8192.0 exponential. Zero = middle E with 128 steps per semitone.<br />
+            <b>Amp:</b> signal's amplitude. Range between -16384.0 .. 0.0 exponential. Zero = 0 dB. Every 1536 divides the amplitude by half.<br />
+            <b>Ratio:</b> frequency multiplier (literally).<br />
+            <b>Trigger:</b> value of 16384.0 or higher keeps the internal clock at time = ZERO.<br />
+            <b>Wave:</b> selects the waveform. Sine = 0, 1 = Sawtooth, 2 = Square, 3 = Noise, otherwise = Sine.<br />
+            <b>OUTPUTS:</b><br />
+            <b>Signal:</b> output signal in range between -1.0 .. 1.0.<br />
         </div>
     </a>
 </div>
@@ -943,6 +1121,18 @@
     </a>
 </div>
 
+<div class="doc_predicate">
+    <a id="predicate_orbiter">
+        <div class="doc_predicate_header">
+            [orbiter] => Displays the number of all modules.<br />
+            [orbiter *x] [orbiter : *x] => Returns the number of all modules.<br />
+        </div>
+        <div class="doc_predicate_body">
+            Reports the current number of all modules.
+        </div>
+    </a>
+</div>
+
 <div class="doc_library_section"><a id="hardware">Communication with hardware</a></div>
 
 <div class="doc_predicate">
@@ -977,6 +1167,34 @@
             However, the recording can be stopped prematurely (by either [core] or [core "file_name.wav"]).
             If the recording is stopped and file name was not provided at the beginning,
             then it has to be provided at stopping (otherwise, the recording will be lost).
+        </div>
+    </a>
+</div>
+
+<div class="doc_predicate">
+    <a id="predicate_midi">
+        <div class="doc_predicate_header">
+            [midi module callback "hardware"] => Creates a MIDI interface (callback and "hardware" are optional).<br />
+            [module] => Closes the MIDI interface.<br />
+        </div>
+        <div class="doc_predicate_body">
+            Opens MIDI interface.
+            The default callback is the predefined <b>income_midi</b> command.
+            It distributes incoming MIDI commands between instruments hooked to the superstructure.<br />
+            The callback receives the following commands:<br />
+            [income_midi keyoff channel key velocity] => Key Off<br />
+            [income_midi keyon channel key velocity] => Key On<br />
+            [income_midi polyaftertouch channel key value] => Polyphonic After Touch<br />
+            [income_midi control channel value] => Control Change<br />
+            [income_midi programchange channel program] => Program Change<br />
+            [income_midi aftertouch channel value] => After Touch<br />
+            [income_midi pitch channel lsb msb] => Pitch Change<br />
+            [income_midi sysex .....] => System Exclusive<br />
+            [income_midi timingclock] => Timing Clock<br />
+            [income_midi START] => Start<br />
+            [income_midi CONTINUE] => Continue<br />
+            [income_midi STOP] => Stop<br />
+            [income_midi activesensing] => Active Sensing<br />
         </div>
     </a>
 </div>

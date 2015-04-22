@@ -157,16 +157,24 @@ bool midi_code :: code (PrologElement * parameters, PrologResolution * resolutio
 	if (! ae -> isAtom ()) return false;
 	PrologAtom * atom = ae -> getAtom ();
 	parameters = parameters -> getRight ();
+	int channel; int key; double velocity;
 	if (atom == keyoff) {
 		if (! parameters -> isPair ()) return false;
-		PrologElement * channel = parameters -> getLeft (); if (! channel -> isInteger ()) return false; parameters = parameters -> getRight ();
-		if (parameters -> isEarth ()) {send_three (0xb0 + channel -> getInteger (), 123, 0); return true;}
+		if (! graph . get_channel (& parameters, & channel)) return false;
+		if (parameters -> isEarth ()) {send_three (0xb0 + channel, 123, 0); return true;}
+		if (! graph . get_key (& parameters, & key)) return false;
+		if (parameters -> isEarth ()) {send_three (0x80 + channel, key, 0); return true;}
+		if (! graph . get_velocity (& parameters, & velocity)) return false;
+		send_three (0x80 + channel, key, (int) velocity);
+		return true;
+	}
+	if (atom == keyon) {
 		if (! parameters -> isPair ()) return false;
-		PrologElement * key = parameters -> getLeft (); if (! key -> isInteger ()) return false; parameters = parameters -> getRight ();
-		if (parameters -> isEarth ()) {send_three (0x80 + channel -> getInteger (), key -> getInteger (), 0); return true;}
-		if (! parameters -> isPair ()) return false;
-		PrologElement * velocity = parameters -> getLeft (); if (! velocity -> isInteger ()) return false;
-		send_three (0x80 + channel -> getInteger (), key -> getInteger (), velocity -> getInteger ());
+		if (! graph . get_channel (& parameters, & channel)) return false;
+		if (! graph . get_key (& parameters, & key)) return false;
+		if (parameters -> isEarth ()) {send_three (0x90 + channel, key, 100); return true;}
+		if (! graph . get_velocity (& parameters, & velocity)) return false;
+		send_three (0x90 + channel, key, (int) velocity);
 		return true;
 	}
 	return false;
@@ -203,7 +211,7 @@ void midi_code :: send_three (int command, int key, int velocity) {
 	pthread_mutex_unlock (& locker);
 }
 
-midi_code :: midi_code (PrologRoot * root, PrologDirectory * directory, PrologAtom * atom, PrologAtom * callback, char * location) {
+midi_code :: midi_code (PrologRoot * root, PrologDirectory * directory, PrologAtom * atom, PrologAtom * callback, char * location) : graph (directory) {
 	command = channel = 0;
 	keyoff = keyon = polyaftertouch = control = programchange = aftertouch = pitch = 0;
 	sysex = timingclock = start = cont = stop = activesensing = 0;

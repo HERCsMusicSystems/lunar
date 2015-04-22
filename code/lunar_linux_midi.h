@@ -28,6 +28,7 @@
 #define LUNAR_MIDI
 
 #include "prolog.h"
+#include "chromatic.h"
 
 class midi_code : public PrologNativeCode {
 public:
@@ -45,6 +46,7 @@ public:
 	PrologAtom * keyoff, * keyon, * polyaftertouch, * control, * programchange, * aftertouch, * pitch;
 	PrologAtom * sysex, * timingclock, * start, * cont, * stop, * activesensing;
 	pthread_mutex_t locker;
+	chromatograph graph;
 	void run (void);
 	void one_parameter (void);
 	void two_parameters (void);

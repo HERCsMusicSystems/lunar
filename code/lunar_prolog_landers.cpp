@@ -30,6 +30,7 @@
 #include "lunar_wave.h"
 #include "string.h"
 #include <math.h>
+#include "chromatic.h"
 
 #ifdef WIN32
 #define strcasecmp _strcmpi
@@ -438,32 +439,7 @@ static char * moonbase_action_code = "Moonbase Action";
 class native_moonbase : public PrologNativeOrbiter {
 private:
 	PrologAtom * keyon, * keyoff, *pitch, * control, * mono, * poly, * timingclock;
-	PrologAtom * cbb, * cb, * c, * cx, * cxx;
-	PrologAtom * dbb, * db, * d, * dx, * dxx;
-	PrologAtom * ebb, * eb, * e, * ex, * exx;
-	PrologAtom * fbb, * fb, * f, * fx, * fxx;
-	PrologAtom * gbb, * gb, * g, * gx, * gxx;
-	PrologAtom * abb, * ab, * a, * ax, * axx;
-	PrologAtom * bbb, * bb, * b, * bx, * bxx;
-	int chromatic (PrologAtom * atom) {
-		if (atom == cbb) return -2;
-		if (atom == cb) return -1;
-		if (atom == c || atom == dbb) return 0;
-		if (atom == cx || atom == db) return 1;
-		if (atom == cxx || atom == d || atom == ebb) return 2;
-		if (atom == dx || atom == eb || atom == fbb) return 3;
-		if (atom == dxx || atom == e || atom == fb) return 4;
-		if (atom == ex || atom == f || atom == gbb) return 5;
-		if (atom == exx || atom == fx || atom == gb) return 6;
-		if (atom == fxx || atom == g || atom == abb) return 7;
-		if (atom == gx || atom == ab) return 8;
-		if (atom == gxx || atom == a || atom == bbb) return 9;
-		if (atom == ax || atom == bb || atom == cbb) return 10;
-		if (atom == axx || atom == b || atom == cb) return 11;
-		if (atom == bx) return 12;
-		if (atom == bxx) return 13;
-		return 0;
-	}
+	chromatograph graph;
 public:
 	static char * name (void) {return moonbase_action_code;}
 	bool isTypeOf (char * code_name) {return moonbase_action_code == code_name ? true : PrologNativeOrbiter :: isTypeOf (code_name);}
@@ -503,7 +479,7 @@ public:
 				if (a == keyon) {
 					int key_note;
 					if (key != 0) key_note = (int) key -> getNumber ();
-					else if (note != 0 && octave != 0) key_note = chromatic (note -> getAtom ()) + octave -> getInteger () * 12 + 48;
+					else if (note != 0 && octave != 0) key_note = graph . chromatic (note -> getAtom ()) + octave -> getInteger () * 12 + 48;
 					else return false;
 					if (velocity == 0) trigger -> keyon (key_note);
 					else trigger -> keyon (key_note, (int) velocity -> getNumber ());
@@ -512,7 +488,8 @@ public:
 				if (a == keyoff) {
 					if (key != 0) trigger -> keyoff ((int) key -> getNumber (), velocity == 0 ? 0 : (int) velocity -> getNumber ());
 					else if (note != 0 && octave != 0)
-						trigger -> keyoff (chromatic (note -> getAtom ()) + octave -> getInteger () * 12 + 48, velocity == 0 ? 0 : (int) velocity -> getNumber ());
+						trigger -> keyoff (graph . chromatic (note -> getAtom ()) + octave -> getInteger () * 12 + 48,
+																				velocity == 0 ? 0 : (int) velocity -> getNumber ());
 					else trigger -> keyoff ();
 					return true;
 				}
@@ -551,15 +528,8 @@ public:
 		}
 		return PrologNativeOrbiter :: code (parameters, resolution);
 	}
-	native_moonbase (PrologDirectory * dir, PrologAtom * atom, orbiter_core * core, orbiter * module) : PrologNativeOrbiter (atom, core, module) {
+	native_moonbase (PrologDirectory * dir, PrologAtom * atom, orbiter_core * core, orbiter * module) : graph (dir), PrologNativeOrbiter (atom, core, module) {
 		keyon = keyoff = pitch = control = mono = poly = timingclock = 0;
-		cbb = cb = c = cx = cxx = 0;
-		dbb = db = d = dx = dxx = 0;
-		ebb = eb = e = ex = exx = 0;
-		fbb = fb = f = fx = fxx = 0;
-		gbb = gb = g = gx = gxx = 0;
-		abb = ab = a = ax = axx = 0;
-		bbb = bb = b = bx = bxx = 0;
 		if (dir == 0) return;
 		keyon = dir -> searchAtom ("keyon");
 		keyoff = dir -> searchAtom ("keyoff");
@@ -568,13 +538,6 @@ public:
 		mono = dir -> searchAtom ("mono");
 		poly = dir -> searchAtom ("poly");
 		timingclock = dir -> searchAtom ("timingclock");
-		c = dir -> searchAtom ("C"); cb = dir -> searchAtom ("Cb"); cbb = dir -> searchAtom ("Cbb"); cx = dir -> searchAtom ("C#"); cxx = dir -> searchAtom ("Cx");
-		d = dir -> searchAtom ("D"); db = dir -> searchAtom ("Db"); dbb = dir -> searchAtom ("Dbb"); dx = dir -> searchAtom ("D#"); dxx = dir -> searchAtom ("Dx");
-		e = dir -> searchAtom ("E"); eb = dir -> searchAtom ("Eb"); ebb = dir -> searchAtom ("Ebb"); ex = dir -> searchAtom ("E#"); exx = dir -> searchAtom ("Ex");
-		f = dir -> searchAtom ("F"); fb = dir -> searchAtom ("Fb"); fbb = dir -> searchAtom ("Fbb"); fx = dir -> searchAtom ("F#"); fxx = dir -> searchAtom ("Fx");
-		g = dir -> searchAtom ("G"); gb = dir -> searchAtom ("Gb"); gbb = dir -> searchAtom ("Gbb"); gx = dir -> searchAtom ("G#"); gxx = dir -> searchAtom ("Gx");
-		a = dir -> searchAtom ("A"); ab = dir -> searchAtom ("Ab"); abb = dir -> searchAtom ("Abb"); ax = dir -> searchAtom ("A#"); axx = dir -> searchAtom ("Ax");
-		b = dir -> searchAtom ("B"); bb = dir -> searchAtom ("Bb"); bbb = dir -> searchAtom ("Bbb"); bx = dir -> searchAtom ("B#"); bxx = dir -> searchAtom ("Bx");
 	}
 };
 orbiter * moonbase_class :: create_orbiter (PrologElement * parameters) {return new moonbase (core);}

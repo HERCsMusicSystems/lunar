@@ -227,10 +227,11 @@ midi_code :: midi_code (PrologRoot * root, PrologDirectory * directory, PrologAt
 	this -> atom = atom;
 	this -> callback = callback;
 	if (callback != 0) {COLLECTOR_REFERENCE_INC (callback);}
+	tc = -1;
 	fd = open (location, O_RDONLY | O_NONBLOCK);
 	if (fd < 0) return;
 	tc = open (location, O_WRONLY);
-	if (tc >= 0) locker = PTHREAD_MUTEX_INITIALIZER;
+	if (tc >= 0) pthread_mutex_init (& locker, 0);
 	pthread_create (& thread, 0, midi_runner, this);
 	pthread_detach (thread);
 }

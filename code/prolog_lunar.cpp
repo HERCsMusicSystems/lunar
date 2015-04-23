@@ -72,7 +72,7 @@ bool PrologNativeOrbiter :: code (PrologElement * parameters, PrologResolution *
 		if (port -> isText ()) {destination_port = module -> inputIndex (port -> getText ()); source_port = module -> outputIndex (port -> getText ());}
 	}
 	if (atom != 0) {
-		if (atom -> getAtom () == this -> atom) {module -> move (); module -> propagate_signals (); return true;}
+		if (atom -> getAtom () == this -> atom) {module -> propagate_signals (); module -> move (); return true;}
 		PrologNativeCode * machine = atom -> getAtom () -> getMachine ();
 		if (machine == 0 || ! machine -> isTypeOf (PrologNativeOrbiter :: name ())) return false;
 		source_port = 0;

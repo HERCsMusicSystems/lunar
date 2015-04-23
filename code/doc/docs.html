@@ -73,7 +73,10 @@
         <a href="#predicate_ConnectStereo">ConnectStereo</a>
         <a href="#predicate_DisconnectDryWet">DisconnectDryWet</a>
         <a href="#predicate_DisconnectStereo">DisconnectStereo</a>
+        <a href="#predicate_MoveCore">MoveCore</a>
+        <a href="#predicate_MoveModules">MoveModules</a>
         <a href="#predicate_orbiter">orbiter</a>
+        <a href="#predicate_PropagateSignals">PropagateSignals</a>
     </li>
     <li><a href="#hardware">Communication with hardware</a>
         <br />
@@ -104,7 +107,7 @@
             <div style="float:left;">[module : *io]</div><div style="float:left;">&nbsp;=>&nbsp;</div>
                 <div style="float:left;">Reports names of all inputs and outputs.</div><br />
             <div style="float:left;">[module module]</div><div style="float:left;">&nbsp;=>&nbsp;</div>
-                <div style="float:left;">Used for test purposes to push the model one sample forward.</div><br />
+                <div style="float:left;">Used for test purposes to update input signals and push the model one sample forward.</div><br />
             <div style="float:left;">[module []]</div><div style="float:left;">&nbsp;=>&nbsp;</div>
                 <div style="float:left;">Disconnect all inputs.</div><br />
             <div style="float:left;">[module source]</div><div style="float:left;">&nbsp;=>&nbsp;</div>
@@ -1006,13 +1009,14 @@
             <b>Busy:</b> becomes active one sample AFTER the sequence was started.
             If looped then it becomes zero at the beginning of each repetition for the duration of one sample.<br />
             <b>COMMANDS:</b>
-            <b>[keyon channel key velocity]</b> => play key with velocity on selected channel<br />
-            <b>[keyon channel key]</b> => play key without velocity on selected channel<br />
+            <b>[keyon channel key velocity]</b> => play key (either integer or [note octave]) with velocity on selected channel<br />
+            <b>[keyon channel key]</b> => play key (either integer or [note octave]) without velocity on selected channel<br />
             <b>keyoff</b> => all keys off on all channels<br />
             <b>[keyoff]</b> => all keys off on all channels<br />
             <b>[keyoff channel]</b> => all keys off on selected channel<br />
-            <b>[keyoff channel key]</b> => keyoff one key on selected channel<br />
-            <b>[control channel index value]</b> => control change on selected channel (value can be fractional)<br />
+            <b>[keyoff channel key]</b> => keyoff one key (either integer or [note octave]) on selected channel<br />
+            <b>[control channel index value]</b> => control change on selected channel
+            (value can be fractional and index can be either integer or [note octave])<br />
             <b>[busy value]</b> => sets the value of the <b>Busy</b> signal. Value can be either integer or double.<br />
             <b>[impulse value]</b> => sets the value of the <b>Busy</b> signal for the duration of one sample
             and then returns to its previous level. Value can be either integer or double.<br />
@@ -1040,12 +1044,12 @@
             <b>Busy:</b> becomes active one sample AFTER the sequence was started.
             If looped then it becomes zero at the beginning of each repetition for the duration of one sample.<br />
             <b>COMMANDS:</b>
-            <b>[keyon key velocity]</b> => play key with velocity<br />
-            <b>[keyon key]</b> => play key without velocity<br />
+            <b>[keyon key velocity]</b> => play key (either integer or [note octave]) with velocity<br />
+            <b>[keyon key]</b> => play key (either integer or [note octave]) without velocity<br />
             <b>keyoff</b> => all keys off<br />
             <b>[keyoff]</b> => all keys off<br />
-            <b>[keyoff key]</b> => keyoff one key<br />
-            <b>[control index value]</b> => control change (value can be fractional)<br />
+            <b>[keyoff key]</b> => keyoff one key (either integer or [note octave])<br />
+            <b>[control index value]</b> => control change (value can be fractional and index can be either integer or [note octave])<br />
             <b>[busy value]</b> => sets the value of the <b>Busy</b> signal. Value can be either integer or double.<br />
             <b>[impulse value]</b> => sets the value of the <b>Busy</b> signal for the duration of one sample
             and then returns to its previous level. Value can be either integer or double.<br />
@@ -1122,6 +1126,32 @@
 </div>
 
 <div class="doc_predicate">
+    <a id="predicate_MoveCore">
+        <div class="doc_predicate_header">
+            [MoveCore] => Move the entire audio system by one sample.<br />
+            [MoveCore samples] => Move the entire audio system by a number of samples.<br />
+        </div>
+        <div class="doc_predicate_body">
+            Moves the entire audio system forward by specified number of samples. Very good for testing.
+        </div>
+    </a>
+</div>
+
+<div class="doc_predicate">
+    <a id="predicate_MoveModules">
+        <div class="doc_predicate_header">
+            [MoveModules] => Move all audio modules by one sample.<br />
+        </div>
+        <div class="doc_predicate_body">
+            Moves all audio modules by one sample. The signals are not propagated between modules.
+            It should be preceeded by call to <a href="#predicate_PropagateSignals">[PropagateSignals]</a>
+            to make sure all modules have current input values.
+            Very good for testing.<br />
+        </div>
+    </a>
+</div>
+
+<div class="doc_predicate">
     <a id="predicate_orbiter">
         <div class="doc_predicate_header">
             [orbiter] => Displays the number of all modules.<br />
@@ -1129,6 +1159,19 @@
         </div>
         <div class="doc_predicate_body">
             Reports the current number of all modules.
+        </div>
+    </a>
+</div>
+
+<div class="doc_predicate">
+    <a id="predicate_PropagateSignals">
+        <div class="doc_predicate_header">
+            [PropagateSignals] => Propagates signals between modules.<br />
+        </div>
+        <div class="doc_predicate_body">
+            This should be called before <a href="#predicate_MoveModules">[MoveModules]</a>.
+            It updates the input signals connected to outputs of other modules.
+            Very good for testing.
         </div>
     </a>
 </div>
@@ -1176,6 +1219,23 @@
         <div class="doc_predicate_header">
             [midi module callback "hardware"] => Creates a MIDI interface (callback and "hardware" are optional).<br />
             [module] => Closes the MIDI interface.<br />
+            [module keyoff channel] => Sends all keys off MIDI message.<br />
+            [module keyoff channel key] => Sends keyoff MIDI message.<br />
+            [module keyoff channel key velocity] => Sends keyoff MIDI message.<br />
+            [module keyon channel key] => Sends keyon MIDI message.<br />
+            [module keyon channel key velocity] => Sends keyon MIDI message.<br />
+            [module polyaftertouch channel key value] => Sends polyphonic aftertouch MIDI message.<br />
+            [module control channel index value] => Sends control change MIDI message.<br />
+            [module programchange channel program] => Sends program change MIDI message.<br />
+            [module aftertouch channel value] => Sends channel aftertouch MIDI message.<br />
+            [module pitch channel value] => Sends pitch MIDI message.<br />
+            [module pitch channel lsb msb] => Sends pitch MIDI message.<br />
+            [module sysex ......] => Sends system exclusive MIDI message.<br />
+            [module timingclock] => Sends timing clock MIDI message.<br />
+            [module START] => Sends stat MIDI message.<br />
+            [module CONTINUE] => Sends continue MIDI message.<br />
+            [module STOP] => Sends stop MIDI message.<br />
+            [module activesensing] => Send active sensing MIDI message.<br />
         </div>
         <div class="doc_predicate_body">
             Opens MIDI interface.

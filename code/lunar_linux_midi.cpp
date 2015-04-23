@@ -158,8 +158,8 @@ bool midi_code :: code (PrologElement * parameters, PrologResolution * resolutio
 	PrologAtom * atom = ae -> getAtom ();
 	parameters = parameters -> getRight ();
 	int channel; int key; double velocity;
+	unsigned char data;
 	if (atom == keyoff) {
-		if (! parameters -> isPair ()) return false;
 		if (! graph . get_channel (& parameters, & channel)) return false;
 		if (parameters -> isEarth ()) {send_three (0xb0 + channel, 123, 0); return true;}
 		if (! graph . get_key (& parameters, & key)) return false;
@@ -169,7 +169,6 @@ bool midi_code :: code (PrologElement * parameters, PrologResolution * resolutio
 		return true;
 	}
 	if (atom == keyon) {
-		if (! parameters -> isPair ()) return false;
 		if (! graph . get_channel (& parameters, & channel)) return false;
 		if (! graph . get_key (& parameters, & key)) return false;
 		if (parameters -> isEarth ()) {send_three (0x90 + channel, key, 100); return true;}
@@ -177,6 +176,41 @@ bool midi_code :: code (PrologElement * parameters, PrologResolution * resolutio
 		send_three (0x90 + channel, key, (int) velocity);
 		return true;
 	}
+	if (atom == polyaftertouch || atom == control) {
+		if (! graph . get_channel (& parameters, & channel)) return false;
+		if (! graph . get_key (& parameters, & key)) return false;
+		if (! graph . get_velocity (& parameters, & velocity)) return false;
+		send_three ((atom == control ? 0xb0 : 0xa0) + channel, key, (int) velocity);
+		return true;
+	}
+	if (atom == programchange || atom == aftertouch) {
+		if (! graph . get_channel (& parameters, & channel)) return false;
+		if (! graph . get_key (& parameters, & key)) return false;
+		send_two ((atom == programchange ? 0xc0 : 0xd0) + channel, key);
+		return true;
+	}
+	if (atom == pitch) {
+		if (! graph . get_channel (& parameters, & channel)) return false;
+		if (! graph . get_key (& parameters, & key)) return false;
+		if (parameters -> isEarth ()) {send_three (0xe0 + channel, 0, key); return true;}
+		int msb; if (! graph . get_key (& parameters, & msb)) return false;
+		send_three (0xe0 + channel, key, msb);
+		return true;
+	}
+	if (atom == sysex) {
+		data = 0xf0; write (tc, & data, 1);
+		while (parameters -> isPair ()) {
+			if (graph . get_key (& parameters, & key)) {data = (unsigned char) key; write (tc, & data, 1);}
+			else parameters = parameters -> getRight ();
+		}
+		data = 0xf7; write (tc, & data, 1);
+		return true;
+	}
+	if (atom == timingclock) {data = 0xf8; write (tc, & data, 1); return true;}
+	if (atom == start) {data = 0xfa; write (tc, & data, 1); return true;}
+	if (atom == cont) {data = 0xfb; write (tc, & data, 1); return true;}
+	if (atom == stop) {data = 0xfc; write (tc, & data, 1); return true;}
+	if (atom == activesensing) {data = 0xfe; write (tc, & data, 1); return true;}
 	return false;
 }
 

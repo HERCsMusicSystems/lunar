@@ -40,6 +40,7 @@
     <ClCompile Include="..\..\prolog\code\prolog\prolog_windows_console.cpp" />
     <ClCompile Include="..\..\prolog\code\prolog\prolog_xml.cpp" />
     <ClCompile Include="..\..\prolog\code\tinyxml2\tinyxml2.cpp" />
+    <ClCompile Include="..\code\chromatic.cpp" />
     <ClCompile Include="..\code\graphic_resources.cpp" />
     <ClCompile Include="..\code\keyboard_calculator.cpp" />
     <ClCompile Include="..\code\lunar.cpp" />

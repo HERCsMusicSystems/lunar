@@ -171,6 +171,9 @@
     <ClCompile Include="..\code\lunar_prolog_core_panel.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\code\chromatic.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\..\prolog\windows\studio.rc">

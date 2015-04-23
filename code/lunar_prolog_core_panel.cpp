@@ -37,6 +37,7 @@ public:
 	PrologAtom * atom;
 	PrologAtom * core;
 	PrologAtom * reactor;
+	PrologAtom * connect_all_moons;
 	GtkWidget * viewport;
 	cairo_surface_t * background_image;
 	point location;
@@ -44,18 +45,47 @@ public:
 	int captured_button;
 	GdkEventType captured_type;
 	button_active_graphics START;
-	button_active_graphics STOP;
 	button_active_graphics RECORD;
 	bool remove (bool remove_gtk = true) {
 		if (remove_gtk) g_idle_add ((GSourceFunc) RemoveViewportIdleCode, viewport);
 		delete this;
 		return true;
 	}
+	void action_start_audio (void) {
+		PrologElement * query = root -> pair (root -> atom (core),
+								root -> pair (root -> atom (reactor),
+								root -> pair (root -> integer (330),
+								root -> pair (root -> integer (22050),
+								root -> pair (root -> integer (4096),
+								root -> pair (root -> integer (0),
+								root -> pair (root -> integer (0), root -> earth ())))))));
+		PrologElement * q2 = root -> pair (root -> atom (connect_all_moons),
+								root -> pair (root -> atom (reactor), root -> earth ()));
+		query = root -> pair (query, root -> pair (q2, root -> earth ()));
+		query = root -> pair (root -> earth (), query);
+		root -> resolution ();
+		//char command [1024]; root -> getValue (query, command, 0);
+		//printf ("COMMAND: %s\n", command);
+		delete query;
+	}
+	void action_stop_audio (void) {
+		printf ("stop audio\n");
+	}
+	void action_start_recording (void) {
+		GtkWidget * dialog = gtk_file_chooser_dialog_new ("Record audio.", GTK_WINDOW (viewport),
+										GTK_FILE_CHOOSER_ACTION_SAVE, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT, NULL);
+		if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT) {
+			char * file_name = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (dialog));
+			audio . selectOutputFile (3600.0, file_name);
+			g_free (file_name);
+		}
+		gtk_widget_destroy (dialog);
+	}
+	void action_stop_recording (void) {audio . stopRecording ();}
 	bool code (PrologElement * parameters, PrologResolution * resolution);
-	core_panel_action (GraphicResources * resources, PrologRoot * root, PrologAtom * atom, PrologAtom * core, PrologAtom * reactor) :
-		STOP (point (10.0, 92.0), 1, resources, true),
-		START (point (40.0, 92.0), 2, resources, true),
-		RECORD (point (90.0, 92.0), 3, resources, true)
+	core_panel_action (GraphicResources * resources, PrologRoot * root, PrologAtom * atom, PrologAtom * core, PrologAtom * reactor, PrologAtom * connect_all_moons) :
+		START (point (340.0, 88.0), 2, resources, true),
+		RECORD (point (390.0, 88.0), 3, resources, true)
 	{
 		this -> root = root;
 		captured_button = 0;
@@ -64,12 +94,14 @@ public:
 		this -> atom = atom; COLLECTOR_REFERENCE_INC (atom);
 		this -> core = core; COLLECTOR_REFERENCE_INC (core);
 		this -> reactor = reactor; COLLECTOR_REFERENCE_INC (reactor);
+		this -> connect_all_moons = connect_all_moons; COLLECTOR_REFERENCE_INC (connect_all_moons);
 	}
 	~ core_panel_action (void) {
 		atom -> setMachine (0);
 		atom -> removeAtom ();
 		core -> removeAtom ();
 		reactor -> removeAtom ();
+		connect_all_moons -> removeAtom ();
 	}
 };
 
@@ -173,33 +205,28 @@ static gboolean RedrawEGPanel (GtkWidget * viewport, GdkEvent * event, eg_panel_
 */
 
 static gint CorePanelKeyon (GtkWidget * viewport, GdkEventButton * event, core_panel_action * action) {
-	printf ("clicked....[%i]\n", (int) event -> type);
 	action -> captured_type = event -> type;
 	action -> captured_button = event -> button;
 	point location (event -> x, event -> y);
 	action -> captured = location;
 	bool redraw = false;
-	if (action -> STOP . keyon (location)) {
-		action -> STOP . engaged = true;
-		action -> START . engaged = false;
-		redraw = true;
-	}
-	if (action -> START . keyon (location)) {
-		action -> START . engaged = true;
-		redraw = true;
-	}
 	if (redraw) gtk_widget_queue_draw (viewport);
 	return TRUE;
 }
 static gint CorePanelKeyoff (GtkWidget * viewport, GdkEventButton * event, core_panel_action * action) {
-	printf (".... [%i]\n", (int) event -> type);
 	point location (event -> x, event -> y);
 	bool redraw = false;
-	if (action -> STOP . keyoff (location)) {action -> STOP . engaged = false; redraw = true;}
+	if (action -> START . keyoff (location)) {
+		if (action -> captured_type == GDK_BUTTON_PRESS) {
+			if (action -> START . engaged = ! action -> START . engaged) action -> action_start_audio ();
+			else action -> action_stop_audio ();
+			redraw = true;
+		}
+	}
 	if (action -> RECORD . keyoff (location)) {
 		if (action -> captured_type == GDK_BUTTON_PRESS) {
-			printf ("change record....\n");
-			action -> RECORD . engaged = ! action -> RECORD . engaged;
+			if (action -> RECORD . engaged = ! action -> RECORD . engaged) action -> action_start_recording ();
+			else action -> action_stop_recording ();
 			redraw = true;
 		}
 	}
@@ -218,7 +245,6 @@ static gint CorePanelMove (GtkWidget * viewport, GdkEventButton * event, core_pa
 static gboolean RedrawCorePanel (GtkWidget * viewport, GdkEvent * event, core_panel_action * action) {
 	cairo_t * cr = gdk_cairo_create (gtk_widget_get_window (viewport));
 	if (action -> background_image != 0) {cairo_set_source_surface (cr, action -> background_image, 0, 0); cairo_paint (cr);}
-	action -> STOP . draw (cr);
 	action -> START . draw (cr);
 	action -> RECORD . draw (cr);
 	cairo_destroy (cr);
@@ -276,14 +302,14 @@ static gboolean CreateCorePanelIdleCode (core_panel_action * action) {
 		gtk_combo_box_append_text (GTK_COMBO_BOX (input_combo), audio . getInputDeviceName (ind));
 	}
 	gtk_combo_box_set_active (GTK_COMBO_BOX (input_combo), audio . getSelectedInputDevice () + 1);
-	gtk_fixed_put (GTK_FIXED (area), input_combo, 10, 10);
+	gtk_fixed_put (GTK_FIXED (area), input_combo, 20, 40);
 	GtkWidget * output_combo = gtk_combo_box_new_text ();
 	gtk_combo_box_append_text (GTK_COMBO_BOX (output_combo), "Inactive");
 	for (int ind = 0; ind < audio . getNumberOfOutputDevices (); ind++) {
 		gtk_combo_box_append_text (GTK_COMBO_BOX (output_combo), audio . getOutputDeviceName (ind));
 	}
 	gtk_combo_box_set_active (GTK_COMBO_BOX (output_combo), audio . getSelectedOutputDevice () + 1);
-	gtk_fixed_put (GTK_FIXED (area), output_combo, 10, 30);
+	gtk_fixed_put (GTK_FIXED (area), output_combo, 20, 120);
 	GtkWidget * sampling_combo = gtk_combo_box_new_text();
 	gtk_combo_box_append_text (GTK_COMBO_BOX (sampling_combo), "8,000 Hz [Telephone]");
 	gtk_combo_box_append_text (GTK_COMBO_BOX (sampling_combo), "11,025 Hz [PCM MPEG]");
@@ -305,7 +331,7 @@ static gboolean CreateCorePanelIdleCode (core_panel_action * action) {
 	gtk_combo_box_append_text (GTK_COMBO_BOX (sampling_combo), "5,644,800 Hz [DSD]");
 	gtk_combo_box_set_active (GTK_COMBO_BOX (sampling_combo), 8);
 	g_signal_connect (G_OBJECT (sampling_combo), "changed", G_CALLBACK (SamplingRateChanged), 0);
-	gtk_fixed_put (GTK_FIXED (area), sampling_combo, 140, 10);
+	gtk_fixed_put (GTK_FIXED (area), sampling_combo, 440, 90);
 	gtk_container_add (GTK_CONTAINER (action -> viewport), area);
 
 	g_signal_connect (G_OBJECT (area), "expose-event", G_CALLBACK (RedrawCorePanel), action);
@@ -354,13 +380,15 @@ bool core_panel_class :: code (PrologElement * parameters, PrologResolution * re
 	PrologElement * atom = 0;
 	PrologAtom * core = 0;
 	PrologAtom * reactor = 0;
+	PrologAtom * connect_all_moons = 0;
 	while (parameters -> isPair ()) {
 		PrologElement * el = parameters -> getLeft ();
 		if (el -> isVar ()) atom = el;
 		if (el -> isAtom ()) {
 			if (atom == 0) atom = el;
 			else if (core == 0) core = el -> getAtom ();
-			else reactor = el -> getAtom ();
+			else if (reactor == 0) reactor = el -> getAtom ();
+			else connect_all_moons = el -> getAtom ();
 		}
 		parameters = parameters -> getRight ();
 	}
@@ -370,11 +398,12 @@ bool core_panel_class :: code (PrologElement * parameters, PrologResolution * re
 		if (dir == 0) return false;
 		if (core == 0) core = dir -> searchAtom ("core");
 		if (reactor == 0) reactor = dir -> searchAtom ("reactor");
+		if (connect_all_moons == 0) connect_all_moons = dir -> searchAtom ("ConnectAllMoons");
 	}
 	if (core == 0 || reactor == 0) return false;
 	if (atom -> isVar ()) atom -> setAtom (new PrologAtom ());
 	if (atom -> getAtom () -> getMachine () != 0) return false;
-	core_panel_action * machine = new core_panel_action (resources, root, atom -> getAtom (), core, reactor);
+	core_panel_action * machine = new core_panel_action (resources, root, atom -> getAtom (), core, reactor, connect_all_moons);
 	if (! atom -> getAtom () -> setMachine (machine)) {delete machine; return false;}
 	g_idle_add ((GSourceFunc) CreateCorePanelIdleCode, machine);
 	return true;

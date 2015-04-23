@@ -87,8 +87,9 @@ void MultiplatformAudio :: selectOutputFile (double seconds, char * file_name) {
 	int to_record = (int) (seconds * (double) record_sampling_freq);
 	if (to_record < 1) return;
 	if (output_file_name == 0 && file_name != 0) {
-		output_file_name = new char [strlen (file_name) + 4];
-		strcpy (output_file_name, file_name);
+		char * copy = new char [strlen (file_name) + 4];
+		strcpy (copy, file_name);
+		output_file_name = copy;
 	}
 	recorded_frames = 0;
 	stop_recording = false;
@@ -97,8 +98,9 @@ void MultiplatformAudio :: selectOutputFile (double seconds, char * file_name) {
 }
 void MultiplatformAudio :: stopRecording (char * file_name) {
 	if (output_file_name == 0 && file_name != 0) {
-		output_file_name = new char [strlen (file_name) + 4];
-		strcpy (output_file_name, file_name);
+		char * copy = new char [strlen (file_name) + 4];
+		strcpy (copy, file_name);
+		output_file_name = copy;
 	}
 	printf ("stopping recording....\n");
 	stop_recording = true;

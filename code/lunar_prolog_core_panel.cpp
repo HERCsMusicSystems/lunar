@@ -52,6 +52,7 @@ public:
 		return true;
 	}
 	void action_start_audio (void) {
+		if (reactor -> getMachine () != 0) return;
 		PrologElement * query = root -> pair (root -> atom (core),
 								root -> pair (root -> atom (reactor),
 								root -> pair (root -> integer (330),
@@ -63,13 +64,15 @@ public:
 								root -> pair (root -> atom (reactor), root -> earth ()));
 		query = root -> pair (query, root -> pair (q2, root -> earth ()));
 		query = root -> pair (root -> earth (), query);
-		root -> resolution ();
-		//char command [1024]; root -> getValue (query, command, 0);
-		//printf ("COMMAND: %s\n", command);
+		root -> resolution (query);
 		delete query;
 	}
 	void action_stop_audio (void) {
-		printf ("stop audio\n");
+		if (reactor -> getMachine () == 0) return;
+		PrologElement * query = root -> pair (root -> atom (reactor), root -> earth ());
+		query = root -> pair (root -> earth (), root -> pair (query, root -> earth ()));
+		root -> resolution (query);
+		delete query;
 	}
 	void action_start_recording (void) {
 		GtkWidget * dialog = gtk_file_chooser_dialog_new ("Record audio.", GTK_WINDOW (viewport),
@@ -95,6 +98,7 @@ public:
 		this -> core = core; COLLECTOR_REFERENCE_INC (core);
 		this -> reactor = reactor; COLLECTOR_REFERENCE_INC (reactor);
 		this -> connect_all_moons = connect_all_moons; COLLECTOR_REFERENCE_INC (connect_all_moons);
+		START . engaged = reactor == 0 ? 0 : reactor -> getMachine () != 0;
 	}
 	~ core_panel_action (void) {
 		atom -> setMachine (0);

@@ -563,6 +563,7 @@ arpeggiator_class :: arpeggiator_class (PrologDirectory * dir, orbiter_core * co
 class native_sequencer : public native_moonbase {
 public:
 	PrologAtom * keyon, * keyoff, * control, * busy, * impulse;
+	chromatograph graph;
 	bool code (PrologElement * parameters, PrologResolution * resolution) {
 		if (parameters -> isPair ()) {
 			PrologElement * el = parameters -> getLeft ();
@@ -630,34 +631,63 @@ public:
 				if (seq -> elements != 0) delete seq -> elements; seq -> elements = 0;
 				sequence_element * * sqep = & seq -> elements;
 				while (el -> isPair ()) {
-					PrologElement * atom = 0;
-					PrologElement * key = 0;
-					PrologElement * velocity = 0;
-					PrologElement * ticks = 0;
 					PrologElement * eq = el -> getLeft ();
 					if (eq -> isInteger ()) {* sqep = new sequence_element (0, eq -> getInteger ()); sqep = & (* sqep) -> next;}
 					if (eq -> isAtom () && eq -> getAtom () == keyoff) {* sqep = new sequence_element (3); sqep = & (* sqep) -> next;}
 					if (eq -> isPair ()) {
+						PrologElement * atom = 0;
+						PrologElement * key = 0;
+						PrologElement * velocity = 0;
+						PrologElement * note = 0;
+						PrologElement * octave = 0;
+						PrologElement * ticks = 0;
 						while (eq -> isPair ()) {
 							PrologElement * eqq = eq -> getLeft ();
 							if (eqq -> isAtom ()) atom = eqq;
 							if (eqq -> isInteger ()) if (key == 0) key = eqq; else velocity = eqq;
 							if (eqq -> isDouble ()) velocity = eqq;
+							if (eqq -> isPair ()) {
+								note = eqq -> getLeft ();
+								octave = eqq -> getRight ();
+								if (octave -> isPair ()) octave = octave -> getLeft ();
+								if (! note -> isAtom ()) note = 0;
+								if (! octave -> isInteger ()) octave = 0;
+							}
 							eq = eq -> getRight ();
 						}
-						if (atom -> getAtom () == keyon && key != 0) {
-							if (velocity == 0) * sqep = new sequence_element (1, key -> getInteger ());
-							else * sqep = new sequence_element (2, key -> getInteger (), velocity -> getNumber ());
-							sqep = & (* sqep) -> next;
+						if (atom -> getAtom () == keyon) {
+							if (note != 0 && octave != 0) {
+								int sub = graph . chromatic (note -> getAtom ()) + octave -> getInteger () * 12 + 48;
+								if (key != 0) * sqep = new sequence_element (2, sub, (double) key -> getInteger ());
+								else if (velocity != 0) * sqep = new sequence_element (2, sub, velocity -> getNumber ());
+								else * sqep = new sequence_element (1, sub);
+								sqep = & (* sqep) -> next;
+							} else if (key != 0) {
+								if (velocity == 0) * sqep = new sequence_element (1, key -> getInteger ());
+								else * sqep = new sequence_element (2, key -> getInteger (), velocity -> getNumber ());
+								sqep = & (* sqep) -> next;
+							}
 						}
 						if (atom -> getAtom () == keyoff) {
-							if (key == 0) * sqep = new sequence_element (3);
-							else * sqep = new sequence_element (4, key -> getInteger ());
+							if (note != 0 && octave != 0) * sqep = new sequence_element (4, graph . chromatic (note -> getAtom ()) + octave -> getInteger () * 12 + 48);
+							else if (key != 0) * sqep = new sequence_element (4, key -> getInteger ());
+							else * sqep = new sequence_element (3);
 							sqep = & (* sqep) -> next;
 						}
-						if (atom -> getAtom () == control && key != 0 && velocity != 0) {
-							* sqep = new sequence_element (5, key -> getInteger (), velocity -> getNumber ());
-							sqep = & (* sqep) -> next;
+						if (atom -> getAtom () == control) {
+							if (note != 0 && octave != 0) {
+								int sub = graph . chromatic (note -> getAtom ()) + octave -> getInteger () * 12 + 48;
+								if (key != 0) {
+									* sqep = new sequence_element (5, sub, (double) key -> getInteger ());
+									sqep = & (* sqep) -> next;
+								} else if (velocity != 0) {
+									* sqep = new sequence_element (5, sub, velocity -> getNumber ());
+									sqep = & (* sqep) -> next;
+								}
+							} else if (key != 0 && velocity != 0) {
+								* sqep = new sequence_element (5, key -> getInteger (), velocity -> getNumber ());
+								sqep = & (* sqep) -> next;
+							}
 						}
 						if (atom -> getAtom () == busy && (key != 0 || velocity != 0)) {
 							* sqep = new sequence_element (8, 0, key != 0 ? key -> getNumber () : velocity -> getNumber ());
@@ -675,7 +705,7 @@ public:
 		}
 		return native_moonbase :: code (parameters, resolution);
 	}
-	native_sequencer (PrologDirectory * dir, PrologAtom * atom, orbiter_core * core, orbiter * module) : native_moonbase (dir, atom, core, module) {
+	native_sequencer (PrologDirectory * dir, PrologAtom * atom, orbiter_core * core, orbiter * module) : graph (dir), native_moonbase (dir, atom, core, module) {
 		keyon = keyoff = control = 0;
 		if (dir == 0) return;
 		keyon = dir -> searchAtom ("keyon");
@@ -769,48 +799,77 @@ public:
 				if (seq -> elements != 0) delete seq -> elements; seq -> elements = 0;
 				polysequence_element * * sqep = & seq -> elements;
 				while (el -> isPair ()) {
-					PrologElement * atom = 0;
-					PrologElement * channel = 0;
-					PrologElement * key = 0;
-					PrologElement * velocity = 0;
-					PrologElement * ticks = 0;
 					PrologElement * eq = el -> getLeft ();
 					if (eq -> isInteger ()) {* sqep = new polysequence_element (0, 0, eq -> getInteger ()); sqep = & (* sqep) -> next;}
 					if (eq -> isAtom () && eq -> getAtom () == keyoff) {* sqep = new polysequence_element (6); sqep = & (* sqep) -> next;}
 					if (eq -> isPair ()) {
+						PrologElement * atom = 0;
+						PrologElement * channel = 0;
+						PrologElement * key = 0;
+						PrologElement * note = 0;
+						PrologElement * octave = 0;
+						PrologElement * velocity = 0;
+						PrologElement * ticks = 0;
 						while (eq -> isPair ()) {
 							PrologElement * eqq = eq -> getLeft ();
 							if (eqq -> isAtom ()) atom = eqq;
 							if (eqq -> isInteger ()) if (channel == 0) channel = eqq; else if (key == 0) key = eqq; else velocity = eqq;
 							if (eqq -> isDouble ()) velocity = eqq;
+							if (eqq -> isPair ()) {
+								note = eqq -> getLeft ();
+								octave = eqq -> getRight ();
+								if (octave -> isPair ()) octave = octave -> getLeft ();
+								if (! note -> isAtom ()) note = 0;
+								if (! octave -> isInteger ()) octave = 0;
+							}
 							eq = eq -> getRight ();
 						}
-						if (channel != 0 && channel -> getInteger () >= 0 && channel -> getInteger () < seq -> numberOfBases ()) {
-							if (atom -> getAtom () == keyon && key != 0) {
-								if (velocity == 0) * sqep = new polysequence_element (1, channel -> getInteger (), key -> getInteger ());
-								else * sqep = new polysequence_element (2, channel -> getInteger (), key -> getInteger (), velocity -> getNumber ());
-								sqep = & (* sqep) -> next;
+						if (atom -> getAtom () == busy && (channel != 0 || velocity != 0)) {
+							* sqep = new polysequence_element (8, 0, 0, channel != 0 ? channel -> getNumber () : velocity -> getNumber ());
+							sqep = & (* sqep) -> next;
+						} else if (atom -> getAtom () == impulse && (channel != 0 || velocity != 0)) {
+							* sqep = new polysequence_element (9, 0, 0, channel != 0 ? channel -> getNumber () : velocity -> getNumber ());
+							sqep = & (* sqep) -> next;
+						} else if (channel != 0 && channel -> getInteger () >= 0 && channel -> getInteger () < seq -> numberOfBases ()) {
+							if (atom -> getAtom () == keyon) {
+								if (note != 0 && octave != 0) {
+									int sub = graph . chromatic (note -> getAtom ()) + octave -> getInteger () * 12 + 48;
+									if (key != 0) * sqep = new polysequence_element (2, channel -> getInteger (), sub, (double) key -> getInteger ());
+									else if (velocity != 0) * sqep = new polysequence_element (2, channel -> getInteger (), sub, velocity -> getNumber ());
+									else * sqep = new polysequence_element (1, channel -> getInteger (), sub);
+									sqep = & (* sqep) -> next;
+								} else if (key != 0) {
+									if (velocity == 0) * sqep = new polysequence_element (1, channel -> getInteger (), key -> getInteger ());
+									else * sqep = new polysequence_element (2, channel -> getInteger (), key -> getInteger (), velocity -> getNumber ());
+									sqep = & (* sqep) -> next;
+								}
 							}
 							if (atom -> getAtom () == keyoff) {
-								if (key == 0) * sqep = new polysequence_element (3, channel -> getInteger ());
-								else * sqep = new polysequence_element (4, channel -> getInteger (), key -> getInteger ());
+								if (note != 0 && octave != 0)
+									* sqep = new polysequence_element (4, channel -> getInteger (),
+															graph . chromatic (note -> getAtom ()) + octave -> getInteger () * 12 + 48);
+								else if (key != 0) * sqep = new polysequence_element (4, channel -> getInteger (), key -> getInteger ());
+								else * sqep = new polysequence_element (3, channel -> getInteger ());
 								sqep = & (* sqep) -> next;
 							}
-							if (atom -> getAtom () == control && key != 0 && velocity != 0) {
-								* sqep = new polysequence_element (5, channel -> getInteger (), key -> getInteger (), velocity -> getNumber ());
-								sqep = & (* sqep) -> next;
+							if (atom -> getAtom () == control) {
+								if (note != 0 && octave != 0) {
+									int sub = graph . chromatic (note -> getAtom ()) + octave -> getInteger () * 12 + 48;
+									if (key != 0) {
+										* sqep = new polysequence_element (5, channel -> getInteger (), sub, (double) key -> getInteger ());
+										sqep = & (* sqep) -> next;
+									} else if (velocity != 0) {
+										* sqep = new polysequence_element (5, channel -> getInteger (), sub, velocity -> getNumber ());
+										sqep = & (* sqep) -> next;
+									}
+								} else if (key != 0 && velocity != 0) {
+									* sqep = new polysequence_element (5, channel -> getInteger (), key -> getInteger (), velocity -> getNumber ());
+									sqep = & (* sqep) -> next;
+								}
 							}
 						} else {
 							if (atom -> getAtom () == keyoff) {
 								* sqep = new polysequence_element (6);
-								sqep = & (* sqep) -> next;
-							}
-							if (atom -> getAtom () == busy && (channel != 0 || velocity != 0)) {
-								* sqep = new polysequence_element (8, 0, 0, channel != 0 ? channel -> getNumber () : velocity -> getNumber ());
-								sqep = & (* sqep) -> next;
-							}
-							if (atom -> getAtom () == impulse && (channel != 0 || velocity != 0)) {
-								* sqep = new polysequence_element (9, 0, 0, channel != 0 ? channel -> getNumber () : velocity -> getNumber ());
 								sqep = & (* sqep) -> next;
 							}
 						}

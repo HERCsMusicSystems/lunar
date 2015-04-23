@@ -39,7 +39,16 @@
 
 [TestEq "sequencer busy 0" 0.0 *x [MoveCore] [s "busy" *x]]
 
-[s] [polysequencer s bs]
+[s [[keyon 66 7] [keyon 6.0 88] [keyon 7]]]
+[TestEq "sequencer data 1" [[keyon 66 7] [keyon 88 6] [keyon 7]] *x [s *x]]
+[s [[keyon [F# 2] 8] [keyon [Bb 1] 8.5] [keyon [Dx 1]]]]
+[TestEq "sequencer data 2" [[keyon 78 8] [keyon 70 8] [keyon 64]] *x [s *x]]
+[s [[keyoff] keyoff [keyoff 66] [keyoff [F# 2]]]]
+[TestEq "sequencer data 3" [keyoff keyoff [keyoff 66] [keyoff 78]] *x [s *x]]
+[s [[control 4 5.75] [control 5 6] [control [Gb 2] 7.5] [control [G# -1] 8]]]
+[TestEq "sequencer data 4" [[control 4 5.75] [control 5 6.0] [control 78 7.5] [control 44 8.0]] *x [s *x]]
+
+[s] [polysequencer s bs bs bs bs bs bs bs bs bs bs]
 
 [s [1 [busy 4] 1 [impulse 2] 1 [busy 3] 1]]
 [s "speed" 40000]
@@ -77,6 +86,15 @@
 [TestEq "polysequencer busy 11" 3.0 *x [MoveCore] [s "busy" *x]]
 
 [TestEq "polysequencer busy 0" 0.0 *x [MoveCore] [s "busy" *x]]
+
+[s [[keyon 0 66 7] [keyon 1 6.0 88] [keyon 2 7]]]
+[TestEq "polysequencer data 1" [[keyon 0 66 7] [keyon 1 88 6] [keyon 2 7]] *x [s *x]]
+[s [[keyon 0 [F# 2] 8] [keyon 1 [Bb 1] 8.5] [keyon 2 [Dx 1]]]]
+[TestEq "polysequencer data 2" [[keyon 0 78 8] [keyon 1 70 8] [keyon 2 64]] *x [s *x]]
+[s [[keyoff 0] [keyoff 1 66] [keyoff 2 [F# 2]]]]
+[TestEq "polysequencer data 3" [[keyoff 0] [keyoff 1 66] [keyoff 2 78]] *x [s *x]]
+[s [[control 0 4 5.75] [control 1 5 6] [control 2 [Gb 2] 7.5] [control 3 [G# -1] 8]]]
+[TestEq "polysequencer data 4" [[control 0 4 5.75] [control 1 5 6.0] [control 2 78 7.5] [control 3 44 8.0]] *x [s *x]]
 
 [exit]
 

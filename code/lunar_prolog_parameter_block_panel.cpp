@@ -66,10 +66,10 @@ public:
 
 	bool code (PrologElement * paramters, PrologResolution * resolution);
 	parameter_block_panel_action (GraphicResources * resources, PrologRoot * root, PrologDirectory * directory, PrologAtom * atom, PrologAtom * command, bool active) :
-		ctrl (point (0, 0), 0, resources, true)
+		ctrl (point (0, 0), 0, resources, true, true)
 	{
 		captured_button = 0;
-		background_image = resources != 0 ? resources -> vector_surface : 0;
+		background_image = resources != 0 ? resources -> knob_surface : 0;
 		viewport = 0;
 		this -> root = root;
 		this -> atom = atom; COLLECTOR_REFERENCE_INC (atom);

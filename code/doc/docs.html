@@ -68,6 +68,11 @@
     </li>
     <li><a href="#utilities">Utilities</a>
         <br />
+        <a href="#predicate_BuildAdsrPanel">BuildAdsrPanel</a>
+        <a href="#predicate_BuildEGPanel">BuildEGPanel</a>
+        <a href="#predicate_BuildFEGPanel">BuildFEGPanel</a>
+        <a href="#predicate_BuildFM4Panel">BuildFM4Panel</a>
+        <a href="#predicate_BuildParameterBlockPanel">BuildParameterBlockPanel</a>
         <a href="#predicate_Connect">Connect</a>
         <a href="#predicate_ConnectDryWet">ConnectDryWet</a>
         <a href="#predicate_ConnectStereo">ConnectStereo</a>
@@ -85,10 +90,16 @@
     </li>
     <li><a href="#panels">Panels</a>
         <br />
+        <a href="#predicate_AdsrPanel">AdsrPanel</a>
         <a href="#predicate_big_keyboard">big_keyboard</a>
         <a href="#predicate_command_centre">CommandCentre</a>
+        <a href="#predicate_CorePanel">CorePanel</a>
+        <a href="#predicate_EGPanel">EGPanel</a>
+        <a href="#predicate_FEGPanel">FEGPanel</a>
+        <a href="#predicate_FM4Panel">FM4Panel</a>
         <a href="#predicate_keyboard">keyboard</a>
         <a href="#predicate_oscilloscope">oscilloscope</a>
+        <a href="#predicate_ParameterBlockPanel">ParameterBlockPanel</a>
         <a href="#predicate_small_keyboard">small_keyboard</a>
         <a href="#predicate_vector">vector</a>
     </li>
@@ -1060,6 +1071,66 @@
 <div class="doc_library_section"><a id="utilities">Utilities</a></div>
 
 <div class="doc_predicate">
+    <a id="predicate_BuildAdsrPanel">
+        <div class="doc_predicate_header">
+            [BuildAdsrPanel module instrument : selector] => Builds an ADSR panel.<br />
+        </div>
+        <div class="doc_predicate_body">
+            This is a shortcut designed to find the appropriate parameter blocks in superstructure
+            and build an ADSR panel.
+        </div>
+    </a>
+</div>
+
+<div class="doc_predicate">
+    <a id="predicate_BuildEGPanel">
+        <div class="doc_predicate_header">
+            [BuildEGPanel module instrument : selector] => Builds an EG panel.<br />
+        </div>
+        <div class="doc_predicate_body">
+            This is a shortcut designed to find the appropriate parameter blocks in superstructure
+            and build an EG panel.
+        </div>
+    </a>
+</div>
+
+<div class="doc_predicate">
+    <a id="predicate_BuildFEGPanel">
+        <div class="doc_predicate_header">
+            [BuildFEGPanel module instrument : selector] => Builds an FEG panel.<br />
+        </div>
+        <div class="doc_predicate_body">
+            This is a shortcut designed to find the appropriate parameter blocks in superstructure
+            and build an FEG panel.
+        </div>
+    </a>
+</div>
+
+<div class="doc_predicate">
+    <a id="predicate_BuildFM4Panel">
+        <div class="doc_predicate_header">
+            [BuildFM4Panel module instrument : selector] => Builds an FM4 panel.<br />
+        </div>
+        <div class="doc_predicate_body">
+            This is a shortcut designed to find the appropriate parameter blocks in superstructure
+            and build an FM4 panel.
+        </div>
+    </a>
+</div>
+
+<div class="doc_predicate">
+    <a id="predicate_BuildParameterBlockPanel">
+        <div class="doc_predicate_header">
+            [BuildParameterBlockPanel module instrument : selector] => Builds a Parameter Block panel.<br />
+        </div>
+        <div class="doc_predicate_body">
+            This is a shortcut designed to find the appropriate parameter block in superstructure
+            and build a Parameter Block panel.
+        </div>
+    </a>
+</div>
+
+<div class="doc_predicate">
     <a id="predicate_Connect">
         <div class="doc_predicate_header">
             [Connect : *modules] => Connects two modules.<br />
@@ -1262,6 +1333,23 @@
 <div class="doc_library_section"><a id="panels">Panels</a></div>
 
 <div class="doc_predicate">
+    <a id="predicate_AdsrPanel">
+        <div class="doc_predicate_header">
+            [AdsrPanel module attack decay sustain release] => Creates a panel for an ADSR module block.<br />
+            [module *x *y] => reposition on the screen<br />
+            [module] => closes the panel<br />
+        </div>
+        <div class="doc_predicate_body">
+            Creates a panel for 4 parameter blocks commonly associated with ADSR module.
+            Range from 0 .. 16384 for times and -16384 .. 0 for sustain level.
+            The resolution is 128 steps with left mouse button and 16384 with the right one.<br />
+            <b>Note:</b> do not use AdsrPanel directly. Use <a href="#predicate_BuildAdsrPanel">BuildAdsrPanel</a> instead.<br />
+            <img src="../../graphics/adsr_panel.png" />
+        </div>
+    </a>
+</div>
+
+<div class="doc_predicate">
     <a id="predicate_big_keyboard">
         <div class="doc_predicate_header">
             [big_keyboard atom callback]<br />
@@ -1281,7 +1369,7 @@
 <div class="doc_predicate">
     <a id="predicate_command_centre">
         <div class="doc_predicate_header">
-            [CommandCentre commander CCCB] => Create a command centre. CCCB parameter is optional and defaults to CCCB<br />
+            [CommandCentre commander CCCB] => Create a command centre. CCCB parameter is optional and defaults to CCCB.<br />
             [commander *x *y] => reposition on the screen.<br />
             [commander] => closes the command centre panel.<br />
         </div>
@@ -1289,8 +1377,75 @@
             CommandCentre panel enables effective control on all instruments,
             which are constructed as superstructures and are present on the list of all instruments.
             It should always be constructed with the predefined callback CCCB.
-            It is possible to use custom callbacks, but its purpose would be rather dubious.
+            It is possible to use custom callbacks, but its purpose would be rather dubious.<br />
+            <b>Note:</b> you can drag-and-drop PROLOG batch files on the command centre.
             <img src="../../graphics/command_centre.png" width="75%" />
+        </div>
+    </a>
+</div>
+
+<div class="doc_predicate">
+    <a id="predicate_CorePanel">
+        <div class="doc_predicate_header">
+            [CorePanel module core reactor ConnectAllMoons] => Create a Core Panel. All parameters except module are optional (default values are: core, reactor and ConnectAllMoons).<br />
+            [module *x *y] => reposition on the screen.<br />
+            [module] => closes the command centre panel.<br />
+        </div>
+        <div class="doc_predicate_body">
+            Core Panel controls audio hardware and audio recording.
+            <b>Note:</b> you can drag-and-drop PROLOG batch files on the command centre.
+            <img src="../../graphics/core_panel.png" />
+        </div>
+    </a>
+</div>
+
+<div class="doc_predicate">
+    <a id="predicate_EGPanel">
+        <div class="doc_predicate_header">
+            [EGPanel module t1 t2 t3 t4 l1 l2 l3 l4] => Creates a panel for an EG module block.<br />
+            [module *x *y] => reposition on the screen<br />
+            [module] => closes the panel<br />
+        </div>
+        <div class="doc_predicate_body">
+            Creates a panel for 8 parameter blocks commonly associated with EG module.
+            Range from 0 .. 16384 for times <b>and -16384 .. 0 for levels</b>.
+            The resolution is 128 steps with left mouse button and 16384 with the right one.<br />
+            <b>Note:</b> do not use EGPanel directly. Use <a href="#predicate_BuildEGPanel">BuildEGPanel</a> instead.<br />
+            <img src="../../graphics/eg_panel.png" />
+        </div>
+    </a>
+</div>
+
+<div class="doc_predicate">
+    <a id="predicate_FEGPanel">
+        <div class="doc_predicate_header">
+            [FEGPanel module t1 t2 t3 t4 l1 l2 l3 l4] => Creates a panel for an EG module block.<br />
+            [module *x *y] => reposition on the screen<br />
+            [module] => closes the panel<br />
+        </div>
+        <div class="doc_predicate_body">
+            Creates a panel for 8 parameter blocks commonly associated with EG module.
+            Range from 0 .. 16384 for times <b>and -8192 .. 8192 for levels</b>.
+            The resolution is 128 steps with left mouse button and 16384 with the right one.<br />
+            <b>Note:</b> do not use FEGPanel directly. Use <a href="#predicate_BuildFEGPanel">BuildFEGPanel</a> instead.<br />
+            <img src="../../graphics/eg_panel.png" />
+        </div>
+    </a>
+</div>
+
+<div class="doc_predicate">
+    <a id="predicate_FM4Panel">
+        <div class="doc_predicate_header">
+            [FM4Panel module algo freq1 amp1 ratio1 feedback1 .... freq4 amp4 ratio4 feedback4] => Creates a panel for an FM4 module block.<br />
+            [module *x *y] => reposition on the screen<br />
+            [module] => closes the panel<br />
+        </div>
+        <div class="doc_predicate_body">
+            Creates a panel for 17 parameter blocks commonly associated with FM4 block.
+            Range different for each knob.
+            The resolution is 128 steps with left mouse button and 16384 with the right one.<br />
+            <b>Note:</b> do not use FM4Panel directly. Use <a href="#predicate_BuildFM4Panel">BuildFM4Panel</a> instead.<br />
+            <img src="../../graphics/fm4_panel.png" />
         </div>
     </a>
 </div>
@@ -1316,12 +1471,31 @@
     <a id="predicate_oscilloscope">
         <div class="doc_predicate_header">
             [oscilloscope module] => Creates an oscilloscope window.<br />
+            [module *x *y] => reposition on the screen<br />
+            [module] => closes the panel<br />
             <b>Note:</b> module adheres to <a href="#common_behaviour_of_predicates">Common Behaviour</a>.
         </div>
         <div class="doc_predicate_body">
             <b>Signals:</b> [["SIGNAL"] ["SIGNAL"]]<br />
             Displays the input signal. Range of the signal is from -1.0 to 1.0.<br />
             <img src="radar.png" />
+        </div>
+    </a>
+</div>
+
+<div class="doc_predicate">
+    <a id="predicate_ParameterBlockPanel">
+        <div class="doc_predicate_header">
+            [ParameterBlockPanel module pb from to] => Creates a panel for a parameter block. The from and to parameters are optional.<br />
+            [module *x *y] => reposition on the screen<br />
+            [module] => closes the panel<br />
+        </div>
+        <div class="doc_predicate_body">
+            Creates a panel for a single parameter block.
+            If range (from .. to) is not provided then it defaults to -64 .. 64.
+            The resolution is 128 steps with left mouse button and 16384 with the right one.<br />
+            <b>Note:</b> ParameterBlockPanel can be constructed by <a href="#predicate_BuildParameterBlockPanel">BuildParameterBlockPanel</a>.<br />
+            <img src="../../graphics/parameter_block_panel.png" />
         </div>
     </a>
 </div>

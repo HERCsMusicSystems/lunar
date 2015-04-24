@@ -26,8 +26,9 @@
 
 #include "prolog_lunar.h"
 #include "graphic_resources.h"
-#include <string.h>
 #include "multiplatform_audio.h"
+#include <string.h>
+#include <math.h>
 
 extern MultiplatformAudio audio;
 
@@ -46,6 +47,10 @@ public:
 	GdkEventType captured_type;
 	button_active_graphics START;
 	button_active_graphics RECORD;
+	int requested_sampling_rate;
+	int requested_latency_buffer_size;
+	int requested_output_device;
+	int requested_input_device;
 	bool remove (bool remove_gtk = true) {
 		if (remove_gtk) g_idle_add ((GSourceFunc) RemoveViewportIdleCode, viewport);
 		delete this;
@@ -56,10 +61,10 @@ public:
 		PrologElement * query = root -> pair (root -> atom (core),
 								root -> pair (root -> atom (reactor),
 								root -> pair (root -> integer (330),
-								root -> pair (root -> integer (22050),
-								root -> pair (root -> integer (4096),
-								root -> pair (root -> integer (0),
-								root -> pair (root -> integer (0), root -> earth ())))))));
+								root -> pair (root -> integer (requested_sampling_rate),
+								root -> pair (root -> integer (requested_latency_buffer_size),
+								root -> pair (root -> integer (requested_output_device),
+								root -> pair (root -> integer (requested_input_device), root -> earth ())))))));
 		PrologElement * q2 = root -> pair (root -> atom (connect_all_moons),
 								root -> pair (root -> atom (reactor), root -> earth ()));
 		query = root -> pair (query, root -> pair (q2, root -> earth ()));
@@ -74,15 +79,18 @@ public:
 		root -> resolution (query);
 		delete query;
 	}
-	void action_start_recording (void) {
+	bool action_start_recording (void) {
 		GtkWidget * dialog = gtk_file_chooser_dialog_new ("Record audio.", GTK_WINDOW (viewport),
 										GTK_FILE_CHOOSER_ACTION_SAVE, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT, NULL);
+		bool ret = false;
 		if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT) {
 			char * file_name = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (dialog));
 			audio . selectOutputFile (3600.0, file_name);
 			g_free (file_name);
+			ret = true;
 		}
 		gtk_widget_destroy (dialog);
+		return ret;
 	}
 	void action_stop_recording (void) {audio . stopRecording ();}
 	bool code (PrologElement * parameters, PrologResolution * resolution);
@@ -94,6 +102,10 @@ public:
 		captured_button = 0;
 		captured_type = (GdkEventType) 0;
 		background_image = resources != 0 ? resources -> core_panel_surface : 0;
+		requested_sampling_rate = 48000;
+		requested_latency_buffer_size = 128;
+		requested_output_device = 0;
+		requested_input_device = -1;
 		this -> atom = atom; COLLECTOR_REFERENCE_INC (atom);
 		this -> core = core; COLLECTOR_REFERENCE_INC (core);
 		this -> reactor = reactor; COLLECTOR_REFERENCE_INC (reactor);
@@ -229,8 +241,8 @@ static gint CorePanelKeyoff (GtkWidget * viewport, GdkEventButton * event, core_
 	}
 	if (action -> RECORD . keyoff (location)) {
 		if (action -> captured_type == GDK_BUTTON_PRESS) {
-			if (action -> RECORD . engaged = ! action -> RECORD . engaged) action -> action_start_recording ();
-			else action -> action_stop_recording ();
+			if (action -> RECORD . engaged) {action -> action_stop_recording (); action -> RECORD . engaged = false;}
+			else action -> RECORD . engaged = action -> action_start_recording ();
 			redraw = true;
 		}
 	}
@@ -291,9 +303,67 @@ static void dnd_receive (GtkWidget * widget, GdkDragContext * context, gint x, g
 	root -> resolution (query);
 	delete query;
 }
-static void SamplingRateChanged (GtkWidget * combo, gpointer data) {
+int sampling_rate_to_index (int freq) {
+	switch (freq) {
+	case 8000: return 0;
+	case 11025: return 1;
+	case 16000: return 2;
+	case 22050: return 3;
+	case 32000: return 4;
+	case 37800: return 5;
+	case 44056: return 6;
+	case 44100: return 7;
+	case 48000: return 8;
+	case 50000: return 9;
+	case 50400: return 10;
+	case 88200: return 11;
+	case 96000: return 12;
+	case 176400: return 13;
+	case 192000: return 14;
+	case 362800: return 15;
+	case 2822400: return 16;
+	case 5644800: return 17;
+	default: break;
+	}
+	return 8;
+}
+int index_to_sampling_freq (int freq) {
+	switch (freq) {
+	case 0: return 8000;
+	case 1: return 11025;
+	case 2: return 16000;
+	case 3: return 22050;
+	case 4: return 32000;
+	case 5: return 37800;
+	case 6: return 44056;
+	case 7: return 44100;
+	case 8: return 48000;
+	case 9: return 50000;
+	case 10: return 50400;
+	case 11: return 88200;
+	case 12: return 96000;
+	case 13: return 176400;
+	case 14: return 192000;
+	case 15: return 362800;
+	case 16: return 2822400;
+	case 17: return 5644800;
+	default: break;
+	}
+	return 48000;
+}
+static void SamplingRateChanged (GtkWidget * combo, core_panel_action * action) {
 	int index = gtk_combo_box_get_active (GTK_COMBO_BOX (combo));
-	printf ("selected [%i]\n", index);
+	action -> requested_sampling_rate = index_to_sampling_freq (index);
+}
+static void LatencyBufferSizeChanged (GtkWidget * combo, core_panel_action * action) {
+	int index = gtk_combo_box_get_active (GTK_COMBO_BOX (combo));
+	action -> requested_latency_buffer_size = (int) pow (2.0, index);
+}
+static void OutputDeviceChanged (GtkWidget * combo, core_panel_action * action) {
+	action -> requested_output_device = gtk_combo_box_get_active (GTK_COMBO_BOX (combo));
+}
+static void InputDeviceChanged (GtkWidget * combo, core_panel_action * action) {
+	action -> requested_input_device = gtk_combo_box_get_active (GTK_COMBO_BOX (combo));
 }
 static gboolean CreateCorePanelIdleCode (core_panel_action * action) {
 	action -> viewport = gtk_window_new (GTK_WINDOW_TOPLEVEL);
@@ -305,15 +375,33 @@ static gboolean CreateCorePanelIdleCode (core_panel_action * action) {
 	for (int ind = 0; ind < audio . getNumberOfInputDevices (); ind++) {
 		gtk_combo_box_append_text (GTK_COMBO_BOX (input_combo), audio . getInputDeviceName (ind));
 	}
-	gtk_combo_box_set_active (GTK_COMBO_BOX (input_combo), audio . getSelectedInputDevice () + 1);
+	gtk_combo_box_set_active (GTK_COMBO_BOX (input_combo), 1 + (action -> requested_input_device = audio . getSelectedInputDevice ()));
 	gtk_fixed_put (GTK_FIXED (area), input_combo, 20, 40);
 	GtkWidget * output_combo = gtk_combo_box_new_text ();
 	gtk_combo_box_append_text (GTK_COMBO_BOX (output_combo), "Inactive");
 	for (int ind = 0; ind < audio . getNumberOfOutputDevices (); ind++) {
 		gtk_combo_box_append_text (GTK_COMBO_BOX (output_combo), audio . getOutputDeviceName (ind));
 	}
-	gtk_combo_box_set_active (GTK_COMBO_BOX (output_combo), audio . getSelectedOutputDevice () + 1);
+	gtk_combo_box_set_active (GTK_COMBO_BOX (output_combo), 1 + (action -> requested_output_device + audio . getSelectedOutputDevice ()));
 	gtk_fixed_put (GTK_FIXED (area), output_combo, 20, 120);
+	GtkWidget * latency_combo = gtk_combo_box_new_text ();
+	gtk_combo_box_append_text (GTK_COMBO_BOX (latency_combo), "1 [no latency]");
+	gtk_combo_box_append_text (GTK_COMBO_BOX (latency_combo), "2 [almost no latency]");
+	gtk_combo_box_append_text (GTK_COMBO_BOX (latency_combo), "4 [ultra short]");
+	gtk_combo_box_append_text (GTK_COMBO_BOX (latency_combo), "8 [non detectable]");
+	gtk_combo_box_append_text (GTK_COMBO_BOX (latency_combo), "16 [neligable]");
+	gtk_combo_box_append_text (GTK_COMBO_BOX (latency_combo), "32 [excellent]");
+	gtk_combo_box_append_text (GTK_COMBO_BOX (latency_combo), "64 [very good]");
+	gtk_combo_box_append_text (GTK_COMBO_BOX (latency_combo), "128 [good]");
+	gtk_combo_box_append_text (GTK_COMBO_BOX (latency_combo), "256 [still good]");
+	gtk_combo_box_append_text (GTK_COMBO_BOX (latency_combo), "512 [audible]");
+	gtk_combo_box_append_text (GTK_COMBO_BOX (latency_combo), "1024 [not good]");
+	gtk_combo_box_append_text (GTK_COMBO_BOX (latency_combo), "2048 [bad]");
+	gtk_combo_box_append_text (GTK_COMBO_BOX (latency_combo), "4096 [very bad]");
+	gtk_combo_box_append_text (GTK_COMBO_BOX (latency_combo), "8192 [just make it work]");
+	gtk_combo_box_append_text (GTK_COMBO_BOX (latency_combo), "16384 [not very useful]");
+	gtk_combo_box_append_text (GTK_COMBO_BOX (latency_combo), "32768 [not useful]");
+	gtk_combo_box_append_text (GTK_COMBO_BOX (latency_combo), "65536 [never used]");
 	GtkWidget * sampling_combo = gtk_combo_box_new_text();
 	gtk_combo_box_append_text (GTK_COMBO_BOX (sampling_combo), "8,000 Hz [Telephone]");
 	gtk_combo_box_append_text (GTK_COMBO_BOX (sampling_combo), "11,025 Hz [PCM MPEG]");
@@ -333,8 +421,17 @@ static gboolean CreateCorePanelIdleCode (core_panel_action * action) {
 	gtk_combo_box_append_text (GTK_COMBO_BOX (sampling_combo), "362,800 Hz [eXtreme]");
 	gtk_combo_box_append_text (GTK_COMBO_BOX (sampling_combo), "2,822,400 Hz [SACD]");
 	gtk_combo_box_append_text (GTK_COMBO_BOX (sampling_combo), "5,644,800 Hz [DSD]");
-	gtk_combo_box_set_active (GTK_COMBO_BOX (sampling_combo), 8);
-	g_signal_connect (G_OBJECT (sampling_combo), "changed", G_CALLBACK (SamplingRateChanged), 0);
+	if (action -> reactor != 0 && action -> reactor -> getMachine () != 0) {
+		gtk_combo_box_set_active (GTK_COMBO_BOX (sampling_combo), sampling_rate_to_index (action -> requested_sampling_rate = audio . getSamplingFrequency ()));
+		int latency = (int) (log ((double) (action -> requested_latency_buffer_size = audio . getLatencyBufferSize ())) / log (2.0));
+		gtk_combo_box_set_active (GTK_COMBO_BOX (latency_combo), latency);
+	} else {
+		gtk_combo_box_set_active (GTK_COMBO_BOX (latency_combo), 7);
+		gtk_combo_box_set_active (GTK_COMBO_BOX (sampling_combo), 8);
+	}
+	g_signal_connect (G_OBJECT (latency_combo), "changed", G_CALLBACK (LatencyBufferSizeChanged), action);
+	gtk_fixed_put (GTK_FIXED (area), latency_combo, 440, 50);
+	g_signal_connect (G_OBJECT (sampling_combo), "changed", G_CALLBACK (SamplingRateChanged), action);
 	gtk_fixed_put (GTK_FIXED (area), sampling_combo, 440, 90);
 	gtk_container_add (GTK_CONTAINER (action -> viewport), area);
 

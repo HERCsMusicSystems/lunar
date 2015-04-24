@@ -83,7 +83,7 @@ static void insert_short (FILE * tc, int ind) {
 	fputc (ind & 0xff, tc);
 }
 void MultiplatformAudio :: selectOutputFile (double seconds, char * file_name) {
-	if (record_frames > 0) {printf ("currently recording....\n"); return;}
+	if (record_frames > 0 || recorded_frames > 0) {printf ("currently recording....\n"); return;}
 	int to_record = (int) (seconds * (double) record_sampling_freq);
 	if (to_record < 1) return;
 	if (output_file_name == 0 && file_name != 0) {
@@ -107,7 +107,7 @@ void MultiplatformAudio :: stopRecording (char * file_name) {
 }
 
 bool MultiplatformAudio :: inputFileActive (void) {return input_file != NULL;}
-bool MultiplatformAudio :: outputFileActive (void) {return record_frames > 0;}
+bool MultiplatformAudio :: outputFileActive (void) {return record_frames > 0 || recorded_frames > 0;}
 
 class audio_dx_stereo_buffers : public AudioBuffers {
 public:
@@ -388,7 +388,9 @@ bool MultiplatformAudio :: selectOutputDevice (int ind) {
 
 void MultiplatformAudio :: setChannels (int channels) {pcm_channels = channels < 1 ? 1 : channels;}
 void MultiplatformAudio :: setSamplingFrequency (int sampling_frequency) {record_sampling_freq = pcm_sampling_freq = sampling_frequency < 1 ? 1 : sampling_frequency;}
+int MultiplatformAudio :: getSamplingFrequency (void) {return pcm_sampling_freq;}
 void MultiplatformAudio :: setLatencyBufferSize (int size) {pcm_block_size = size;}
+int MultiplatformAudio :: getLatencyBufferSize (void) {return pcm_block_size;}
 
 static void replace_enter (char * command) {
 	if (command == 0) return;
@@ -999,7 +1001,9 @@ static void oscilloscope_audio_capture_dx_init (int sampling_frequency) {
 
 void MultiplatformAudio :: setChannels (int channels) {audio_channels = channels < 1 ? 1 : channels;}
 void MultiplatformAudio :: setSamplingFrequency (int sampling_frequency) {record_sampling_freq = audio_sampling_freq = sampling_frequency < 1 ? 1 : sampling_frequency;}
+int MultiplatformAudio :: getSamplingFrequency (void) {return audio_sampling_freq;}
 void MultiplatformAudio :: setLatencyBufferSize (int size) {set_audio_block_size (size);}
+int MultiplatformAudio :: getLatencyBufferSize (void) {return number_of_samples;}
 MultiplatformAudio :: MultiplatformAudio (void * hwnd) {
 	if (hwnd == 0) hwnd = GetForegroundWindow ();
 	if (hwnd == 0) hwnd = GetDesktopWindow ();

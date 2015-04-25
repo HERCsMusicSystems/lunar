@@ -51,6 +51,11 @@ public:
 	cairo_surface_t * eg_panel_surface;
 	cairo_surface_t * fm4_panel_surface;
 	cairo_surface_t * core_panel_surface;
+	cairo_surface_t * lfo_panel_surface;
+	cairo_surface_t * lfo_vibrato_surface;
+	cairo_surface_t * lfo_tremolo_surface;
+	cairo_surface_t * lfo_wah_wah_surface;
+	cairo_surface_t * lfo_pan_surface;
 	GraphicResources (void);
 	~ GraphicResources (void);
 };

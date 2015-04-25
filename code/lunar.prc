@@ -34,8 +34,8 @@ program lunar #machine := "prolog.lunar"
 				Abb Ab A A# Ax
 				Bbb Bb B B# Bx
 				midi
-				ParameterBlockPanel AdsrPanel EGPanel FEGPanel FM4Panel CorePanel
-				BuildParameterBlockPanel BuildAdsrPanel BuildEGPanel BuildFEGPanel BuildFM4Panel
+				ParameterBlockPanel AdsrPanel EGPanel FEGPanel FM4Panel CorePanel LfoPanel
+				BuildParameterBlockPanel BuildAdsrPanel BuildEGPanel BuildFEGPanel BuildFM4Panel BuildLfoPanel
 				MoveModules PropagateSignals MoveCore LunarDrop FUNCTION_KEY
 				CreateDistributor CloseDistributor Distribute Redistribute
 				CCCB cb_callback cb_path cb_edit_path process_mode CBsub
@@ -111,6 +111,7 @@ program lunar #machine := "prolog.lunar"
 #machine FEGPanel := "FEGPanel"
 #machine FM4Panel := "FM4Panel"
 #machine CorePanel := "CorePanel"
+#machine LfoPanel := "LfoPanel"
 
 #machine MoveModules := "MoveModules"
 #machine PropagateSignals := "PropagateSignals"
@@ -158,6 +159,13 @@ program lunar #machine := "prolog.lunar"
 	[APPEND *path [level3] *level3_path] [*parameters *level3 : *level3_path]
 	[APPEND *path [level4] *level4_path] [*parameters *level4 : *level4_path]
 	[FEGPanel *panel *time1 *time2 *time3 *time4 *level1 *level2 *level3 *level4]
+]
+
+[[BuildLfoPanel *panel *instrument *lfo *vibrato *tremolo *wahwah *pan]
+	[*instrument *parameters : *]
+	[APPEND *path [speed] *speed_path] [*parameters *speed : *speed_path]
+	[APPEND *path [wave] *wave_path] [*parameters *wave : *wave_path]
+	[APPEND *pulse [pulse] *pulse_path] [*parameters *puls : *pulse_path]
 ]
 
 [[BuildFM4Panel *panel *instrument : *path]

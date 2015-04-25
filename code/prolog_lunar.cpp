@@ -333,6 +333,7 @@ PrologNativeCode * PrologLunarServiceClass :: getNativeCode (char * name) {
 	if (strcmp (name, "FEGPanel") == 0) return new eg_panel_class (this, true);
 	if (strcmp (name, "FM4Panel") == 0) return new fm4_panel_class (this);
 	if (strcmp (name, "CorePanel") == 0) return new core_panel_class (this);
+	if (strcmp (name, "LfoPanel") == 0) return new lfo_panel_class (this);
 	if (strcmp (name, "MoveModules") == 0) return new move_modules_class (& core);
 	if (strcmp (name, "PropagateSignals") == 0) return new propagate_signals_class (& core);
 	if (strcmp (name, "MoveCore") == 0) return new move_core_class (& core);

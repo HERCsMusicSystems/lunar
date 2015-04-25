@@ -77,6 +77,16 @@ extern char resource_fm4_panel_start;
 extern char resource_fm4_panel_end;
 extern char resource_core_panel_start;
 extern char resource_core_panel_end;
+extern char resource_lfo_panel_start;
+extern char resource_lfo_panel_end;
+extern char resource_lfo_vibrato_start;
+extern char resource_lfo_vibrato_end;
+extern char resource_lfo_tremolo_start;
+extern char resource_lfo_tremolo_end;
+extern char resource_lfo_wah_wah_start;
+extern char resource_lfo_wah_wah_end;
+extern char resource_lfo_pan_start;
+extern char resource_lfo_pan_end;
 #endif
 
 class png_closure {
@@ -121,6 +131,11 @@ GraphicResources :: GraphicResources (void) {
 	png_closure eg_panel_surface_closure (GetResource (EG_PANEL_PNG), EG_PANEL_SIZE);
 	png_closure fm4_panel_surface_closure (GetResource (FM4_PANEL_PNG), FM4_PANEL_SIZE);
 	png_closure core_panel_surface_closure (GetResource (CORE_PANEL_PNG), CORE_PANEL_SIZE);
+	png_closure lfo_panel_surface_closure (GetResource (LFO_PANEL_PNG), LFO_PANEL_SIZE);
+	png_closure lfo_vibrato_surface_closure (GetResource (LFO_VIBRATO_PNG), LFO_VIBRATO_SIZE);
+	png_closure lfo_tremolo_surface_closure (GetResource (LFO_TREMOLO_PNG), LFO_TREMOLO_SIZE);
+	png_closure lfo_wah_wah_surface_closure (GetResource (LFO_WAH_WAH_PNG), LFO_WAH_WAH_SIZE);
+	png_closure lfo_pan_surface_closure (GetResource (LFO_PAN_PNG), LFO_PAN_SIZE);
 #else
 	png_closure frame_closure (& resource_vector_frame_start, & resource_vector_frame_end);
 	png_closure handle_closure (& resource_vector_handle_start, & resource_vector_handle_end);
@@ -142,6 +157,11 @@ GraphicResources :: GraphicResources (void) {
 	png_closure eg_panel_surface_closure (& resource_eg_panel_start, & resource_eg_panel_end);
 	png_closure fm4_panel_surface_closure (& resource_fm4_panel_start, & resource_fm4_panel_end);
 	png_closure core_panel_surface_closure (& resource_core_panel_start, & resource_core_panel_end);
+	png_closure lfo_panel_surface_closure (& resource_lfo_panel_start, & resource_lfo_panel_end);
+	png_closure lfo_vibrato_surface_closure (& resource_lfo_vibrato_start, & resource_lfo_vibrato_end);
+	png_closure lfo_tremolo_surface_closure (& resource_lfo_tremolo_start, & resource_lfo_tremolo_end);
+	png_closure lfo_wah_wah_surface_closure (& resource_lfo_wah_wah_start, & resource_lfo_wah_wah_end);
+	png_closure lfo_pan_surface_closure (& resource_lfo_pan_start, & resource_lfo_pan_end);
 #endif
 	vector_surface = cairo_image_surface_create_from_png_stream (png_reader, & frame_closure);
 	vector_handle = cairo_image_surface_create_from_png_stream (png_reader, & handle_closure);
@@ -163,6 +183,11 @@ GraphicResources :: GraphicResources (void) {
 	eg_panel_surface = cairo_image_surface_create_from_png_stream (png_reader, & eg_panel_surface_closure);
 	fm4_panel_surface = cairo_image_surface_create_from_png_stream (png_reader, & fm4_panel_surface_closure);
 	core_panel_surface = cairo_image_surface_create_from_png_stream (png_reader, & core_panel_surface_closure);
+	lfo_panel_surface = cairo_image_surface_create_from_png_stream (png_reader, & lfo_panel_surface_closure);
+	lfo_vibrato_surface = cairo_image_surface_create_from_png_stream (png_reader, & lfo_vibrato_surface_closure);
+	lfo_tremolo_surface = cairo_image_surface_create_from_png_stream (png_reader, & lfo_tremolo_surface_closure);
+	lfo_wah_wah_surface = cairo_image_surface_create_from_png_stream (png_reader, & lfo_wah_wah_surface_closure);
+	lfo_pan_surface = cairo_image_surface_create_from_png_stream (png_reader, & lfo_pan_surface_closure);
 }
 
 GraphicResources :: ~ GraphicResources (void) {
@@ -186,6 +211,11 @@ GraphicResources :: ~ GraphicResources (void) {
 	if (eg_panel_surface != 0) cairo_surface_destroy (eg_panel_surface);
 	if (fm4_panel_surface != 0) cairo_surface_destroy (fm4_panel_surface);
 	if (core_panel_surface != 0) cairo_surface_destroy (core_panel_surface);
+	if (lfo_panel_surface != 0) cairo_surface_destroy (lfo_panel_surface);
+	if (lfo_vibrato_surface != 0) cairo_surface_destroy (lfo_vibrato_surface);
+	if (lfo_tremolo_surface != 0) cairo_surface_destroy (lfo_tremolo_surface);
+	if (lfo_wah_wah_surface != 0) cairo_surface_destroy (lfo_wah_wah_surface);
+	if (lfo_pan_surface != 0) cairo_surface_destroy (lfo_pan_surface);
 }
 
 GraphicResources * create_graphic_resources (void) {return new GraphicResources ();}

@@ -44,12 +44,12 @@ class lfo_panel_action : public PrologNativeCode {
 public:
 	PrologRoot * root;
 	PrologAtom * atom;
-	PrologAtom * t1, * t2, * t3, * t4, * l1, * l2, * l3, * l4;
+	PrologAtom * t1, * t2, * t3, * t4, * vibrato, * l2, * l3, * l4;
 	GtkWidget * viewport;
 	point captured;
 	point location;
 	int captured_button;
-	knob_active_graphics T1, T2, T3, T4, L1, L2, L3, L4;
+	knob_active_graphics T1, T2, T3, T4, VIBRATO, L2, L3, L4;
 	cairo_surface_t * background_image;
 	bool remove (bool remove_gtk = true) {
 		if (remove_gtk) g_idle_add ((GSourceFunc) RemoveViewportIdleCode, viewport);
@@ -64,7 +64,7 @@ public:
 		case 1: a = t2; v = prepare (T2 . angle); break;
 		case 2: a = t3; v = prepare (T3 . angle); break;
 		case 3: a = t4; v = prepare (T4 . angle); break;
-		case 4: a = l1; v = prepare (L1 . angle); break;
+		case 4: a = vibrato; v = prepare (VIBRATO . angle); break;
 		case 5: a = l2; v = prepare (L2 . angle); break;
 		case 6: a = l3; v = prepare (L3 . angle); break;
 		case 7: a = l4; v = prepare (L4 . angle); break;
@@ -89,7 +89,7 @@ public:
 		query = root -> pair (root -> pair (root -> atom (l4), root -> pair (root -> var (7), root -> earth ())), root -> earth ());
 		query = root -> pair (root -> pair (root -> atom (l3), root -> pair (root -> var (6), root -> earth ())), query);
 		query = root -> pair (root -> pair (root -> atom (l2), root -> pair (root -> var (5), root -> earth ())), query);
-		query = root -> pair (root -> pair (root -> atom (l1), root -> pair (root -> var (4), root -> earth ())), query);
+		query = root -> pair (root -> pair (root -> atom (vibrato), root -> pair (root -> var (4), root -> earth ())), query);
 		query = root -> pair (root -> pair (root -> atom (t4), root -> pair (root -> var (3), root -> earth ())), query);
 		query = root -> pair (root -> pair (root -> atom (t3), root -> pair (root -> var (2), root -> earth ())), query);
 		query = root -> pair (root -> pair (root -> atom (t2), root -> pair (root -> var (1), root -> earth ())), query);
@@ -108,7 +108,7 @@ public:
 			el = el -> getRight (); if (! el -> isPair ()) {delete query; return;} sub = el -> getLeft ();
 			if (sub -> isNumber ()) T4 . angle = unprepare (sub -> getNumber ());
 			el = el -> getRight (); if (! el -> isPair ()) {delete query; return;} sub = el -> getLeft ();
-			if (sub -> isNumber ()) L1 . angle = unprepare (sub -> getNumber ());
+			if (sub -> isNumber ()) VIBRATO . angle = unprepare (sub -> getNumber ());
 			el = el -> getRight (); if (! el -> isPair ()) {delete query; return;} sub = el -> getLeft ();
 			if (sub -> isNumber ()) L2 . angle = unprepare (sub -> getNumber ());
 			el = el -> getRight (); if (! el -> isPair ()) {delete query; return;} sub = el -> getLeft ();
@@ -121,12 +121,12 @@ public:
 	bool code (PrologElement * parameters, PrologResolution * resolution);
 	lfo_panel_action (GraphicResources * resources, PrologRoot * root, PrologAtom * atom,
 		PrologAtom * t1, PrologAtom * t2, PrologAtom * t3, PrologAtom * t4,
-		PrologAtom * l1, PrologAtom * l2, PrologAtom * l3, PrologAtom * l4, bool active) :
+		PrologAtom * vibrato, PrologAtom * l2, PrologAtom * l3, PrologAtom * l4, bool active) :
 	T1 (point (18, 10), 0, resources, true, active, 0.0, 16384.0),
 	T2 (point (88, 10), 0, resources, true, active, 0.0, 16384.0),
 	T3 (point (158, 10), 0, resources, true, active, 0.0, 16384.0),
 	T4 (point (228, 10), 0, resources, true, active, 0.0, 16384.0),
-	L1 (point (18, 98), 0, resources, true, active, -8192.0, 8192.0),
+	VIBRATO (point (18, 98), 0, resources, true, active, -8192.0, 8192.0),
 	L2 (point (88, 98), 0, resources, true, active, -8192.0, 8192.0),
 	L3 (point (158, 98), 0, resources, true, active, -8192.0, 8192.0),
 	L4 (point (228, 98), 0, resources, true, active, -8192.0, 8192.0) {
@@ -139,7 +139,7 @@ public:
 		this -> t2 = t2; COLLECTOR_REFERENCE_INC (t2);
 		this -> t3 = t3; COLLECTOR_REFERENCE_INC (t3);
 		this -> t4 = t4; COLLECTOR_REFERENCE_INC (t4);
-		this -> l1 = l1; COLLECTOR_REFERENCE_INC (l1);
+		this -> vibrato = vibrato; if (vibrato != 0) {COLLECTOR_REFERENCE_INC (vibrato);}
 		this -> l2 = l2; COLLECTOR_REFERENCE_INC (l2);
 		this -> l3 = l3; COLLECTOR_REFERENCE_INC (l3);
 		this -> l4 = l4; COLLECTOR_REFERENCE_INC (l4);
@@ -149,7 +149,8 @@ public:
 		atom -> setMachine (0);
 		atom -> removeAtom ();
 		t1 -> removeAtom (); t2 -> removeAtom (); t3 -> removeAtom (); t4 -> removeAtom ();
-		l1 -> removeAtom (); l2 -> removeAtom (); l3 -> removeAtom (); l4 -> removeAtom ();
+		if (vibrato != 0) vibrato -> removeAtom ();
+		l2 -> removeAtom (); l3 -> removeAtom (); l4 -> removeAtom ();
 	}
 };
 
@@ -165,7 +166,7 @@ static gboolean RedrawLfoPanel (GtkWidget * viewport, GdkEvent * event, lfo_pane
 	action -> T2 . draw (cr);
 	action -> T3 . draw (cr);
 	action -> T4 . draw (cr);
-	action -> L1 . draw (cr);
+	if (action -> vibrato != 0) action -> VIBRATO . draw (cr);
 	action -> L2 . draw (cr);
 	action -> L3 . draw (cr);
 	action -> L4 . draw (cr);
@@ -180,7 +181,7 @@ static gint LfoPanelKeyon (GtkWidget * viewport, GdkEventButton * event, lfo_pan
 	action -> T2 . keyon (location);
 	action -> T3 . keyon (location);
 	action -> T4 . keyon (location);
-	action -> L1 . keyon (location);
+	if (action -> vibrato != 0) action -> VIBRATO . keyon (location);
 	action -> L2 . keyon (location);
 	action -> L3 . keyon (location);
 	action -> L4 . keyon (location);
@@ -192,7 +193,7 @@ static gint LfoPanelKeyoff (GtkWidget * viewport, GdkEventButton * event, lfo_pa
 	action -> T2 . keyoff (location);
 	action -> T3 . keyoff (location);
 	action -> T4 . keyoff (location);
-	action -> L1 . keyoff (location);
+	if (action -> vibrato != 0) action -> VIBRATO . keyoff (location);
 	action -> L2 . keyoff (location);
 	action -> L3 . keyoff (location);
 	action -> L4 . keyoff (location);
@@ -208,7 +209,7 @@ static gint LfoPanelMove (GtkWidget * viewport, GdkEventButton * event, lfo_pane
 	if (action -> T2 . move (delta)) {action -> move (1); redraw = true;}
 	if (action -> T3 . move (delta)) {action -> move (2); redraw = true;}
 	if (action -> T4 . move (delta)) {action -> move (3); redraw = true;}
-	if (action -> L1 . move (delta)) {action -> move (4); redraw = true;}
+	if (action -> vibrato != 0 && action -> VIBRATO . move (delta)) {action -> move (4); redraw = true;}
 	if (action -> L2 . move (delta)) {action -> move (5); redraw = true;}
 	if (action -> L3 . move (delta)) {action -> move (6); redraw = true;}
 	if (action -> L4 . move (delta)) {action -> move (7); redraw = true;}
@@ -258,7 +259,7 @@ bool lfo_panel_action :: code (PrologElement * parameters, PrologResolution * re
 bool lfo_panel_class :: code (PrologElement * parameters, PrologResolution * resolution) {
 	PrologElement * atom = 0;
 	PrologElement * t1 = 0, * t2 = 0, * t3 = 0, * t4 = 0;
-	PrologElement * l1 = 0, * l2 = 0, * l3 = 0, * l4 = 0;
+	PrologElement * vibrato = 0, * l2 = 0, * l3 = 0, * l4 = 0;
 	while (parameters -> isPair ()) {
 		PrologElement * el = parameters -> getLeft ();
 		if (el -> isVar ()) atom = el;
@@ -268,7 +269,13 @@ bool lfo_panel_class :: code (PrologElement * parameters, PrologResolution * res
 			else if (t2 == 0) t2 = el;
 			else if (t3 == 0) t3 = el;
 			else if (t4 == 0) t4 = el;
-			else if (l1 == 0) l1 = el;
+			else if (vibrato == 0) vibrato = el;
+			else if (l2 == 0) l2 = el;
+			else if (l3 == 0) l3 = el;
+			else if (l4 == 0) l4 = el;
+		}
+		if (el -> isEarth ()) {
+			if (vibrato == 0) vibrato = el;
 			else if (l2 == 0) l2 = el;
 			else if (l3 == 0) l3 = el;
 			else if (l4 == 0) l4 = el;
@@ -280,7 +287,7 @@ bool lfo_panel_class :: code (PrologElement * parameters, PrologResolution * res
 	if (atom -> getAtom () -> getMachine () != 0) return false;
 	lfo_panel_action * machine = new lfo_panel_action (resources, root, atom -> getAtom (),
 		t1 -> getAtom (), t2 -> getAtom (), t3 -> getAtom (), t4 -> getAtom (),
-		l1 -> getAtom (), l2 -> getAtom (), l3 -> getAtom (), l4 -> getAtom (), false);
+		vibrato != 0 ? vibrato -> getAtom () : 0, l2 != 0 ? l2 -> getAtom () : 0, l3 != 0 ? l3 -> getAtom () : 0, l4 != 0 ? l4 -> getAtom () : 0, false);
 	if (! atom -> getAtom () -> setMachine (machine)) {delete machine; return false;}
 	g_idle_add ((GSourceFunc) CreateLfoPanelIdleCode, machine);
 	return true;

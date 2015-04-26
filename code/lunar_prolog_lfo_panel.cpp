@@ -44,13 +44,17 @@ class lfo_panel_action : public PrologNativeCode {
 public:
 	PrologRoot * root;
 	PrologAtom * atom;
-	PrologAtom * t1, * t2, * t3, * t4, * vibrato, * l2, * l3, * l4;
+	PrologAtom * t1, * t2, * t3, * t4, * vibrato, * tremolo, * wah_wah, * pan;
 	GtkWidget * viewport;
 	point captured;
 	point location;
 	int captured_button;
-	knob_active_graphics T1, T2, T3, T4, VIBRATO, L2, L3, L4;
+	knob_active_graphics T1, T2, T3, T4, VIBRATO, TREMOLO, WAH_WAH, PAN;
 	cairo_surface_t * background_image;
+	cairo_surface_t * vibrato_image;
+	cairo_surface_t * tremolo_image;
+	cairo_surface_t * wah_wah_image;
+	cairo_surface_t * pan_image;
 	bool remove (bool remove_gtk = true) {
 		if (remove_gtk) g_idle_add ((GSourceFunc) RemoveViewportIdleCode, viewport);
 		delete this;
@@ -65,9 +69,9 @@ public:
 		case 2: a = t3; v = prepare (T3 . angle); break;
 		case 3: a = t4; v = prepare (T4 . angle); break;
 		case 4: a = vibrato; v = prepare (VIBRATO . angle); break;
-		case 5: a = l2; v = prepare (L2 . angle); break;
-		case 6: a = l3; v = prepare (L3 . angle); break;
-		case 7: a = l4; v = prepare (L4 . angle); break;
+		case 5: a = tremolo; v = prepare (TREMOLO . angle); break;
+		case 6: a = wah_wah; v = prepare (WAH_WAH . angle); break;
+		case 7: a = pan; v = prepare (PAN . angle); break;
 		default: a = 0; break;
 		}
 		if (a == 0) return;
@@ -85,11 +89,11 @@ public:
 									root -> pair (root -> var (5),
 									root -> pair (root -> var (6),
 									root -> pair (root -> var (7), root -> earth ()))))))));
-		PrologElement * query;
-		query = root -> pair (root -> pair (root -> atom (l4), root -> pair (root -> var (7), root -> earth ())), root -> earth ());
-		query = root -> pair (root -> pair (root -> atom (l3), root -> pair (root -> var (6), root -> earth ())), query);
-		query = root -> pair (root -> pair (root -> atom (l2), root -> pair (root -> var (5), root -> earth ())), query);
-		query = root -> pair (root -> pair (root -> atom (vibrato), root -> pair (root -> var (4), root -> earth ())), query);
+		PrologElement * query = root -> earth ();
+		if (pan != 0) query = root -> pair (root -> pair (root -> atom (pan), root -> pair (root -> var (7), root -> earth ())), query);
+		if (wah_wah != 0) query = root -> pair (root -> pair (root -> atom (wah_wah), root -> pair (root -> var (6), root -> earth ())), query);
+		if (tremolo != 0) query = root -> pair (root -> pair (root -> atom (tremolo), root -> pair (root -> var (5), root -> earth ())), query);
+		if (vibrato != 0) query = root -> pair (root -> pair (root -> atom (vibrato), root -> pair (root -> var (4), root -> earth ())), query);
 		query = root -> pair (root -> pair (root -> atom (t4), root -> pair (root -> var (3), root -> earth ())), query);
 		query = root -> pair (root -> pair (root -> atom (t3), root -> pair (root -> var (2), root -> earth ())), query);
 		query = root -> pair (root -> pair (root -> atom (t2), root -> pair (root -> var (1), root -> earth ())), query);
@@ -110,28 +114,32 @@ public:
 			el = el -> getRight (); if (! el -> isPair ()) {delete query; return;} sub = el -> getLeft ();
 			if (sub -> isNumber ()) VIBRATO . angle = unprepare (sub -> getNumber ());
 			el = el -> getRight (); if (! el -> isPair ()) {delete query; return;} sub = el -> getLeft ();
-			if (sub -> isNumber ()) L2 . angle = unprepare (sub -> getNumber ());
+			if (sub -> isNumber ()) TREMOLO . angle = unprepare (sub -> getNumber ());
 			el = el -> getRight (); if (! el -> isPair ()) {delete query; return;} sub = el -> getLeft ();
-			if (sub -> isNumber ()) L3 . angle = unprepare (sub -> getNumber ());
+			if (sub -> isNumber ()) WAH_WAH . angle = unprepare (sub -> getNumber ());
 			el = el -> getRight (); if (! el -> isPair ()) {delete query; return;} sub = el -> getLeft ();
-			if (sub -> isNumber ()) L4 . angle = unprepare (sub -> getNumber ());
+			if (sub -> isNumber ()) PAN . angle = unprepare (sub -> getNumber ());
 		}
 		delete query;
 	}
 	bool code (PrologElement * parameters, PrologResolution * resolution);
 	lfo_panel_action (GraphicResources * resources, PrologRoot * root, PrologAtom * atom,
 		PrologAtom * t1, PrologAtom * t2, PrologAtom * t3, PrologAtom * t4,
-		PrologAtom * vibrato, PrologAtom * l2, PrologAtom * l3, PrologAtom * l4, bool active) :
+		PrologAtom * vibrato, PrologAtom * tremolo, PrologAtom * wah_wah, PrologAtom * pan, bool active) :
 	T1 (point (18, 10), 0, resources, true, active, 0.0, 16384.0),
 	T2 (point (88, 10), 0, resources, true, active, 0.0, 16384.0),
 	T3 (point (158, 10), 0, resources, true, active, 0.0, 16384.0),
 	T4 (point (228, 10), 0, resources, true, active, 0.0, 16384.0),
 	VIBRATO (point (18, 98), 0, resources, true, active, -8192.0, 8192.0),
-	L2 (point (88, 98), 0, resources, true, active, -8192.0, 8192.0),
-	L3 (point (158, 98), 0, resources, true, active, -8192.0, 8192.0),
-	L4 (point (228, 98), 0, resources, true, active, -8192.0, 8192.0) {
+	TREMOLO (point (88, 98), 0, resources, true, active, -8192.0, 8192.0),
+	WAH_WAH (point (158, 98), 0, resources, true, active, -8192.0, 8192.0),
+	PAN (point (228, 98), 0, resources, true, active, -8192.0, 8192.0) {
 		captured_button = 0;
 		background_image = resources != 0 ? resources -> lfo_panel_surface : 0;
+		vibrato_image = resources != 0 ? resources -> lfo_vibrato_surface : 0;
+		tremolo_image = resources != 0 ? resources -> lfo_tremolo_surface : 0;
+		wah_wah_image = resources != 0 ? resources -> lfo_wah_wah_surface : 0;
+		pan_image = resources != 0 ? resources -> lfo_pan_surface : 0;
 		viewport = 0;
 		this -> root = root;
 		this -> atom = atom; COLLECTOR_REFERENCE_INC (atom);
@@ -140,9 +148,9 @@ public:
 		this -> t3 = t3; COLLECTOR_REFERENCE_INC (t3);
 		this -> t4 = t4; COLLECTOR_REFERENCE_INC (t4);
 		this -> vibrato = vibrato; if (vibrato != 0) {COLLECTOR_REFERENCE_INC (vibrato);}
-		this -> l2 = l2; COLLECTOR_REFERENCE_INC (l2);
-		this -> l3 = l3; COLLECTOR_REFERENCE_INC (l3);
-		this -> l4 = l4; COLLECTOR_REFERENCE_INC (l4);
+		this -> tremolo = tremolo; if (tremolo != 0) {COLLECTOR_REFERENCE_INC (tremolo);}
+		this -> wah_wah = wah_wah; if (wah_wah != 0) {COLLECTOR_REFERENCE_INC (wah_wah);}
+		this -> pan = pan; if (pan != 0) {COLLECTOR_REFERENCE_INC (pan);}
 		feedback ();
 	}
 	~ lfo_panel_action (void) {
@@ -150,7 +158,9 @@ public:
 		atom -> removeAtom ();
 		t1 -> removeAtom (); t2 -> removeAtom (); t3 -> removeAtom (); t4 -> removeAtom ();
 		if (vibrato != 0) vibrato -> removeAtom ();
-		l2 -> removeAtom (); l3 -> removeAtom (); l4 -> removeAtom ();
+		if (tremolo != 0) tremolo -> removeAtom ();
+		if (wah_wah != 0) wah_wah -> removeAtom ();
+		if (pan != 0) pan -> removeAtom ();
 	}
 };
 
@@ -166,10 +176,10 @@ static gboolean RedrawLfoPanel (GtkWidget * viewport, GdkEvent * event, lfo_pane
 	action -> T2 . draw (cr);
 	action -> T3 . draw (cr);
 	action -> T4 . draw (cr);
-	if (action -> vibrato != 0) action -> VIBRATO . draw (cr);
-	action -> L2 . draw (cr);
-	action -> L3 . draw (cr);
-	action -> L4 . draw (cr);
+	if (action -> vibrato != 0) {cairo_set_source_surface (cr, action -> vibrato_image, 18, 98); cairo_paint (cr); action -> VIBRATO . draw (cr);}
+	if (action -> tremolo != 0) {cairo_set_source_surface (cr, action -> tremolo_image, 88, 98); cairo_paint (cr); action -> TREMOLO . draw (cr);}
+	if (action -> wah_wah != 0) {cairo_set_source_surface (cr, action -> wah_wah_image, 156, 98); cairo_paint (cr); action -> WAH_WAH . draw (cr);}
+	if (action -> pan != 0) {cairo_set_source_surface (cr, action -> pan_image, 226, 98); cairo_paint (cr); action -> PAN . draw (cr);}
 	cairo_destroy (cr);
 	return FALSE;
 }
@@ -182,9 +192,9 @@ static gint LfoPanelKeyon (GtkWidget * viewport, GdkEventButton * event, lfo_pan
 	action -> T3 . keyon (location);
 	action -> T4 . keyon (location);
 	if (action -> vibrato != 0) action -> VIBRATO . keyon (location);
-	action -> L2 . keyon (location);
-	action -> L3 . keyon (location);
-	action -> L4 . keyon (location);
+	if (action -> tremolo != 0) action -> TREMOLO . keyon (location);
+	if (action -> wah_wah != 0) action -> WAH_WAH . keyon (location);
+	if (action -> pan != 0) action -> PAN . keyon (location);
 	return TRUE;
 }
 static gint LfoPanelKeyoff (GtkWidget * viewport, GdkEventButton * event, lfo_panel_action * action) {
@@ -194,9 +204,9 @@ static gint LfoPanelKeyoff (GtkWidget * viewport, GdkEventButton * event, lfo_pa
 	action -> T3 . keyoff (location);
 	action -> T4 . keyoff (location);
 	if (action -> vibrato != 0) action -> VIBRATO . keyoff (location);
-	action -> L2 . keyoff (location);
-	action -> L3 . keyoff (location);
-	action -> L4 . keyoff (location);
+	if (action -> tremolo != 0) action -> TREMOLO . keyoff (location);
+	if (action -> wah_wah != 0) action -> WAH_WAH . keyoff (location);
+	if (action -> pan != 0) action -> PAN . keyoff (location);
 	return TRUE;
 }
 static gint LfoPanelMove (GtkWidget * viewport, GdkEventButton * event, lfo_panel_action * action) {
@@ -210,9 +220,9 @@ static gint LfoPanelMove (GtkWidget * viewport, GdkEventButton * event, lfo_pane
 	if (action -> T3 . move (delta)) {action -> move (2); redraw = true;}
 	if (action -> T4 . move (delta)) {action -> move (3); redraw = true;}
 	if (action -> vibrato != 0 && action -> VIBRATO . move (delta)) {action -> move (4); redraw = true;}
-	if (action -> L2 . move (delta)) {action -> move (5); redraw = true;}
-	if (action -> L3 . move (delta)) {action -> move (6); redraw = true;}
-	if (action -> L4 . move (delta)) {action -> move (7); redraw = true;}
+	if (action -> tremolo != 0 && action -> TREMOLO . move (delta)) {action -> move (5); redraw = true;}
+	if (action -> wah_wah != 0 && action -> WAH_WAH . move (delta)) {action -> move (6); redraw = true;}
+	if (action -> pan != 0 && action -> PAN . move (delta)) {action -> move (7); redraw = true;}
 	if (redraw) gtk_widget_queue_draw (viewport);
 	return TRUE;
 }
@@ -259,7 +269,7 @@ bool lfo_panel_action :: code (PrologElement * parameters, PrologResolution * re
 bool lfo_panel_class :: code (PrologElement * parameters, PrologResolution * resolution) {
 	PrologElement * atom = 0;
 	PrologElement * t1 = 0, * t2 = 0, * t3 = 0, * t4 = 0;
-	PrologElement * vibrato = 0, * l2 = 0, * l3 = 0, * l4 = 0;
+	PrologElement * vibrato = 0, * tremolo = 0, * wah_wah = 0, * pan = 0;
 	while (parameters -> isPair ()) {
 		PrologElement * el = parameters -> getLeft ();
 		if (el -> isVar ()) atom = el;
@@ -270,24 +280,25 @@ bool lfo_panel_class :: code (PrologElement * parameters, PrologResolution * res
 			else if (t3 == 0) t3 = el;
 			else if (t4 == 0) t4 = el;
 			else if (vibrato == 0) vibrato = el;
-			else if (l2 == 0) l2 = el;
-			else if (l3 == 0) l3 = el;
-			else if (l4 == 0) l4 = el;
+			else if (tremolo == 0) tremolo = el;
+			else if (wah_wah == 0) wah_wah = el;
+			else if (pan == 0) pan = el;
 		}
 		if (el -> isEarth ()) {
 			if (vibrato == 0) vibrato = el;
-			else if (l2 == 0) l2 = el;
-			else if (l3 == 0) l3 = el;
-			else if (l4 == 0) l4 = el;
+			else if (tremolo == 0) tremolo = el;
+			else if (wah_wah == 0) wah_wah = el;
+			else if (pan == 0) pan = el;
 		}
 		parameters = parameters -> getRight ();
 	}
-	if (atom == 0 || l4 == 0) return false;
+	if (atom == 0 || pan == 0) return false;
 	if (atom -> isVar ()) atom -> setAtom (new PrologAtom ());
 	if (atom -> getAtom () -> getMachine () != 0) return false;
 	lfo_panel_action * machine = new lfo_panel_action (resources, root, atom -> getAtom (),
 		t1 -> getAtom (), t2 -> getAtom (), t3 -> getAtom (), t4 -> getAtom (),
-		vibrato != 0 ? vibrato -> getAtom () : 0, l2 != 0 ? l2 -> getAtom () : 0, l3 != 0 ? l3 -> getAtom () : 0, l4 != 0 ? l4 -> getAtom () : 0, false);
+		vibrato -> isAtom () ? vibrato -> getAtom () : 0, tremolo -> isAtom () ? tremolo -> getAtom () : 0,
+		wah_wah -> isAtom () ? wah_wah -> getAtom () : 0, pan -> isAtom () ? pan -> getAtom () : 0, false);
 	if (! atom -> getAtom () -> setMachine (machine)) {delete machine; return false;}
 	g_idle_add ((GSourceFunc) CreateLfoPanelIdleCode, machine);
 	return true;

@@ -2,16 +2,18 @@
 import studio
 import lunar
 
-program phobos [Phobos PhobosEditor BuildPhobos BuildPhobosPart Operator-1 Operator-2 Operator-3 Operator-4 Operators]
+program phobos [Phobos PhobosEditor BuildPhobos BuildPhobosPart Operator-1 Operator-2 Operator-3 Operator-4 Operators Lfo-1 Lfo-2]
 
 [[PhobosEditor *phobos]
 	[BuildEGPanel Operator-1 *phobos operator 1 eg amp] [Operator-1 10 10]
-	[BuildEGPanel Operator-2 *phobos operator 2 eg amp] [Operator-2 300 10]
-	[BuildEGPanel Operator-3 *phobos operator 3 eg amp] [Operator-3 10 200]
-	[BuildEGPanel Operator-4 *phobos operator 4 eg amp] [Operator-4 300 200]
-	[BuildFM4Panel Operators *phobos operator] [Operators 10 400]
+	[BuildEGPanel Operator-2 *phobos operator 2 eg amp] [Operator-2 330 10]
+	[BuildEGPanel Operator-3 *phobos operator 3 eg amp] [Operator-3 10 240]
+	[BuildEGPanel Operator-4 *phobos operator 4 eg amp] [Operator-4 330 240]
+	[BuildFM4Panel Operators *phobos operator] [Operators 10 490]
+	[BuildLfoPanel Lfo-1 *phobos [lfo 1] [lfo 1 vibrato] [] [] []] [Lfo-1 660 10]
+	[BuildLfoPanel Lfo-2 *phobos [lfo 2] [lfo 2 vibrato] [lfo 2 tremolo] [] [lfo 2 pan]] [Lfo-2 660 240]
 ]
-[[PhobosEditor] [TRY [Operator-1] [Operator-2] [Operator-3] [Operator-4] [Operators]]]
+[[PhobosEditor] [TRY [Operator-1]] [TRY [Operator-2]] [TRY [Operator-3]] [TRY [Operator-4]] [TRY [Operators]] [TRY [Lfo-1]] [TRY [Lfo-2]]]
 
 [[BuildPhobos *polyphony]
 	[GenerateInstrumentName Phobos *phobos]

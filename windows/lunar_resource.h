@@ -26,6 +26,11 @@
 #define EG_PANEL_PNG                    219
 #define FM4_PANEL_PNG                   220
 #define CORE_PANEL_PNG                  221
+#define LFO_PANEL_PNG                   222
+#define LFO_VIBRATO_PNG                 223
+#define LFO_TREMOLO_PNG                 224
+#define LFO_WAH_WAH_PNG                 225
+#define LFO_PAN_PNG                     226
 
 #define SMALL_KEYBOARD_SIZE             435
 #define KEYBOARD_SIZE                   579
@@ -47,10 +52,15 @@
 #define EG_PANEL_SIZE                   37224
 #define FM4_PANEL_SIZE                  66525
 #define CORE_PANEL_SIZE                 114617
+#define LFO_PANEL_SIZE                  48642
+#define LFO_VIBRATO_SIZE                5826
+#define LFO_TREMOLO_SIZE                5763
+#define LFO_WAH_WAH_SIZE                5847
+#define LFO_PAN_SIZE                    5529
 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        222
+#define _APS_NEXT_RESOURCE_VALUE        227
 #define _APS_NEXT_COMMAND_VALUE         40001
 #define _APS_NEXT_CONTROL_VALUE         1001
 #define _APS_NEXT_SYMED_VALUE           101

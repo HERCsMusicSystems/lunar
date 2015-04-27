@@ -36,6 +36,7 @@ program lunar #machine := "prolog.lunar"
 				midi
 				ParameterBlockPanel AdsrPanel EGPanel FEGPanel FM4Panel CorePanel LfoPanel
 				BuildParameterBlockPanel BuildAdsrPanel BuildEGPanel BuildFEGPanel BuildFM4Panel BuildLfoPanel
+				FindLfoKnob
 				MoveModules PropagateSignals MoveCore LunarDrop FUNCTION_KEY
 				CreateDistributor CloseDistributor Distribute Redistribute
 				CCCB cb_callback cb_path cb_edit_path process_mode CBsub
@@ -161,13 +162,6 @@ program lunar #machine := "prolog.lunar"
 	[FEGPanel *panel *time1 *time2 *time3 *time4 *level1 *level2 *level3 *level4]
 ]
 
-[[BuildLfoPanel *panel *instrument *lfo *vibrato *tremolo *wahwah *pan]
-	[*instrument *parameters : *]
-	[APPEND *path [speed] *speed_path] [*parameters *speed : *speed_path]
-	[APPEND *path [wave] *wave_path] [*parameters *wave : *wave_path]
-	[APPEND *pulse [pulse] *pulse_path] [*parameters *puls : *pulse_path]
-]
-
 [[BuildFM4Panel *panel *instrument : *path]
 	[*instrument *parameters : *]
 	[APPEND *path [algo] *algo_path] [*parameters *algo : *algo_path]
@@ -194,6 +188,23 @@ program lunar #machine := "prolog.lunar"
 		*freq4 *amp4 *ratio4 *feedback4
 	]
 ]
+
+[[BuildLfoPanel *panel *instrument *lfo *vibrato *tremolo *wah_wah *pan]
+	[*instrument *parameters : *]
+	[APPEND *lfo [speed] *speed_path] [*parameters *speed : *speed_path]
+	[APPEND *lfo [wave] *wave_path] [*parameters *wave : *wave_path]
+	[APPEND *lfo [pulse] *pulse_path] [*parameters *pulse : *pulse_path]
+	[APPEND *lfo [phase] *phase_path] [*parameters *phase : *phase_path]
+	[APPEND *lfo [sync] *sync_path] [*parameters *sync : *sync_path]
+	[FindLfoKnob *vibrato_knob *parameters : *vibrato]
+	[FindLfoKnob *tremolo_knob *parameters : *tremolo]
+	[FindLfoKnob *wah_wah_knob *parameters : *wah_wah]
+	[FindLfoKnob *pan_knob *parameters : *pan]
+	[LfoPanel *panel *speed *wave *pulse *phase *sync *vibrato_knob *tremolo_knob *wah_wah_knob *pan_knob]
+]
+
+[[FindLfoKnob [] *parameters]]
+[[FindLfoKnob *knob *parameters : *path] [*parameters *knob : *path]]
 
 [[CreateDistributor *distributor]
 	[create_atom *distributor]
@@ -729,7 +740,7 @@ auto := [
 			[FOR *i 0 15 1 [MIDI_CHANNELS *i MIDI_BACK]]
 		]
 
-private [AddParameterBlock SubRestore cb_callback cb_path cb_edit_path CBsub process_mode]
+private [AddParameterBlock SubRestore cb_callback cb_path cb_edit_path CBsub process_mode FindLfoKnob]
 
 end .
 

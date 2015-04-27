@@ -72,6 +72,7 @@
         <a href="#predicate_BuildEGPanel">BuildEGPanel</a>
         <a href="#predicate_BuildFEGPanel">BuildFEGPanel</a>
         <a href="#predicate_BuildFM4Panel">BuildFM4Panel</a>
+        <a href="#predicate_BuildLfoPanel">BuildLfoPanel</a>
         <a href="#predicate_BuildParameterBlockPanel">BuildParameterBlockPanel</a>
         <a href="#predicate_Connect">Connect</a>
         <a href="#predicate_ConnectDryWet">ConnectDryWet</a>
@@ -99,6 +100,7 @@
         <a href="#predicate_FEGPanel">FEGPanel</a>
         <a href="#predicate_FM4Panel">FM4Panel</a>
         <a href="#predicate_keyboard">keyboard</a>
+        <a href="#predicate_LfoPanel">LfoPanel</a>
         <a href="#predicate_oscilloscope">oscilloscope</a>
         <a href="#predicate_ParameterBlockPanel">ParameterBlockPanel</a>
         <a href="#predicate_small_keyboard">small_keyboard</a>
@@ -1120,6 +1122,22 @@
 </div>
 
 <div class="doc_predicate">
+    <a id="predicate_BuildLfoPanel">
+        <div class="doc_predicate_header">
+            [BuildLfoPanel module instrument lfo vibrato tremolo wah_wah pan] => Builds an ADSR panel.<br />
+        </div>
+        <div class="doc_predicate_body">
+            This is a shortcut designed to find the appropriate parameter blocks in superstructure
+            and build an LFO panel.<br />
+            <b>Note:</b> contrary to other builders, this one require passing 5 paths and as such they are in fact lists.
+            The first path specifies the access to common lfo parameters, such as speed, wave, pulse, phase and sync.
+            The remaining four paths point to lfo amplitude controllers and can be empty ([]).
+            A typical example would be: [BuildLfoPanel panel Phobos [lfo 2] [lfo 2 vibrato] [lfo 2 tremolo] [] [lfo 2 pan]].
+        </div>
+    </a>
+</div>
+
+<div class="doc_predicate">
     <a id="predicate_BuildParameterBlockPanel">
         <div class="doc_predicate_header">
             [BuildParameterBlockPanel module instrument : selector] => Builds a Parameter Block panel.<br />
@@ -1349,7 +1367,7 @@
 <div class="doc_predicate">
     <a id="predicate_AdsrPanel">
         <div class="doc_predicate_header">
-            [AdsrPanel module attack decay sustain release] => Creates a panel for an ADSR module block.<br />
+            [AdsrPanel module attack decay sustain release] => Creates a panel for an ADSR module.<br />
             [module *x *y] => reposition on the screen<br />
             [module] => closes the panel<br />
         </div>
@@ -1416,7 +1434,7 @@
 <div class="doc_predicate">
     <a id="predicate_EGPanel">
         <div class="doc_predicate_header">
-            [EGPanel module t1 t2 t3 t4 l1 l2 l3 l4] => Creates a panel for an EG module block.<br />
+            [EGPanel module t1 t2 t3 t4 l1 l2 l3 l4] => Creates a panel for an EG module.<br />
             [module *x *y] => reposition on the screen<br />
             [module] => closes the panel<br />
         </div>
@@ -1433,7 +1451,7 @@
 <div class="doc_predicate">
     <a id="predicate_FEGPanel">
         <div class="doc_predicate_header">
-            [FEGPanel module t1 t2 t3 t4 l1 l2 l3 l4] => Creates a panel for an EG module block.<br />
+            [FEGPanel module t1 t2 t3 t4 l1 l2 l3 l4] => Creates a panel for an EG module.<br />
             [module *x *y] => reposition on the screen<br />
             [module] => closes the panel<br />
         </div>
@@ -1460,6 +1478,24 @@
             The resolution is 128 steps with left mouse button and 16384 with the right one.<br />
             <b>Note:</b> do not use FM4Panel directly. Use <a href="#predicate_BuildFM4Panel">BuildFM4Panel</a> instead.<br />
             <img src="../../graphics/fm4_panel.png" />
+        </div>
+    </a>
+</div>
+
+<div class="doc_predicate">
+    <a id="predicate_LfoPanel">
+        <div class="doc_predicate_header">
+            [LfoPanel module speed wave pulse phase sync vibrato tremolo wah_wah pan] => Creates a panel for an LFO module.<br />
+            [module *x *y] => reposition on the screen<br />
+            [module] => closes the panel<br />
+        </div>
+        <div class="doc_predicate_body">
+            Creates a panel for 9 parameter blocks commonly associated with LFO module.
+            The vibrato, tremolo, wah_wah and pan parameters can be [], and thus may not be used and displayed.
+            Range different for each knob.
+            The resolution is 128 steps with left mouse button and 16384 with the right one.<br />
+            <b>Note:</b> do not use LfoPanel directly. Use <a href="#predicate_BuildLfoPanel">BuildLfoPanel</a> instead.<br />
+            <img src="../../graphics/lfo_panel.png" />
         </div>
     </a>
 </div>

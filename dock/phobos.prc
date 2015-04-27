@@ -10,8 +10,8 @@ program phobos [Phobos PhobosEditor BuildPhobos BuildPhobosPart Operator-1 Opera
 	[BuildEGPanel Operator-3 *phobos operator 3 eg amp] [Operator-3 10 240]
 	[BuildEGPanel Operator-4 *phobos operator 4 eg amp] [Operator-4 330 240]
 	[BuildFM4Panel Operators *phobos operator] [Operators 10 490]
-	[BuildLfoPanel Lfo-1 *phobos [lfo 1] [lfo 1 vibrato] [] [] []] [Lfo-1 660 10]
-	[BuildLfoPanel Lfo-2 *phobos [lfo 2] [lfo 2 vibrato] [lfo 2 tremolo] [] [lfo 2 pan]] [Lfo-2 660 240]
+	[BuildLfoPanel Lfo-1 *phobos [lfo 1] [lfo 1 vibrato] [] [filter lfo 1] []] [Lfo-1 660 10]
+	[BuildLfoPanel Lfo-2 *phobos [lfo 2] [lfo 2 vibrato] [lfo 2 tremolo] [filter lfo 2] [lfo 2 pan]] [Lfo-2 660 240]
 ]
 [[PhobosEditor] [TRY [Operator-1]] [TRY [Operator-2]] [TRY [Operator-3]] [TRY [Operator-4]] [TRY [Operators]] [TRY [Lfo-1]] [TRY [Lfo-2]]]
 

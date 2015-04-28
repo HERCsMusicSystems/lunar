@@ -24,8 +24,6 @@
 #define _USE_MATH_DEFINES
 #include <math.h>
 
-gboolean RemoveViewportIdleCode (GtkWidget * viewport) {gtk_widget_destroy (viewport); return FALSE;}
-
 #ifdef WIN32
 #include "lunar_resource.h"
 #include <Windows.h>

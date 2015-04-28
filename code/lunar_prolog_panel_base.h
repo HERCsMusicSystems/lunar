@@ -39,6 +39,8 @@ public:
 	int captured_button;
 	cairo_surface_t * background_image;
 	GtkWidget * viewport;
+	GtkWidget * area;
+	int gtk_redrawer;
 	bool remove (bool remove_gtk = true);
 	void update (void);
 	void reposition (void);

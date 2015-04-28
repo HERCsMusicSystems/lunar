@@ -191,7 +191,6 @@ public:
 		if (tremolo != 0) tremolo -> removeAtom ();
 		if (wah_wah != 0) wah_wah -> removeAtom ();
 		if (pan != 0) pan -> removeAtom ();
-		printf ("Child panel removed.\n");
 	}
 };
 

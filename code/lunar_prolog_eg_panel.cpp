@@ -28,16 +28,9 @@
 
 class eg_panel_action : public AudioModulePanel {
 public:
-	PrologRoot * root;
-	PrologAtom * atom;
 	PrologAtom * t1, * t2, * t3, * t4, * l1, * l2, * l3, * l4;
 	bool feg;
-	GtkWidget * viewport;
-	point captured;
-	point location;
-	int captured_button;
 	knob_active_graphics T1, T2, T3, T4, L1, L2, L3, L4;
-	cairo_surface_t * background_image;
 	bool remove (bool remove_gtk = true) {
 		if (remove_gtk) g_idle_add ((GSourceFunc) RemoveViewportIdleCode, viewport);
 		delete this;

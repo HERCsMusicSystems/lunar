@@ -24,41 +24,20 @@
 // This file was created on Wednesday, 12th March 2015 at 13:25:55. //
 //////////////////////////////////////////////////////////////////////
 
-#include "prolog_lunar.h"
-#include "graphic_resources.h"
+#include "lunar_prolog_panel_base.h"
 
-static double prepare (double angle) {
-	angle *= 16384.0;
-	if (angle > 16384.0) angle = 16384.0;
-	if (angle < -16384.0) angle = -16384.0;
-	int ind = (int) angle;
-	return (double) ind;
-}
-static double unprepare (double angle) {
-	if (angle <= -16384.0) return -1.0;
-	if (angle >= 16384.0) return 1.0;
-	return angle / 16384.0;
-}
-
-class fm4_panel_action : public PrologNativeCode {
+class fm4_panel_action : public AudioModulePanel {
 public:
-	PrologRoot * root;
-	PrologAtom * atom;
 	PrologAtom * algo;
 	PrologAtom * freq1, * amp1, * ratio1, * feedback1;
 	PrologAtom * freq2, * amp2, * ratio2, * feedback2;
 	PrologAtom * freq3, * amp3, * ratio3, * feedback3;
 	PrologAtom * freq4, * amp4, * ratio4, * feedback4;
-	GtkWidget * viewport;
-	point captured;
-	point location;
-	int captured_button;
 	knob_active_graphics ALGO;
 	knob_active_graphics FREQ1, AMP1, RATIO1, FEEDBACK1;
 	knob_active_graphics FREQ2, AMP2, RATIO2, FEEDBACK2;
 	knob_active_graphics FREQ3, AMP3, RATIO3, FEEDBACK3;
 	knob_active_graphics FREQ4, AMP4, RATIO4, FEEDBACK4;
-	cairo_surface_t * background_image;
 	bool remove (bool remove_gtk = true) {
 		if (remove_gtk) g_idle_add ((GSourceFunc) RemoveViewportIdleCode, viewport);
 		delete this;
@@ -68,23 +47,23 @@ public:
 		PrologAtom * a = 0;
 		double v;
 		switch (ind) {
-		case 0: a = algo; v = (double) ((int) ALGO . value); break;
-		case 1: a = freq1; v = prepare (FREQ1 . angle - 0.5); break;
-		case 2: a = amp1; v = prepare (AMP1 . angle - 1.0); break;
+		case 0: a = algo; v = ALGO . value; break;
+		case 1: a = freq1; v = FREQ1 . value; break;
+		case 2: a = amp1; v = AMP1 . value; break;
 		case 3: a = ratio1; v = RATIO1 . value; break;
-		case 4: a = feedback1; v = prepare (FEEDBACK1 . angle); break;
-		case 5: a = freq2; v = prepare (FREQ2 . angle - 0.5); break;
-		case 6: a = amp2; v = prepare (AMP2 . angle - 1.0); break;
+		case 4: a = feedback1; v = FEEDBACK1 . value; break;
+		case 5: a = freq2; v = FREQ2 . value; break;
+		case 6: a = amp2; v = AMP2 . value; break;
 		case 7: a = ratio2; v = RATIO2 . value; break;
-		case 8: a = feedback2; v = prepare (FEEDBACK2 . angle); break;
-		case 9: a = freq3; v = prepare (FREQ3 . angle - 0.5); break;
-		case 10: a = amp3; v = prepare (AMP3 . angle - 1.0); break;
+		case 8: a = feedback2; v = FEEDBACK2 . value; break;
+		case 9: a = freq3; v = FREQ3 . value; break;
+		case 10: a = amp3; v = AMP3 . value; break;
 		case 11: a = ratio3; v = RATIO3 . value; break;
-		case 12: a = feedback3; v = prepare (FEEDBACK3 . angle); break;
-		case 13: a = freq4; v = prepare (FREQ4 . angle - 0.5); break;
-		case 14: a = amp4; v = prepare (AMP4 . angle - 1.0); break;
+		case 12: a = feedback3; v = FEEDBACK3 . value; break;
+		case 13: a = freq4; v = FREQ4 . value; break;
+		case 14: a = amp4; v = AMP4 . value; break;
 		case 15: a = ratio4; v = RATIO4 . value; break;
-		case 16: a = feedback4; v = prepare (FEEDBACK4 . angle); break;
+		case 16: a = feedback4; v = FEEDBACK4 . value; break;
 		default: a = 0; break;
 		}
 		if (a == 0) return;
@@ -135,43 +114,84 @@ public:
 			if (! el -> isPair ()) {delete query; return;}
 			el = el -> getLeft (); if (! el -> isPair ()) {delete query; return;}
 			PrologElement * sub = el -> getLeft ();
-			if (sub -> isNumber ()) ALGO . angle = sub -> getNumber () / 7.0;
+			if (sub -> isNumber ()) ALGO . setValue (sub -> getNumber ());
 			el = el -> getRight (); if (! el -> isPair ()) {delete query; return;} sub = el -> getLeft ();
-			if (sub -> isNumber ()) FREQ1 . angle = unprepare (sub -> getNumber ()) + 0.5;
+			if (sub -> isNumber ()) FREQ1 . setValue (sub -> getNumber ());
 			el = el -> getRight (); if (! el -> isPair ()) {delete query; return;} sub = el -> getLeft ();
-			if (sub -> isNumber ()) AMP1 . angle = unprepare (sub -> getNumber ()) + 1.0;
+			if (sub -> isNumber ()) AMP1 . setValue (sub -> getNumber ());
 			el = el -> getRight (); if (! el -> isPair ()) {delete query; return;} sub = el -> getLeft ();
 			if (sub -> isNumber ()) RATIO1 . setValue (sub -> getNumber ());
 			el = el -> getRight (); if (! el -> isPair ()) {delete query; return;} sub = el -> getLeft ();
-			if (sub -> isNumber ()) FEEDBACK1 . angle = unprepare (sub -> getNumber ());
+			if (sub -> isNumber ()) FEEDBACK1 . setValue (sub -> getNumber ());
 			el = el -> getRight (); if (! el -> isPair ()) {delete query; return;} sub = el -> getLeft ();
-			if (sub -> isNumber ()) FREQ2 . angle = unprepare (sub -> getNumber ()) + 0.5;
+			if (sub -> isNumber ()) FREQ2 . setValue (sub -> getNumber ());
 			el = el -> getRight (); if (! el -> isPair ()) {delete query; return;} sub = el -> getLeft ();
-			if (sub -> isNumber ()) AMP2 . angle = unprepare (sub -> getNumber ()) + 1.0;
+			if (sub -> isNumber ()) AMP2 . setValue (sub -> getNumber ());
 			el = el -> getRight (); if (! el -> isPair ()) {delete query; return;} sub = el -> getLeft ();
 			if (sub -> isNumber ()) RATIO2 . setValue (sub -> getNumber ());
 			el = el -> getRight (); if (! el -> isPair ()) {delete query; return;} sub = el -> getLeft ();
-			if (sub -> isNumber ()) FEEDBACK2 . angle = unprepare (sub -> getNumber ());
+			if (sub -> isNumber ()) FEEDBACK2 . setValue (sub -> getNumber ());
 			el = el -> getRight (); if (! el -> isPair ()) {delete query; return;} sub = el -> getLeft ();
-			if (sub -> isNumber ()) FREQ3 . angle = unprepare (sub -> getNumber ()) + 0.5;
+			if (sub -> isNumber ()) FREQ3 . setValue (sub -> getNumber ());
 			el = el -> getRight (); if (! el -> isPair ()) {delete query; return;} sub = el -> getLeft ();
-			if (sub -> isNumber ()) AMP3 . angle = unprepare (sub -> getNumber ()) + 1.0;
+			if (sub -> isNumber ()) AMP3 . setValue (sub -> getNumber ());
 			el = el -> getRight (); if (! el -> isPair ()) {delete query; return;} sub = el -> getLeft ();
 			if (sub -> isNumber ()) RATIO3 . setValue (sub -> getNumber ());
 			el = el -> getRight (); if (! el -> isPair ()) {delete query; return;} sub = el -> getLeft ();
-			if (sub -> isNumber ()) FEEDBACK3 . angle = unprepare (sub -> getNumber ());
+			if (sub -> isNumber ()) FEEDBACK3 . setValue (sub -> getNumber ());
 			el = el -> getRight (); if (! el -> isPair ()) {delete query; return;} sub = el -> getLeft ();
-			if (sub -> isNumber ()) FREQ4 . angle = unprepare (sub -> getNumber ()) + 0.5;
+			if (sub -> isNumber ()) FREQ4 . setValue (sub -> getNumber ());
 			el = el -> getRight (); if (! el -> isPair ()) {delete query; return;} sub = el -> getLeft ();
-			if (sub -> isNumber ()) AMP4 . angle = unprepare (sub -> getNumber ()) + 1.0;
+			if (sub -> isNumber ()) AMP4 . setValue (sub -> getNumber ());
 			el = el -> getRight (); if (! el -> isPair ()) {delete query; return;} sub = el -> getLeft ();
 			if (sub -> isNumber ()) RATIO4 . setValue (sub -> getNumber ());
 			el = el -> getRight (); if (! el -> isPair ()) {delete query; return;} sub = el -> getLeft ();
-			if (sub -> isNumber ()) FEEDBACK4 . angle = unprepare (sub -> getNumber ());
+			if (sub -> isNumber ()) FEEDBACK4 . setValue (sub -> getNumber ());
 		}
 		delete query;
 	}
-	bool code (PrologElement * parameters, PrologResolution * resolution);
+	void redraw (cairo_t * cr) {
+		ALGO . draw (cr);
+		FREQ1 . draw (cr); AMP1 . draw (cr); RATIO1 . draw (cr); FEEDBACK1 . draw (cr);
+		FREQ2 . draw (cr); AMP2 . draw (cr); RATIO2 . draw (cr); FEEDBACK2 . draw (cr);
+		FREQ3 . draw (cr); AMP3 . draw (cr); RATIO3 . draw (cr); FEEDBACK3 . draw (cr);
+		FREQ4 . draw (cr); AMP4 . draw (cr); RATIO4 . draw (cr); FEEDBACK4 . draw (cr);
+	}
+	void MouseKeyon (point location) {
+		ALGO . keyon (location);
+		FREQ1 . keyon (location); AMP1 . keyon (location); RATIO1 . keyon (location); FEEDBACK1 . keyon (location);
+		FREQ2 . keyon (location); AMP2 . keyon (location); RATIO2 . keyon (location); FEEDBACK2 . keyon (location);
+		FREQ3 . keyon (location); AMP3 . keyon (location); RATIO3 . keyon (location); FEEDBACK3 . keyon (location);
+		FREQ4 . keyon (location); AMP4 . keyon (location); RATIO4 . keyon (location); FEEDBACK4 . keyon (location);
+	}
+	void MouseKeyoff (point location) {
+		ALGO . keyoff (location);
+		FREQ1 . keyoff (location); AMP1 . keyoff (location); RATIO1 . keyoff (location); FEEDBACK1 . keyoff (location);
+		FREQ2 . keyoff (location); AMP2 . keyoff (location); RATIO2 . keyoff (location); FEEDBACK2 . keyoff (location);
+		FREQ3 . keyoff (location); AMP3 . keyoff (location); RATIO3 . keyoff (location); FEEDBACK3 . keyoff (location);
+		FREQ4 . keyoff (location); AMP4 . keyoff (location); RATIO4 . keyoff (location); FEEDBACK4 . keyoff (location);
+	}
+	void MouseMove (point delta) {
+	bool redraw = false;
+		if (ALGO . move (delta)) {move (0); redraw = true;}
+		if (FREQ1 . move (delta)) {move (1); redraw = true;}
+		if (AMP1 . move (delta)) {move (2); redraw = true;}
+		if (RATIO1 . move (delta)) {move (3); redraw = true;}
+		if (FEEDBACK1 . move (delta)) {move (4); redraw = true;}
+		if (FREQ2 . move (delta)) {move (5); redraw = true;}
+		if (AMP2 . move (delta)) {move (6); redraw = true;}
+		if (RATIO2 . move (delta)) {move (7); redraw = true;}
+		if (FEEDBACK2 . move (delta)) {move (8); redraw = true;}
+		if (FREQ3 . move (delta)) {move (9); redraw = true;}
+		if (AMP3 . move (delta)) {move (10); redraw = true;}
+		if (RATIO3 . move (delta)) {move (11); redraw = true;}
+		if (FEEDBACK3 . move (delta)) {move (12); redraw = true;}
+		if (FREQ4 . move (delta)) {move (13); redraw = true;}
+		if (AMP4 . move (delta)) {move (14); redraw = true;}
+		if (RATIO4 . move (delta)) {move (15); redraw = true;}
+		if (FEEDBACK4 . move (delta)) {move (16); redraw = true;}
+		if (redraw) update ();
+	}
 	fm4_panel_action (GraphicResources * resources, PrologRoot * root, PrologAtom * atom, PrologAtom * algo,
 		PrologAtom * freq1, PrologAtom * amp1, PrologAtom * ratio1, PrologAtom * feedback1,
 		PrologAtom * freq2, PrologAtom * amp2, PrologAtom * ratio2, PrologAtom * feedback2,
@@ -193,12 +213,8 @@ public:
 	FREQ4 (point (310, 98), 0, resources, true, active, -8192.0, 8192.0),
 	AMP4 (point (380, 98), 0, resources, true, active, -16384.0, 0.0),
 	RATIO4 (point (450, 98), 0, resources, true, active, 1.0, 33.0),
-	FEEDBACK4 (point (520, 98), 0, resources, true, active, 0.0, 16384.0) {
-		captured_button = 0;
-		background_image = resources != 0 ? resources -> fm4_panel_surface : 0;
-		viewport = 0;
-		this -> root = root;
-		this -> atom = atom; COLLECTOR_REFERENCE_INC (atom);
+	FEEDBACK4 (point (520, 98), 0, resources, true, active, 0.0, 16384.0),
+	AudioModulePanel (root, atom, resources != 0 ? resources -> fm4_panel_surface : 0) {
 		this -> algo = algo; COLLECTOR_REFERENCE_INC (algo);
 		this -> freq1 = freq1; COLLECTOR_REFERENCE_INC (freq1);
 		this -> amp1 = amp1; COLLECTOR_REFERENCE_INC (amp1);
@@ -219,8 +235,6 @@ public:
 		feedback ();
 	}
 	~ fm4_panel_action (void) {
-		atom -> setMachine (0);
-		atom -> removeAtom ();
 		algo -> removeAtom ();
 		freq1 -> removeAtom (); amp1 -> removeAtom (); ratio1 -> removeAtom (); feedback1 -> removeAtom ();
 		freq2 -> removeAtom (); amp2 -> removeAtom (); ratio2 -> removeAtom (); feedback2 -> removeAtom ();
@@ -228,144 +242,6 @@ public:
 		freq4 -> removeAtom (); amp4 -> removeAtom (); ratio4 -> removeAtom (); feedback4 -> removeAtom ();
 	}
 };
-
-static gboolean EGPanelDeleteEvent (GtkWidget * viewport, GdkEvent * event, fm4_panel_action * machine) {
-	gtk_widget_destroy (machine -> viewport);
-	machine -> remove (false);
-	return FALSE;
-}
-static gboolean RedrawEGPanel (GtkWidget * viewport, GdkEvent * event, fm4_panel_action * action) {
-	cairo_t * cr = gdk_cairo_create (gtk_widget_get_window (viewport));
-	if (action -> background_image != 0) {cairo_set_source_surface (cr, action -> background_image, 0, 0); cairo_paint (cr);}
-	action -> ALGO . draw (cr);
-	action -> FREQ1 . draw (cr);
-	action -> AMP1 . draw (cr);
-	action -> RATIO1 . draw (cr);
-	action -> FEEDBACK1 . draw (cr);
-	action -> FREQ2 . draw (cr);
-	action -> AMP2 . draw (cr);
-	action -> RATIO2 . draw (cr);
-	action -> FEEDBACK2 . draw (cr);
-	action -> FREQ3 . draw (cr);
-	action -> AMP3 . draw (cr);
-	action -> RATIO3 . draw (cr);
-	action -> FEEDBACK3 . draw (cr);
-	action -> FREQ4 . draw (cr);
-	action -> AMP4 . draw (cr);
-	action -> RATIO4 . draw (cr);
-	action -> FEEDBACK4 . draw (cr);
-	cairo_destroy (cr);
-	return FALSE;
-}
-static gint EGPanelKeyon (GtkWidget * viewport, GdkEventButton * event, fm4_panel_action * action) {
-	action -> captured_button = event -> button;
-	point location (event -> x, event -> y);
-	action -> captured = location;
-	action -> ALGO . keyon (location);
-	action -> FREQ1 . keyon (location);
-	action -> AMP1 . keyon (location);
-	action -> RATIO1 . keyon (location);
-	action -> FEEDBACK1 . keyon (location);
-	action -> FREQ2 . keyon (location);
-	action -> AMP2 . keyon (location);
-	action -> RATIO2 . keyon (location);
-	action -> FEEDBACK2 . keyon (location);
-	action -> FREQ3 . keyon (location);
-	action -> AMP3 . keyon (location);
-	action -> RATIO3 . keyon (location);
-	action -> FEEDBACK3 . keyon (location);
-	action -> FREQ4 . keyon (location);
-	action -> AMP4 . keyon (location);
-	action -> RATIO4 . keyon (location);
-	action -> FEEDBACK4 . keyon (location);
-	return TRUE;
-}
-static gint EGPanelKeyoff (GtkWidget * viewport, GdkEventButton * event, fm4_panel_action * action) {
-	point location (event -> x, event -> y);
-	action -> ALGO . keyoff (location);
-	action -> FREQ1 . keyoff (location);
-	action -> AMP1 . keyoff (location);
-	action -> RATIO1 . keyoff (location);
-	action -> FEEDBACK1 . keyoff (location);
-	action -> FREQ2 . keyoff (location);
-	action -> AMP2 . keyoff (location);
-	action -> RATIO2 . keyoff (location);
-	action -> FEEDBACK2 . keyoff (location);
-	action -> FREQ3 . keyoff (location);
-	action -> AMP3 . keyoff (location);
-	action -> RATIO3 . keyoff (location);
-	action -> FEEDBACK3 . keyoff (location);
-	action -> FREQ4 . keyoff (location);
-	action -> AMP4 . keyoff (location);
-	action -> RATIO4 . keyoff (location);
-	action -> FEEDBACK4 . keyoff (location);
-	return TRUE;
-}
-static gint EGPanelMove (GtkWidget * viewport, GdkEventButton * event, fm4_panel_action * action) {
-	point location (event -> x, event -> y);
-	point delta = location - action -> captured;
-	if (action -> captured_button > 1) delta *= 0.0078125;
-	action -> captured = location;
-	bool redraw = false;
-	if (action -> ALGO . move (delta)) {action -> move (0); redraw = true;}
-	if (action -> FREQ1 . move (delta)) {action -> move (1); redraw = true;}
-	if (action -> AMP1 . move (delta)) {action -> move (2); redraw = true;}
-	if (action -> RATIO1 . move (delta)) {action -> move (3); redraw = true;}
-	if (action -> FEEDBACK1 . move (delta)) {action -> move (4); redraw = true;}
-	if (action -> FREQ2 . move (delta)) {action -> move (5); redraw = true;}
-	if (action -> AMP2 . move (delta)) {action -> move (6); redraw = true;}
-	if (action -> RATIO2 . move (delta)) {action -> move (7); redraw = true;}
-	if (action -> FEEDBACK2 . move (delta)) {action -> move (8); redraw = true;}
-	if (action -> FREQ3 . move (delta)) {action -> move (9); redraw = true;}
-	if (action -> AMP3 . move (delta)) {action -> move (10); redraw = true;}
-	if (action -> RATIO3 . move (delta)) {action -> move (11); redraw = true;}
-	if (action -> FEEDBACK3 . move (delta)) {action -> move (12); redraw = true;}
-	if (action -> FREQ4 . move (delta)) {action -> move (13); redraw = true;}
-	if (action -> AMP4 . move (delta)) {action -> move (14); redraw = true;}
-	if (action -> RATIO4 . move (delta)) {action -> move (15); redraw = true;}
-	if (action -> FEEDBACK4 . move (delta)) {action -> move (16); redraw = true;}
-	if (redraw) gtk_widget_queue_draw (viewport);
-	return TRUE;
-}
-static gboolean CreateEGPanelIdleCode (fm4_panel_action * action) {
-	action -> viewport = gtk_window_new (GTK_WINDOW_TOPLEVEL);
-	gtk_window_set_title (GTK_WINDOW (action -> viewport), action -> atom -> name ());
-	g_signal_connect (action -> viewport, "delete-event", G_CALLBACK (EGPanelDeleteEvent), action);
-	GtkWidget * area = gtk_drawing_area_new ();
-	gtk_container_add (GTK_CONTAINER (action -> viewport), area);
-	g_signal_connect (G_OBJECT (area), "expose-event", G_CALLBACK (RedrawEGPanel), action);
-	gtk_widget_add_events (action -> viewport, GDK_BUTTON_PRESS_MASK | GDK_POINTER_MOTION_MASK | GDK_BUTTON_RELEASE_MASK);
-	g_signal_connect (G_OBJECT (action -> viewport), "button_press_event", G_CALLBACK (EGPanelKeyon), action);
-	g_signal_connect (G_OBJECT (action -> viewport), "button_release_event", G_CALLBACK (EGPanelKeyoff), action);
-	g_signal_connect (G_OBJECT (action -> viewport), "motion_notify_event", G_CALLBACK (EGPanelMove), action);
-	if (action -> background_image != 0) gtk_window_resize (GTK_WINDOW (action -> viewport),
-											cairo_image_surface_get_width (action -> background_image),
-											cairo_image_surface_get_height (action -> background_image));
-	gtk_widget_show_all (action -> viewport);
-	return FALSE;
-}
-
-static gboolean RepositionFM4Panel (fm4_panel_action * action) {
-	gtk_window_move (GTK_WINDOW (action -> viewport), (int) action -> location . x, (int) action -> location . y);
-	return FALSE;
-}
-
-bool fm4_panel_action :: code (PrologElement * parameters, PrologResolution * resolution) {
-	if (parameters -> isEarth ()) return remove ();
-	PrologElement * x = 0, * y = 0;
-	PrologElement * refresher = 0;
-	while (parameters -> isPair ()) {
-		PrologElement * el = parameters -> getLeft ();
-		if (el -> isNumber ()) if (x == 0) x = el; else y = el;
-		if (el -> isEarth ()) refresher = el;
-		parameters = parameters -> getRight ();
-	}
-	if (refresher != 0) {feedback (); gtk_widget_queue_draw (viewport); return true;}
-	if (x == 0 || y == 0) return true;
-	location = point (x -> getNumber (), y -> getNumber ());
-	g_idle_add ((GSourceFunc) RepositionFM4Panel, this);
-	return true;
-}
 
 bool fm4_panel_class :: code (PrologElement * parameters, PrologResolution * resolution) {
 	PrologElement * atom = 0;
@@ -408,7 +284,7 @@ bool fm4_panel_class :: code (PrologElement * parameters, PrologResolution * res
 		freq3 -> getAtom (), amp3 -> getAtom (), ratio3 -> getAtom (), feedback3 -> getAtom (),
 		freq4 -> getAtom (), amp4 -> getAtom (), ratio4 -> getAtom (), feedback4 -> getAtom (), false);
 	if (! atom -> getAtom () -> setMachine (machine)) {delete machine; return false;}
-	g_idle_add ((GSourceFunc) CreateEGPanelIdleCode, machine);
+	machine -> BuildPanel ();
 	return true;
 }
 

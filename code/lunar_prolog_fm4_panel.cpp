@@ -38,11 +38,6 @@ public:
 	knob_active_graphics FREQ2, AMP2, RATIO2, FEEDBACK2;
 	knob_active_graphics FREQ3, AMP3, RATIO3, FEEDBACK3;
 	knob_active_graphics FREQ4, AMP4, RATIO4, FEEDBACK4;
-	bool remove (bool remove_gtk = true) {
-		if (remove_gtk) g_idle_add ((GSourceFunc) RemoveViewportIdleCode, viewport);
-		delete this;
-		return true;
-	}
 	void move (int ind) {
 		PrologAtom * a = 0;
 		double v;

@@ -31,11 +31,6 @@ public:
 	PrologAtom * a, * d, * s, * r;
 	knob_active_graphics A, D, S, R;
 	void redraw (cairo_t * cr) {A . draw (cr); D . draw (cr); S . draw (cr); R . draw (cr);}
-	bool remove (bool remove_gtk = true) {
-		if (remove_gtk) g_idle_add ((GSourceFunc) RemoveViewportIdleCode, viewport);
-		delete this;
-		return true;
-	}
 	void move (int ind) {
 		if (a == 0) return;
 		PrologElement * query;

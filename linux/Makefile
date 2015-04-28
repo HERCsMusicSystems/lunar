@@ -77,15 +77,15 @@ lunar_prolog_parameter_block_panel.o: ../code/lunar_prolog_parameter_block_panel
 			$(pc)graphics2d.h ../code/graphic_resources.h
 	g++ -Wno-write-strings -I. -I$(pc) ../code/lunar_prolog_parameter_block_panel.cpp -c -o lunar_prolog_parameter_block_panel.o `pkg-config --cflags gtk+-2.0`
 
-lunar_prolog_adsr_panel.o: ../code/lunar_prolog_adsr_panel.cpp ../code/lunar.h ../code/prolog_lunar.h $(pc)prolog.h\
+lunar_prolog_adsr_panel.o: ../code/lunar_prolog_adsr_panel.cpp ../code/lunar.h ../code/prolog_lunar.h ../code/lunar_prolog_panel_base.h $(pc)prolog.h\
 			$(pc)graphics2d.h ../code/graphic_resources.h
 	g++ -Wno-write-strings -I. -I$(pc) ../code/lunar_prolog_adsr_panel.cpp -c -o lunar_prolog_adsr_panel.o `pkg-config --cflags gtk+-2.0`
 
-lunar_prolog_eg_panel.o: ../code/lunar_prolog_eg_panel.cpp ../code/lunar.h ../code/prolog_lunar.h $(pc)prolog.h\
+lunar_prolog_eg_panel.o: ../code/lunar_prolog_eg_panel.cpp ../code/lunar.h ../code/prolog_lunar.h ../code/lunar_prolog_panel_base.h $(pc)prolog.h\
 			$(pc)graphics2d.h ../code/graphic_resources.h
 	g++ -Wno-write-strings -I. -I$(pc) ../code/lunar_prolog_eg_panel.cpp -c -o lunar_prolog_eg_panel.o `pkg-config --cflags gtk+-2.0`
 
-lunar_prolog_fm4_panel.o: ../code/lunar_prolog_fm4_panel.cpp ../code/lunar.h ../code/prolog_lunar.h $(pc)prolog.h\
+lunar_prolog_fm4_panel.o: ../code/lunar_prolog_fm4_panel.cpp ../code/lunar.h ../code/prolog_lunar.h ../code/lunar_prolog_panel_base.h $(pc)prolog.h\
 			$(pc)graphics2d.h ../code/graphic_resources.h
 	g++ -Wno-write-strings -I. -I$(pc) ../code/lunar_prolog_fm4_panel.cpp -c -o lunar_prolog_fm4_panel.o `pkg-config --cflags gtk+-2.0`
 

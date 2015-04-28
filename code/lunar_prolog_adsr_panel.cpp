@@ -24,33 +24,13 @@
 // This file was created on Wednesday, 27th November 2014 at 14:57:20. //
 /////////////////////////////////////////////////////////////////////////
 
-#include "prolog_lunar.h"
-#include "graphic_resources.h"
+#include "lunar_prolog_panel_base.h"
 
-static double prepare (double angle) {
-	angle *= 16384.0;
-	if (angle > 16384.0) angle = 16384.0;
-	if (angle < -16384.0) angle = -16384.0;
-	int ind = (int) angle;
-	return (double) ind;
-}
-static double unprepare (double angle) {
-	if (angle <= -16384.0) return -1.0;
-	if (angle >= 16384.0) return 1.0;
-	return angle / 16384.0;
-}
-
-class adsr_panel_action : public PrologNativeCode {
+class adsr_panel_action : public AudioModulePanel {
 public:
-	PrologRoot * root;
-	PrologAtom * atom;
 	PrologAtom * a, * d, * s, * r;
-	GtkWidget * viewport;
-	point captured;
-	point location;
-	int captured_button;
 	knob_active_graphics A, D, S, R;
-	cairo_surface_t * background_image;
+	void redraw (cairo_t * cr) {A . draw (cr); D . draw (cr); S . draw (cr); R . draw (cr);}
 	bool remove (bool remove_gtk = true) {
 		if (remove_gtk) g_idle_add ((GSourceFunc) RemoveViewportIdleCode, viewport);
 		delete this;
@@ -61,18 +41,18 @@ public:
 		PrologElement * query;
 		if (d != 0 && s != 0 && r != 0) {
 			switch (ind) {
-			case 0: query = root -> pair (root -> atom (a), root -> pair (root -> Double (prepare (A . angle)), root -> earth ())); break;
-			case 1: query = root -> pair (root -> atom (d), root -> pair (root -> Double (prepare (D . angle)), root -> earth ())); break;
-			case 2: query = root -> pair (root -> atom (s), root -> pair (root -> Double (prepare (-1.0 + S . angle)), root -> earth ())); break;
-			default: query = root -> pair (root -> atom (r), root -> pair (root -> Double (prepare (R . angle)), root -> earth ())); break;
+			case 0: query = root -> pair (root -> atom (a), root -> pair (root -> Double (A . value), root -> earth ())); break;
+			case 1: query = root -> pair (root -> atom (d), root -> pair (root -> Double (D . value), root -> earth ())); break;
+			case 2: query = root -> pair (root -> atom (s), root -> pair (root -> Double (S . value), root -> earth ())); break;
+			default: query = root -> pair (root -> atom (r), root -> pair (root -> Double (R . value), root -> earth ())); break;
 			}
 			query = root -> pair (root -> head (0), root -> pair (query, root -> earth ()));
 		} else {
 			query = root -> pair (root -> atom (a),
-					root -> pair (root -> Double (prepare (A . angle)),
-					root -> pair (root -> Double (prepare (D . angle)),
-					root -> pair (root -> Double (prepare (S . angle - 1.0)),
-					root -> pair (root -> Double (prepare (R . angle)), root -> earth ())))));
+					root -> pair (root -> Double (A . value),
+					root -> pair (root -> Double (D . value),
+					root -> pair (root -> Double (S . value),
+					root -> pair (root -> Double (R . value), root -> earth ())))));
 			query = root -> pair (root -> head (0), root -> pair (query, root -> earth ()));
 		}
 		root -> resolution (query);
@@ -104,31 +84,36 @@ public:
 			if (! el -> isPair ()) {delete query; return;}
 			el = el -> getLeft (); if (! el -> isPair ()) {delete query; return;}
 			PrologElement * sub = el -> getLeft ();
-			if (sub -> isNumber ()) A . angle = unprepare (sub -> getNumber ());
+			if (sub -> isNumber ()) A . setValue (sub -> getNumber ());
 			el = el -> getRight (); if (! el -> isPair ()) {delete query; return;}
 			sub = el -> getLeft ();
-			if (sub -> isNumber ()) D . angle = unprepare (sub -> getNumber ());
+			if (sub -> isNumber ()) D . setValue (sub -> getNumber ());
 			el = el -> getRight (); if (! el -> isPair ()) {delete query; return;}
 			sub = el -> getLeft ();
-			if (sub -> isNumber ()) S . angle = 1.0 + unprepare (sub -> getNumber ());
+			if (sub -> isNumber ()) S . setValue (sub -> getNumber ());
 			el = el -> getRight (); if (! el -> isPair ()) {delete query; return;}
 			sub = el -> getLeft ();
-			if (sub -> isNumber ()) R . angle = unprepare (sub -> getNumber ());
+			if (sub -> isNumber ()) R . setValue (sub -> getNumber ());
 		}
 		delete query;
 	}
-	bool code (PrologElement * parameters, PrologResolution * resolution);
+	void MouseKeyon (point location) {A . keyon (location); D . keyon (location); S . keyon (location); R . keyon (location);}
+	void MouseKeyoff (point location) {A . keyoff (location); D . keyoff (location); S . keyoff (location); R . keyoff (location);}
+	void MouseMove (point delta) {
+		bool redraw = false;
+		if (A . move (delta)) {move (0); redraw = true;}
+		if (D . move (delta)) {move (1); redraw = true;}
+		if (S . move (delta)) {move (2); redraw = true;}
+		if (R . move (delta)) {move (3); redraw = true;}
+		if (redraw) gtk_widget_queue_draw (viewport);
+	}
 	adsr_panel_action (GraphicResources * resources, PrologRoot * root, PrologAtom * atom,
 											PrologAtom * a, PrologAtom * d, PrologAtom * s, PrologAtom * r, bool active) :
 	A (point (18, 10), 0, resources, true, active, 0.0, 16384.0),
 	D (point (88, 10), 0, resources, true, active, 0.0, 16384.0),
 	S (point (158, 10), 0, resources, true, active, -16384.0, 0.0),
-	R (point (228, 10), 0, resources, true, active, 0.0, 16384.0) {
-		captured_button = 0;
-		background_image = resources != 0 ? resources -> adsr_panel_surface : 0;
-		viewport = 0;
-		this -> root = root;
-		this -> atom = atom; COLLECTOR_REFERENCE_INC (atom);
+	R (point (228, 10), 0, resources, true, active, 0.0, 16384.0),
+	AudioModulePanel (root, atom, resources != 0 ? resources -> adsr_panel_surface : 0) {
 		this -> a = a; COLLECTOR_REFERENCE_INC (a);
 		this -> d = d; if (d != 0) {COLLECTOR_REFERENCE_INC (d);}
 		this -> s = s; if (s != 0) {COLLECTOR_REFERENCE_INC (s);}
@@ -136,100 +121,12 @@ public:
 		feedback ();
 	}
 	~ adsr_panel_action (void) {
-		atom -> setMachine (0);
-		atom -> removeAtom ();
 		a -> removeAtom ();
 		if (d != 0) d -> removeAtom ();
 		if (s != 0) s -> removeAtom ();
 		if (r != 0) r -> removeAtom ();
 	}
 };
-
-static gboolean AdsrPanelDeleteEvent (GtkWidget * viewport, GdkEvent * event, adsr_panel_action * machine) {
-	gtk_widget_destroy (machine -> viewport);
-	machine -> remove (false);
-	return FALSE;
-}
-static gboolean RedrawAdsrPanel (GtkWidget * viewport, GdkEvent * event, adsr_panel_action * action) {
-	cairo_t * cr = gdk_cairo_create (gtk_widget_get_window (viewport));
-	if (action -> background_image != 0) {cairo_set_source_surface (cr, action -> background_image, 0, 0); cairo_paint (cr);}
-	action -> A . draw (cr);
-	action -> D . draw (cr);
-	action -> S . draw (cr);
-	action -> R . draw (cr);
-	cairo_destroy (cr);
-	return FALSE;
-}
-static gint AdsrPanelKeyon (GtkWidget * viewport, GdkEventButton * event, adsr_panel_action * action) {
-	action -> captured_button = event -> button;
-	point location (event -> x, event -> y);
-	action -> captured = location;
-	action -> A . keyon (location);
-	action -> D . keyon (location);
-	action -> S . keyon (location);
-	action -> R . keyon (location);
-	return TRUE;
-}
-static gint AdsrPanelKeyoff (GtkWidget * viewport, GdkEventButton * event, adsr_panel_action * action) {
-	point location (event -> x, event -> y);
-	action -> A . keyoff (location);
-	action -> D . keyoff (location);
-	action -> S . keyoff (location);
-	action -> R . keyoff (location);
-	return TRUE;
-}
-static gint AdsrPanelMove (GtkWidget * viewport, GdkEventButton * event, adsr_panel_action * action) {
-	point location (event -> x, event -> y);
-	point delta = location - action -> captured;
-	if (action -> captured_button > 1) delta *= 0.0078125;
-	action -> captured = location;
-	bool redraw = false;
-	if (action -> A . move (delta)) {action -> move (0); redraw = true;}
-	if (action -> D . move (delta)) {action -> move (1); redraw = true;}
-	if (action -> S . move (delta)) {action -> move (2); redraw = true;}
-	if (action -> R . move (delta)) {action -> move (3); redraw = true;}
-	if (redraw) gtk_widget_queue_draw (viewport);
-	return TRUE;
-}
-static gboolean CreateAdsrPanelIdleCode (adsr_panel_action * action) {
-	action -> viewport = gtk_window_new (GTK_WINDOW_TOPLEVEL);
-	gtk_window_set_title (GTK_WINDOW (action -> viewport), action -> atom -> name ());
-	g_signal_connect (action -> viewport, "delete-event", G_CALLBACK (AdsrPanelDeleteEvent), action);
-	GtkWidget * area = gtk_drawing_area_new ();
-	gtk_container_add (GTK_CONTAINER (action -> viewport), area);
-	g_signal_connect (G_OBJECT (area), "expose-event", G_CALLBACK (RedrawAdsrPanel), action);
-	gtk_widget_add_events (action -> viewport, GDK_BUTTON_PRESS_MASK | GDK_POINTER_MOTION_MASK | GDK_BUTTON_RELEASE_MASK);
-	g_signal_connect (G_OBJECT (action -> viewport), "button_press_event", G_CALLBACK (AdsrPanelKeyon), action);
-	g_signal_connect (G_OBJECT (action -> viewport), "button_release_event", G_CALLBACK (AdsrPanelKeyoff), action);
-	g_signal_connect (G_OBJECT (action -> viewport), "motion_notify_event", G_CALLBACK (AdsrPanelMove), action);
-	if (action -> background_image != 0) gtk_window_resize (GTK_WINDOW (action -> viewport),
-											cairo_image_surface_get_width (action -> background_image),
-											cairo_image_surface_get_height (action -> background_image));
-	gtk_widget_show_all (action -> viewport);
-	return FALSE;
-}
-
-static gboolean RepositionAdsrPanel (adsr_panel_action * action) {
-	gtk_window_move (GTK_WINDOW (action -> viewport), (int) action -> location . x, (int) action -> location . y);
-	return FALSE;
-}
-
-bool adsr_panel_action :: code (PrologElement * parameters, PrologResolution * resolution) {
-	if (parameters -> isEarth ()) return remove ();
-	PrologElement * x = 0, * y = 0;
-	PrologElement * refresher = 0;
-	while (parameters -> isPair ()) {
-		PrologElement * el = parameters -> getLeft ();
-		if (el -> isNumber ()) if (x == 0) x = el; else y = el;
-		if (el -> isEarth ()) refresher = el;
-		parameters = parameters -> getRight ();
-	}
-	if (refresher != 0) {feedback (); gtk_widget_queue_draw (viewport); return true;}
-	if (x == 0 || y == 0) return true;
-	location = point (x -> getNumber (), y -> getNumber ());
-	g_idle_add ((GSourceFunc) RepositionAdsrPanel, this);
-	return true;
-}
 
 bool adsr_panel_class :: code (PrologElement * parameters, PrologResolution * resolution) {
 	PrologElement * atom = 0;
@@ -252,7 +149,7 @@ bool adsr_panel_class :: code (PrologElement * parameters, PrologResolution * re
 	adsr_panel_action * machine = new adsr_panel_action (resources, root, atom -> getAtom (), a -> getAtom (),
 										d != 0 ? d -> getAtom () : 0, s != 0 ? s -> getAtom () : 0, r != 0 ? r -> getAtom () : 0, false);
 	if (! atom -> getAtom () -> setMachine (machine)) {delete machine; return false;}
-	g_idle_add ((GSourceFunc) CreateAdsrPanelIdleCode, machine);
+	machine -> BuildPanel ();
 	return true;
 }
 

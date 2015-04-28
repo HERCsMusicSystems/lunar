@@ -1,13 +1,20 @@
 
 import lunar
 
-program alarm [Alarm BuildAlarm AlarmEditor]
+program alarm [Alarm BuildAlarm AlarmEditor Lfo-1 Adsr-1 Vco-1]
 
 
 [[BuildAlarm]
 	[GenerateInstrumentName Alarm *alarm]
 	[BuildAlarm *alarm * *]
 ]
+
+[[AlarmEditor *alarm]
+	[BuildLfoPanel Lfo-1 *alarm [lfo] [lfo vibrato] [lfo tremolo] [] [lfo pan]] [Lfo-1 100 100]
+	[BuildAdsrPanel Adsr-1 *alarm adsr] [Adsr-1 410 100]
+]
+
+[[AlarmEditor] [TRY [Lfo-1]] [TRY [Lfo-2]] [TRY [Adsr-1]]]
 
 [[BuildAlarm *alarm *alarmcb *volume]
 	[create_atoms *alarm *alarmcb *volume]

@@ -37,7 +37,6 @@ public:
 	cairo_surface_t * wah_wah_image;
 	cairo_surface_t * pan_image;
 	void redraw (cairo_t * cr) {
-		if (background_image != 0) {cairo_set_source_surface (cr, background_image, 0, 0); cairo_paint (cr);}
 		SPEED . draw (cr);
 		WAVE . draw (cr);
 		PULSE . draw (cr);

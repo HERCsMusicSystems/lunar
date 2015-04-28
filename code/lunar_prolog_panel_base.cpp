@@ -41,6 +41,7 @@ static gboolean AudioModulePanelDeleteEvent (GtkWidget * viewport, GdkEvent * ev
 
 static gboolean RedrawAudioModulePanel (GtkWidget * viewport, GdkEvent * event, AudioModulePanel * action) {
 	cairo_t * cr = gdk_cairo_create (gtk_widget_get_window (viewport));
+	if (action -> background_image != 0) {cairo_set_source_surface (cr, action -> background_image, 0, 0); cairo_paint (cr);}
 	action -> redraw (cr);
 	cairo_destroy (cr);
 	return FALSE;

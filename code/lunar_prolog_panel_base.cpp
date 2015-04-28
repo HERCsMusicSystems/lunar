@@ -25,6 +25,7 @@
 //////////////////////////////////////////////////////////////////////
 
 #include "lunar_prolog_panel_base.h"
+#include <string.h>
 
 gboolean RemoveViewportIdleCode (GtkWidget * viewport) {gtk_widget_destroy (viewport); return FALSE;}
 

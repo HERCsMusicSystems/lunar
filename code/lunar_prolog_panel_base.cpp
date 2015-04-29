@@ -132,7 +132,10 @@ gboolean CreateAudioModulePanelIdleCode (AudioModulePanel * action) {
 }
 
 bool AudioModulePanel :: remove (bool remove_gtk) {
-	if (remove_gtk) g_idle_add ((GSourceFunc) RemoveViewportIdleCode, viewport);
+	if (remove_gtk) {
+		g_signal_handler_disconnect (area, gtk_redrawer);
+		g_idle_add ((GSourceFunc) RemoveViewportIdleCode, viewport);
+	}
 	delete this;
 	return true;
 }
@@ -172,7 +175,6 @@ AudioModulePanel :: AudioModulePanel (PrologRoot * root, PrologAtom * atom, cair
 }
 
 AudioModulePanel :: ~ AudioModulePanel (void) {
-	g_signal_handler_disconnect (area, gtk_redrawer);
 	atom -> setMachine (0);
 	atom -> removeAtom ();
 }

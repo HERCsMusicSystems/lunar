@@ -46,7 +46,7 @@ public:
 		if (root -> resolution (query) == 1) {
 			PrologElement * el = query;
 			if (el -> isPair ()) el = el -> getLeft ();
-			if (el -> isNumber ()) ctrl . angle = el -> getNumber ();
+			if (el -> isNumber ()) ctrl . setValue (el -> getNumber ());
 		}
 		delete query;
 	}
@@ -56,7 +56,7 @@ public:
 	void MouseMove (point delta) {if (ctrl . move (delta)) {move (); update ();}}
 	parameter_block_panel_action (GraphicResources * resources, PrologRoot * root, PrologDirectory * directory, PrologAtom * atom, PrologAtom * command, bool active) :
 		ctrl (point (0, 0), 0, resources, true, true), AudioModulePanel (root, atom, resources != 0 ? resources -> knob_surface : 0)
-	{this -> command = command; COLLECTOR_REFERENCE_INC (command); feedback ();}
+	{this -> command = command; COLLECTOR_REFERENCE_INC (command);}
 	~ parameter_block_panel_action (void) {command -> removeAtom ();}
 };
 
@@ -82,6 +82,7 @@ bool parameter_block_panel_class :: code (PrologElement * parameters, PrologReso
 		if (to != 0) machine -> ctrl . range = to -> getNumber () - machine -> ctrl . start;
 	}
 	if (! atom -> getAtom () -> setMachine (machine)) {delete machine; return false;}
+	machine -> feedback ();
 	machine -> BuildPanel ();
 	return true;
 }

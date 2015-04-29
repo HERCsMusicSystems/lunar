@@ -66,11 +66,12 @@ lunar_prolog_keyboard.o: ../code/lunar_prolog_keyboard.cpp ../code/lunar.h\
 			 ../code/prolog_lunar.h $(pc)prolog.h ../code/keyboard_calculator.h ../code/graphic_resources.h $(pc)graphics2d.h
 	g++ -Wno-write-strings -I. -I$(pc) ../code/lunar_prolog_keyboard.cpp -c -o lunar_prolog_keyboard.o `pkg-config --cflags gtk+-2.0`
 
-lunar_prolog_vector.o: ../code/lunar_prolog_vector.cpp ../code/lunar.h ../code/prolog_lunar.h $(pc)prolog.h $(pc)graphics2d.h ../code/graphic_resources.h
+lunar_prolog_vector.o: ../code/lunar_prolog_vector.cpp ../code/lunar.h ../code/prolog_lunar.h ../code/lunar_prolog_panel_base.h\
+			$(pc)prolog.h $(pc)graphics2d.h ../code/graphic_resources.h
 	g++ -Wno-write-strings -I. -I$(pc) ../code/lunar_prolog_vector.cpp -c -o lunar_prolog_vector.o `pkg-config --cflags gtk+-2.0`
 
 lunar_prolog_control_panel.o: ../code/lunar_prolog_control_panel.cpp ../code/lunar.h ../code/prolog_lunar.h $(pc)prolog.h\
-			$(pc)graphics2d.h ../code/graphic_resources.h
+			../code/lunar_prolog_panel_base.h $(pc)graphics2d.h ../code/graphic_resources.h
 	g++ -Wno-write-strings -I. -I$(pc) ../code/lunar_prolog_control_panel.cpp -c -o lunar_prolog_control_panel.o `pkg-config --cflags gtk+-2.0`
 
 lunar_prolog_parameter_block_panel.o: ../code/lunar_prolog_parameter_block_panel.cpp ../code/lunar.h ../code/prolog_lunar.h $(pc)prolog.h\

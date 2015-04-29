@@ -42,7 +42,7 @@ public:
 		delete query;
 	}
 	void feedback (void) {}
-	bool vector_action :: code (PrologElement * parameters, PrologResolution * resolution) {
+	bool code (PrologElement * parameters, PrologResolution * resolution) {
 		if (parameters -> isEarth ()) return remove ();
 		PrologElement * x = 0;
 		PrologElement * y = 0;

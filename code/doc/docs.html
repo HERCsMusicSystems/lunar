@@ -167,7 +167,7 @@
             <br />
             <b>INPUTS:</b><br />
             <b>Trigger:</b> key on/off input. Range between 0.0 .. 1.0.<br />
-            <b>Attack:</b> time. Range between -8192.0 .. 8192.0. ZERO = 1 second (at correction = 0.0).
+            <b>Attack:</b> time. Range between 0.0 .. 16384.0, where 8192.0 = 1 second (at correction = 0.0).
             Every step of 768 (6 * 128) multiplies time by 2.<br />
             <b>Decay:</b> time. Range same as above.<br />
             <b>Sustain:</b> level. Range between -16384.0 .. 0.0.<br />
@@ -334,7 +334,7 @@
             <b>Note:</b> if retriggered before reaching <b>level 4</b>, it may start from a point between levels 4, 1 or 2.<br />
             <b>INPUTS:</b><br />
             <b>Trigger:</b> key on/off input. Range between 0.0 .. 1.0.<br />
-            <b>Time 1 - 4:</b> range between -8192.0 .. 8192.0. ZERO = 1 second (at correction = 0.0).
+            <b>Time 1 - 4:</b> range between 0.0 .. 16384.0, where 8192.0 = 1 second (at correction = 0.0).
             Every step of 768 (6 * 128) multiplies time by 2.<br />
             <b>Level 1 - 4:</b> range between -8192.0 .. 8192.0 (however, can be more really).<br />
             <b>OUTPUTS:</b><br />

@@ -84,6 +84,7 @@ public:
 		if (pan != 0 && PAN . move (delta)) {move (7); redraw = true;}
 		if (redraw) update ();
 	}
+	void FunctionKey (int key, int state) {}
 	void move (int ind) {
 		PrologAtom * a = 0;
 		double v;

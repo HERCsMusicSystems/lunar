@@ -50,6 +50,7 @@ public:
 	virtual void MouseKeyon (point location) = 0;
 	virtual void MouseKeyoff (point location) = 0;
 	virtual void MouseMove (point delta) = 0;
+	virtual void FunctionKey (int key, int state) = 0;
 	virtual void feedback (void) = 0;
 	AudioModulePanel (PrologRoot * root, PrologAtom * atom, cairo_surface_t * background_image);
 	~ AudioModulePanel (void);

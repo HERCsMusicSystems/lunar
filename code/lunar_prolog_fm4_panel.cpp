@@ -167,7 +167,7 @@ public:
 		FREQ4 . keyoff (location); AMP4 . keyoff (location); RATIO4 . keyoff (location); FEEDBACK4 . keyoff (location);
 	}
 	void MouseMove (point delta) {
-	bool redraw = false;
+		bool redraw = false;
 		if (ALGO . move (delta)) {move (0); redraw = true;}
 		if (FREQ1 . move (delta)) {move (1); redraw = true;}
 		if (AMP1 . move (delta)) {move (2); redraw = true;}
@@ -187,6 +187,7 @@ public:
 		if (FEEDBACK4 . move (delta)) {move (16); redraw = true;}
 		if (redraw) update ();
 	}
+	void FunctionKey (int key, int state) {}
 	fm4_panel_action (GraphicResources * resources, PrologRoot * root, PrologAtom * atom, PrologAtom * algo,
 		PrologAtom * freq1, PrologAtom * amp1, PrologAtom * ratio1, PrologAtom * feedback1,
 		PrologAtom * freq2, PrologAtom * amp2, PrologAtom * ratio2, PrologAtom * feedback2,

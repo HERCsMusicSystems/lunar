@@ -102,6 +102,7 @@ public:
 		if (R . move (delta)) {move (3); redraw = true;}
 		if (redraw) gtk_widget_queue_draw (viewport);
 	}
+	void FunctionKey (int key, int state) {}
 	adsr_panel_action (GraphicResources * resources, PrologRoot * root, PrologAtom * atom,
 											PrologAtom * a, PrologAtom * d, PrologAtom * s, PrologAtom * r, bool active) :
 	A (point (18, 10), 0, resources, true, active, 0.0, 16384.0),

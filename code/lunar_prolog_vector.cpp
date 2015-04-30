@@ -81,6 +81,7 @@ public:
 			action ();
 		}
 	}
+	void FunctionKey (int key, int state) {}
 	vector_action (GraphicResources * resources, PrologRoot * root, PrologAtom * atom, PrologAtom * command) :
 		AudioModulePanel (root, atom, resources != 0 ? resources -> vector_surface : 0), position (64.0, 64.0) {
 		on = false;

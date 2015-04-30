@@ -117,6 +117,7 @@ public:
 		if (L4 . move (delta)) {move (7); redraw = true;}
 		if (redraw) update ();
 	}
+	void FunctionKey (int key, int state) {}
 	eg_panel_action (GraphicResources * resources, PrologRoot * root, bool feg, PrologAtom * atom,
 		PrologAtom * t1, PrologAtom * t2, PrologAtom * t3, PrologAtom * t4,
 		PrologAtom * l1, PrologAtom * l2, PrologAtom * l3, PrologAtom * l4, bool active) :

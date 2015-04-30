@@ -54,6 +54,7 @@ public:
 	void MouseKeyon (point location) {ctrl . keyon (location);}
 	void MouseKeyoff (point location) {ctrl . keyoff (location);}
 	void MouseMove (point delta) {if (ctrl . move (delta)) {move (); update ();}}
+	void FunctionKey (int key, int state) {}
 	parameter_block_panel_action (GraphicResources * resources, PrologRoot * root, PrologDirectory * directory, PrologAtom * atom, PrologAtom * command, bool active) :
 		ctrl (point (0, 0), 0, resources, true, true), AudioModulePanel (root, atom, resources != 0 ? resources -> knob_surface : 0)
 	{this -> command = command; COLLECTOR_REFERENCE_INC (command);}

@@ -35,9 +35,6 @@
 #define cwd getcwd
 #endif
 
-class control_panel_action;
-extern bool file_action (char * command, char * title, GtkWidget * viewport, control_panel_action * action);
-
 class control_panel_action : public AudioModulePanel {
 public:
 	PrologDirectory * directory;
@@ -336,6 +333,143 @@ public:
 		root -> resolution (query);
 		delete query;
 	}
+	void redraw (cairo_t * cr) {
+		ctrl_volume . draw (cr);
+		ctrl_attack . draw (cr);
+		ctrl_decay . draw (cr);
+		ctrl_sustain . draw (cr);
+		ctrl_release . draw (cr);
+		ctrl_freq . draw (cr);
+		ctrl_drywet . draw (cr);
+		ctrl_pan . draw (cr);
+		ctrl_porta . draw (cr);
+		ctrl_speed . draw (cr);
+		ctrl_vibrato . draw (cr);
+		vector . draw (cr);
+		keyboard . draw (cr);
+		display . draw (cr);
+		selector0 . draw (cr);
+		selector1 . draw (cr);
+		selector2 . draw (cr);
+		selector3 . draw (cr);
+		selector4 . draw (cr);
+		selector5 . draw (cr);
+		selector6 . draw (cr);
+		selector7 . draw (cr);
+		selector8 . draw (cr);
+		selector9 . draw (cr);
+		program0 . draw (cr);
+		program1 . draw (cr);
+		program2 . draw (cr);
+		program3 . draw (cr);
+		program4 . draw (cr);
+		program5 . draw (cr);
+		program6 . draw (cr);
+		program7 . draw (cr);
+		program8 . draw (cr);
+		program9 . draw (cr);
+		add_one . draw (cr);
+		sub_one . draw (cr);
+		delta_1 . draw (cr);
+		delta_8 . draw (cr);
+		delta_128 . draw (cr);
+		encoder . draw (cr);
+		pitch . draw (cr);
+		modulation . draw (cr);
+		poly_mono . draw (cr);
+		porta_on_off . draw (cr);
+		store . draw (cr);
+		restore . draw (cr);
+		voice_init . draw (cr);
+	}
+	void MouseKeyon (point location, int button) {
+		if (keyboard . keyon (location)) {key_action (keyboard . key, button == 1 ? 100 : 0); return;}
+		ctrl_volume . keyon (location);
+		ctrl_attack . keyon (location);
+		ctrl_decay . keyon (location);
+		ctrl_sustain . keyon (location);
+		ctrl_release . keyon (location);
+		ctrl_freq . keyon (location);
+		ctrl_drywet . keyon (location);
+		ctrl_pan . keyon (location);
+		ctrl_porta . keyon (location);
+		ctrl_speed . keyon (location);
+		ctrl_vibrato . keyon (location);
+		vector . keyon (location);
+		encoder . keyon (location);
+		pitch . keyon (location);
+		modulation . keyon (location);
+		bool redraw = false;
+		if (poly_mono . keyon (location)) {
+			poly_mono . engaged = ! poly_mono . engaged;
+			action (poly_mono . engaged ? 127 : 126, 0.0);
+			redraw = true;
+		}
+		if (porta_on_off . keyon (location)) {
+			porta_on_off . engaged = ! porta_on_off . engaged;
+			action (65, porta_on_off . engaged ? 1.0 : 0.0);
+			redraw = true;
+		}
+		if (selector0 . keyon (location)) {program_action (& selector0); redraw = true;}
+		if (selector1 . keyon (location)) {program_action (& selector1); redraw = true;}
+		if (selector2 . keyon (location)) {program_action (& selector2); redraw = true;}
+		if (selector3 . keyon (location)) {program_action (& selector3); redraw = true;}
+		if (selector4 . keyon (location)) {program_action (& selector4); redraw = true;}
+		if (selector5 . keyon (location)) {program_action (& selector5); redraw = true;}
+		if (selector6 . keyon (location)) {program_action (& selector6); redraw = true;}
+		if (selector7 . keyon (location)) {program_action (& selector7); redraw = true;}
+		if (selector8 . keyon (location)) {program_action (& selector8); redraw = true;}
+		if (selector9 . keyon (location)) {program_action (& selector9); redraw = true;}
+		if (program0 . keyon (location)) {program_action (& program0); redraw = true;}
+		if (program1 . keyon (location)) {program_action (& program1); redraw = true;}
+		if (program2 . keyon (location)) {program_action (& program2); redraw = true;}
+		if (program3 . keyon (location)) {program_action (& program3); redraw = true;}
+		if (program4 . keyon (location)) {program_action (& program4); redraw = true;}
+		if (program5 . keyon (location)) {program_action (& program5); redraw = true;}
+		if (program6 . keyon (location)) {program_action (& program6); redraw = true;}
+		if (program7 . keyon (location)) {program_action (& program7); redraw = true;}
+		if (program8 . keyon (location)) {program_action (& program8); redraw = true;}
+		if (program9 . keyon (location)) {program_action (& program9); redraw = true;}
+		if (delta_1 . keyon (location)) {
+			delta_1 . engaged = true; delta_8 . engaged = delta_128 . engaged = false;
+			current_delta = 1; redraw = true;
+		}
+		if (delta_8 . keyon (location)) {
+			delta_8 . engaged = true; delta_1 . engaged = delta_128 . engaged = false;
+			current_delta = 8; redraw = true;
+		}
+		if (delta_128 . keyon (location)) {
+			delta_128 . engaged = true; delta_1 . engaged = delta_8 . engaged = false;
+			current_delta = 128; redraw = true;
+		}
+		if (add_one . keyon (location)) {value_change_action (1); add_one . engaged = true; redraw = true;}
+		if (sub_one . keyon (location)) {value_change_action (-1); sub_one . engaged = true; redraw = true;}
+		if (store . keyon (location)) redraw = store . engaged = true;
+		if (restore . keyon (location)) redraw = restore . engaged = true;
+		if (voice_init . keyon (location)) redraw = voice_init . engaged = true;
+		if (redraw) gtk_widget_queue_draw (viewport);
+	}
+	void MouseKeyoff (point location, int button);
+	void MouseMove (point delta) {
+		bool redraw = false;
+		if (ctrl_volume . move (delta)) {action (ctrl_volume . id, ctrl_volume . value * 0.0078125); redraw = true;}
+		if (ctrl_attack . move (delta)) {action (ctrl_attack . id, ctrl_attack . value * 0.0078125); redraw = true;}
+		if (ctrl_decay . move (delta)) {action (ctrl_decay . id, ctrl_decay . value * 0.0078125); redraw = true;}
+		if (ctrl_sustain . move (delta)) {action (ctrl_sustain . id, ctrl_sustain . value * 0.0078125); redraw = true;}
+		if (ctrl_release . move (delta)) {action (ctrl_release . id, ctrl_release . value * 0.0078125); redraw = true;}
+		if (ctrl_freq . move (delta)) {action (ctrl_freq . id, ctrl_freq . value * 0.0078125); redraw = true;}
+		if (ctrl_drywet . move (delta)) {action (ctrl_drywet . id, ctrl_drywet . value * 0.0078125); redraw = true;}
+		if (ctrl_pan . move (delta)) {action (ctrl_pan . id, ctrl_pan . value * 0.0078125); redraw = true;}
+		if (ctrl_porta . move (delta)) {action (ctrl_porta . id, ctrl_porta . value * 0.0078125); redraw = true;}
+		if (ctrl_speed . move (delta)) {action (ctrl_speed . id, ctrl_speed . value * 0.0078125); redraw = true;}
+		if (ctrl_vibrato . move (delta)) {action (ctrl_vibrato . id, ctrl_vibrato . value * 0.0078125); redraw = true;}
+		if (vector . move (delta)) {action (vector . id, vector . position . x, vector . position . y); redraw = true;}
+		if (encoder . move (delta)) {value_change_action ((int) encoder . increment); redraw = true;}
+		if (pitch . move (delta)) {action (pitch . id, pitch . position * 128.0); redraw = true;}
+		if (modulation . move (delta)) {action (modulation . id, modulation . position * 128.0); redraw = true;}
+		if (redraw) update ();
+	}
+	void FunctionKey (int key, int state);
 	control_panel_action (GraphicResources * resources, PrologRoot * root, PrologDirectory * directory, PrologAtom * atom, PrologAtom * command, bool active) :
 	ctrl_volume (point (186.0, 5.0), 7, resources, false, active, 0.0, 16384.0),
 	ctrl_attack (point (268.0, 5.0), 73, resources, false, active, 0.0, 16384.0),
@@ -395,133 +529,10 @@ public:
 		delta_128 . engaged = true;
 		program_action (& selector0);
 	}
-	~ control_panel_action (void) {
-		command -> removeAtom ();
-	}
-	void redraw (cairo_t * cr) {
-		ctrl_volume . draw (cr);
-		ctrl_attack . draw (cr);
-		ctrl_decay . draw (cr);
-		ctrl_sustain . draw (cr);
-		ctrl_release . draw (cr);
-		ctrl_freq . draw (cr);
-		ctrl_drywet . draw (cr);
-		ctrl_pan . draw (cr);
-		ctrl_porta . draw (cr);
-		ctrl_speed . draw (cr);
-		ctrl_vibrato . draw (cr);
-		vector . draw (cr);
-		keyboard . draw (cr);
-		display . draw (cr);
-		selector0 . draw (cr);
-		selector1 . draw (cr);
-		selector2 . draw (cr);
-		selector3 . draw (cr);
-		selector4 . draw (cr);
-		selector5 . draw (cr);
-		selector6 . draw (cr);
-		selector7 . draw (cr);
-		selector8 . draw (cr);
-		selector9 . draw (cr);
-		program0 . draw (cr);
-		program1 . draw (cr);
-		program2 . draw (cr);
-		program3 . draw (cr);
-		program4 . draw (cr);
-		program5 . draw (cr);
-		program6 . draw (cr);
-		program7 . draw (cr);
-		program8 . draw (cr);
-		program9 . draw (cr);
-		add_one . draw (cr);
-		sub_one . draw (cr);
-		delta_1 . draw (cr);
-		delta_8 . draw (cr);
-		delta_128 . draw (cr);
-		encoder . draw (cr);
-		pitch . draw (cr);
-		modulation . draw (cr);
-		poly_mono . draw (cr);
-		porta_on_off . draw (cr);
-		store . draw (cr);
-		restore . draw (cr);
-		voice_init . draw (cr);
-	}
-	void MouseKeyon (point location) {}
-	void MouseKeyoff (point location) {}
-	void MouseMove (point delta) {}
-	void FunctionKey (int key, int state) {
-		bool redraw = false;
-		if (key >= 65470 && key <= 65481) {f_action (key - 65469 + 12 * state); return;}
-		switch (key) {
-		case 33: program_action (& selector0); redraw = true; break;
-		case 64: program_action (& selector1); redraw = true; break;
-		case 35: program_action (& selector2); redraw = true; break;
-		case 36: program_action (& selector3); redraw = true; break;
-		case 37: program_action (& selector4); redraw = true; break;
-		case 94: program_action (& selector5); redraw = true; break;
-		case 38: program_action (& selector6); redraw = true; break;
-		case 42: program_action (& selector7); redraw = true; break;
-		case 40: program_action (& selector8); redraw = true; break;
-		case 41: program_action (& selector9); redraw = true; break;
-		case 49: program_action (& program0); redraw = true; break;
-		case 50: program_action (& program1); redraw = true; break;
-		case 51: program_action (& program2); redraw = true; break;
-		case 52: program_action (& program3); redraw = true; break;
-		case 53: program_action (& program4); redraw = true; break;
-		case 54: program_action (& program5); redraw = true; break;
-		case 55: program_action (& program6); redraw = true; break;
-		case 56: program_action (& program7); redraw = true; break;
-		case 57: program_action (& program8); redraw = true; break;
-		case 48: program_action (& program9); redraw = true; break;
-		case 122:
-			delta_1 . engaged = true;
-			delta_8 . engaged = delta_128 . engaged = false;
-			current_delta = 1;
-			redraw = true;
-			break;
-		case 120:
-			delta_8 . engaged = true;
-			delta_1 . engaged = delta_128 . engaged = false;
-			current_delta = 8;
-			redraw = true;
-			break;
-		case 99:
-			delta_128 . engaged = true;
-			delta_1 . engaged = delta_8 . engaged = false;
-			current_delta = 128;
-			redraw = true;
-			break;
-		case 65361: value_change_action (-1); redraw = true; break;
-		case 65362: value_change_action (4); redraw = true; break;
-		case 65363: value_change_action (1); redraw = true; break;
-		case 65364: value_change_action (-4); redraw = true; break;
-		case 91: redraw = file_action ("Store", "Save File", viewport, this); break;
-		case 92: redraw = voice_init_action (); feedback (); break;
-		case 93: redraw = file_action ("Restore", "Load File", viewport, this); feedback (); break;
-		case 44:
-			poly_mono . engaged = ! poly_mono . engaged;
-			action (poly_mono . engaged ? 127 : 126, 0.0);
-			redraw = true;
-			break;
-		case 46:
-			porta_on_off . engaged = ! porta_on_off . engaged;
-			action (65, porta_on_off . engaged ? 1.0 : 0.0);
-			redraw = true;
-			break;
-		case 47: redraw = file_action ("START", "Record File", viewport, this); break;
-		case 32: stop_recording_action (); redraw = true; break;
-		case 97: change_selector (-1); redraw = true; break;
-		case 100: change_selector (1); redraw = true; break;
-		case 115: change_program (1); redraw = true; break;
-		case 119: change_program (-1); redraw = true; break;
-		default: return;
-		}
-		if (redraw) update ();
-	}
+	~ control_panel_action (void) {command -> removeAtom ();}
 };
 
-bool file_action (char * command, char * title, GtkWidget * viewport, control_panel_action * action) {
+static bool file_action (char * command, char * title, GtkWidget * viewport, control_panel_action * action) {
 	bool redraw = false;
 	GtkWidget * dialog = gtk_file_chooser_dialog_new (title, GTK_WINDOW (viewport),
 										GTK_FILE_CHOOSER_ACTION_SAVE, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT, NULL);
@@ -538,202 +549,113 @@ bool file_action (char * command, char * title, GtkWidget * viewport, control_pa
 	gtk_widget_destroy (dialog);
 	return redraw;
 }
-static gboolean ControlPanelButtonOn (GtkWidget * viewport, GdkEventKey * event, control_panel_action * action) {
+
+void control_panel_action :: MouseKeyoff (point location, int button) {
+	if (keyboard . keyoff (location)) {key_action (keyboard . key, 0);}
+	ctrl_volume . keyoff (location);
+	ctrl_attack . keyoff (location);
+	ctrl_decay . keyoff (location);
+	ctrl_sustain . keyoff (location);
+	ctrl_release . keyoff (location);
+	ctrl_freq . keyoff (location);
+	ctrl_drywet . keyoff (location);
+	ctrl_pan . keyoff (location);
+	ctrl_porta . keyoff (location);
+	ctrl_speed . keyoff (location);
+	ctrl_vibrato . keyoff (location);
+	vector . keyoff (location);
+	encoder . keyoff (location);
+	modulation . keyoff (location);
+	poly_mono . keyoff (location);
+	porta_on_off . keyoff (location);
 	bool redraw = false;
-	int key = (int) event -> keyval;
-	return FALSE;
+	if (pitch . keyoff (location)) {action (pitch . id, pitch . position * 128.0); redraw = true;}
+	if (add_one . keyoff (location)) {add_one . engaged = false; redraw = true;}
+	if (sub_one . keyoff (location)) {sub_one . engaged = false; redraw = true;}
+	if (store . keyoff (location)) {
+		file_action ("Store", "Save File", viewport, this);
+		store . engaged = false; redraw = true;
+	}
+	if (restore . keyoff (location)) {
+		file_action ("Restore", "Load File", viewport, this);
+		feedback ();
+		restore . engaged = false; redraw = true;
+	}
+	if (voice_init . keyoff (location)) {
+		if (voice_init_action ()) feedback ();
+		voice_init . engaged = false; redraw = true;
+	}
+	if (redraw) update ();
 }
-static gint ControlPanelKeyon (GtkWidget * viewport, GdkEventButton * event, control_panel_action * action) {
-	action -> captured_button = event -> button;
-	point location (event -> x, event -> y);
-	action -> captured_location = location;
-	if (action -> keyboard . keyon (location)) {action -> key_action (action -> keyboard . key, event -> button == 1 ? 100 : 0); return TRUE;}
-	action -> ctrl_volume . keyon (location);
-	action -> ctrl_attack . keyon (location);
-	action -> ctrl_decay . keyon (location);
-	action -> ctrl_sustain . keyon (location);
-	action -> ctrl_release . keyon (location);
-	action -> ctrl_freq . keyon (location);
-	action -> ctrl_drywet . keyon (location);
-	action -> ctrl_pan . keyon (location);
-	action -> ctrl_porta . keyon (location);
-	action -> ctrl_speed . keyon (location);
-	action -> ctrl_vibrato . keyon (location);
-	action -> vector . keyon (location);
-	action -> encoder . keyon (location);
-	action -> pitch . keyon (location);
-	action -> modulation . keyon (location);
+
+void control_panel_action :: FunctionKey (int key, int state) {
 	bool redraw = false;
-	if (action -> poly_mono . keyon (location)) {
-		action -> poly_mono . engaged = ! action -> poly_mono . engaged;
-		action -> action (action -> poly_mono . engaged ? 127 : 126, 0.0);
+	if (key >= 65470 && key <= 65481) {f_action (key - 65469 + 12 * state); return;}
+	switch (key) {
+	case 33: program_action (& selector0); redraw = true; break;
+	case 64: program_action (& selector1); redraw = true; break;
+	case 35: program_action (& selector2); redraw = true; break;
+	case 36: program_action (& selector3); redraw = true; break;
+	case 37: program_action (& selector4); redraw = true; break;
+	case 94: program_action (& selector5); redraw = true; break;
+	case 38: program_action (& selector6); redraw = true; break;
+	case 42: program_action (& selector7); redraw = true; break;
+	case 40: program_action (& selector8); redraw = true; break;
+	case 41: program_action (& selector9); redraw = true; break;
+	case 49: program_action (& program0); redraw = true; break;
+	case 50: program_action (& program1); redraw = true; break;
+	case 51: program_action (& program2); redraw = true; break;
+	case 52: program_action (& program3); redraw = true; break;
+	case 53: program_action (& program4); redraw = true; break;
+	case 54: program_action (& program5); redraw = true; break;
+	case 55: program_action (& program6); redraw = true; break;
+	case 56: program_action (& program7); redraw = true; break;
+	case 57: program_action (& program8); redraw = true; break;
+	case 48: program_action (& program9); redraw = true; break;
+	case 122:
+		delta_1 . engaged = true;
+		delta_8 . engaged = delta_128 . engaged = false;
+		current_delta = 1;
 		redraw = true;
-	}
-	if (action -> porta_on_off . keyon (location)) {
-		action -> porta_on_off . engaged = ! action -> porta_on_off . engaged;
-		action -> action (65, action -> porta_on_off . engaged ? 1.0 : 0.0);
+		break;
+	case 120:
+		delta_8 . engaged = true;
+		delta_1 . engaged = delta_128 . engaged = false;
+		current_delta = 8;
 		redraw = true;
-	}
-	if (action -> selector0 . keyon (location)) {action -> program_action (& action -> selector0); redraw = true;}
-	if (action -> selector1 . keyon (location)) {action -> program_action (& action -> selector1); redraw = true;}
-	if (action -> selector2 . keyon (location)) {action -> program_action (& action -> selector2); redraw = true;}
-	if (action -> selector3 . keyon (location)) {action -> program_action (& action -> selector3); redraw = true;}
-	if (action -> selector4 . keyon (location)) {action -> program_action (& action -> selector4); redraw = true;}
-	if (action -> selector5 . keyon (location)) {action -> program_action (& action -> selector5); redraw = true;}
-	if (action -> selector6 . keyon (location)) {action -> program_action (& action -> selector6); redraw = true;}
-	if (action -> selector7 . keyon (location)) {action -> program_action (& action -> selector7); redraw = true;}
-	if (action -> selector8 . keyon (location)) {action -> program_action (& action -> selector8); redraw = true;}
-	if (action -> selector9 . keyon (location)) {action -> program_action (& action -> selector9); redraw = true;}
-	if (action -> program0 . keyon (location)) {action -> program_action (& action -> program0); redraw = true;}
-	if (action -> program1 . keyon (location)) {action -> program_action (& action -> program1); redraw = true;}
-	if (action -> program2 . keyon (location)) {action -> program_action (& action -> program2); redraw = true;}
-	if (action -> program3 . keyon (location)) {action -> program_action (& action -> program3); redraw = true;}
-	if (action -> program4 . keyon (location)) {action -> program_action (& action -> program4); redraw = true;}
-	if (action -> program5 . keyon (location)) {action -> program_action (& action -> program5); redraw = true;}
-	if (action -> program6 . keyon (location)) {action -> program_action (& action -> program6); redraw = true;}
-	if (action -> program7 . keyon (location)) {action -> program_action (& action -> program7); redraw = true;}
-	if (action -> program8 . keyon (location)) {action -> program_action (& action -> program8); redraw = true;}
-	if (action -> program9 . keyon (location)) {action -> program_action (& action -> program9); redraw = true;}
-	if (action -> delta_1 . keyon (location)) {
-		action -> delta_1 . engaged = true; action -> delta_8 . engaged = action -> delta_128 . engaged = false;
-		action -> current_delta = 1; redraw = true;
-	}
-	if (action -> delta_8 . keyon (location)) {
-		action -> delta_8 . engaged = true; action -> delta_1 . engaged = action -> delta_128 . engaged = false;
-		action -> current_delta = 8; redraw = true;
-	}
-	if (action -> delta_128 . keyon (location)) {
-		action -> delta_128 . engaged = true; action -> delta_1 . engaged = action -> delta_8 . engaged = false;
-		action -> current_delta = 128; redraw = true;
-	}
-	if (action -> add_one . keyon (location)) {action -> value_change_action (1); action -> add_one . engaged = true; redraw = true;}
-	if (action -> sub_one . keyon (location)) {action -> value_change_action (-1); action -> sub_one . engaged = true; redraw = true;}
-	if (action -> store . keyon (location)) redraw = action -> store . engaged = true;
-	if (action -> restore . keyon (location)) redraw = action -> restore . engaged = true;
-	if (action -> voice_init . keyon (location)) redraw = action -> voice_init . engaged = true;
-	if (redraw) gtk_widget_queue_draw (viewport);
-	return TRUE;
-}
-static gint ControlPanelKeyoff (GtkWidget * viewport, GdkEventButton * event, control_panel_action * action) {
-	point location (event -> x, event -> y);
-	if (action -> keyboard . keyoff (location)) {action -> key_action (action -> keyboard . key, 0);}
-	action -> ctrl_volume . keyoff (location);
-	action -> ctrl_attack . keyoff (location);
-	action -> ctrl_decay . keyoff (location);
-	action -> ctrl_sustain . keyoff (location);
-	action -> ctrl_release . keyoff (location);
-	action -> ctrl_freq . keyoff (location);
-	action -> ctrl_drywet . keyoff (location);
-	action -> ctrl_pan . keyoff (location);
-	action -> ctrl_porta . keyoff (location);
-	action -> ctrl_speed . keyoff (location);
-	action -> ctrl_vibrato . keyoff (location);
-	action -> vector . keyoff (location);
-	action -> encoder . keyoff (location);
-	action -> modulation . keyoff (location);
-	action -> poly_mono . keyoff (location);
-	action -> porta_on_off . keyoff (location);
-	bool redraw = false;
-	if (action -> pitch . keyoff (location)) {action -> action (action -> pitch . id, action -> pitch . position * 128.0); redraw = true;}
-	if (action -> add_one . keyoff (location)) {action -> add_one . engaged = false; redraw = true;}
-	if (action -> sub_one . keyoff (location)) {action -> sub_one . engaged = false; redraw = true;}
-	if (action -> store . keyoff (location)) {
-		file_action ("Store", "Save File", viewport, action);
-		action -> store . engaged = false; redraw = true;
-	}
-	if (action -> restore . keyoff (location)) {
-		file_action ("Restore", "Load File", viewport, action);
-		action -> feedback ();
-		action -> restore . engaged = false; redraw = true;
-	}
-	if (action -> voice_init . keyoff (location)) {
-		if (action -> voice_init_action ()) action -> feedback ();
-		action -> voice_init . engaged = false; redraw = true;
-	}
-	if (redraw) gtk_widget_queue_draw (viewport);
-	return TRUE;
-}
-static gint ControlPanelMove (GtkWidget * viewport, GdkEventButton * event, control_panel_action * action) {
-	point location (event -> x, event -> y);
-	point delta = location - action -> captured_location;
-	if (action -> captured_button > 1) delta *= 0.0078125;
-	action -> captured_location = location;
-	bool redraw = false;
-	if (action -> ctrl_volume . move (delta)) {action -> action (action -> ctrl_volume . id, action -> ctrl_volume . value * 0.0078125); redraw = true;}
-	if (action -> ctrl_attack . move (delta)) {action -> action (action -> ctrl_attack . id, action -> ctrl_attack . value * 0.0078125); redraw = true;}
-	if (action -> ctrl_decay . move (delta)) {action -> action (action -> ctrl_decay . id, action -> ctrl_decay . value * 0.0078125); redraw = true;}
-	if (action -> ctrl_sustain . move (delta)) {action -> action (action -> ctrl_sustain . id, action -> ctrl_sustain . value * 0.0078125); redraw = true;}
-	if (action -> ctrl_release . move (delta)) {action -> action (action -> ctrl_release . id, action -> ctrl_release . value * 0.0078125); redraw = true;}
-	if (action -> ctrl_freq . move (delta)) {action -> action (action -> ctrl_freq . id, action -> ctrl_freq . value * 0.0078125); redraw = true;}
-	if (action -> ctrl_drywet . move (delta)) {action -> action (action -> ctrl_drywet . id, action -> ctrl_drywet . value * 0.0078125); redraw = true;}
-	if (action -> ctrl_pan . move (delta)) {action -> action (action -> ctrl_pan . id, action -> ctrl_pan . value * 0.0078125); redraw = true;}
-	if (action -> ctrl_porta . move (delta)) {action -> action (action -> ctrl_porta . id, action -> ctrl_porta . value * 0.0078125); redraw = true;}
-	if (action -> ctrl_speed . move (delta)) {action -> action (action -> ctrl_speed . id, action -> ctrl_speed . value * 0.0078125); redraw = true;}
-	if (action -> ctrl_vibrato . move (delta)) {action -> action (action -> ctrl_vibrato . id, action -> ctrl_vibrato . value * 0.0078125); redraw = true;}
-	if (action -> vector . move (delta)) {
-		action -> action (action -> vector . id, action -> vector . position . x, action -> vector . position . y);
+		break;
+	case 99:
+		delta_128 . engaged = true;
+		delta_1 . engaged = delta_8 . engaged = false;
+		current_delta = 128;
 		redraw = true;
+		break;
+	case 65361: value_change_action (-1); redraw = true; break;
+	case 65362: value_change_action (4); redraw = true; break;
+	case 65363: value_change_action (1); redraw = true; break;
+	case 65364: value_change_action (-4); redraw = true; break;
+	case 91: redraw = file_action ("Store", "Save File", viewport, this); break;
+	case 92: redraw = voice_init_action (); feedback (); break;
+	case 93: redraw = file_action ("Restore", "Load File", viewport, this); feedback (); break;
+	case 44:
+		poly_mono . engaged = ! poly_mono . engaged;
+		action (poly_mono . engaged ? 127 : 126, 0.0);
+		redraw = true;
+		break;
+	case 46:
+		porta_on_off . engaged = ! porta_on_off . engaged;
+		action (65, porta_on_off . engaged ? 1.0 : 0.0);
+		redraw = true;
+		break;
+	case 47: redraw = file_action ("START", "Record File", viewport, this); break;
+	case 32: stop_recording_action (); redraw = true; break;
+	case 97: change_selector (-1); redraw = true; break;
+	case 100: change_selector (1); redraw = true; break;
+	case 115: change_program (1); redraw = true; break;
+	case 119: change_program (-1); redraw = true; break;
+	default: return;
 	}
-	if (action -> encoder . move (delta)) {action -> value_change_action ((int) action -> encoder . increment); redraw = true;}
-	if (action -> pitch . move (delta)) {action -> action (action -> pitch . id, action -> pitch . position * 128.0); redraw = true;}
-	if (action -> modulation . move (delta)) {action -> action (action -> modulation . id, action -> modulation . position * 128.0); redraw = true;}
-	if (redraw) gtk_widget_queue_draw (viewport);
-	return TRUE;
-}
-static gboolean dnd_drop (GtkWidget * widget, GdkDragContext * context, gint x, gint y, guint time, gpointer * ptr) {
-	GdkAtom target_type;
-	if (context -> targets) {
-		target_type = GDK_POINTER_TO_ATOM (g_list_nth_data (context -> targets, 0));
-		gtk_drag_get_data (widget, context, target_type, time);
-	} else return FALSE;
-	return TRUE;
-}
-static gboolean dnd_motion (GtkWidget * widget, GdkDragContext * context, gint x, gint y, GtkSelectionData * gsd, guint ttype, guint time, gpointer * ptr) {return TRUE;}
-static void dnd_leave (GtkWidget * widget, GdkDragContext * context, guint time, gpointer * ptr) {}
-static void dnd_receive (GtkWidget * widget, GdkDragContext * context, gint x, gint y, GtkSelectionData * data, guint ttype, guint time, PrologRoot * root) {
-	PrologDirectory * LunarDirectory = root -> searchDirectory ("lunar");
-	if (LunarDirectory == 0) return;
-	PrologAtom * LunarDrop = LunarDirectory -> searchAtom ("LunarDrop");
-	if (LunarDrop == 0) return;
-	gchar * ptr = (char *) data -> data;
-	char command [4096];
-	PrologElement * query = root -> earth ();
-	while (strncmp (ptr, "file:///", 8) == 0) {
-		ptr += 7;
-		char * cp = command;
-		while (* ptr >= ' ') * cp++ = * ptr++; * cp = '\0';
-		query = root -> pair (root -> text (command), query);
-		while (* ptr > '\0' && * ptr <= ' ') ptr++;
-	}
-	query = root -> pair (root -> integer ((int) y), query);
-	query = root -> pair (root -> integer ((int) x), query);
-	query = root -> pair (root -> atom (LunarDrop), query);
-	query = root -> pair (root -> earth (), root -> pair (query, root -> earth ()));
-	root -> resolution (query);
-	delete query;
-}
-static gboolean CreateControlPanelIdleCode (control_panel_action * action) {
-	action -> viewport = gtk_window_new (GTK_WINDOW_TOPLEVEL);
-	gtk_window_set_title (GTK_WINDOW (action -> viewport), action -> atom -> name ());
-	GtkWidget * area = gtk_drawing_area_new ();
-	gtk_container_add (GTK_CONTAINER (action -> viewport), area);
-	gtk_widget_add_events (action -> viewport, GDK_BUTTON_PRESS_MASK | GDK_POINTER_MOTION_MASK | GDK_BUTTON_RELEASE_MASK);
-	g_signal_connect (G_OBJECT (action -> viewport), "button_press_event", G_CALLBACK (ControlPanelKeyon), action);
-	g_signal_connect (G_OBJECT (action -> viewport), "button_release_event", G_CALLBACK (ControlPanelKeyoff), action);
-	g_signal_connect (G_OBJECT (action -> viewport), "motion_notify_event", G_CALLBACK (ControlPanelMove), action);
-	g_signal_connect (G_OBJECT (action -> viewport), "key-press-event", G_CALLBACK (ControlPanelButtonOn), action);
-	if (action -> background_image == 0) gtk_window_resize (GTK_WINDOW (action -> viewport), 1300, 420);
-	else gtk_window_resize (GTK_WINDOW (action -> viewport),
-								cairo_image_surface_get_width (action -> background_image),
-								cairo_image_surface_get_height (action -> background_image));
-	const GtkTargetEntry targets [2] = {{"text/plain", 0, 0}, {"application/x-rootwindow-drop", 0, 0}};
-	gtk_drag_dest_set (area, GTK_DEST_DEFAULT_ALL, targets, 2, GDK_ACTION_COPY);
-	g_signal_connect (area, "drag-drop", G_CALLBACK (dnd_drop), 0);
-	g_signal_connect (area, "drag-motion", G_CALLBACK (dnd_motion), 0);
-	g_signal_connect (area, "drag-data-received", G_CALLBACK (dnd_receive), action -> root);
-	g_signal_connect (area, "drag-leave", G_CALLBACK (dnd_leave), 0);
-	gtk_widget_show_all (action -> viewport);
-	return FALSE;
+	if (redraw) update ();
 }
 
 bool control_panel_class :: code (PrologElement * parameters, PrologResolution * resolution) {

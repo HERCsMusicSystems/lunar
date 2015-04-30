@@ -47,7 +47,7 @@ public:
 		if (pan != 0) {cairo_set_source_surface (cr, pan_image, 226, 104); cairo_paint (cr); PAN . draw (cr);}
 		SYNC . draw (cr);
 	}
-	void MouseKeyon (point location) {
+	void MouseKeyon (point location, int button) {
 		SPEED . keyon (location);
 		WAVE . keyon (location);
 		PULSE . keyon (location);
@@ -62,7 +62,7 @@ public:
 			update ();
 		}
 	}
-	void MouseKeyoff (point location) {
+	void MouseKeyoff (point location, int button) {
 		SPEED . keyoff (location);
 		WAVE . keyoff (location);
 		PULSE . keyoff (location);
@@ -145,6 +145,7 @@ public:
 			el = el -> getRight (); if (! el -> isPair ()) {delete query; return;} sub = el -> getLeft ();
 			if (sub -> isNumber ()) PHASE . setValue (sub -> getNumber ());
 			el = el -> getRight (); if (! el -> isPair ()) {delete query; return;} sub = el -> getLeft ();
+
 			if (sub -> isNumber ()) SYNC . engaged = (sub -> getNumber () != 0.0);
 			el = el -> getRight (); if (! el -> isPair ()) {delete query; return;} sub = el -> getLeft ();
 			if (sub -> isNumber ()) VIBRATO . setValue (sub -> getNumber ());

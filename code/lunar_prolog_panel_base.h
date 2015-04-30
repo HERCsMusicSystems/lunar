@@ -47,8 +47,8 @@ public:
 	bool code (PrologElement * parameter, PrologResolution * resolution);
 	void BuildPanel (void);
 	virtual void redraw (cairo_t * cr) = 0;
-	virtual void MouseKeyon (point location) = 0;
-	virtual void MouseKeyoff (point location) = 0;
+	virtual void MouseKeyon (point location, int button) = 0;
+	virtual void MouseKeyoff (point location, int button) = 0;
 	virtual void MouseMove (point delta) = 0;
 	virtual void FunctionKey (int key, int state) = 0;
 	virtual void feedback (void) = 0;

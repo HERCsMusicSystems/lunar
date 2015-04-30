@@ -51,8 +51,8 @@ public:
 		delete query;
 	}
 	void redraw (cairo_t * cr) {ctrl . draw (cr);}
-	void MouseKeyon (point location) {ctrl . keyon (location);}
-	void MouseKeyoff (point location) {ctrl . keyoff (location);}
+	void MouseKeyon (point location, int button) {ctrl . keyon (location);}
+	void MouseKeyoff (point location, int button) {ctrl . keyoff (location);}
 	void MouseMove (point delta) {if (ctrl . move (delta)) {move (); update ();}}
 	void FunctionKey (int key, int state) {}
 	parameter_block_panel_action (GraphicResources * resources, PrologRoot * root, PrologDirectory * directory, PrologAtom * atom, PrologAtom * command, bool active) :

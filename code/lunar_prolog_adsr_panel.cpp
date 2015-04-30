@@ -92,8 +92,8 @@ public:
 		}
 		delete query;
 	}
-	void MouseKeyon (point location) {A . keyon (location); D . keyon (location); S . keyon (location); R . keyon (location);}
-	void MouseKeyoff (point location) {A . keyoff (location); D . keyoff (location); S . keyoff (location); R . keyoff (location);}
+	void MouseKeyon (point location, int button) {A . keyon (location); D . keyon (location); S . keyon (location); R . keyon (location);}
+	void MouseKeyoff (point location, int button) {A . keyoff (location); D . keyoff (location); S . keyoff (location); R . keyoff (location);}
 	void MouseMove (point delta) {
 		bool redraw = false;
 		if (A . move (delta)) {move (0); redraw = true;}

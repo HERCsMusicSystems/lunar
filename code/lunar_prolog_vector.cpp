@@ -70,8 +70,8 @@ public:
 		cairo_paint (cr);
 		cairo_surface_destroy (sub);
 	}
-	void MouseKeyon (point location) {on = true;}
-	void MouseKeyoff (point location) {on = false;}
+	void MouseKeyon (point location, int button) {on = true;}
+	void MouseKeyoff (point location, int button) {on = false;}
 	void MouseMove (point delta) {
 		if (on) {
 			position -= delta * 0.25;

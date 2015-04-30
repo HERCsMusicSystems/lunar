@@ -52,13 +52,13 @@ static gint AudioModulePanelKeyon (GtkWidget * viewport, GdkEventButton * event,
 	action -> captured_button = event -> button;
 	point location (event -> x, event -> y);
 	action -> captured_location = location;
-	action -> MouseKeyon (location);
+	action -> MouseKeyon (location, (int) event -> button);
 	return TRUE;
 }
 
 static gint AudioModulePanelKeyoff (GtkWidget * viewport, GdkEventButton * event, AudioModulePanel * action) {
 	point location (event -> x, event -> y);
-	action -> MouseKeyoff (location);
+	action -> MouseKeyoff (location, (int) event -> button);
 	return TRUE;
 }
 
@@ -69,6 +69,11 @@ static gint AudioModulePanelMove (GtkWidget * viewport, GdkEventButton * event, 
 	action -> captured_location = location;
 	action -> MouseMove (delta);
 	return TRUE;
+}
+
+static gboolean AudioModulePanelFunctionKey (GtkWidget * widget, GdkEventKey * event, AudioModulePanel * action) {
+	action -> FunctionKey ((int) event -> keyval, (int) event -> state);
+	return FALSE;
 }
 
 static gboolean dnd_drop (GtkWidget * widget, GdkDragContext * context, gint x, gint y, guint time, gpointer * ptr) {
@@ -118,6 +123,7 @@ gboolean CreateAudioModulePanelIdleCode (AudioModulePanel * action) {
 	g_signal_connect (G_OBJECT (action -> viewport), "button_press_event", G_CALLBACK (AudioModulePanelKeyon), action);
 	g_signal_connect (G_OBJECT (action -> viewport), "button_release_event", G_CALLBACK (AudioModulePanelKeyoff), action);
 	g_signal_connect (G_OBJECT (action -> viewport), "motion_notify_event", G_CALLBACK (AudioModulePanelMove), action);
+	g_signal_connect (G_OBJECT (action -> viewport), "key-press-event", G_CALLBACK (AudioModulePanelFunctionKey), action);
 	if (action -> background_image != 0) gtk_window_resize (GTK_WINDOW (action -> viewport),
 											cairo_image_surface_get_width (action -> background_image),
 											cairo_image_surface_get_height (action -> background_image));

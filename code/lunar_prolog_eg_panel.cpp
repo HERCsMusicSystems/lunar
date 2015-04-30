@@ -97,11 +97,11 @@ public:
 		T1 . draw (cr); T2 . draw (cr); T3 . draw (cr); T4 . draw (cr);
 		L1 . draw (cr); L2 . draw (cr); L3 . draw (cr); L4 . draw (cr);
 	}
-	void MouseKeyon (point location) {
+	void MouseKeyon (point location, int button) {
 		T1 . keyon (location); T2 . keyon (location); T3 . keyon (location); T4 . keyon (location);
 		L1 . keyon (location); L2 . keyon (location); L3 . keyon (location); L4 . keyon (location);
 	}
-	void MouseKeyoff (point location) {
+	void MouseKeyoff (point location, int button) {
 		T1 . keyoff (location); T2 . keyoff (location); T3 . keyoff (location); T4 . keyoff (location);
 		L1 . keyoff (location); L2 . keyoff (location); L3 . keyoff (location); L4 . keyoff (location);
 	}

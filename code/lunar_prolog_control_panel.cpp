@@ -105,27 +105,27 @@ public:
 		var = var -> getRight (); if (! var -> isPair ()) {delete query; return;} el = var -> getLeft ();
 		if (el -> isDouble ()) {x = el -> getDouble () * 0.015625; x -= 1.0; if (x < -1.0) x = -1.0; if (x > 1.0) x = 1.0; vector . position . y = x;}
 		var = var -> getRight (); if (! var -> isPair ()) {delete query; return;} el = var -> getLeft ();
-		if (el -> isDouble ()) {x = el -> getDouble () * 0.0078125; if (x < -1.0) x = -1.0; if (x > 1.0) x = 1.0; ctrl_volume . angle = x;}
+		if (el -> isDouble ()) ctrl_volume . setValue (el -> getDouble () * 128.0);
 		var = var -> getRight (); if (! var -> isPair ()) {delete query; return;} el = var -> getLeft ();
-		if (el -> isDouble ()) {x = el -> getDouble () * 0.0078125; if (x < 0.0) x = 0.0; if (x > 1.0) x = 1.0; ctrl_attack . angle = x;}
+		if (el -> isDouble ()) ctrl_attack . setValue (el -> getDouble () * 128.0);
 		var = var -> getRight (); if (! var -> isPair ()) {delete query; return;} el = var -> getLeft ();
-		if (el -> isDouble ()) {x = el -> getDouble () * 0.0078125; if (x < 0.0) x = 0.0; if (x > 1.0) x = 1.0; ctrl_decay . angle = x;}
+		if (el -> isDouble ()) ctrl_decay . setValue (el -> getDouble () * 128.0);
 		var = var -> getRight (); if (! var -> isPair ()) {delete query; return;} el = var -> getLeft ();
-		if (el -> isDouble ()) {x = el -> getDouble () * 0.0078125; if (x < 0.0) x = 0.0; if (x > 1.0) x = 1.0; ctrl_sustain . angle = x;}
+		if (el -> isDouble ()) ctrl_sustain . setValue (el -> getDouble () * 128.0);
 		var = var -> getRight (); if (! var -> isPair ()) {delete query; return;} el = var -> getLeft ();
-		if (el -> isDouble ()) {x = el -> getDouble () * 0.0078125; if (x < 0.0) x = 0.0; if (x > 1.0) x = 1.0; ctrl_release . angle = x;}
+		if (el -> isDouble ()) ctrl_release . setValue (el -> getDouble () * 128.0);
 		var = var -> getRight (); if (! var -> isPair ()) {delete query; return;} el = var -> getLeft ();
-		if (el -> isDouble ()) {x = el -> getDouble () * 0.0078125; if (x < 0.0) x = 0.0; if (x > 1.0) x = 1.0; ctrl_freq . angle = x;}
+		if (el -> isDouble ()) ctrl_freq . setValue (el -> getDouble () * 128.0);
 		var = var -> getRight (); if (! var -> isPair ()) {delete query; return;} el = var -> getLeft ();
-		if (el -> isDouble ()) {x = el -> getDouble () * 0.0078125; if (x < 0.0) x = 0.0; if (x > 1.0) x = 1.0; ctrl_drywet . angle = x;}
+		if (el -> isDouble ()) ctrl_drywet . setValue (el -> getDouble () * 128.0);
 		var = var -> getRight (); if (! var -> isPair ()) {delete query; return;} el = var -> getLeft ();
-		if (el -> isDouble ()) {x = el -> getDouble () * 0.0078125; if (x < 0.0) x = 0.0; if (x > 1.0) x = 1.0; ctrl_pan . angle = x;}
+		if (el -> isDouble ()) ctrl_pan . setValue (el -> getDouble () * 128.0);
 		var = var -> getRight (); if (! var -> isPair ()) {delete query; return;} el = var -> getLeft ();
-		if (el -> isDouble ()) {x = el -> getDouble () * 0.0078125; if (x < 0.0) x = 0.0; if (x > 1.0) x = 1.0; ctrl_porta . angle = x;}
+		if (el -> isDouble ()) ctrl_porta . setValue (el -> getDouble () * 128.0);
 		var = var -> getRight (); if (! var -> isPair ()) {delete query; return;} el = var -> getLeft ();
-		if (el -> isDouble ()) {x = el -> getDouble () * 0.0078125; if (x < 0.0) x = 0.0; if (x > 1.0) x = 1.0; ctrl_speed . angle = x;}
+		if (el -> isDouble ()) ctrl_speed . setValue (el -> getDouble () * 128.0);
 		var = var -> getRight (); if (! var -> isPair ()) {delete query; return;} el = var -> getLeft ();
-		if (el -> isDouble ()) {x = el -> getDouble () * 0.0078125; if (x < 0.0) x = 0.0; if (x > 1.0) x = 1.0; ctrl_vibrato . angle = x;}
+		if (el -> isDouble ()) ctrl_vibrato . setValue (el -> getDouble () * 128.0);
 		delete query;
 	}
 	void reset_selectors (void) {
@@ -243,7 +243,7 @@ public:
 		PrologElement * query = root -> pair (root -> atom (command),
 								root -> pair (root -> var (0),
 								root -> pair (root -> integer (ind),
-								root -> pair (root -> Double (value * 128.0),
+								root -> pair (root -> Double (value),
 								root -> earth ()))));
 		query = root -> pair (root -> var (0), root -> pair (query, root -> earth ()));
 		if (root -> resolution (query) == 1) {
@@ -350,17 +350,17 @@ public:
 	}
 	bool code (PrologElement * parameters, PrologResolution * resolution);
 	control_panel_action (GraphicResources * resources, PrologRoot * root, PrologDirectory * directory, PrologAtom * atom, PrologAtom * command, bool active) :
-	ctrl_volume (point (186.0, 5.0), 7, resources, active),
-	ctrl_attack (point (268.0, 5.0), 73, resources, active),
-	ctrl_decay (point (338.0, 5.0), 93, resources, active),
-	ctrl_sustain (point (408.0, 5.0), 94, resources, active),
-	ctrl_release (point (478.0, 5.0), 72, resources, active),
-	ctrl_freq (point (218.0, 90.0), 74, resources, active),
-	ctrl_drywet (point (288.0, 90.0), 91, resources, active),
-	ctrl_pan (point (358.0, 90.0), 10, resources, active),
-	ctrl_porta (point (442.0, 90.0), 11, resources, active),
-	ctrl_speed (point (512.0, 90.0), 95, resources, active),
-	ctrl_vibrato (point (582.0, 90.0), 71, resources, active),
+	ctrl_volume (point (186.0, 5.0), 7, resources, false, active, 0.0, 16384.0),
+	ctrl_attack (point (268.0, 5.0), 73, resources, false, active, 0.0, 16384.0),
+	ctrl_decay (point (338.0, 5.0), 93, resources, false, active, 0.0, 16384.0),
+	ctrl_sustain (point (408.0, 5.0), 94, resources, false, active, 0.0, 16384.0),
+	ctrl_release (point (478.0, 5.0), 72, resources, false, active, 0.0, 16384.0),
+	ctrl_freq (point (218.0, 90.0), 74, resources, false, active, 0.0, 16384.0),
+	ctrl_drywet (point (288.0, 90.0), 91, resources, false, active, 0.0, 16384.0),
+	ctrl_pan (point (358.0, 90.0), 10, resources, false, active, 0.0, 16384.0),
+	ctrl_porta (point (442.0, 90.0), 11, resources, false, active, 0.0, 16384.0),
+	ctrl_speed (point (512.0, 90.0), 95, resources, false, active, 0.0, 16384.0),
+	ctrl_vibrato (point (582.0, 90.0), 71, resources, false, active, 0.0, 16384.0),
 	vector (point (12.0, -2.0), 12, resources, 0.25, active),
 	keyboard (point (114.0, 194.0), 2, 6, resources, active),
 	display (point (542.0, -7.0), 7, resources, active),
@@ -413,7 +413,6 @@ public:
 		current_delta = 128;
 		delta_128 . engaged = true;
 		program_action (& selector0);
-		feedback_on_controllers ();
 	}
 	~ control_panel_action (void) {
 		atom -> setMachine (0);
@@ -683,7 +682,7 @@ static gint ControlPanelKeyoff (GtkWidget * viewport, GdkEventButton * event, co
 	action -> poly_mono . keyoff (location);
 	action -> porta_on_off . keyoff (location);
 	bool redraw = false;
-	if (action -> pitch . keyoff (location)) {action -> action (action -> pitch . id, action -> pitch . position); redraw = true;}
+	if (action -> pitch . keyoff (location)) {action -> action (action -> pitch . id, action -> pitch . position * 128.0); redraw = true;}
 	if (action -> add_one . keyoff (location)) {action -> add_one . engaged = false; redraw = true;}
 	if (action -> sub_one . keyoff (location)) {action -> sub_one . engaged = false; redraw = true;}
 	if (action -> store . keyoff (location)) {
@@ -708,24 +707,24 @@ static gint ControlPanelMove (GtkWidget * viewport, GdkEventButton * event, cont
 	if (action -> captured_button > 1) delta *= 0.0078125;
 	action -> captured = location;
 	bool redraw = false;
-	if (action -> ctrl_volume . move (delta)) {action -> action (action -> ctrl_volume . id, action -> ctrl_volume . angle); redraw = true;}
-	if (action -> ctrl_attack . move (delta)) {action -> action (action -> ctrl_attack . id, action -> ctrl_attack . angle); redraw = true;}
-	if (action -> ctrl_decay . move (delta)) {action -> action (action -> ctrl_decay . id, action -> ctrl_decay . angle); redraw = true;}
-	if (action -> ctrl_sustain . move (delta)) {action -> action (action -> ctrl_sustain . id, action -> ctrl_sustain . angle); redraw = true;}
-	if (action -> ctrl_release . move (delta)) {action -> action (action -> ctrl_release . id, action -> ctrl_release . angle); redraw = true;}
-	if (action -> ctrl_freq . move (delta)) {action -> action (action -> ctrl_freq . id, action -> ctrl_freq . angle); redraw = true;}
-	if (action -> ctrl_drywet . move (delta)) {action -> action (action -> ctrl_drywet . id, action -> ctrl_drywet . angle); redraw = true;}
-	if (action -> ctrl_pan . move (delta)) {action -> action (action -> ctrl_pan . id, action -> ctrl_pan . angle); redraw = true;}
-	if (action -> ctrl_porta . move (delta)) {action -> action (action -> ctrl_porta . id, action -> ctrl_porta . angle); redraw = true;}
-	if (action -> ctrl_speed . move (delta)) {action -> action (action -> ctrl_speed . id, action -> ctrl_speed . angle); redraw = true;}
-	if (action -> ctrl_vibrato . move (delta)) {action -> action (action -> ctrl_vibrato . id, action -> ctrl_vibrato . angle); redraw = true;}
+	if (action -> ctrl_volume . move (delta)) {action -> action (action -> ctrl_volume . id, action -> ctrl_volume . value * 0.0078125); redraw = true;}
+	if (action -> ctrl_attack . move (delta)) {action -> action (action -> ctrl_attack . id, action -> ctrl_attack . value * 0.0078125); redraw = true;}
+	if (action -> ctrl_decay . move (delta)) {action -> action (action -> ctrl_decay . id, action -> ctrl_decay . value * 0.0078125); redraw = true;}
+	if (action -> ctrl_sustain . move (delta)) {action -> action (action -> ctrl_sustain . id, action -> ctrl_sustain . value * 0.0078125); redraw = true;}
+	if (action -> ctrl_release . move (delta)) {action -> action (action -> ctrl_release . id, action -> ctrl_release . value * 0.0078125); redraw = true;}
+	if (action -> ctrl_freq . move (delta)) {action -> action (action -> ctrl_freq . id, action -> ctrl_freq . value * 0.0078125); redraw = true;}
+	if (action -> ctrl_drywet . move (delta)) {action -> action (action -> ctrl_drywet . id, action -> ctrl_drywet . value * 0.0078125); redraw = true;}
+	if (action -> ctrl_pan . move (delta)) {action -> action (action -> ctrl_pan . id, action -> ctrl_pan . value * 0.0078125); redraw = true;}
+	if (action -> ctrl_porta . move (delta)) {action -> action (action -> ctrl_porta . id, action -> ctrl_porta . value * 0.0078125); redraw = true;}
+	if (action -> ctrl_speed . move (delta)) {action -> action (action -> ctrl_speed . id, action -> ctrl_speed . value * 0.0078125); redraw = true;}
+	if (action -> ctrl_vibrato . move (delta)) {action -> action (action -> ctrl_vibrato . id, action -> ctrl_vibrato . value * 0.0078125); redraw = true;}
 	if (action -> vector . move (delta)) {
 		action -> action (action -> vector . id, action -> vector . position . x, action -> vector . position . y);
 		redraw = true;
 	}
 	if (action -> encoder . move (delta)) {action -> value_change_action ((int) action -> encoder . increment); redraw = true;}
-	if (action -> pitch . move (delta)) {action -> action (action -> pitch . id, action -> pitch . position); redraw = true;}
-	if (action -> modulation . move (delta)) {action -> action (action -> modulation . id, action -> modulation . position); redraw = true;}
+	if (action -> pitch . move (delta)) {action -> action (action -> pitch . id, action -> pitch . position * 128.0); redraw = true;}
+	if (action -> modulation . move (delta)) {action -> action (action -> modulation . id, action -> modulation . position * 128.0); redraw = true;}
 	if (redraw) gtk_widget_queue_draw (viewport);
 	return TRUE;
 }

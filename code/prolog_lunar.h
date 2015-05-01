@@ -136,10 +136,12 @@ public:
 
 class oscilloscope_class : public PrologNativeOrbiterCreator {
 public:
+	enum types {OSCILLOSCOPE = 0, SPECTROSCOPE};
+	types type;
 	virtual orbiter * create_orbiter (PrologElement * parameters);
 	virtual PrologNativeOrbiter * create_native_orbiter (PrologAtom * atom, orbiter * module);
 	virtual void code_created (PrologNativeOrbiter * machine);
-	oscilloscope_class (orbiter_core * core);
+	oscilloscope_class (orbiter_core * core, types type = OSCILLOSCOPE);
 };
 
 class core_class : public PrologNativeCode {

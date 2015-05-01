@@ -37,17 +37,20 @@ public:
 	GtkWidget * viewport;
 	bool no_redraw;
 	double wave [256];
+	double fft [256];
 	int frame_count;
+	oscilloscope_class :: types type;
 	point location;
 	virtual int numberOfInputs (void) {return numberOfOutputs ();}
 	virtual char * inputName (int ind) {return outputName (ind);}
 	virtual double * inputAddress (int ind) {return outputAddress (ind);}
 	virtual void move (void);
-	lunar_oscilloscope (orbiter_core * core) : orbiter (core) {
+	lunar_oscilloscope (orbiter_core * core, oscilloscope_class :: types type) : orbiter (core) {
+		this -> type = type;
 		viewport = 0;
 		no_redraw = false;
 		frame_count = 0;
-		for (int ind = 0; ind < 256; ind++) wave [ind] = 0;
+		for (int ind = 0; ind < 256; ind++) fft [ind] = wave [ind] = 0;
 		initialise (); activate ();
 	}
 };
@@ -58,25 +61,44 @@ void lunar_oscilloscope :: move (void) {
 	if (frame_count == 0 && signal < 0.0) return;
 	wave [frame_count++] = signal;
 	if (frame_count < 256) return;
-	frame_count = -2000;
+	switch (type) {
+	case oscilloscope_class :: OSCILLOSCOPE: frame_count -= 2000; break;
+	case oscilloscope_class ::SPECTROSCOPE:
+		for (int ind = 0; ind < 256; ind++) {
+			fft [ind] = 0.0;
+			for (int sub = 0; sub < 256; sub++) {
+				fft [ind] += core -> sine_wave [sub << 6] * wave [sub];
+			}
+		}
+		frame_count -= 20000;
+		break;
+	default: break;
+	}
 	g_idle_add ((GSourceFunc) RepaintOscilloscopeIdleCode, this);
 }
 
 class oscilloscope_action : public PrologNativeOrbiter {
 public:
+	oscilloscope_class :: types type;
 	bool remove_gtk;
+	GtkWidget * drawing_area;
+	int gtk_redrawer;
 	void remove_by_gtk (void) {
 		remove_gtk = false;
 		atom -> setMachine (0);
 		delete this;
 	}
 	bool code (PrologElement * parameters, PrologResolution * resolution);
-	oscilloscope_action (PrologAtom * atom, orbiter_core * core, orbiter * module) : PrologNativeOrbiter (atom, core, module) {
+	oscilloscope_action (PrologAtom * atom, orbiter_core * core, orbiter * module, oscilloscope_class :: types type) : PrologNativeOrbiter (atom, core, module) {
+		this -> type = type;
 		remove_gtk = true;
 		COLLECTOR_REFERENCE_INC (atom);
 	}
 	~ oscilloscope_action (void) {
-		if (remove_gtk) g_idle_add ((GSourceFunc) RemoveOscilloscopeIdleCode, ((lunar_oscilloscope *) module) -> viewport);
+		if (remove_gtk) {
+			g_signal_handler_disconnect (drawing_area, gtk_redrawer);
+			g_idle_add ((GSourceFunc) RemoveOscilloscopeIdleCode, ((lunar_oscilloscope *) module) -> viewport);
+		}
 		atom -> removeAtom ();
 	}
 };
@@ -116,32 +138,41 @@ static gboolean RedrawOscilloscope (GtkWidget * viewport, GdkEvent * event, osci
 	cairo_fill (cr);
 	cairo_set_source_rgb (cr, 0.0, 1.0, 0.0);
 	cairo_move_to (cr, 0.0, 64.0 - losc -> wave [0] * 64.0);
-	for (int ind = 1; ind < 256; ind++) cairo_line_to (cr, 0.0 + (double) ind, 64.0 - losc -> wave [ind] * 64.0);
-	cairo_stroke (cr);
-	cairo_set_source_rgb (cr, 0.0, 0.0, 1.0);
-	cairo_move_to (cr, 0.0, 32.0);
-	cairo_line_to (cr, 256.0, 32.0);
-	cairo_move_to (cr, 0.0, 96.0);
-	cairo_line_to (cr, 256.0, 96.0);
-	cairo_move_to (cr, 32.0, 0.0);
-	cairo_line_to (cr, 32.0, 128.0);
-	cairo_move_to (cr, 64.0, 0.0);
-	cairo_line_to (cr, 64.0, 128.0);
-	cairo_move_to (cr, 96.0, 0.0);
-	cairo_line_to (cr, 96.0, 128.0);
-	cairo_move_to (cr, 160.0, 0.0);
-	cairo_line_to (cr, 160.0, 128.0);
-	cairo_move_to (cr, 192.0, 0.0);
-	cairo_line_to (cr, 192.0, 128.0);
-	cairo_move_to (cr, 224.0, 0.0);
-	cairo_line_to (cr, 224.0, 128.0);
-	cairo_stroke (cr);
-	cairo_set_source_rgb (cr, 1.0, 0.0, 0.0);
-	cairo_move_to (cr, 0.0, 64.0);
-	cairo_line_to (cr, 256.0, 64.0);
-	cairo_move_to (cr, 128.0, 0.0);
-	cairo_line_to (cr, 128.0, 128.0);
-	cairo_stroke (cr);
+	switch (osc -> type) {
+	case oscilloscope_class :: OSCILLOSCOPE:
+		for (int ind = 1; ind < 256; ind++) cairo_line_to (cr, 0.0 + (double) ind, 64.0 - losc -> wave [ind] * 64.0);
+		cairo_stroke (cr);
+		cairo_set_source_rgb (cr, 0.0, 0.0, 1.0);
+		cairo_move_to (cr, 0.0, 32.0);
+		cairo_line_to (cr, 256.0, 32.0);
+		cairo_move_to (cr, 0.0, 96.0);
+		cairo_line_to (cr, 256.0, 96.0);
+		cairo_move_to (cr, 32.0, 0.0);
+		cairo_line_to (cr, 32.0, 128.0);
+		cairo_move_to (cr, 64.0, 0.0);
+		cairo_line_to (cr, 64.0, 128.0);
+		cairo_move_to (cr, 96.0, 0.0);
+		cairo_line_to (cr, 96.0, 128.0);
+		cairo_move_to (cr, 160.0, 0.0);
+		cairo_line_to (cr, 160.0, 128.0);
+		cairo_move_to (cr, 192.0, 0.0);
+		cairo_line_to (cr, 192.0, 128.0);
+		cairo_move_to (cr, 224.0, 0.0);
+		cairo_line_to (cr, 224.0, 128.0);
+		cairo_stroke (cr);
+		cairo_set_source_rgb (cr, 1.0, 0.0, 0.0);
+		cairo_move_to (cr, 0.0, 64.0);
+		cairo_line_to (cr, 256.0, 64.0);
+		cairo_move_to (cr, 128.0, 0.0);
+		cairo_line_to (cr, 128.0, 128.0);
+		cairo_stroke (cr);
+		break;
+	case oscilloscope_class :: SPECTROSCOPE:
+		for (int ind = 1; ind < 256; ind++) cairo_line_to (cr, 0.0 + (double) ind, 64.0 - losc -> fft [ind] * 64.0);
+		cairo_stroke (cr);
+		break;
+	default: break;
+	}
 	cairo_destroy (cr);
 	return FALSE;
 }
@@ -150,17 +181,16 @@ static gboolean CreateOscilloscopeIdleCode (oscilloscope_action * osc) {
 	GtkWidget * viewport = gtk_window_new (GTK_WINDOW_TOPLEVEL);
 	gtk_window_set_title (GTK_WINDOW (viewport), osc -> atom -> name ());
 	g_signal_connect (viewport, "delete-event", G_CALLBACK (DeleteOscilloscopeEvent), osc);
-	GtkWidget * drawing_area = gtk_drawing_area_new ();
-	gtk_container_add (GTK_CONTAINER (viewport), drawing_area);
-	g_signal_connect (G_OBJECT (drawing_area), "expose-event", G_CALLBACK (RedrawOscilloscope), osc);
+	osc -> drawing_area = gtk_drawing_area_new ();
+	gtk_container_add (GTK_CONTAINER (viewport), osc -> drawing_area);
+	osc -> gtk_redrawer = g_signal_connect (G_OBJECT (osc -> drawing_area), "expose-event", G_CALLBACK (RedrawOscilloscope), osc);
 	gtk_window_resize (GTK_WINDOW (viewport), 256, 128);
 	gtk_widget_show_all (viewport);
 	((lunar_oscilloscope *) (osc -> module)) -> viewport = viewport;
 	return FALSE;
 }
 
-orbiter * oscilloscope_class :: create_orbiter (PrologElement * parameters) {return new lunar_oscilloscope (core);}
-PrologNativeOrbiter * oscilloscope_class :: create_native_orbiter (PrologAtom * atom, orbiter * module) {return new oscilloscope_action (atom, core, module);}
+orbiter * oscilloscope_class :: create_orbiter (PrologElement * parameters) {return new lunar_oscilloscope (core, type);}
+PrologNativeOrbiter * oscilloscope_class :: create_native_orbiter (PrologAtom * atom, orbiter * module) {return new oscilloscope_action (atom, core, module, type);}
 void oscilloscope_class :: code_created (PrologNativeOrbiter * machine) {g_idle_add ((GSourceFunc) CreateOscilloscopeIdleCode, machine);}
-oscilloscope_class :: oscilloscope_class (orbiter_core * core) : PrologNativeOrbiterCreator (core) {}
-
+oscilloscope_class :: oscilloscope_class (orbiter_core * core, types type) : PrologNativeOrbiterCreator (core) {this -> type = type;}

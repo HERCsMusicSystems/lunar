@@ -6,7 +6,7 @@ import studio
 
 program lunar #machine := "prolog.lunar"
 			[
-				small_keyboard keyboard big_keyboard oscilloscope vector CommandCentre detector
+				small_keyboard keyboard big_keyboard oscilloscope spectroscope vector CommandCentre detector
 				noise orbiter X Y modulation vibrato tremolo wahwah range
 				core base moonbase arpeggiator sequencer polysequencer operator parameter_block auto auto_data key_map velocity_map impulse
 				trigger inactive_trigger delay1 delay2 mixer stereo_mixer gateway stereo_gateway amplifier stereo_amplifier volume mono_volume
@@ -50,6 +50,7 @@ program lunar #machine := "prolog.lunar"
 #machine keyboard := "keyboard"
 #machine big_keyboard := "big_keyboard"
 #machine oscilloscope := "oscilloscope"
+#machine spectroscope := "spectroscope"
 #machine vector := "vector"
 #machine CommandCentre := "CommandCentre"
 #machine parameter_block := "parameter_block"

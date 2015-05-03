@@ -195,19 +195,13 @@ double orbiter_core :: Volume (double index) {
 	return volumes [ind];
 }
 
-double orbiter_core :: Sine (double index) {
-	int ind = (int) (index * 16384.0);
-	while (ind < 0) ind += 16384;
-	while (ind > 16383) ind -= 16384;
-	return sine_wave [ind];
-}
+double orbiter_core :: Sine (double index) {return sine_wave [0x3fff & ((int) (index * 16384.0))];}
 
 double orbiter_core :: SineApproximated (double index) {
 	index *= 16384.0;
 	int ind = (int) index;
 	double sub = index - (double) ind;
-	while (ind < 0) ind += 16384;
-	while (ind > 16384) ind -= 16384;
+	ind &= 0x3fff;
 	return sine_wave [ind] * (1.0 - sub) + sine_wave [ind + 1] * sub;
 }
 

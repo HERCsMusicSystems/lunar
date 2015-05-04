@@ -47,6 +47,7 @@ public:
 	GdkEventType captured_type;
 	button_active_graphics START;
 	button_active_graphics RECORD;
+	button_active_graphics AUDIO_OUTPUT;
 	int requested_sampling_rate;
 	int requested_latency_buffer_size;
 	int requested_output_device;
@@ -96,7 +97,8 @@ public:
 	bool code (PrologElement * parameters, PrologResolution * resolution);
 	core_panel_action (GraphicResources * resources, PrologRoot * root, PrologAtom * atom, PrologAtom * core, PrologAtom * reactor, PrologAtom * connect_all_moons) :
 		START (point (340.0, 88.0), 2, resources, true),
-		RECORD (point (390.0, 88.0), 3, resources, true)
+		RECORD (point (390.0, 88.0), 3, resources, true),
+		AUDIO_OUTPUT (point (390.0, 108.0), 4, resources, true)
 	{
 		this -> root = root;
 		captured_button = 0;
@@ -226,6 +228,7 @@ static gint CorePanelKeyon (GtkWidget * viewport, GdkEventButton * event, core_p
 	point location (event -> x, event -> y);
 	action -> captured = location;
 	bool redraw = false;
+	if (action -> AUDIO_OUTPUT . keyon (location)) {action -> AUDIO_OUTPUT . engaged = true; redraw = true;}
 	if (redraw) gtk_widget_queue_draw (viewport);
 	return TRUE;
 }
@@ -246,6 +249,7 @@ static gint CorePanelKeyoff (GtkWidget * viewport, GdkEventButton * event, core_
 			redraw = true;
 		}
 	}
+	if (action -> AUDIO_OUTPUT . keyoff (location)) {action -> AUDIO_OUTPUT . engaged = false; redraw = true;}
 	if (redraw) gtk_widget_queue_draw (viewport);
 	return TRUE;
 }
@@ -263,6 +267,7 @@ static gboolean RedrawCorePanel (GtkWidget * viewport, GdkEvent * event, core_pa
 	if (action -> background_image != 0) {cairo_set_source_surface (cr, action -> background_image, 0, 0); cairo_paint (cr);}
 	action -> START . draw (cr);
 	action -> RECORD . draw (cr);
+	action -> AUDIO_OUTPUT . draw (cr);
 	cairo_destroy (cr);
 	return FALSE;
 }

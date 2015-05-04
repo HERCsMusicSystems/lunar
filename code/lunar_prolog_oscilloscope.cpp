@@ -100,6 +100,9 @@ public:
 	bool remove_gtk;
 	GtkWidget * drawing_area;
 	int gtk_redrawer;
+	char markings [5] [16];
+	int marking_locations [5];
+	bool need_to_calculate_markings;
 	void remove_by_gtk (void) {
 		remove_gtk = false;
 		atom -> setMachine (0);
@@ -110,6 +113,7 @@ public:
 		this -> type = type;
 		remove_gtk = true;
 		COLLECTOR_REFERENCE_INC (atom);
+		need_to_calculate_markings = true;
 	}
 	~ oscilloscope_action (void) {
 		if (remove_gtk) {
@@ -181,6 +185,21 @@ static gboolean RedrawOscilloscope (GtkWidget * viewport, GdkEvent * event, osci
 		cairo_move_to (cr, 20.0, 84.0 - losc -> wave [0] * 64.0);
 		for (int ind = 1; ind < 256; ind++) cairo_line_to (cr, 20.0 + (double) ind, 84.0 - losc -> wave [ind] * 64.0);
 		cairo_stroke (cr);
+		if (osc -> need_to_calculate_markings) {
+			for (int ind = 1; ind < 5; ind++) {
+				sprintf (osc -> markings [ind], "%iHz", (int) (4.0 * losc -> core -> sampling_frequency / (256.0 * (double) ind)));
+				cairo_text_extents_t extent;
+				cairo_text_extents (cr, osc -> markings [ind], & extent);
+				osc -> marking_locations [ind] = (int) (20.0 + 64.0 * (double) ind - extent . width * 0.5);
+			}
+			osc -> need_to_calculate_markings = false;
+		}
+		cairo_set_font_size (cr, 10);
+		cairo_set_source_rgb (cr, 1.0, 1.0, 0.0);
+		for (int ind = 1; ind < 5; ind++) {
+			cairo_move_to (cr, osc -> marking_locations [ind], 160.0);
+			cairo_show_text (cr, osc -> markings [ind]);
+		}
 		break;
 	case oscilloscope_class :: SPECTROSCOPE:
 		// grid
@@ -210,6 +229,22 @@ static gboolean RedrawOscilloscope (GtkWidget * viewport, GdkEvent * event, osci
 			cairo_line_to (cr, 20.0 + (double) ind, 148.0 - losc -> fft [ind] * 128.0);
 		}
 		cairo_stroke (cr);
+		if (osc -> need_to_calculate_markings) {
+			double cycle = losc -> core -> sampling_frequency / (512.0 * losc -> base);
+			for (int ind = 0; ind < 5; ind++) {
+				sprintf (osc -> markings [ind], "%i", (int) ((double) (ind * 64) * cycle));
+				cairo_text_extents_t extent;
+				cairo_text_extents (cr, osc -> markings [ind], & extent);
+				osc -> marking_locations [ind] = (int) (20.0 + 64.0 * (double) ind - extent . width * 0.5);
+			}
+			osc -> need_to_calculate_markings = false;
+		}
+		cairo_set_font_size (cr, 10);
+		cairo_set_source_rgb (cr, 1.0, 1.0, 0.0);
+		for (int ind = 0; ind < 5; ind++) {
+			cairo_move_to (cr, osc -> marking_locations [ind], 160.0);
+			cairo_show_text (cr, osc -> markings [ind]);
+		}
 		break;
 	default: break;
 	}

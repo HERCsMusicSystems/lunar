@@ -83,7 +83,7 @@ public:
 	FREQ (point (18, 10), 0, resources, true, active, -8192.0, 8192.0),
 	RESONANCE (point (88, 10), 0, resources, true, active, 0.0, 16384.0),
 	AMP (point (158, 10), 0, resources, true, active, -16384.0, 0.0),
-	AudioModulePanel (root, atom, resources != 0 ? resources -> lfo_panel_surface : 0) {
+	AudioModulePanel (root, atom, resources != 0 ? resources -> filter_panel_surface : 0) {
 		this -> freq = freq; COLLECTOR_REFERENCE_INC (freq);
 		this -> resonance = resonance; COLLECTOR_REFERENCE_INC (resonance);
 		this -> amp = amp; COLLECTOR_REFERENCE_INC (amp);

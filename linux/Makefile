@@ -273,6 +273,13 @@ lfo_panel.o: ../graphics/lfo_panel.png
 		../graphics/lfo_panel.png lfo_panel.o
 	objdump -t lfo_panel.o
 
+filter_panel.o: ../graphics/filter_panel.png
+	objcopy --input binary --output elf64-x86-64 --binary-architecture i386\
+		--redefine-sym _binary____graphics_filter_panel_png_start=resource_filter_panel_start\
+		--redefine-sym _binary____graphics_filter_panel_png_end=resource_filter_panel_end\
+		../graphics/filter_panel.png filter_panel.o
+	objdump -t filter_panel.o
+
 lfo_vibrato.o: ../graphics/lfo_vibrato_knob.png
 	objcopy --input binary --output elf64-x86-64 --binary-architecture i386\
 		--redefine-sym _binary____graphics_lfo_vibrato_knob_png_start=resource_lfo_vibrato_start\
@@ -315,7 +322,7 @@ prcgtk.o: ../code/prcgtk.cpp ../code/prolog_lunar.h ../code/lunar.h\
 graphics = small_keyboard.o keyboard.o big_keyboard.o vector_frame.o vector_handle.o knob.o knob_surface.o\
 	knob_handle.o display.o button_on.o button_off.o encoder_surface.o encoder_handle.o slider_surface.o slider_handle.o\
 	command_centre.o adsr_panel.o eg_panel.o fm4_panel.o core_panel.o\
-	lfo_panel.o lfo_vibrato.o lfo_tremolo.o lfo_wah_wah.o lfo_pan.o
+	lfo_panel.o lfo_vibrato.o lfo_tremolo.o lfo_wah_wah.o lfo_pan.o filter_panel.o
 
 ~/bin/lunar: $(lunar_objects) $(objects) $(graphics) $(prc_resources)
 	g++ $(lunar_objects) $(objects) $(prc_resources) $(graphics) \

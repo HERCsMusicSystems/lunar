@@ -326,7 +326,7 @@ void core_panel_action :: MouseKeyon (point location, int button) {
 		GtkWidget * list = gtk_tree_view_new_with_model (GTK_TREE_MODEL (store));
 		g_object_unref (store);
 		gtk_tree_view_set_headers_visible (GTK_TREE_VIEW (list), FALSE);
-		gtk_tree_view_append_column (GTK_TREE_VIEW (list), gtk_tree_view_column_new_with_attributes ("IO", gtk_cell_renderer_text_new (), "text", 0, 0));
+		gtk_tree_view_append_column (GTK_TREE_VIEW (list), gtk_tree_view_column_new_with_attributes ("IO", gtk_cell_renderer_text_new (), "text", 0, NULL));
 		GtkTreeSelection * selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (list));
 		GtkTreePath * path = gtk_tree_path_new_from_indices (requested_input_device + 1, -1);
 		gtk_tree_selection_select_path (selection, path);
@@ -352,7 +352,7 @@ void core_panel_action :: MouseKeyon (point location, int button) {
 		GtkWidget * list = gtk_tree_view_new_with_model (GTK_TREE_MODEL (store));
 		g_object_unref (store);
 		gtk_tree_view_set_headers_visible (GTK_TREE_VIEW (list), FALSE);
-		gtk_tree_view_append_column (GTK_TREE_VIEW (list), gtk_tree_view_column_new_with_attributes ("IO", gtk_cell_renderer_text_new (), "text", 0, 0));
+		gtk_tree_view_append_column (GTK_TREE_VIEW (list), gtk_tree_view_column_new_with_attributes ("IO", gtk_cell_renderer_text_new (), "text", 0, NULL));
 		GtkTreeSelection * selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (list));
 		GtkTreePath * path = gtk_tree_path_new_from_indices (requested_output_device + 1, -1);
 		gtk_tree_selection_select_path (selection, path);
@@ -377,7 +377,7 @@ void core_panel_action :: MouseKeyon (point location, int button) {
 		GtkWidget * list = gtk_tree_view_new_with_model (GTK_TREE_MODEL (store));
 		g_object_unref (store);
 		gtk_tree_view_set_headers_visible (GTK_TREE_VIEW (list), FALSE);
-		gtk_tree_view_append_column (GTK_TREE_VIEW (list), gtk_tree_view_column_new_with_attributes ("IO", gtk_cell_renderer_text_new (), "text", 0, 0));
+		gtk_tree_view_append_column (GTK_TREE_VIEW (list), gtk_tree_view_column_new_with_attributes ("IO", gtk_cell_renderer_text_new (), "text", 0, NULL));
 		GtkTreeSelection * selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (list));
 		GtkTreePath * path = gtk_tree_path_new_from_indices (requested_output_device + 1, -1);
 		gtk_tree_selection_select_path (selection, path);
@@ -402,7 +402,7 @@ void core_panel_action :: MouseKeyon (point location, int button) {
 		GtkWidget * list = gtk_tree_view_new_with_model (GTK_TREE_MODEL (store));
 		g_object_unref (store);
 		gtk_tree_view_set_headers_visible (GTK_TREE_VIEW (list), FALSE);
-		gtk_tree_view_append_column (GTK_TREE_VIEW (list), gtk_tree_view_column_new_with_attributes ("IO", gtk_cell_renderer_text_new (), "text", 0, 0));
+		gtk_tree_view_append_column (GTK_TREE_VIEW (list), gtk_tree_view_column_new_with_attributes ("IO", gtk_cell_renderer_text_new (), "text", 0, NULL));
 		GtkTreeSelection * selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (list));
 		GtkTreePath * path = gtk_tree_path_new_from_indices (requested_output_device + 1, -1);
 		gtk_tree_selection_select_path (selection, path);

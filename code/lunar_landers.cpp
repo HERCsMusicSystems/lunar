@@ -958,7 +958,7 @@ double * lunar_freeverb :: inputAddress (int ind) {
 	case 2: return & right; break;
 	case 3: return & feedback; break;
 	case 4: return & diffusion; break;
-	case 5: return & highdamp; break;
+	case 5: return & high_damp; break;
 	case 6: return & dry; break;
 	case 7: return & wet; break;
 	default: break;
@@ -988,9 +988,9 @@ void lunar_freeverb :: move (void) {
 		double feed = feedback * DIV_16384;
 		for (int ind = 0; ind < 8; ind++) left_combs [ind] . feedback = right_combs [ind] . feedback = feed;
 	}
-	if (highdamp != previous_highdamp) {
-		previous_highdamp = highdamp;
-		double B = highdamp > 0.0 ? exp (-48000000.0 / (core -> sampling_frequency * highdamp)) : 0.0;
+	if (high_damp != previous_high_damp) {
+		previous_high_damp = high_damp;
+		double B = high_damp > 0.0 ? exp (-48000000.0 / (core -> sampling_frequency * high_damp)) : 0.0;
 		double A = 1.0 - B;
 		for (int ind = 0; ind < 4; ind++) {
 			left_combs [ind] . A = right_combs [ind] . A = A;
@@ -1033,10 +1033,10 @@ void lunar_freeverb :: move (void) {
 }
 lunar_freeverb :: lunar_freeverb (orbiter_core * core) : orbiter (core) {
 	mono = left = right = signal_right = 0.0;
-	feedback = diffusion = highdamp = 0.0;
+	feedback = diffusion = high_damp = 0.0;
 	dry = wet = 16384.0;
 	d1 = w1 = w2 = 1.0;
-	previous_feedback = previous_diffusion = previous_highdamp = previous_dry = previous_wet = 1.0;
+	previous_feedback = previous_diffusion = previous_high_damp = previous_dry = previous_wet = 1.0;
 	for (int ind = 0; ind < 8; ind++) {
 		left_combs [ind] . size_pointer = core -> left_freeverb_comb_sizes + ind;
 		right_combs [ind] . size_pointer = core -> right_freeverb_comb_sizes + ind;

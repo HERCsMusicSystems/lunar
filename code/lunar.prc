@@ -35,6 +35,7 @@ program lunar #machine := "prolog.lunar"
 				Bbb Bb B B# Bx
 				midi
 				ParameterBlockPanel AdsrPanel EGPanel FEGPanel FM4Panel CorePanel LfoPanel FilterPanel
+				DelayPanel ChrousPanel FreeverbPanel
 				BuildParameterBlockPanel BuildAdsrPanel BuildEGPanel BuildFEGPanel BuildFM4Panel BuildLfoPanel BuildFilterPanel
 				FindLfoKnob
 				MoveModules PropagateSignals MoveCore LunarDrop FUNCTION_KEY
@@ -115,6 +116,7 @@ program lunar #machine := "prolog.lunar"
 #machine CorePanel := "CorePanel"
 #machine LfoPanel := "LfoPanel"
 #machine FilterPanel := "FilterPanel"
+#machine DelayPanel := "DelayPanel"
 
 #machine MoveModules := "MoveModules"
 #machine PropagateSignals := "PropagateSignals"

@@ -360,8 +360,8 @@ class lunar_freeverb : public orbiter {
 private:
 	double mono, left, right;
 	double signal_right;
-	double feedback, diffusion, highdamp, dry, wet;
-	double previous_feedback, previous_diffusion, previous_highdamp, previous_dry, previous_wet;
+	double feedback, diffusion, high_damp, dry, wet;
+	double previous_feedback, previous_diffusion, previous_high_damp, previous_dry, previous_wet;
 	double d1, w1, w2;
 	lunar_comb left_combs [8];
 	lunar_comb right_combs [8];

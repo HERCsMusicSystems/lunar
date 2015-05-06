@@ -134,6 +134,14 @@ public:
 	lfo_panel_class (PrologLunarServiceClass * servo);
 };
 
+class filter_panel_class : public PrologNativeCode {
+public:
+	PrologRoot * root;
+	GraphicResources * resources;
+	bool code (PrologElement * parameters, PrologResolution * resolution);
+	filter_panel_class (PrologLunarServiceClass * servo);
+};
+
 class oscilloscope_class : public PrologNativeOrbiterCreator {
 public:
 	enum types {OSCILLOSCOPE = 0, SPECTROSCOPE};

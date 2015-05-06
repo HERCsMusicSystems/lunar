@@ -29,7 +29,6 @@
 class lfo_panel_action : public AudioModulePanel {
 public:
 	PrologAtom * speed, * wave, * pulse, * phase, * sync, * vibrato, * tremolo, * wah_wah, * pan;
-	GtkWidget * viewport;
 	knob_active_graphics SPEED, WAVE, PULSE, PHASE, VIBRATO, TREMOLO, WAH_WAH, PAN;
 	button_active_graphics SYNC;
 	cairo_surface_t * vibrato_image;

@@ -154,7 +154,7 @@ static gboolean DeleteOscilloscopeEvent (GtkWidget * viewport, GdkEvent * event,
 static gboolean RedrawOscilloscope (GtkWidget * viewport, GdkEvent * event, oscilloscope_action * osc) {
 	cairo_t * cr = gdk_cairo_create (gtk_widget_get_window (viewport));
 	lunar_oscilloscope * losc = (lunar_oscilloscope *) osc -> module;
-	cairo_rectangle (cr, 0.0, 0.0, 296.0, 168.0);
+	cairo_rectangle (cr, 0.0, 0.0, 302.0, 174.0);
 	cairo_set_source_rgb (cr, 0.0, 0.0, 0.0);
 	cairo_fill (cr);
 	switch (osc -> type) {
@@ -232,7 +232,7 @@ static gboolean RedrawOscilloscope (GtkWidget * viewport, GdkEvent * event, osci
 		if (osc -> need_to_calculate_markings) {
 			double cycle = losc -> core -> sampling_frequency / (512.0 * losc -> base);
 			for (int ind = 0; ind < 5; ind++) {
-				sprintf (osc -> markings [ind], "%i", (int) ((double) (ind * 64) * cycle));
+				sprintf (osc -> markings [ind], "%iHz", (int) (ind == 0 ? cycle : (double) (ind * 64) * cycle));
 				cairo_text_extents_t extent;
 				cairo_text_extents (cr, osc -> markings [ind], & extent);
 				osc -> marking_locations [ind] = (int) (20.0 + 64.0 * (double) ind - extent . width * 0.5);
@@ -261,7 +261,7 @@ static gboolean CreateOscilloscopeIdleCode (oscilloscope_action * osc) {
 	gtk_container_add (GTK_CONTAINER (lo -> viewport), osc -> drawing_area);
 	osc -> gtk_redrawer = g_signal_connect (G_OBJECT (osc -> drawing_area), "expose-event", G_CALLBACK (RedrawOscilloscope), osc);
 	gtk_window_move (GTK_WINDOW (lo -> viewport), (int) lo -> location . x, (int) lo -> location . y);
-	gtk_window_resize (GTK_WINDOW (lo -> viewport), 296, 168);
+	gtk_window_resize (GTK_WINDOW (lo -> viewport), 302, 174);
 	gtk_widget_show_all (lo -> viewport);
 	return FALSE;
 }

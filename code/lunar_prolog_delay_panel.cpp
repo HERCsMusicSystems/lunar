@@ -80,9 +80,9 @@ public:
 	}
 	delay_panel_action (GraphicResources * resources, PrologRoot * root, PrologAtom * atom,
 		PrologAtom * feed, PrologAtom * time, PrologAtom * highdamp, bool active) :
-	FEEDBACK (point (18, 10), 0, resources, true, active, -8192.0, 8192.0),
+	FEEDBACK (point (18, 10), 0, resources, true, active, 0.0, 16384.0),
 	TIME (point (88, 10), 0, resources, true, active, 0.0, 16384.0),
-	HIGHDAMP (point (158, 10), 0, resources, true, active, -16384.0, 0.0),
+	HIGHDAMP (point (158, 10), 0, resources, true, active, 0.0, 16384.0),
 	AudioModulePanel (root, atom, resources != 0 ? resources -> delay_panel_surface : 0) {
 		this -> feed = feed; COLLECTOR_REFERENCE_INC (feed);
 		this -> time = time; COLLECTOR_REFERENCE_INC (time);

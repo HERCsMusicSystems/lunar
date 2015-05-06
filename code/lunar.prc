@@ -37,6 +37,7 @@ program lunar #machine := "prolog.lunar"
 				ParameterBlockPanel AdsrPanel EGPanel FEGPanel FM4Panel CorePanel LfoPanel FilterPanel
 				DelayPanel ChrousPanel FreeverbPanel
 				BuildParameterBlockPanel BuildAdsrPanel BuildEGPanel BuildFEGPanel BuildFM4Panel BuildLfoPanel BuildFilterPanel
+				BuildDelayPanel
 				FindLfoKnob
 				MoveModules PropagateSignals MoveCore LunarDrop FUNCTION_KEY
 				CreateDistributor CloseDistributor Distribute Redistribute
@@ -213,6 +214,14 @@ program lunar #machine := "prolog.lunar"
 	[APPEND *path [resonance] *resonance_path] [*parameters *resonance : *resonance_path]
 	[APPEND *path [amp] *amp_path] [*parameters *amp : *amp_path]
 	[FilterPanel *panel *freq *resonance *amp]
+]
+
+[[BuildDelayPanel *panel *instrument : *path]
+	[*instrument *parameters : *]
+	[APPEND *path [feedback] *feedback_path] [*parameters *feedback : *feedback_path]
+	[APPEND *path [time] *time_path] [*parameters *time : *time_path]
+	[APPEND *path [highdamp] *highdamp_path] [*parameters *highdamp : *highdamp_path]
+	[DelayPanel *panel *feedback *time *highdamp]
 ]
 
 [[FindLfoKnob [] *parameters]]

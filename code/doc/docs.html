@@ -104,6 +104,7 @@
         <a href="#predicate_oscilloscope">oscilloscope</a>
         <a href="#predicate_ParameterBlockPanel">ParameterBlockPanel</a>
         <a href="#predicate_small_keyboard">small_keyboard</a>
+        <a href="#predicate_spectroscope">spectroscope</a>
         <a href="#predicate_vector">vector</a>
     </li>
 </ul>
@@ -1520,7 +1521,7 @@
 <div class="doc_predicate">
     <a id="predicate_oscilloscope">
         <div class="doc_predicate_header">
-            [oscilloscope module] => Creates an oscilloscope window.<br />
+            [oscilloscope module divisor shift refresh] => Creates an oscilloscope window.<br />
             [module *x *y] => reposition on the screen<br />
             [module] => closes the panel<br />
             <b>Note:</b> module adheres to <a href="#common_behaviour_of_predicates">Common Behaviour</a>.
@@ -1528,6 +1529,7 @@
         <div class="doc_predicate_body">
             <b>Signals:</b> [["SIGNAL"] ["SIGNAL"]]<br />
             Displays the input signal. Range of the signal is from -1.0 to 1.0.<br />
+            The divisor (default = 1), shift (default = 0) and refresh rate (default = 2,000) parameters are optional.<br />
             <img src="radar.png" />
         </div>
     </a>
@@ -1563,6 +1565,23 @@
         <div class="doc_predicate_body">
             Creates a panel containing a small keyboard.<br />
             <img src="../../graphics/small_keyboard.png" />
+        </div>
+    </a>
+</div>
+
+<div class="doc_predicate">
+    <a id="predicate_spectroscope">
+        <div class="doc_predicate_header">
+            [spectroscope module divisor shift refresh] => Creates a spectroscope window.<br />
+            [module *x *y] => reposition on the screen<br />
+            [module] => closes the panel<br />
+            <b>Note:</b> module adheres to <a href="#common_behaviour_of_predicates">Common Behaviour</a>.
+        </div>
+        <div class="doc_predicate_body">
+            <b>Signals:</b> [["SIGNAL"] ["SIGNAL"]]<br />
+            Displays the spectrum of the input signal. Range of the signal is from -1.0 to 1.0.<br />
+            The divisor (default = 1), shift (default = 0) and refresh rate (default = 20,000) parameters are optional.<br />
+            <img src="dft.png" />
         </div>
     </a>
 </div>

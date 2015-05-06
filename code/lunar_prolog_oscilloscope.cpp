@@ -52,8 +52,11 @@ public:
 		previous = signal;
 		location = point (0.0, 0.0);
 		this -> type = type;
+		if (base < 1) base = 1;
 		this -> base = base; current_base = 1;
+		if (shift < 0) shift = 0;
 		this -> current_shift = this -> shift = shift;
+		if (refresh_samples < 256) refresh_samples = 256;
 		this -> refresh_samples = refresh_samples;
 		viewport = 0;
 		no_redraw = false;

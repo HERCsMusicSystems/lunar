@@ -52,6 +52,7 @@
     <ClCompile Include="..\code\lunar_prolog_control_panel.cpp" />
     <ClCompile Include="..\code\lunar_prolog_core_panel.cpp" />
     <ClCompile Include="..\code\lunar_prolog_eg_panel.cpp" />
+    <ClCompile Include="..\code\lunar_prolog_filter_panel.cpp" />
     <ClCompile Include="..\code\lunar_prolog_fm4_panel.cpp" />
     <ClCompile Include="..\code\lunar_prolog_landers.cpp" />
     <ClCompile Include="..\code\lunar_prolog_lfo_panel.cpp" />

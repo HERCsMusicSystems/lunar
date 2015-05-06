@@ -136,7 +136,7 @@ GraphicResources :: GraphicResources (void) {
 	png_closure lfo_tremolo_surface_closure (GetResource (LFO_TREMOLO_PNG), LFO_TREMOLO_SIZE);
 	png_closure lfo_wah_wah_surface_closure (GetResource (LFO_WAH_WAH_PNG), LFO_WAH_WAH_SIZE);
 	png_closure lfo_pan_surface_closure (GetResource (LFO_PAN_PNG), LFO_PAN_SIZE);
-	png_closure filter_panel_surface_closure (GetREsource (FILTER_PANEL_PNG), FILTER_PANEL_SIZE);
+	png_closure filter_panel_surface_closure (GetResource (FILTER_PANEL_PNG), FILTER_PANEL_SIZE);
 #else
 	png_closure frame_closure (& resource_vector_frame_start, & resource_vector_frame_end);
 	png_closure handle_closure (& resource_vector_handle_start, & resource_vector_handle_end);

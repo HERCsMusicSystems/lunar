@@ -2,7 +2,7 @@
 import studio
 import lunar
 
-program phobos [Phobos PhobosEditor BuildPhobos BuildPhobosPart Operator-1 Operator-2 Operator-3 Operator-4 Operators Lfo-1 Lfo-2]
+program phobos [Phobos PhobosEditor BuildPhobos BuildPhobosPart Operator-1 Operator-2 Operator-3 Operator-4 Operators Lfo-1 Lfo-2 Noise-EG Noise-Amp Filter-1]
 
 [[PhobosEditor *phobos]
 	[BuildEGPanel Operator-1 *phobos operator 1 eg amp] [Operator-1 10 10]
@@ -12,8 +12,14 @@ program phobos [Phobos PhobosEditor BuildPhobos BuildPhobosPart Operator-1 Opera
 	[BuildFM4Panel Operators *phobos operator] [Operators 10 490]
 	[BuildLfoPanel Lfo-1 *phobos [lfo 1] [lfo 1 vibrato] [] [filter lfo 1] []] [Lfo-1 660 10]
 	[BuildLfoPanel Lfo-2 *phobos [lfo 2] [lfo 2 vibrato] [lfo 2 tremolo] [filter lfo 2] [lfo 2 pan]] [Lfo-2 660 240]
+	[BuildFilterPanel Filter-1 *phobos filter] [Filter-1 500 730]
+	[BuildEGPanel Noise-EG *phobos noise] [Noise-EG 720 490]
+	[BuildParameterBlockPanel Noise-Amp -16384.0 0.0 *phobos noise amp] [Noise-Amp 800 730]
 ]
-[[PhobosEditor] [TRY [Operator-1]] [TRY [Operator-2]] [TRY [Operator-3]] [TRY [Operator-4]] [TRY [Operators]] [TRY [Lfo-1]] [TRY [Lfo-2]]]
+[[PhobosEditor]
+	[TRY [Operator-1]] [TRY [Operator-2]] [TRY [Operator-3]] [TRY [Operator-4]]
+	[TRY [Operators]] [TRY [Lfo-1]] [TRY [Lfo-2]] [TRY [Filter-1]] [TRY [Noise-EG]] [TRY [Noise-Amp]]
+]
 
 [[BuildPhobos *polyphony]
 	[GenerateInstrumentName Phobos *phobos]

@@ -124,9 +124,9 @@ program lunar #machine := "prolog.lunar"
 
 #machine unicar := "unicar"
 
-[[BuildParameterBlockPanel *panel *instrument : *path]
+[[BuildParameterBlockPanel *panel *from *to *instrument : *path]
 	[*instrument *parameters : *] [*parameters *parameter : *path]
-	[ParameterBlockPanel *panel *parameter]
+	[ParameterBlockPanel *panel *parameter *from *to]
 ]
 
 [[BuildAdsrPanel *panel *instrument : *path]
@@ -203,6 +203,14 @@ program lunar #machine := "prolog.lunar"
 	[FindLfoKnob *wah_wah_knob *parameters : *wah_wah]
 	[FindLfoKnob *pan_knob *parameters : *pan]
 	[LfoPanel *panel *speed *wave *pulse *phase *sync *vibrato_knob *tremolo_knob *wah_wah_knob *pan_knob]
+]
+
+[[BuildFilterPanel *panel *instrument : *path]
+	[*instrument *parameters : *]
+	[APPEND *path [freq] *freq_path] [*parameters *freq : *freq_path]
+	[APPEND *path [resonance] *resonance_path] [*parameters *resonance : *resonance_path]
+	[APPEND *path [amp] *amp_path] [*parameters *amp : *amp_path]
+	[FilterPanel *panel *freq *resonance *amp]
 ]
 
 [[FindLfoKnob [] *parameters]]

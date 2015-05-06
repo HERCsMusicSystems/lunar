@@ -127,6 +127,7 @@ gboolean CreateAudioModulePanelIdleCode (AudioModulePanel * action) {
 	if (action -> background_image != 0) gtk_window_resize (GTK_WINDOW (action -> viewport),
 											cairo_image_surface_get_width (action -> background_image),
 											cairo_image_surface_get_height (action -> background_image));
+	gtk_window_move (GTK_WINDOW (action -> viewport), (int) action -> location . x, (int) action -> location . y);
 	const GtkTargetEntry targets [2] = {{"text/plain", 0, 0}, {"application/x-rootwindow-drop", 0, 0}};
 	gtk_drag_dest_set (action -> area, GTK_DEST_DEFAULT_ALL, targets, 2, GDK_ACTION_COPY);
 	g_signal_connect (action -> area, "drag-drop", G_CALLBACK (dnd_drop), 0);

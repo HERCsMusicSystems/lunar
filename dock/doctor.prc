@@ -15,6 +15,8 @@ program doctor [
 	[BuildDoctor *polyphony *doctor * * *waveforms]
 ]
 
+[[BuildDoctor *polyphony *doctor *waveforms] [BuildDoctor *polyphony *doctor * * *waveforms]]
+
 [[BuildDoctor *polyphony *Doctor *DoctorCB *volume]
 	[TRY
 		[show "trying...."]

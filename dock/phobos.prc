@@ -26,6 +26,8 @@ program phobos [Phobos PhobosEditor BuildPhobos BuildPhobosPart Operator-1 Opera
 	[BuildPhobos *polyphony *phobos * * *]
 ]
 
+[[BuildPhobos *polyphony *phobos] [BuildPhobos *polyphony *phobos : *]]
+
 [[BuildPhobos *polyphony *Phobos *PhobosCB *volume *pan]
 	[Moonbase *Phobos *PhobosCB Phobos]
 

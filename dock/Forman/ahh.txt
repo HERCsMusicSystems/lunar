@@ -1,0 +1,42 @@
+Forman
+poly
+[core volume]12800.0
+[core pan]-3328.0
+[core chorus level]0.0
+[core chorus time]1024.0
+[core chorus speed]0.0
+[core chorus amp]8192.0
+[core delay balance]-8192.0
+[core delay feedback]8192.0
+[core delay time]8192.0
+[core delay highdamp]0.0
+[trigger porta]0.0
+[trigger time]0.0
+[trigger legato]0.0
+[trigger hold]0.0
+[operator freq]0.0
+[operator amp]0.0
+[operator ratio]1.0
+[filter 1 freq]1709.0
+[filter 1 resonance]15616.0
+[filter 1 amp]0.0
+[filter 2 freq]2688.0
+[filter 2 resonance]15360.0
+[filter 2 amp]0.0
+[filter 3 freq]4443.0
+[filter 3 resonance]15360.0
+[filter 3 amp]0.0
+[filter 4 freq]4608.0
+[filter 4 resonance]14848.0
+[filter 4 amp]-16384.0
+[filter 5 freq]5120.0
+[filter 5 resonance]0.0
+[filter 5 amp]-16384.0
+[filter 6 freq]5120.0
+[filter 6 resonance]0.0
+[filter 6 amp]-16384.0
+[adsr attack]5632.0
+[adsr decay]0.0
+[adsr sustain]0.0
+[adsr release]6272.0
+

@@ -150,6 +150,14 @@ public:
 	delay_panel_class (PrologLunarServiceClass * servo);
 };
 
+class chorus_panel_class : public PrologNativeCode {
+public:
+	PrologRoot * root;
+	GraphicResources * resources;
+	bool code (PrologElement * parameters, PrologResolution * resolution);
+	chorus_panel_class (PrologLunarServiceClass * servo);
+};
+
 class oscilloscope_class : public PrologNativeOrbiterCreator {
 public:
 	enum types {OSCILLOSCOPE = 0, SPECTROSCOPE};

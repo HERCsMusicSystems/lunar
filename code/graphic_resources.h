@@ -58,6 +58,7 @@ public:
 	cairo_surface_t * lfo_pan_surface;
 	cairo_surface_t * filter_panel_surface;
 	cairo_surface_t * delay_panel_surface;
+	cairo_surface_t * chorus_panel_surface;
 	GraphicResources (void);
 	~ GraphicResources (void);
 };

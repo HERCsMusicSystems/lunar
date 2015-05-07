@@ -35,9 +35,9 @@ program lunar #machine := "prolog.lunar"
 				Bbb Bb B B# Bx
 				midi
 				ParameterBlockPanel AdsrPanel EGPanel FEGPanel FM4Panel CorePanel LfoPanel FilterPanel
-				DelayPanel ChrousPanel FreeverbPanel
+				DelayPanel ChorusPanel FreeverbPanel
 				BuildParameterBlockPanel BuildAdsrPanel BuildEGPanel BuildFEGPanel BuildFM4Panel BuildLfoPanel BuildFilterPanel
-				BuildDelayPanel
+				BuildDelayPanel BuildChorusPanel BuildFreeverbPanel
 				FindLfoKnob
 				MoveModules PropagateSignals MoveCore LunarDrop FUNCTION_KEY
 				CreateDistributor CloseDistributor Distribute Redistribute
@@ -118,6 +118,7 @@ program lunar #machine := "prolog.lunar"
 #machine LfoPanel := "LfoPanel"
 #machine FilterPanel := "FilterPanel"
 #machine DelayPanel := "DelayPanel"
+#machine ChorusPanel := "ChorusPanel"
 
 #machine MoveModules := "MoveModules"
 #machine PropagateSignals := "PropagateSignals"
@@ -222,6 +223,15 @@ program lunar #machine := "prolog.lunar"
 	[APPEND *path [time] *time_path] [*parameters *time : *time_path]
 	[APPEND *path [highdamp] *highdamp_path] [*parameters *highdamp : *highdamp_path]
 	[DelayPanel *panel *feedback *time *highdamp]
+]
+
+[[BuildChorusPanel *panel *instrument : *path]
+	[*instrument *parameters : *]
+	[APPEND *path [level] *level_path] [*parameters *level : *level_path]
+	[APPEND *path [time] *time_path] [*parameters *time : *time_path]
+	[APPEND *path [speed] *speed_path] [*parameters *speed : *speed_path]
+	[APPEND *path [amp] *amp_path] [*parameters *amp : *amp_path]
+	[ChorusPanel *panel *level *time *speed *amp]
 ]
 
 [[FindLfoKnob [] *parameters]]

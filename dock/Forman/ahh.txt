@@ -29,12 +29,6 @@ poly
 [filter 4 freq]4608.0
 [filter 4 resonance]14848.0
 [filter 4 amp]-16384.0
-[filter 5 freq]5120.0
-[filter 5 resonance]0.0
-[filter 5 amp]-16384.0
-[filter 6 freq]5120.0
-[filter 6 resonance]0.0
-[filter 6 amp]-16384.0
 [adsr attack]5632.0
 [adsr decay]0.0
 [adsr sustain]0.0

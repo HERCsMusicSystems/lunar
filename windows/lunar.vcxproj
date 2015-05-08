@@ -49,6 +49,7 @@
     <ClCompile Include="..\code\lunar_moonbase.cpp" />
     <ClCompile Include="..\code\lunar_operator.cpp" />
     <ClCompile Include="..\code\lunar_prolog_adsr_panel.cpp" />
+    <ClCompile Include="..\code\lunar_prolog_chorus_panel.cpp" />
     <ClCompile Include="..\code\lunar_prolog_control_panel.cpp" />
     <ClCompile Include="..\code\lunar_prolog_core_panel.cpp" />
     <ClCompile Include="..\code\lunar_prolog_delay_panel.cpp" />

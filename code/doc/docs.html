@@ -69,8 +69,11 @@
     <li><a href="#utilities">Utilities</a>
         <br />
         <a href="#predicate_BuildAdsrPanel">BuildAdsrPanel</a>
+        <a href="#predicate_BuildChorusPanel">BuildChorusPanel</a>
+        <a href="#predicate_BuildDelayPanel">BuildDelayPanel</a>
         <a href="#predicate_BuildEGPanel">BuildEGPanel</a>
         <a href="#predicate_BuildFEGPanel">BuildFEGPanel</a>
+        <a href="#predicate_BuildFilterPanel">BuildFilterPanel</a>
         <a href="#predicate_BuildFM4Panel">BuildFM4Panel</a>
         <a href="#predicate_BuildLfoPanel">BuildLfoPanel</a>
         <a href="#predicate_BuildParameterBlockPanel">BuildParameterBlockPanel</a>
@@ -94,10 +97,13 @@
         <br />
         <a href="#predicate_AdsrPanel">AdsrPanel</a>
         <a href="#predicate_big_keyboard">big_keyboard</a>
+        <a href="#predicate_ChorusPanel">ChorusPanel</a>
         <a href="#predicate_command_centre">CommandCentre</a>
         <a href="#predicate_CorePanel">CorePanel</a>
+        <a href="#predicate_DelayPanel">DelayPanel</a>
         <a href="#predicate_EGPanel">EGPanel</a>
         <a href="#predicate_FEGPanel">FEGPanel</a>
+        <a href="#predicate_FilterPanel">FilterPanel</a>
         <a href="#predicate_FM4Panel">FM4Panel</a>
         <a href="#predicate_keyboard">keyboard</a>
         <a href="#predicate_LfoPanel">LfoPanel</a>
@@ -1087,6 +1093,30 @@
 </div>
 
 <div class="doc_predicate">
+    <a id="predicate_BuildChorusPanel">
+        <div class="doc_predicate_header">
+            [BuildChorusPanel module instrument : selector] => Builds a chorus panel.<br />
+        </div>
+        <div class="doc_predicate_body">
+            This is a shortcut designed to find the appropriate parameter blocks in superstructure
+            and build a chorus panel.
+        </div>
+    </a>
+</div>
+
+<div class="doc_predicate">
+    <a id="predicate_BuildDelayPanel">
+        <div class="doc_predicate_header">
+            [BuildDelayPanel module instrument : selector] => Builds a delay panel.<br />
+        </div>
+        <div class="doc_predicate_body">
+            This is a shortcut designed to find the appropriate parameter blocks in superstructure
+            and build a delay panel.
+        </div>
+    </a>
+</div>
+
+<div class="doc_predicate">
     <a id="predicate_BuildEGPanel">
         <div class="doc_predicate_header">
             [BuildEGPanel module instrument : selector] => Builds an EG panel.<br />
@@ -1106,6 +1136,18 @@
         <div class="doc_predicate_body">
             This is a shortcut designed to find the appropriate parameter blocks in superstructure
             and build an FEG panel.
+        </div>
+    </a>
+</div>
+
+<div class="doc_predicate">
+    <a id="predicate_BuildFilterPanel">
+        <div class="doc_predicate_header">
+            [BuildFilterPanel module instrument : selector] => Builds a filter panel.<br />
+        </div>
+        <div class="doc_predicate_body">
+            This is a shortcut designed to find the appropriate parameter blocks in superstructure
+            and build a filter panel.
         </div>
     </a>
 </div>
@@ -1400,6 +1442,23 @@
 </div>
 
 <div class="doc_predicate">
+    <a id="predicate_ChorusPanel">
+        <div class="doc_predicate_header">
+            [ChorusPanel module level time speed amp] => Creates a panel for a chorus module.<br />
+            [module *x *y] => reposition on the screen<br />
+            [module] => closes the panel<br />
+        </div>
+        <div class="doc_predicate_body">
+            Creates a panel for 4 parameter blocks commonly associated with chorus module.
+            Ranges from -8192.0 .. 8192.0 for speed and from 0 .. 16384 for all other parameters.
+            The resolution is 128 steps with left mouse button and 16384 with the right one.<br />
+            <b>Note:</b> do not use ChorusPanel directly. Use <a href="#predicate_BuildChorusPanel">BuildChorusPanel</a> instead.<br />
+            <img src="../../graphics/chorus_panel.png" />
+        </div>
+    </a>
+</div>
+
+<div class="doc_predicate">
     <a id="predicate_command_centre">
         <div class="doc_predicate_header">
             [CommandCentre commander CCCB] => Create a command centre. CCCB parameter is optional and defaults to CCCB.<br />
@@ -1428,6 +1487,23 @@
             Core Panel controls audio hardware and audio recording.
             <b>Note:</b> you can drag-and-drop PROLOG batch files on the command centre.
             <img src="../../graphics/core_panel.png" />
+        </div>
+    </a>
+</div>
+
+<div class="doc_predicate">
+    <a id="predicate_DelayPanel">
+        <div class="doc_predicate_header">
+            [DelayPanel module feedback time highdamp] => Creates a panel for a delay module.<br />
+            [module *x *y] => reposition on the screen<br />
+            [module] => closes the panel<br />
+        </div>
+        <div class="doc_predicate_body">
+            Creates a panel for 3 parameter blocks commonly associated with chorus module.
+            Ranges from 0.0 .. 16384.0 for all parameters.
+            The resolution is 128 steps with left mouse button and 16384 with the right one.<br />
+            <b>Note:</b> do not use DelayPanel directly. Use <a href="#predicate_BuildDelayPanel">BuildDelayPanel</a> instead.<br />
+            <img src="../../graphics/delay_panel.png" />
         </div>
     </a>
 </div>
@@ -1462,6 +1538,23 @@
             The resolution is 128 steps with left mouse button and 16384 with the right one.<br />
             <b>Note:</b> do not use FEGPanel directly. Use <a href="#predicate_BuildFEGPanel">BuildFEGPanel</a> instead.<br />
             <img src="../../graphics/eg_panel.png" />
+        </div>
+    </a>
+</div>
+
+<div class="doc_predicate">
+    <a id="predicate_FilterPanel">
+        <div class="doc_predicate_header">
+            [FilterPanel module freq resonance amp] => Creates a panel for a filter module.<br />
+            [module *x *y] => reposition on the screen<br />
+            [module] => closes the panel<br />
+        </div>
+        <div class="doc_predicate_body">
+            Creates a panel for 3 parameter blocks commonly associated with filter module.
+            Ranges from -8192.0 .. 8192.0 for freq, from 0.0 .. 16384.0 for resonance and from -16384.0 .. 0.0 for amp..
+            The resolution is 128 steps with left mouse button and 16384 with the right one.<br />
+            <b>Note:</b> do not use FilterPanel directly. Use <a href="#predicate_BuildFilterPanel">BuildFilterPanel</a> instead.<br />
+            <img src="../../graphics/filter_panel.png" />
         </div>
     </a>
 </div>

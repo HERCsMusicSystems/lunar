@@ -20,9 +20,9 @@
 // THE SOFTWARE.                                                                 //
 ///////////////////////////////////////////////////////////////////////////////////
 
-/////////////////////////////////////////////////////////////////////////
-// This file was created on Wednesday, 27th November 2014 at 14:57:20. //
-/////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
+// This file was created on Wednesday, 7th May 2015 at 17:28:10 PM. //
+//////////////////////////////////////////////////////////////////////
 
 #include "lunar_prolog_panel_base.h"
 
@@ -107,24 +107,24 @@ public:
 
 bool chorus_panel_class :: code (PrologElement * parameters, PrologResolution * resolution) {
 	PrologElement * atom = 0;
-	PrologElement * a = 0, * d = 0, * s = 0, * r = 0;
+	PrologElement * level = 0, * time = 0, * speed = 0, * amp = 0;
 	while (parameters -> isPair ()) {
 		PrologElement * el = parameters -> getLeft ();
 		if (el -> isVar ()) atom = el;
 		if (el -> isAtom ()) {
 			if (atom == 0) atom = el;
-			else if (a == 0) a = el;
-			else if (d == 0) d = el;
-			else if (s == 0) s = el;
-			else if (r == 0) r = el;
+			else if (level == 0) level = el;
+			else if (time == 0) time = el;
+			else if (speed == 0) speed = el;
+			else if (amp == 0) amp = el;
 		}
 		parameters = parameters -> getRight ();
 	}
-	if (atom == 0 || a == 0) return false;
+	if (atom == 0 || amp == 0) return false;
 	if (atom -> isVar ()) atom -> setAtom (new PrologAtom ());
 	if (atom -> getAtom () -> getMachine () != 0) return false;
-	chorus_panel_action * machine = new chorus_panel_action (resources, root, atom -> getAtom (), a -> getAtom (),
-										d != 0 ? d -> getAtom () : 0, s != 0 ? s -> getAtom () : 0, r != 0 ? r -> getAtom () : 0, false);
+	chorus_panel_action * machine = new chorus_panel_action (resources, root, atom -> getAtom (), level -> getAtom (),
+										time -> getAtom (), speed -> getAtom (), amp -> getAtom (), false);
 	if (! atom -> getAtom () -> setMachine (machine)) {delete machine; return false;}
 	machine -> BuildPanel ();
 	return true;

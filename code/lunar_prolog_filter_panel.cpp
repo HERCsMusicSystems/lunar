@@ -102,7 +102,7 @@ bool filter_panel_class :: code (PrologElement * parameters, PrologResolution * 
 			if (atom == 0) atom = el;
 			else if (freq == 0) freq = el;
 			else if (resonance == 0) resonance = el;
-			else amp = el;
+			else if (amp == 0) amp = el;
 		}
 		parameters = parameters -> getRight ();
 	}

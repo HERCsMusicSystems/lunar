@@ -10,10 +10,10 @@ poly
 [core delay feedback]8192.0
 [core delay time]8192.0
 [core delay highdamp]0.0
-[trigger porta]0.0
-[trigger time]0.0
-[trigger legato]0.0
-[trigger hold]0.0
+[portamento porta]0.0
+[portamento time]0.0
+[portamento legato]0.0
+[portamento hold]0.0
 [operator freq]0.0
 [operator amp]0.0
 [operator ratio]1.0

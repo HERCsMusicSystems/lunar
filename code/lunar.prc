@@ -13,8 +13,8 @@ program lunar #machine := "prolog.lunar"
 				lfo adsr eg egscaling egscal vco
 				index shift bias
 				square_operator fm4 fm6 dx9 dx7 saw_operator noise_operator sampler_operator sampler
-				sensitivity sens filter delay freeverb chorus pan power_pan linear_pan stereo_pan stereo_power_pan stereo_linear_pan
-				drywet drywet_mono balance
+				sensitivity sens filter delay reverb freeverb chorus pan power_pan linear_pan stereo_pan stereo_power_pan stereo_linear_pan
+				drywet drywet_mono dry wet balance
 				level level1 level2 level3 level4 time1 time2 time3 time4 attack decay sustain release
 				freq amp ratio sync cutoff resonance formant hold busy portamento porta
 				legato time speed wave pulse phase poly feedback highdamp diffusion
@@ -120,6 +120,7 @@ program lunar #machine := "prolog.lunar"
 #machine FilterPanel := "FilterPanel"
 #machine DelayPanel := "DelayPanel"
 #machine ChorusPanel := "ChorusPanel"
+#machine FreeverbPanel := "FreeverbPanel"
 
 #machine MoveModules := "MoveModules"
 #machine PropagateSignals := "PropagateSignals"
@@ -233,6 +234,16 @@ program lunar #machine := "prolog.lunar"
 	[APPEND *path [speed] *speed_path] [*parameters *speed : *speed_path]
 	[APPEND *path [amp] *amp_path] [*parameters *amp : *amp_path]
 	[ChorusPanel *panel *level *time *speed *amp]
+]
+
+[[BuildFreeverbPanel *panel *instrument : *path]
+	[*instrument *parameters : *]
+	[APPEND *path [feedback] *feedback_path] [*parameters *feedback : *feedback_path]
+	[APPEND *path [diffusion] *diffusion_path] [*parameters *diffusion : *diffusion_path]
+	[APPEND *path [highdamp] *highdamp_path] [*parameters *highdamp : *highdamp_path]
+	[APPEND *path [dry] *dry_path] [*parameters *dry : *dry_path]
+	[APPEND *path [wet] *wet_path] [*parameters *wet : *wet_path]
+	[FreeverbPanel *panel *feedback *diffusion *highdamp *dry *wet]
 ]
 
 [[FindLfoKnob [] *parameters]]
@@ -477,6 +488,14 @@ program lunar #machine := "prolog.lunar"
 	[AddParameterBlock *parameters time *chorus *selector 1024 "index"]
 	[AddParameterBlock *parameters speed *chorus *selector 0 "index"]
 	[AddParameterBlock *parameters amp *chorus *selector 8192 "index"]
+]
+
+[[InsertIO *parameters *freeverb *selector [["MONO" "LEFT" "RIGHT" "FEEDBACK" "DIFFUSION" "HIGHDAMP" "DRY" "WET"] ["LEFT" "RIGHT"]]]
+	[AddParameterBlock *parameters feedback *freeverb *selector 0 "index"]
+	[AddParameterBlock *parameters diffusion *freeverb *selector  0 "index"]
+	[AddParameterBlock *parameters highdamp *freeverb *selector 0 "index"]
+	[AddParameterBlock *parameters dry *freeverb *selector 16384 "index"]
+	[AddParameterBlock *parameters wet *freeverb *selector 0 "index"]
 ]
 
 [[InsertIO *parameters *volume *selector [["LEFT" "RIGHT" "VOLUME"] ["LEFT" "RIGHT"]]]

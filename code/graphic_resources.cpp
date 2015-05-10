@@ -91,6 +91,8 @@ extern char resource_delay_panel_start;
 extern char resource_delay_panel_end;
 extern char resource_chorus_panel_start;
 extern char resource_chorus_panel_end;
+extern char resource_freeverb_panel_start;
+extern char resource_freeverb_panel_end;
 #endif
 
 class png_closure {
@@ -143,6 +145,7 @@ GraphicResources :: GraphicResources (void) {
 	png_closure filter_panel_surface_closure (GetResource (FILTER_PANEL_PNG), FILTER_PANEL_SIZE);
 	png_closure delay_panel_surface_closure (GetResource (DELAY_PANEL_PNG), DELAY_PANEL_SIZE);
 	png_closure chorus_panel_surface_closure (GetResource (CHORUS_PANEL_PNG), CHORUS_PANEL_SIZE);
+	png_closure freeverb_panel_surface_closure (GetResource (FREEVERB_PANEL_PNG), FREEVERB_PANEL_SIZE);
 #else
 	png_closure frame_closure (& resource_vector_frame_start, & resource_vector_frame_end);
 	png_closure handle_closure (& resource_vector_handle_start, & resource_vector_handle_end);
@@ -172,6 +175,7 @@ GraphicResources :: GraphicResources (void) {
 	png_closure filter_panel_surface_closure (& resource_filter_panel_start, & resource_filter_panel_end);
 	png_closure delay_panel_surface_closure (& resource_delay_panel_start, & resource_delay_panel_end);
 	png_closure chorus_panel_surface_closure (& resource_chorus_panel_start, & resource_chorus_panel_end);
+	png_closure freeverb_panel_surface_closure (& resource_freeverb_panel_start, & resource_freeverb_panel_end);
 #endif
 	vector_surface = cairo_image_surface_create_from_png_stream (png_reader, & frame_closure);
 	vector_handle = cairo_image_surface_create_from_png_stream (png_reader, & handle_closure);
@@ -201,6 +205,7 @@ GraphicResources :: GraphicResources (void) {
 	filter_panel_surface = cairo_image_surface_create_from_png_stream (png_reader, & filter_panel_surface_closure);
 	delay_panel_surface = cairo_image_surface_create_from_png_stream (png_reader, & delay_panel_surface_closure);
 	chorus_panel_surface = cairo_image_surface_create_from_png_stream (png_reader, & chorus_panel_surface_closure);
+	freeverb_panel_surface = cairo_image_surface_create_from_png_stream (png_reader, & freeverb_panel_surface_closure);
 }
 
 GraphicResources :: ~ GraphicResources (void) {
@@ -232,6 +237,7 @@ GraphicResources :: ~ GraphicResources (void) {
 	if (filter_panel_surface != 0) cairo_surface_destroy (filter_panel_surface);
 	if (delay_panel_surface != 0) cairo_surface_destroy (delay_panel_surface);
 	if (chorus_panel_surface != 0) cairo_surface_destroy (chorus_panel_surface);
+	if (freeverb_panel_surface != 0) cairo_surface_destroy (freeverb_panel_surface);
 }
 
 GraphicResources * create_graphic_resources (void) {return new GraphicResources ();}

@@ -189,6 +189,9 @@
     <ClCompile Include="..\code\lunar_prolog_chorus_panel.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\code\lunar_prolog_freeverb_panel.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\..\prolog\windows\studio.rc">

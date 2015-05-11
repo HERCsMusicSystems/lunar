@@ -75,6 +75,7 @@
         <a href="#predicate_BuildFEGPanel">BuildFEGPanel</a>
         <a href="#predicate_BuildFilterPanel">BuildFilterPanel</a>
         <a href="#predicate_BuildFM4Panel">BuildFM4Panel</a>
+        <a href="#predicate_BuildFreeverbPanel">BuildFreeverbPanel</a>
         <a href="#predicate_BuildLfoPanel">BuildLfoPanel</a>
         <a href="#predicate_BuildParameterBlockPanel">BuildParameterBlockPanel</a>
         <a href="#predicate_Connect">Connect</a>
@@ -105,6 +106,7 @@
         <a href="#predicate_FEGPanel">FEGPanel</a>
         <a href="#predicate_FilterPanel">FilterPanel</a>
         <a href="#predicate_FM4Panel">FM4Panel</a>
+        <a href="#predicate_FreeverbPanel">FreeverbPanel</a>
         <a href="#predicate_keyboard">keyboard</a>
         <a href="#predicate_LfoPanel">LfoPanel</a>
         <a href="#predicate_oscilloscope">oscilloscope</a>
@@ -1165,6 +1167,18 @@
 </div>
 
 <div class="doc_predicate">
+    <a id="predicate_BuildFreeverbPanel">
+        <div class="doc_predicate_header">
+            [BuildFreeverbPanel module instrument : selector] => Builds a freeverb panel.<br />
+        </div>
+        <div class="doc_predicate_body">
+            This is a shortcut designed to find the appropriate parameter blocks in superstructure
+            and build a freeverb panel.
+        </div>
+    </a>
+</div>
+
+<div class="doc_predicate">
     <a id="predicate_BuildLfoPanel">
         <div class="doc_predicate_header">
             [BuildLfoPanel module instrument lfo vibrato tremolo wah_wah pan] => Builds an ADSR panel.<br />
@@ -1577,19 +1591,19 @@
 </div>
 
 <div class="doc_predicate">
-    <a id="predicate_LfoPanel">
+    <a id="predicate_FreeverbPanel">
         <div class="doc_predicate_header">
-            [LfoPanel module speed wave pulse phase sync vibrato tremolo wah_wah pan] => Creates a panel for an LFO module.<br />
+            [FreeverbPanel module feedback diffusion highdamp dry wet] => Creates a panel for a freeverb module.<br />
             [module *x *y] => reposition on the screen<br />
             [module] => closes the panel<br />
         </div>
         <div class="doc_predicate_body">
-            Creates a panel for 9 parameter blocks commonly associated with LFO module.
-            The vibrato, tremolo, wah_wah and pan parameters can be [], and thus may not be used and displayed.
-            Range different for each knob.
+            Creates a panel for 5 parameter blocks commonly associated with chorus module.
+            Range from 0.0 .. 8192.0 for diffusion (higher values reverse channels).
+            Ranges of all other parameters are from 0.0 .. 16384.0.
             The resolution is 128 steps with left mouse button and 16384 with the right one.<br />
-            <b>Note:</b> do not use LfoPanel directly. Use <a href="#predicate_BuildLfoPanel">BuildLfoPanel</a> instead.<br />
-            <img src="../../graphics/lfo_panel.png" />
+            <b>Note:</b> do not use FreeverbPanel directly. Use <a href="#predicate_BuildFreeverbPanel">BuildFreeverbPanel</a> instead.<br />
+            <img src="../../graphics/freeverb_panel.png" />
         </div>
     </a>
 </div>
@@ -1607,6 +1621,24 @@
         <div class="doc_predicate_body">
             Creates a panel containing a keyboard.<br />
             <img src="../../graphics/keyboard.png" />
+        </div>
+    </a>
+</div>
+
+<div class="doc_predicate">
+    <a id="predicate_LfoPanel">
+        <div class="doc_predicate_header">
+            [LfoPanel module speed wave pulse phase sync vibrato tremolo wah_wah pan] => Creates a panel for an LFO module.<br />
+            [module *x *y] => reposition on the screen<br />
+            [module] => closes the panel<br />
+        </div>
+        <div class="doc_predicate_body">
+            Creates a panel for 9 parameter blocks commonly associated with LFO module.
+            The vibrato, tremolo, wah_wah and pan parameters can be [], and thus may not be used and displayed.
+            Range different for each knob.
+            The resolution is 128 steps with left mouse button and 16384 with the right one.<br />
+            <b>Note:</b> do not use LfoPanel directly. Use <a href="#predicate_BuildLfoPanel">BuildLfoPanel</a> instead.<br />
+            <img src="../../graphics/lfo_panel.png" />
         </div>
     </a>
 </div>

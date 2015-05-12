@@ -26,7 +26,7 @@ program phobos [Phobos PhobosEditor BuildPhobos BuildPhobosPart Operator-1 Opera
 [[BuildPhobos *polyphony *phobos] [BuildPhobos *polyphony *phobos * *]]
 
 [[BuildPhobos *polyphony *Phobos *PhobosCB *volume]
-	[Moonbase *Phobos *PhobosCB Phobos]
+	[Moonbase *Phobos *PhobosCB Phobos *volume]
 	[moonbase *moonbase] [key_map *mapper]
 	[arpeggiator *PhobosCB *moonbase]
 	[auto_data *XData] [parameter_block *X "index"] [*XData *X]
@@ -151,8 +151,6 @@ program phobos [Phobos PhobosEditor BuildPhobos BuildPhobosPart Operator-1 Opera
 	[Lunar -8192 *Phobos core balance]
 	[Lunar 1 *Phobos portamento porta]
 	[*PhobosCB mono]
-
-	[AddMoon *Phobos *PhobosCB *volume]
 ]
 
 

@@ -29,7 +29,7 @@ program doctor [
 ]
 
 [[BuildDoctor *polyphony *Doctor *DoctorCB *volume *DoctorWaveforms]
-	[Moonbase *Doctor *DoctorCB Doctor]
+	[Moonbase *Doctor *DoctorCB Doctor *volume]
 	[moonbase *DoctorCB]
 	[parameter_block *pitch "index"] [gateway *pitch_range]
 	[stereo_pan *pan]
@@ -62,7 +62,6 @@ program doctor [
 	[Lunar 16384 *Doctor adsr release]
 	[Lunar 16384 *Doctor sensitivity BP]
 	[Lunar -48 *Doctor sensitivity left]
-	[AddMoon *Doctor *DoctorCB *volume]
 ]
 
 [[BuildDoctorPart *Doctor *DoctorCB *pitch_range *line *DoctorWaveforms]

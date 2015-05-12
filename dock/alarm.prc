@@ -14,7 +14,7 @@ program alarm [Alarm BuildAlarm AlarmEditor Lfo-1 Adsr-1 Vco-1]
 [[AlarmEditor] [TRY [Lfo-1]] [TRY [Adsr-1]]]
 
 [[BuildAlarm *alarm *alarmcb *volume]
-	[Moonbase *alarm *alarmcb Alarm]
+	[Moonbase *alarm *alarmcb Alarm *volume]
 	[moonbase *alarmcb] [*alarmcb mono]
 	[pan *pan]
 	[delay *delay]
@@ -59,7 +59,6 @@ program alarm [Alarm BuildAlarm AlarmEditor Lfo-1 Adsr-1 Vco-1]
 	[InsertController 93 *alarm adsr decay]
 	[InsertController 94 -128 *alarm adsr sustain]
 	[InsertController 72 *alarm adsr release]
-	[AddMoon *alarm *alarmcb *volume]
 ]
 
 end .

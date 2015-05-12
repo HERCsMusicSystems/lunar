@@ -26,7 +26,7 @@ program lunar #machine := "prolog.lunar"
 				Connect ConnectStereo ConnectDryWet Disconnect DisconnectStereo DisconnectDryWet
 				AddParameterBlock AddNamedParameterBlock
 				Moonbase AddModule Insert InsertPB InsertController InsertIO InsertBlock Store Restore SubRestore
-				Moons AddMoon RemoveMoon CloseAllMoons ConnectAllMoons
+				Moons AddMoon CloseAllMoons ConnectAllMoons
 				Cbb Cb C C# Cx
 				Dbb Db D D# Dx
 				Ebb Eb E E# Ex
@@ -306,6 +306,12 @@ program lunar #machine := "prolog.lunar"
 	[*to "WETRIGHT" *wet "RIGHT" []]
 ]
 
+[[Moonbase *base *distributor *type *line]
+	[Moonbase *base *distributor *type] /
+	[create_atom *line]
+	[TRY [AddMoon *base *distributor *line]]
+]
+
 [[Moonbase *base *distributor *type]
 	[GenerateInstrumentName *type *base]
 	[create_atoms *distributor *modules *parameters *blocks]
@@ -319,11 +325,14 @@ program lunar #machine := "prolog.lunar"
 	[TRY [*modules *module : *selector] [*module []] [*module] fail]
 	[delallcl *parameters]
 	[delallcl *modules]
+	[delcl [[Moons *base *id : *x]]]
+	[MIDI_CHANNELS *id MIDI_BACK]
 ]
 
 [[CloseAllMoons]
-	[delcl [[Moons *moon : *x]]]
+	[delcl [[Moons *moon *id : *x]]]
 	[Moonbase *moon]
+	[MIDI_CHANNELS *id MIDI_BACK]
 	/ [CloseAllMoons]
 ]
 [[CloseAllMoons]]
@@ -337,6 +346,17 @@ program lunar #machine := "prolog.lunar"
 	fail
 ]
 [[ConnectAllMoons *]]
+
+[[Moons]]
+
+[[AddMoon *location *moon *cb *line]
+	[MIDI_CHANNELS *location : *original]
+	[eq *original MIDI_BACK]
+	[MIDI_CHANNELS *location *cb]
+	[addcl [[Moons *moon *location *cb *line]]]
+]
+[[AddMoon *location *moon *cb *line] [less *location 16] [++ *location *next] / [AddMoon *next *moon *cb *line]]
+[[AddMoon *moon *cb *line] [AddMoon 0 *moon *cb *line]]
 
 [[AddNamedParameterBlock *parameters *module *name *selector *initial *style]
 	[*parameters *pb : *selector] /
@@ -642,19 +662,6 @@ program lunar #machine := "prolog.lunar"
 		[[eq *io [* ["SIGNAL"]]] [*core *base []]]
 	]
 ]
-
-[[Moons]]
-
-[[AddMoon *location *moon *cb *line]
-	[MIDI_CHANNELS *location : *original]
-	[eq *original MIDI_BACK]
-	[MIDI_CHANNELS *location *cb]
-	[addcl [[Moons *moon *location *cb *line]]]
-]
-[[AddMoon *location *moon *cb *line] [less *location 16] [++ *location *next] / [AddMoon *next *moon *cb *line]]
-[[AddMoon *moon *cb *line] [AddMoon 0 *moon *cb *line]]
-
-[[RemoveMoon *moon] [delcl [[Moons *moon *id : *]]] [MIDI_CHANNELS *id MIDI_BACK]]
 
 [[CCCB *key *velocity] [cb_callback : *callback] [*callback keyon *key *velocity]]
 [[CCCB *ret 73 *v] [cb_callback : *callback] [*callback control 73 *v] [add *ret "Attack = " *v]]

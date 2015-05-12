@@ -261,7 +261,7 @@ program lunar #machine := "prolog.lunar"
 	[delallcl *distributor]
 ]
 
-[[Distribute *distributor *key *velocity *keyon_actions *keyoff_actions]
+[[Distribute *distributor *key *keyon_actions *keyoff_actions]
 	[*distributor *mx]
 	[*mx wait]
 	[TRY
@@ -271,7 +271,7 @@ program lunar #machine := "prolog.lunar"
 	[*mx signal]
 ]
 
-[[Redistribute *distributor *key *velocity]
+[[Redistribute *distributor *key]
 	[*distributor *mx]
 	[*mx wait]
 	[TRY

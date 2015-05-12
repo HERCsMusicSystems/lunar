@@ -66,6 +66,12 @@
         <a href="#predicate_polysequencer">polysequencer</a>
         <a href="#predicate_sequencer">sequencer</a>
     </li>
+    <li><a href="#distributor">Distributor</a><br />
+        <a href="#predicate_CloseDistributor">CloseDistributor</a>
+        <a href="#predicate_CreateDistributor">CreateDistributor</a>
+        <a href="#predicate_Distribute">Distribute</a>
+        <a href="#predicate_Redistribute">Redistribute</a>
+    </li>
     <li><a href="#utilities">Utilities</a>
         <br />
         <a href="#predicate_BuildAdsrPanel">BuildAdsrPanel</a>
@@ -1076,6 +1082,62 @@
             <b>[busy value]</b> => sets the value of the <b>Busy</b> signal. Value can be either integer or double.<br />
             <b>[impulse value]</b> => sets the value of the <b>Busy</b> signal for the duration of one sample
             and then returns to its previous level. Value can be either integer or double.<br />
+        </div>
+    </a>
+</div>
+
+<div class="doc_library_section"><a id="distributor">Distributor</a></div>
+
+<div class="doc_predicate">
+    <a id="predicate_CloseDistributor">
+        <div class="doc_predicate_header">
+            [CloseDistributor distributor] => Closes a distributor.
+        </div>
+        <div class="doc_predicate_body">
+            Removes a previously created distributor.
+            This include mutex and all non-finished actions.
+        </div>
+    </a>
+</div>
+
+<div class="doc_predicate">
+    <a id="predicate_CreateDistributor">
+        <div class="doc_predicate_header">
+            [CreateDistributor distributor] => Closes a distributor.
+        </div>
+        <div class="doc_predicate_body">
+            Creates a new distributor by constructing a guarding mutex and adding a clause [[distributor mutex]].
+        </div>
+    </a>
+</div>
+
+<div class="doc_predicate">
+    <a id="predicate_Distribute">
+        <div class="doc_predicate_header">
+            [Distribute distributor key [... keyon actions ...] [... keyoff actions ...]] => Response to the MIDI keyon message.
+        </div>
+        <div class="doc_predicate_body">
+            This is the response to the incoming MIDI keyon message.
+            The <b>keyon actions</b> are performed immediately
+            while the <b>keyoff actions</b> are stored together with the key value for future completion.
+            Typically the <b>keyon actions</b> would construct an instrument and play it.
+            The <b>keyoff actions</b> would then stop playing and remove the instrument
+            upon receiving MIDI keyoff message.
+        </div>
+    </a>
+</div>
+
+<div class="doc_predicate">
+    <a id="predicate_Redistribute">
+        <div class="doc_predicate_header">
+            [Redistribute distributor key] => Response to the MIDI keyoff message.
+        </div>
+        <div class="doc_predicate_body">
+            This is the response to the incoming MIDI keyoff message.
+            The distributor finds the completion instructions associated with the key,
+            performs them and deletes them.
+            Typically the completion instructions would be stored by a preceeding
+            call to [Distribute ....] and would remove a previously created instrument.
         </div>
     </a>
 </div>

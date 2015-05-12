@@ -29,8 +29,6 @@
 
 #include "pthread.h"
 
-#define HEADROOM_FRACTION 0.4
-
 class orbiter;
 class dock;
 typedef dock * dock_pointer;
@@ -45,6 +43,7 @@ public:
 	double centre_frequency;
 	double sampling_frequency;
 	double sample_duration;
+	double headroom_fraction;
 	int latency_block_size;
 	int requested_active_size;
 	int output_device;

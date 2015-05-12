@@ -263,10 +263,11 @@ orbiter * wave_class :: create_orbiter (PrologElement * parameters) {
 	lunar_wave * wave = new lunar_wave (core, capacity);
 	capacity = 0;
 	double gain = 4.0;
+	double headroom_reciprocal = core -> headroom_fraction > 0.0 ? 1.0 / core -> headroom_fraction : 1.0;
 	while (parameters -> isPair ()) {
 		PrologElement * el = parameters -> getLeft ();
 		if (el -> isDouble ()) gain = el -> getDouble ();
-		if (el -> isText ()) wave -> waves [capacity++] = create_lunar_wave_data (el -> getText (), gain);
+		if (el -> isText ()) wave -> waves [capacity++] = create_lunar_wave_data (el -> getText (), gain * headroom_reciprocal);
 		parameters = parameters -> getRight ();
 	}
 	return wave;

@@ -96,7 +96,6 @@ static bool read4 (FILE * fr, long int * ind) {
 
 #define fail {fclose (fr); return 0;}
 wave_data * create_lunar_wave_data (char * file_name, double gain) {
-	gain /= HEADROOM_FRACTION;
 	if (file_name == 0) return 0;
 	FILE * fr = fopen (file_name, "rb");
 	if (! fr) return 0;

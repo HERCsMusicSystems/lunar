@@ -124,11 +124,12 @@ void alpha_callback (int frames, AudioBuffers * data, void * source) {
 	double * moon = base -> module -> inputAddress (0);
 	double * left_moon = base -> module -> inputAddress (1);
 	double * right_moon = base -> module -> inputAddress (2);
+	double headroom_fraction = core -> headroom_fraction;
 	pthread_mutex_lock (& core -> main_mutex);
 	for (int ind = 0; ind < frames; ind++) {
 		core -> propagate_signals ();
 		core -> move_modules ();
-		data -> insertStereo (((* moon) + (* left_moon)) * HEADROOM_FRACTION, ((* moon) + (* right_moon)) * HEADROOM_FRACTION);
+		data -> insertStereo (((* moon) + (* left_moon)) * headroom_fraction, ((* moon) + (* right_moon)) * headroom_fraction);
 	}
 	pthread_mutex_unlock (& core -> main_mutex);
 }
@@ -159,8 +160,9 @@ bool core_class :: code (PrologElement * parameters, PrologResolution * resoluti
 	}
 	PrologElement * atom = 0;
 	PrologElement * file_name = 0;
-	double centre_frequency = -1;
-	double sampling_frequency = -1;
+	double centre_frequency = -1.0;
+	double sampling_frequency = -1.0;
+	double headroom_fraction = -1.0;
 	int latency_block_size = -1;
 	PrologElement * output_device = 0;
 	PrologElement * input_device = 0;
@@ -178,7 +180,10 @@ bool core_class :: code (PrologElement * parameters, PrologResolution * resoluti
 			else if (input_device == 0) input_device = el;
 			else requested_number_of_actives = el -> getInteger ();
 		}
-		if (el -> isDouble ()) centre_frequency = el -> getDouble ();
+		if (el -> isDouble ()) {
+			if (centre_frequency < 0.0) centre_frequency = el -> getDouble ();
+			else headroom_fraction = el -> getDouble ();
+		}
 		parameters = parameters -> getRight ();
 	}
 	if (atom == 0) {
@@ -192,6 +197,7 @@ bool core_class :: code (PrologElement * parameters, PrologResolution * resoluti
 	if (cores > 0) return false;
 	if (centre_frequency < 0.0) centre_frequency = core -> centre_frequency;
 	if (sampling_frequency < 0.0) sampling_frequency = core -> sampling_frequency;
+	if (headroom_fraction < 0.0) headroom_fraction = core -> headroom_fraction;
 	if (latency_block_size < 16) latency_block_size = core -> latency_block_size;
 	if (requested_number_of_actives < 0) requested_number_of_actives = core -> requested_active_size;
 	if (atom -> isVar ()) atom -> setAtom (new PrologAtom ());
@@ -199,6 +205,7 @@ bool core_class :: code (PrologElement * parameters, PrologResolution * resoluti
 	if (atom -> getAtom () -> getMachine () != 0) return false;
 	core -> centre_frequency = centre_frequency;
 	core -> sampling_frequency = (double) sampling_frequency;
+	core -> headroom_fraction = headroom_fraction;
 	core -> latency_block_size = latency_block_size;
 	core -> output_device = output_device != 0 ? output_device -> getInteger () : 0;
 	core -> input_device = input_device != 0 ? input_device -> getInteger () : 0;

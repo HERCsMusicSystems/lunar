@@ -1346,8 +1346,8 @@
             [core seconds] => Starts recording.<br />
             [core "file_name.wav"] => Stops recording.<br />
             [core seconds "file_name.wav"] => Starts recording.<br />
-            [core module centre_frequency sampling_rate buffer_size output_device input_device capacity] => Creates a hardware connection.<br />
-            [core module 330 48000 128 0 0 4096] => default values.<br />
+            [core module centre_frequency headroom_fraction sampling_rate buffer_size output_device input_device capacity] => Creates a hardware connection.<br />
+            [core module 330 0.4 48000 128 0 0 4096] => default values.<br />
             <b>Note:</b> module adheres to <a href="#common_behaviour_of_predicates">Common Behaviour</a>.<br />
         </div>
         <div class="doc_predicate_body">
@@ -1356,15 +1356,19 @@
             It can also record currently played audio to WAV files.<br />
             To create a hardware connection, it is necessary to provide at least a symbol.
             All numeric values (either integer or double) are optional.
-            The chardware connection can be closed in the same way as every other audio module.<br />
+            The headroom fraction, as it can only be double, can be ommited entirely or inserted at any position after centre frequency.
+            The hardware connection can be closed in the same way as every other audio module.<br />
             <b>Parameters:</b><br />
             <b>module:</b> a symbol representing audio module connected directly to the audio hardware.<br />
-            <b>centre_frequency:</b> of middle E (Midi key number = 64). Default = 330.0.<br />
-            <b>sampling_rate:</b> intended sampling frequency. Default = 48 kHz.<br />
-            <b>buffer_size:</b> directly responsible for latency. Default = 128.<br />
-            <b>output_device:</b> port number. Default = 0.<br />
-            <b>input_device:</b> port number. Default = 0.<br />
-            <b>capacity:</b> specifies the maximum number of expected modules, which can be active at the same time. Default = 4096.<br />
+            <b>centre_frequency:</b> of middle E (Midi key number = 64). Can be either double or integer. Default = 330.0.<br />
+            <b>headroom_fraction:</b> specifies the fraction of the entire dynamic range occupied by the range of audio signals -1.0 .. 1.0.
+            For example, on a 16-bit dynamic range (-32768.0 .. 32768.0) a value of 0.25 would cause a sine wave operator
+            to oscillate from -8192.0 .. 8192.0. Double. Default = 0.4.<br />
+            <b>sampling_rate:</b> intended sampling frequency. Integer. Default = 48 kHz.<br />
+            <b>buffer_size:</b> directly responsible for latency. Integer. Default = 128.<br />
+            <b>output_device:</b> port number. Integer. Default = 0.<br />
+            <b>input_device:</b> port number. Integer. Default = 0.<br />
+            <b>capacity:</b> specifies the maximum number of expected modules, which can be active at the same time. Integer. Default = 4096.<br />
             To start audio recording it is necessary to provide at least its intended duration (in seconds).
             If the file name was not provided and the recording completes, then it will be lost.
             However, the recording can be stopped prematurely (by either [core] or [core "file_name.wav"]).

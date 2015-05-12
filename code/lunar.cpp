@@ -41,6 +41,7 @@ orbiter_core :: orbiter_core (void) {
 	active_pointer = 0; actives = 0; active_limit = 0;
 	this -> centre_frequency = 330.0;
 	this -> sampling_frequency = 48000.0;
+	this -> headroom_fraction = 0.4;
 	this -> latency_block_size = 128;
 	output_device = input_device = 0;
 	time_delta = time_deltas + 16384;

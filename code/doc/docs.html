@@ -127,6 +127,16 @@
 
 <div class="doc_library_section"><a id="#audio_modules">Audio Modules</a></div>
 
+Audio Modules are building blocks, which can be used to construct all kinds of musical instruments and / or audio effects.
+They are active real-time elements with inputs and outputs and an associated Prolog symbol for programmatic control.
+They can be constructed (or allocated), their inputs can be connected to outputs (of other modules) and destroyed (deallocated).
+Destroying a module requires two conditions: (a) the associated Prolog symbol has to be detached, and
+(b) module's output can not be connected to any other input.
+Once these two conditions are met, the audio module is automatically garbage-collected.
+To make the entire system work, a <b>core</b> module has to be constructed.
+To make the sound audible, some modules should be connected to the core's input.
+Core also functions as an audio source (connected directly to the sound hardware).
+
 <div class="doc_predicate">
     <a id="common_behaviour_of_predicates">
         <div class="doc_predicate_header">
@@ -935,6 +945,69 @@
 </div>
 
 <div class="doc_library_section"><a id="superstructure">Superstructure</a></div>
+
+The superstructure allows for constructing entire polyphonic music instruments, which can be connected to MIDI sources.
+It consists of a database of all modules and parameters, which can be automatically allocated, deallocated
+and connected to the core or other recipients of audio signals, such as oscilloscopes, spectroscopes and other effects.
+Additionally, the entire superstructure can be controlled from Command Centre Panel,
+which has an access to the database.
+The Command Centre is also a drop target (as well as any other visible panel) for Prolog scripts,
+which can automatically create new instrument and insert them into the superstructure.
+<br /><br />
+A typical construction of an instrument and inserting it into the superstructure would require the following steps:
+<ul>
+    <li>Create a new superstructure record by [Moonbase instrument Callback type].
+        The instrument is basically the new superstructure record.
+        Callback is necessary for the superstructure to be able to controll the new instrument
+        (by sending MIDI messages to the callback).
+        The type is important for automatic storing end re-storing of presets.
+    </li>
+    <li>Create a (moon)base, which will function as a callback for MIDI messages, eg. [(moon)base Callback]</li>
+    <li>Alternatively create arpeggiator or (poly-)sequencer.
+        However, these modules will still need to have a (moon)base connected, eg. [arpeggiator Callback other-module]
+    </li>
+    <li>Create and connect some global modules for the new instrument, such as volume, pan, delay, chorus, etc.</li>
+    <li>Make those modules accessible through the instrument's superstructure by calling [Insert module instrument : path].
+        Each module inserted this way will have several new parameter blocks constructed, connected to its inputs
+        and made them accessible through the instrument's superstructure.
+        Specialised parameter blocks have to be inserted individually using [InsertPB block instrument : path].
+        This method will not create any new parameter block.
+    </li>
+    <li>In a loop create several polyphonic parts of the instrument.
+        It will require creating a <a href="#predicate_trigger">trigger</a> module,
+        which will need to be connected to the (moon)base callback.
+        The purpose of the trigger is to: (a) receive from the Callback MIDI messages translated into signals, and
+        (b) report back to the Callback if the part is still busy (through its <b>busy</b> input).
+    </li>
+    <li>Also, in the same loop, part modules can be inserted into the superstructure.
+        Please, note, the [Insert....] and will not create duplicates for the same superstructure entries.
+        Instead, the previously created parameter blocks will simply be connected to the inputs of modules
+        from each new part.
+    </li>
+    <li>After all parts are constructed, some more insertions can be made, especially for less significant modules
+        (i.e. at the end of the superstructure).
+    </li>
+    <li>MIDI controllers can be added to the Callback.
+        It can be achieved by [InsertController ctrl-no optional-shift instrument : path].
+        This way the Callback is instructed to modify directly the input of the parameter block
+        (specified by the path) in response to the MIDI control change message.
+    </li>
+    <li>Some pre-set values can be set for some parameter blocks (if necessary)
+        by [Lunar value instrument : path].
+    </li>
+    <li>Finally [AddMoon instrument Callback audio-output] inserts the new instrument into the superstructure.
+        The instrument is the new superstructure record, just created.
+        The Callback is necessary for passing MIDI message from superstructure to the instrument.
+        The audio-output is necessary for automatic connecting and disconnecting with other elements of the system
+        (such as oscilloscopes, spectroscopes, the core, or other modules).
+    </li>
+    <li>
+        The entire superstructure can be connecte to the core (i.e. [ConnectAllMoons reactor]),
+        or destroyed (i.e. [CloseAllMoons]).
+        Individual instruments can be destroyed by [Moonbase instrument]
+        and / or disconnected from the superstructure by [RemoveMoon instrument].
+    </li>
+</ul>
 
 <div class="doc_predicate">
     <a id="predicate_arpeggiator">

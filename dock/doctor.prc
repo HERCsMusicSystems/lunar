@@ -5,15 +5,9 @@ program doctor [
 				Doctor BuildDoctor BuildDoctorPart DoctorWaveforms
 				]
 
-[[BuildDoctor *polyphony]
-	[GenerateInstrumentName Doctor *doctor]
-	[BuildDoctor *polyphony *doctor * *]
-]
+[[BuildDoctor *polyphony] [BuildDoctor *polyphony * * *]]
 
-[[BuildDoctor *polyphony *waveforms]
-	[GenerateInstrumentName Doctor *doctor]
-	[BuildDoctor *polyphony *doctor * * *waveforms]
-]
+[[BuildDoctor *polyphony *waveforms] [BuildDoctor *polyphony * * * *waveforms]]
 
 [[BuildDoctor *polyphony *doctor *waveforms] [BuildDoctor *polyphony *doctor * * *waveforms]]
 
@@ -35,7 +29,6 @@ program doctor [
 ]
 
 [[BuildDoctor *polyphony *Doctor *DoctorCB *volume *DoctorWaveforms]
-	[create_atoms *Doctor *DoctorCB *volume]
 	[Moonbase *Doctor *DoctorCB Doctor]
 	[moonbase *DoctorCB]
 	[parameter_block *pitch "index"] [gateway *pitch_range]

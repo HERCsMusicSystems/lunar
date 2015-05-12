@@ -21,16 +21,12 @@ program phobos [Phobos PhobosEditor BuildPhobos BuildPhobosPart Operator-1 Opera
 	[TRY [Operators]] [TRY [Lfo-1]] [TRY [Lfo-2]] [TRY [Filter-1]] [TRY [Noise-EG]] [TRY [Noise-Amp]]
 ]
 
-[[BuildPhobos *polyphony]
-	[GenerateInstrumentName Phobos *phobos]
-	[BuildPhobos *polyphony *phobos * * *]
-]
+[[BuildPhobos *polyphony] [BuildPhobos *polyphony * * *]]
 
-[[BuildPhobos *polyphony *phobos] [BuildPhobos *polyphony *phobos * * *]]
+[[BuildPhobos *polyphony *phobos] [BuildPhobos *polyphony *phobos * *]]
 
-[[BuildPhobos *polyphony *Phobos *PhobosCB *volume *pan]
+[[BuildPhobos *polyphony *Phobos *PhobosCB *volume]
 	[Moonbase *Phobos *PhobosCB Phobos]
-
 	[moonbase *moonbase] [key_map *mapper]
 	[arpeggiator *PhobosCB *moonbase]
 	[auto_data *XData] [parameter_block *X "index"] [*XData *X]

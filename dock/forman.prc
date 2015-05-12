@@ -4,10 +4,7 @@ import lunar
 
 program forman [Forman BuildForman BuildFormanPart]
 
-[[BuildForman *polyphony]
-	[GenerateInstrumentName Forman *forman]
-	[BuildForman *polyphony *forman * *]
-]
+[[BuildForman *polyphony] [BuildForman *polyphony * * *]]
 
 [[BuildForman *polyphony *forman] [BuildForman *polyphony *forman * *]]
 

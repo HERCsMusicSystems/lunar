@@ -307,7 +307,8 @@ program lunar #machine := "prolog.lunar"
 ]
 
 [[Moonbase *base *distributor *type]
-	[create_atoms *base *distributor *modules *parameters *blocks]
+	[GenerateInstrumentName *type *base]
+	[create_atoms *distributor *modules *parameters *blocks]
 	[addcl [[*base *parameters *modules *distributor *type *blocks]]]
 ]
 
@@ -778,6 +779,7 @@ program lunar #machine := "prolog.lunar"
 	[*cb *command : *t]
 ]
 
+[[GenerateInstrumentName * *name] [is_atom *name] /]
 [[GenerateInstrumentName *prefix *name]
 	[InstrumentIndex : *i]
 	[add *prefix "-" *i *atom_name]

@@ -26,7 +26,7 @@ program lunar #machine := "prolog.lunar"
 				Connect ConnectStereo ConnectDryWet Disconnect DisconnectStereo DisconnectDryWet
 				AddParameterBlock AddNamedParameterBlock
 				Moonbase AddModule Insert InsertPB InsertController InsertIO InsertBlock Store Restore SubRestore
-				Moons AddMoon CloseAllMoons ConnectAllMoons
+				Moons AllocateChannel CloseAllMoons ConnectAllMoons
 				Cbb Cb C C# Cx
 				Dbb Db D D# Dx
 				Ebb Eb E E# Ex
@@ -306,21 +306,27 @@ program lunar #machine := "prolog.lunar"
 	[*to "WETRIGHT" *wet "RIGHT" []]
 ]
 
-[[Moonbase *base *distributor *type *line]
-	[Moonbase *base *distributor *type] /
-	[create_atom *line]
-	[TRY [AddMoon *base *distributor *line]]
-]
+[[Moons]]
 
-[[Moonbase *base *distributor *type]
+[[AllocateChannel *index *index]
+	[MIDI_CHANNELS *index : *original]
+	[eq *original MIDI_BACK] /
+]
+[[AllocateChannel *index *location] [++ *index *next] [MIDI_CHANNELS *next : *] / [AllocateChannel *index *location]]
+
+[[Moonbase *base *distributor *type *line]
+	[AllocateChannel 0 *index]
 	[GenerateInstrumentName *type *base]
-	[create_atoms *distributor *modules *parameters *blocks]
+	[create_atoms *distributor *line *modules *parameters *blocks]
 	[addcl [[*base *parameters *modules *distributor *type *blocks]]]
+	[addcl [[Moons *base *index *distributor *line]]]
+	[MIDI_CHANNELS *index *distributor]
 ]
 
 [[Moonbase *base]
 	[*base *parameters *modules *callback : *]
 	[delallcl *base]
+	[TRY [*callback]]
 	[TRY [*parameters *parameter : *selector] [*parameter] fail]
 	[TRY [*modules *module : *selector] [*module []] [*module] fail]
 	[delallcl *parameters]
@@ -346,17 +352,6 @@ program lunar #machine := "prolog.lunar"
 	fail
 ]
 [[ConnectAllMoons *]]
-
-[[Moons]]
-
-[[AddMoon *location *moon *cb *line]
-	[MIDI_CHANNELS *location : *original]
-	[eq *original MIDI_BACK]
-	[MIDI_CHANNELS *location *cb]
-	[addcl [[Moons *moon *location *cb *line]]]
-]
-[[AddMoon *location *moon *cb *line] [less *location 16] [++ *location *next] / [AddMoon *next *moon *cb *line]]
-[[AddMoon *moon *cb *line] [AddMoon 0 *moon *cb *line]]
 
 [[AddNamedParameterBlock *parameters *module *name *selector *initial *style]
 	[*parameters *pb : *selector] /
@@ -796,8 +791,8 @@ program lunar #machine := "prolog.lunar"
 
 auto := [
 			[var cb_callback cb_path cb_edit_path [InstrumentIndex 0]]
-			[ARRAY MIDI_CHANNELS 16]
-			[FOR *i 0 15 1 [MIDI_CHANNELS *i MIDI_BACK]]
+			[ARRAY MIDI_CHANNELS 128]
+			[FOR *i 0 127 1 [MIDI_CHANNELS *i MIDI_BACK]]
 		]
 
 private [AddParameterBlock SubRestore cb_callback cb_path cb_edit_path CBsub process_mode FindLfoKnob]

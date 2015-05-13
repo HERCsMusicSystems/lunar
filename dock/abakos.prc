@@ -2,7 +2,7 @@
 import studio
 import lunar
 
-program abakos [Abakos BuildAbakos BuildAbakosPart]
+program abakos [Abakos BuildAbakos BuildAbakosPart AddMoon]
 
 [[BuildAbakos *Abakos *AbakosCB *drywet]
 	[moonbase *Abakoscb]

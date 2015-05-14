@@ -65,14 +65,20 @@
         <a href="#predicate_CloseAllMoons">CloseAllMoons</a>
         <a href="#predicate_ConnectAllMoons">ConnectAllMoons</a>
         <a href="#predicate_detector">detector</a>
+        <a href="#predicate_income_midi">income_midi</a>
         <a href="#predicate_Insert">Insert</a>
         <a href="#predicate_InsertBlock">InsertBlock</a>
         <a href="#predicate_InsertController">InsertController</a>
         <a href="#predicate_InsertPB">InsertPB</a>
+        <a href="#predicate_Lander">Lander</a>
+        <a href="#predicate_Lunar">Lunar</a>
+        <a href="#predicate_MIDI_BACK">MIDI_BACK</a>
         <a href="#predicate_Moonbase">Moonbase</a>
         <a href="#predicate_base">moonbase</a>
         <a href="#predicate_polysequencer">polysequencer</a>
+        <a href="#predicate_Restore">Restore</a>
         <a href="#predicate_sequencer">sequencer</a>
+        <a href="#predicate_Store">Store</a>
     </li>
     <li><a href="#distributor">Distributor</a><br />
         <a href="#predicate_CloseDistributor">CloseDistributor</a>
@@ -1119,6 +1125,20 @@ A typical construction of an instrument and inserting it into the superstructure
 </div>
 
 <div class="doc_predicate">
+    <a id="predicate_income_midi">
+        <div class="doc_predicate_header">
+            [income_midi ....] => Default MIDI message entry point to the superstructure.<br />
+        </div>
+        <div class="doc_predicate_body">
+            The income_midi is the default gateway for MIDI communication with the superstructure.
+            It can be used whenever a MIDI message needs to be sent to any
+            instrument inserted into the superstructure.
+            It is also the default callback for <a href="#predicate_midi">midi</a> hardware interface.
+        </div>
+    </a>
+</div>
+
+<div class="doc_predicate">
     <a id="predicate_Insert">
         <div class="doc_predicate_header">
             [Insert module instrument : path] => Inserts a module into the instrument superstructure.<br />
@@ -1179,6 +1199,42 @@ A typical construction of an instrument and inserting it into the superstructure
 </div>
 
 <div class="doc_predicate">
+    <a id="predicate_Lander">
+        <div class="doc_predicate_header">
+            [Lander *module instrument : path] => Find a module in the superstructure.<br />
+        </div>
+        <div class="doc_predicate_body">
+            Finds and return a module within the superstructure.
+        </div>
+    </a>
+</div>
+
+<div class="doc_predicate">
+    <a id="predicate_Lunar">
+        <div class="doc_predicate_header">
+            [Lunar *value instrument : path] => Reads the value from a parameter block in the superstructure.<br />
+            [Lunar value instrument : path] => Sets the value of a parameter block in the superstructure.<br />
+        </div>
+        <div class="doc_predicate_body">
+            Sets or reads a value from a parameter block referenced by path within the superstructure.
+        </div>
+    </a>
+</div>
+
+<div class="doc_predicate">
+    <a id="predicate_MIDI_BACK">
+        <div class="doc_predicate_header">
+            [MIDI_BACK ....] => MIDI monitor.<br />
+        </div>
+        <div class="doc_predicate_body">
+            This is the default response of the superstructure
+            to MIDI messages addressed to non-existent instruments.
+            It displays messages on the console and filters-out activesensing message.
+        </div>
+    </a>
+</div>
+
+<div class="doc_predicate">
     <a id="predicate_Moonbase">
         <div class="doc_predicate_header">
             [Moonbase instrument callback type line] => Creates a new instrument in the superstructure.<br />
@@ -1229,6 +1285,18 @@ A typical construction of an instrument and inserting it into the superstructure
 </div>
 
 <div class="doc_predicate">
+    <a id="predicate_Restore">
+        <div class="doc_predicate_header">
+            [Restore instrument "file_name"] => Reads presets into the instrument within the superstructure.<br />
+        </div>
+        <div class="doc_predicate_body">
+            Reads a file with preset values for all parameter blocks inserted into the superstructore
+            of the instrument.
+        </div>
+    </a>
+</div>
+
+<div class="doc_predicate">
     <a id="predicate_sequencer">
         <div class="doc_predicate_header">
             [sequencer module base] => Creates a sequencer module connected to a base module.<br />
@@ -1257,6 +1325,17 @@ A typical construction of an instrument and inserting it into the superstructure
             <b>[busy value]</b> => sets the value of the <b>Busy</b> signal. Value can be either integer or double.<br />
             <b>[impulse value]</b> => sets the value of the <b>Busy</b> signal for the duration of one sample
             and then returns to its previous level. Value can be either integer or double.<br />
+        </div>
+    </a>
+</div>
+
+<div class="doc_predicate">
+    <a id="predicate_Store">
+        <div class="doc_predicate_header">
+            [Store instrument "file_name"] => Saves a preset.<br />
+        </div>
+        <div class="doc_predicate_body">
+            Saves values of all parameter blocks of the instrument's superstructure into the specified file.
         </div>
     </a>
 </div>

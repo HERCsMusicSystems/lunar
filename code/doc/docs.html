@@ -23,6 +23,7 @@
         <a href="#predicate_chorus">chorus</a>
         <a href="#predicate_control">control</a>
         <a href="#predicate_delay">delay</a>
+        <a href="#predicate_detector">detector</a>
         <a href="#predicate_drywet">drywet</a>
         <a href="#predicate_drywet_mono">drywet_mono</a>
         <a href="#predicate_eg">eg</a>
@@ -61,7 +62,14 @@
     <li><a href="#superstructure">Superstructure</a><br />
         <a href="#predicate_arpeggiator">arpeggiator</a>
         <a href="#predicate_base">base</a>
+        <a href="#predicate_CloseAllMoons">CloseAllMoons</a>
+        <a href="#predicate_ConnectAllMoons">ConnectAllMoons</a>
         <a href="#predicate_detector">detector</a>
+        <a href="#predicate_Insert">Insert</a>
+        <a href="#predicate_InsertBlock">InsertBlock</a>
+        <a href="#predicate_InsertController">InsertController</a>
+        <a href="#predicate_InsertPB">InsertPB</a>
+        <a href="#predicate_Moonbase">Moonbase</a>
         <a href="#predicate_base">moonbase</a>
         <a href="#predicate_polysequencer">polysequencer</a>
         <a href="#predicate_sequencer">sequencer</a>
@@ -311,6 +319,23 @@ Core also functions as an audio source (connected directly to the sound hardware
             <b>Highdamp:</b> level of damping of high frequencies. Range between 0.0 .. 16384.0.<br />
             <b>OUTPUTS:</b><br />
             <b>Left and Right:</b> stereo output.<br />
+        </div>
+    </a>
+</div>
+
+<div class="doc_predicate">
+    <a id="predicate_detector">
+        <div class="doc_predicate_header">
+            [detector module commands ....] => Creates a detector module, which triggers at zero.<br />
+            [detector module value commands ....] => Creates a detector module with specified trigger value.<br />
+            <b>Note:</b> module adheres to <a href="#common_behaviour_of_predicates">Common Behaviour</a>.<br />
+        </div>
+        <div class="doc_predicate_body">
+            <b>Signals:</b> [["SIGNAL"] ["SIGNAL"]]<br />
+            Detector calls the stored command sequence every time the input signal becomes equal to its internal trigger value.
+            The default trigger is zero. Detector is useful to detect if some modules are no longer busy (adsr, sequencer, etc.).<br />
+            <b>Note:</b> similar to <a href=#predicate_parameter_block>inactive parameter block</a>
+            the input signal is in fact the same memory address as the output signal.
         </div>
     </a>
 </div>
@@ -956,11 +981,12 @@ which can automatically create new instrument and insert them into the superstru
 <br /><br />
 A typical construction of an instrument and inserting it into the superstructure would require the following steps:
 <ul>
-    <li>Create a new superstructure record by [Moonbase instrument Callback type].
+    <li>Create a new superstructure record by [Moonbase instrument Callback type line].
         The instrument is basically the new superstructure record.
         Callback is necessary for the superstructure to be able to controll the new instrument
         (by sending MIDI messages to the callback).
         The type is important for automatic storing end re-storing of presets.
+        The line is the mono or stereo output from the instrument and is necessary for automatic connections of audio signals.
     </li>
     <li>Create a (moon)base, which will function as a callback for MIDI messages, eg. [(moon)base Callback]</li>
     <li>Alternatively create arpeggiator or (poly-)sequencer.
@@ -980,7 +1006,7 @@ A typical construction of an instrument and inserting it into the superstructure
         (b) report back to the Callback if the part is still busy (through its <b>busy</b> input).
     </li>
     <li>Also, in the same loop, part modules can be inserted into the superstructure.
-        Please, note, the [Insert....] and will not create duplicates for the same superstructure entries.
+        Please, note, the [Insert....] will not create duplicates for the same superstructure entries.
         Instead, the previously created parameter blocks will simply be connected to the inputs of modules
         from each new part.
     </li>
@@ -995,17 +1021,10 @@ A typical construction of an instrument and inserting it into the superstructure
     <li>Some pre-set values can be set for some parameter blocks (if necessary)
         by [Lunar value instrument : path].
     </li>
-    <li>Finally [AddMoon instrument Callback audio-output] inserts the new instrument into the superstructure.
-        The instrument is the new superstructure record, just created.
-        The Callback is necessary for passing MIDI message from superstructure to the instrument.
-        The audio-output is necessary for automatic connecting and disconnecting with other elements of the system
-        (such as oscilloscopes, spectroscopes, the core, or other modules).
-    </li>
     <li>
         The entire superstructure can be connecte to the core (i.e. [ConnectAllMoons reactor]),
         or destroyed (i.e. [CloseAllMoons]).
-        Individual instruments can be destroyed by [Moonbase instrument]
-        and / or disconnected from the superstructure by [RemoveMoon instrument].
+        Individual instruments can be destroyed by [Moonbase instrument].
     </li>
 </ul>
 
@@ -1075,18 +1094,101 @@ A typical construction of an instrument and inserting it into the superstructure
 </div>
 
 <div class="doc_predicate">
-    <a id="predicate_detector">
+    <a id="predicate_CloseAllMoons">
         <div class="doc_predicate_header">
-            [detector module commands ....] => Creates a detector module, which triggers at zero.<br />
-            [detector module value commands ....] => Creates a detector module with specified trigger value.<br />
-            <b>Note:</b> module adheres to <a href="#common_behaviour_of_predicates">Common Behaviour</a>.<br />
+            [CloseAllMoons] => Erases the entire superstructure.<br />
         </div>
         <div class="doc_predicate_body">
-            <b>Signals:</b> [["SIGNAL"] ["SIGNAL"]]<br />
-            Detector calls the stored command sequence every time the input signal becomes equal to its internal trigger value.
-            The default trigger is zero. Detector is useful to detect if some modules are no longer busy (adsr, sequencer, etc.).<br />
-            <b>Note:</b> similar to <a href=#predicate_parameter_block>inactive parameter block</a>
-            the input signal is in fact the same memory address as the output signal.
+            Removes the entire superstructure from the system.
+            Please, note, it is still necessary to disconnect active audio modules from
+            any audio recipients, such as oscilloscopes, spectroscopes or core.
+            Otherwise, some modules will not be deallocated.
+        </div>
+    </a>
+</div>
+
+<div class="doc_predicate">
+    <a id="predicate_ConnectAllMoons">
+        <div class="doc_predicate_header">
+            [ConnectAllMoons audio_recipient] => Connects superstructure to the audio recipient.<br />
+        </div>
+        <div class="doc_predicate_body">
+            Connect all instruments from the superstructure to the audio recipient.
+        </div>
+    </a>
+</div>
+
+<div class="doc_predicate">
+    <a id="predicate_Insert">
+        <div class="doc_predicate_header">
+            [Insert module instrument : path] => Inserts a module into the instrument superstructure.<br />
+        </div>
+        <div class="doc_predicate_body">
+            Inserts a module into the superstructure.
+            New parameter blocks are created for its inputs and path is extended by symbols identifying those inputs.
+            If there are already previously created parameter blocks for this particular path,
+            then the inputs of the module are simply connected to those parameter blocks.
+            This solution enables connecting multiple audio modules to the same parameter blocks,
+            thus enabling effective control of polyphonic instruments.
+        </div>
+    </a>
+</div>
+
+<div class="doc_predicate">
+    <a id="predicate_InsertBlock">
+        <div class="doc_predicate_header">
+            [InsertBlock module instrument : path] => Inserts a module into the instrument superstructure.<br />
+        </div>
+        <div class="doc_predicate_body">
+            Inserts a module into the superstructure.
+            It does not connect any parameter blocks to the module.
+            The purpose of inserting a module this way is to make sure
+            it will get disconnected from other modules before deallocating the superstructure.
+        </div>
+    </a>
+</div>
+
+<div class="doc_predicate">
+    <a id="predicate_InsertController">
+        <div class="doc_predicate_header">
+            [InsertController ctrl instrument : path] => Connects a MIDI controller to the callback in the instrument superstructure.<br />
+            [InsertController ctrl shift instrument : path] => Connects a MIDI controller (with shift) to the callback in the instrument superstructure.<br />
+        </div>
+        <div class="doc_predicate_body">
+            Connects a MIDI controller to the instrument.<br />
+            First, it finds the callback of the instrument.
+            Then finds a parameter block addressed by the path.
+            Finally connects the parameter block to the callback
+            and make it controllable by MIDI control change message.
+            The optional shift parameter is a numeric shift
+            added to the value of the controller.
+        </div>
+    </a>
+</div>
+
+<div class="doc_predicate">
+    <a id="predicate_InsertPB">
+        <div class="doc_predicate_header">
+            [InsertPB module instrument : path] => Inserts a parameter block into the instrument superstructure.<br />
+        </div>
+        <div class="doc_predicate_body">
+            Inserts a parameter block into the superstructure.
+            No new parameter blocks are constructed and path is not extended by any additional symbols.
+        </div>
+    </a>
+</div>
+
+<div class="doc_predicate">
+    <a id="predicate_Moonbase">
+        <div class="doc_predicate_header">
+            [Moonbase instrument callback type line] => Creates a new instrument in the superstructure.<br />
+        </div>
+        <div class="doc_predicate_body">
+            Creates a new instrument in the superstructure.<br />
+            <b>Instrument</b>: is a symbol identifying the new instrument. If it is a variable then a new symbol will be generated based on the type.<br />
+            <b>Callback</b>: is the receives MIDI messaged. If it is a variable then a new anonymous symbol will be generated.<br />
+            <b>Type</b>: identifies the type of the instrument. It should be a symbol. It is used for storing and restoring presets.<br />
+            <b>Line</b>: is the audio output module (mono or stereo). If it is a variable then a new anonymous symbol is generated.<br />
         </div>
     </a>
 </div>

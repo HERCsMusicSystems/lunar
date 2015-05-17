@@ -191,11 +191,11 @@ public:
 	void redraw (cairo_t * cr) {
 		START . draw (cr); RECORD . draw (cr); AUDIO_INPUT . draw (cr); AUDIO_OUTPUT . draw (cr);
 		SAMPLING_RATE . draw (cr), LATENCY_BLOCK_SIZE . draw (cr);
-		cairo_set_font_size (cr, 20.0);
+		cairo_set_font_size (cr, 12.0);
 		cairo_set_source_rgb (cr, 0.0, 1.0, 0.0);
-		cairo_move_to (cr, 104.0, 32.0);
+		cairo_move_to (cr, 34.0, 46.0);
 		cairo_show_text (cr, requested_input_device >= 0 ? audio . getInputDeviceName (requested_input_device) : "Inactive");
-		cairo_move_to (cr, 104.0, 64.0);
+		cairo_move_to (cr, 34.0, 60.0);
 		cairo_show_text (cr, requested_output_device >= 0 ? audio . getOutputDeviceName (requested_output_device) : "Inactive");
 		cairo_move_to (cr, 104.0, 96.0);
 		cairo_show_text (cr, index_to_sampling_freq_description (sampling_rate_to_index (requested_sampling_rate)));
@@ -315,6 +315,7 @@ void core_panel_action :: MouseKeyon (point location, int button) {
 	if (AUDIO_INPUT . keyon (location)) {
 		AUDIO_INPUT . engaged = true;
 		GtkWidget * list_window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
+		gtk_window_set_title (GTK_WINDOW (list_window), "INPUT");
 		gtk_window_move (GTK_WINDOW (list_window), (int) this -> location . x, (int) this -> location . y);
 		gtk_window_set_modal (GTK_WINDOW (list_window), true);
 		GtkListStore * store = gtk_list_store_new (1, G_TYPE_STRING);
@@ -379,7 +380,7 @@ void core_panel_action :: MouseKeyon (point location, int button) {
 		gtk_tree_view_set_headers_visible (GTK_TREE_VIEW (list), FALSE);
 		gtk_tree_view_append_column (GTK_TREE_VIEW (list), gtk_tree_view_column_new_with_attributes ("IO", gtk_cell_renderer_text_new (), "text", 0, NULL));
 		GtkTreeSelection * selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (list));
-		GtkTreePath * path = gtk_tree_path_new_from_indices (requested_output_device + 1, -1);
+		GtkTreePath * path = gtk_tree_path_new_from_indices (sampling_rate_to_index (requested_sampling_rate), -1);
 		gtk_tree_selection_select_path (selection, path);
 		gtk_tree_path_free (path);
 		gtk_tree_selection_set_mode (selection, GTK_SELECTION_SINGLE);
@@ -404,7 +405,7 @@ void core_panel_action :: MouseKeyon (point location, int button) {
 		gtk_tree_view_set_headers_visible (GTK_TREE_VIEW (list), FALSE);
 		gtk_tree_view_append_column (GTK_TREE_VIEW (list), gtk_tree_view_column_new_with_attributes ("IO", gtk_cell_renderer_text_new (), "text", 0, NULL));
 		GtkTreeSelection * selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (list));
-		GtkTreePath * path = gtk_tree_path_new_from_indices (requested_output_device + 1, -1);
+		GtkTreePath * path = gtk_tree_path_new_from_indices ((int) log2 ((double) requested_latency_buffer_size), -1);
 		gtk_tree_selection_select_path (selection, path);
 		gtk_tree_path_free (path);
 		gtk_tree_selection_set_mode (selection, GTK_SELECTION_SINGLE);

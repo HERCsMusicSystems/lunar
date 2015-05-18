@@ -303,10 +303,12 @@ static gboolean close_list (GtkWidget * viewport, GdkEventKey * event, void * em
 }
 void core_panel_action :: MouseKeyon (point location, int button) {
 	bool redraw = false;
+	int screen_x, screen_y;
+	gtk_window_get_position (GTK_WINDOW (viewport), & screen_x, & screen_y);
 	if (rect (point (44.0, 28.0), point (100.0, 14.0)) . overlap (rect (location, point ()))) {
 		GtkWidget * list_window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
 		gtk_window_set_title (GTK_WINDOW (list_window), "INPUT");
-		gtk_window_move (GTK_WINDOW (list_window), (int) this -> location . x, (int) this -> location . y);
+		gtk_window_move (GTK_WINDOW (list_window), screen_x, screen_y);
 		gtk_window_set_modal (GTK_WINDOW (list_window), true);
 		GtkListStore * store = gtk_list_store_new (1, G_TYPE_STRING);
 		GtkTreeIter iterator;
@@ -333,7 +335,7 @@ void core_panel_action :: MouseKeyon (point location, int button) {
 	if (rect (point (44.0, 50.0), point (100.0, 14.0)) . overlap (rect (location, point ()))) {
 		GtkWidget * list_window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
 		gtk_window_set_title (GTK_WINDOW (list_window), "OUTPUT");
-		gtk_window_move (GTK_WINDOW (list_window), (int) this -> location . x, (int) this -> location . y);
+		gtk_window_move (GTK_WINDOW (list_window), screen_x, screen_y);
 		gtk_window_set_modal (GTK_WINDOW (list_window), true);
 		GtkListStore * store = gtk_list_store_new (1, G_TYPE_STRING);
 		GtkTreeIter iterator;
@@ -360,7 +362,7 @@ void core_panel_action :: MouseKeyon (point location, int button) {
 	if (rect (point (410.0, 28.0), point (100.0, 14.0)) . overlap (rect (location, point ()))) {
 		GtkWidget * list_window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
 		gtk_window_set_title (GTK_WINDOW (list_window), "SAMPLE RATE");
-		gtk_window_move (GTK_WINDOW (list_window), (int) this -> location . x, (int) this -> location . y);
+		gtk_window_move (GTK_WINDOW (list_window), screen_x, screen_y);
 		gtk_window_set_modal (GTK_WINDOW (list_window), true);
 		GtkListStore * store = gtk_list_store_new (1, G_TYPE_STRING);
 		GtkTreeIter iterator;
@@ -386,7 +388,7 @@ void core_panel_action :: MouseKeyon (point location, int button) {
 	if (rect (point (410.0, 50.0), point (100.0, 14.0)) . overlap (rect (location, point ()))) {
 		GtkWidget * list_window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
 		gtk_window_set_title (GTK_WINDOW (list_window), "LATENCY");
-		gtk_window_move (GTK_WINDOW (list_window), (int) this -> location . x, (int) this -> location . y);
+		gtk_window_move (GTK_WINDOW (list_window), screen_x, screen_y);
 		gtk_window_set_modal (GTK_WINDOW (list_window), true);
 		GtkListStore * store = gtk_list_store_new (1, G_TYPE_STRING);
 		GtkTreeIter iterator;

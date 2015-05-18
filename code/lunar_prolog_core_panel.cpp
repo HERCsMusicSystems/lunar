@@ -133,10 +133,6 @@ public:
 	PrologAtom * connect_all_moons;
 	button_active_graphics START;
 	button_active_graphics RECORD;
-	button_active_graphics AUDIO_INPUT;
-	button_active_graphics AUDIO_OUTPUT;
-	button_active_graphics SAMPLING_RATE;
-	button_active_graphics LATENCY_BLOCK_SIZE;
 	int requested_sampling_rate;
 	int requested_latency_buffer_size;
 	int requested_output_device;
@@ -189,17 +185,16 @@ public:
 		requested_latency_buffer_size = audio . getLatencyBufferSize ();
 	}
 	void redraw (cairo_t * cr) {
-		START . draw (cr); RECORD . draw (cr); AUDIO_INPUT . draw (cr); AUDIO_OUTPUT . draw (cr);
-		SAMPLING_RATE . draw (cr), LATENCY_BLOCK_SIZE . draw (cr);
-		cairo_set_font_size (cr, 12.0);
+		START . draw (cr); RECORD . draw (cr);
+		cairo_set_font_size (cr, 14.0);
 		cairo_set_source_rgb (cr, 0.0, 1.0, 0.0);
-		cairo_move_to (cr, 34.0, 46.0);
+		cairo_move_to (cr, 44.0, 42.0);
 		cairo_show_text (cr, requested_input_device >= 0 ? audio . getInputDeviceName (requested_input_device) : "Inactive");
-		cairo_move_to (cr, 34.0, 60.0);
+		cairo_move_to (cr, 44.0, 64.0);
 		cairo_show_text (cr, requested_output_device >= 0 ? audio . getOutputDeviceName (requested_output_device) : "Inactive");
-		cairo_move_to (cr, 104.0, 96.0);
+		cairo_move_to (cr, 410.0, 42.0);
 		cairo_show_text (cr, index_to_sampling_freq_description (sampling_rate_to_index (requested_sampling_rate)));
-		cairo_move_to (cr, 104.0, 128.0);
+		cairo_move_to (cr, 410.0, 64.0);
 		int latency = (int) (log ((double) (requested_latency_buffer_size)) / log (2.0));
 		cairo_show_text (cr, index_to_latency_description (latency));
 	}
@@ -221,12 +216,8 @@ public:
 	void MouseMove (point delta) {}
 	void FunctionKey (int key, int state) {}
 	core_panel_action (GraphicResources * resources, PrologRoot * root, PrologAtom * atom, PrologAtom * core, PrologAtom * reactor, PrologAtom * connect_all_moons) :
-		START (point (340.0, 88.0), 2, resources, true),
-		RECORD (point (390.0, 88.0), 3, resources, true),
-		AUDIO_INPUT (point (16.0, 32.0), 4, resources, true),
-		AUDIO_OUTPUT (point (16.0, 64.0), 5, resources, true),
-		SAMPLING_RATE (point (16.0, 96.0), 6, resources, true),
-		LATENCY_BLOCK_SIZE (point (16.0, 128.0), 7, resources, true),
+		START (point (586.0, 38.0), 2, resources, true),
+		RECORD (point (586.0, 68.0), 3, resources, true),
 		AudioModulePanel (root, atom, resources != 0 ? resources -> core_panel_surface : 0)
 	{
 		deleter = 0;
@@ -254,7 +245,6 @@ static void OnAudioInputSelected (GtkWidget * widget, core_panel_action * action
 			int * ip = gtk_tree_path_get_indices (path);
 			if (ip != 0) {
 				action -> requested_input_device = * ip - 1;
-				action -> AUDIO_INPUT . engaged = false;
 				action -> update ();
 			}
 			gtk_tree_path_free (path);
@@ -270,7 +260,6 @@ static void OnAudioOutputSelected (GtkWidget * widget, core_panel_action * actio
 			int * ip = gtk_tree_path_get_indices (path);
 			if (ip != 0) {
 				action -> requested_output_device = * ip - 1;
-				action -> AUDIO_OUTPUT . engaged = false;
 				action -> update ();
 			}
 			gtk_tree_path_free (path);
@@ -286,7 +275,6 @@ static void OnSamplingRateSelected (GtkWidget * widget, core_panel_action * acti
 			int * ip = gtk_tree_path_get_indices (path);
 			if (ip != 0) {
 				action -> requested_sampling_rate = index_to_sampling_freq (* ip);
-				action -> SAMPLING_RATE . engaged = false;
 				action -> update ();
 			}
 			gtk_tree_path_free (path);
@@ -302,7 +290,6 @@ static void OnLatencyBlockSizeSelected (GtkWidget * widget, core_panel_action * 
 			int * ip = gtk_tree_path_get_indices (path);
 			if (ip != 0) {
 				action -> requested_latency_buffer_size = (int) pow (2.0, (double) (* ip));
-				action -> LATENCY_BLOCK_SIZE . engaged = false;
 				action -> update ();
 			}
 			gtk_tree_path_free (path);
@@ -310,10 +297,13 @@ static void OnLatencyBlockSizeSelected (GtkWidget * widget, core_panel_action * 
 	}
 	action -> drop_deleter ();
 }
+static gboolean close_list (GtkWidget * viewport, GdkEventKey * event, void * empty) {
+	if (event -> keyval == 65307) gtk_widget_destroy (viewport);
+	return TRUE;
+}
 void core_panel_action :: MouseKeyon (point location, int button) {
 	bool redraw = false;
-	if (AUDIO_INPUT . keyon (location)) {
-		AUDIO_INPUT . engaged = true;
+	if (rect (point (44.0, 28.0), point (100.0, 14.0)) . overlap (rect (location, point ()))) {
 		GtkWidget * list_window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
 		gtk_window_set_title (GTK_WINDOW (list_window), "INPUT");
 		gtk_window_move (GTK_WINDOW (list_window), (int) this -> location . x, (int) this -> location . y);
@@ -334,14 +324,15 @@ void core_panel_action :: MouseKeyon (point location, int button) {
 		gtk_tree_path_free (path);
 		gtk_tree_selection_set_mode (selection, GTK_SELECTION_SINGLE);
 		g_signal_connect (selection, "changed", G_CALLBACK (OnAudioInputSelected), this);
+		g_signal_connect (G_OBJECT (list_window), "key-press-event", G_CALLBACK (close_list), 0);
 		gtk_container_add (GTK_CONTAINER (list_window), list);
 		deleter = list_window;
 		gtk_widget_show_all (list_window);
 		redraw = true;
 	}
-	if (AUDIO_OUTPUT . keyon (location)) {
-		AUDIO_OUTPUT . engaged = true;
+	if (rect (point (44.0, 50.0), point (100.0, 14.0)) . overlap (rect (location, point ()))) {
 		GtkWidget * list_window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
+		gtk_window_set_title (GTK_WINDOW (list_window), "OUTPUT");
 		gtk_window_move (GTK_WINDOW (list_window), (int) this -> location . x, (int) this -> location . y);
 		gtk_window_set_modal (GTK_WINDOW (list_window), true);
 		GtkListStore * store = gtk_list_store_new (1, G_TYPE_STRING);
@@ -360,14 +351,15 @@ void core_panel_action :: MouseKeyon (point location, int button) {
 		gtk_tree_path_free (path);
 		gtk_tree_selection_set_mode (selection, GTK_SELECTION_SINGLE);
 		g_signal_connect (selection, "changed", G_CALLBACK (OnAudioOutputSelected), this);
+		g_signal_connect (G_OBJECT (list_window), "key-press-event", G_CALLBACK (close_list), 0);
 		gtk_container_add (GTK_CONTAINER (list_window), list);
 		deleter = list_window;
 		gtk_widget_show_all (list_window);
 		redraw = true;
 	}
-	if (SAMPLING_RATE . keyon (location)) {
-		SAMPLING_RATE . engaged = true;
+	if (rect (point (410.0, 28.0), point (100.0, 14.0)) . overlap (rect (location, point ()))) {
 		GtkWidget * list_window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
+		gtk_window_set_title (GTK_WINDOW (list_window), "SAMPLE RATE");
 		gtk_window_move (GTK_WINDOW (list_window), (int) this -> location . x, (int) this -> location . y);
 		gtk_window_set_modal (GTK_WINDOW (list_window), true);
 		GtkListStore * store = gtk_list_store_new (1, G_TYPE_STRING);
@@ -385,19 +377,20 @@ void core_panel_action :: MouseKeyon (point location, int button) {
 		gtk_tree_path_free (path);
 		gtk_tree_selection_set_mode (selection, GTK_SELECTION_SINGLE);
 		g_signal_connect (selection, "changed", G_CALLBACK (OnSamplingRateSelected), this);
+		g_signal_connect (G_OBJECT (list_window), "key-press-event", G_CALLBACK (close_list), 0);
 		gtk_container_add (GTK_CONTAINER (list_window), list);
 		deleter = list_window;
 		gtk_widget_show_all (list_window);
 		redraw = true;
 	}
-	if (LATENCY_BLOCK_SIZE . keyon (location)) {
-		LATENCY_BLOCK_SIZE . engaged = true;
+	if (rect (point (410.0, 50.0), point (100.0, 14.0)) . overlap (rect (location, point ()))) {
 		GtkWidget * list_window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
+		gtk_window_set_title (GTK_WINDOW (list_window), "LATENCY");
 		gtk_window_move (GTK_WINDOW (list_window), (int) this -> location . x, (int) this -> location . y);
 		gtk_window_set_modal (GTK_WINDOW (list_window), true);
 		GtkListStore * store = gtk_list_store_new (1, G_TYPE_STRING);
 		GtkTreeIter iterator;
-		for (int ind = 0; ind < 18; ind++) {
+		for (int ind = 0; ind < 17; ind++) {
 			gtk_list_store_append (store, & iterator); gtk_list_store_set (store, & iterator, 0, index_to_latency_description (ind), -1);
 		}
 		GtkWidget * list = gtk_tree_view_new_with_model (GTK_TREE_MODEL (store));
@@ -405,11 +398,12 @@ void core_panel_action :: MouseKeyon (point location, int button) {
 		gtk_tree_view_set_headers_visible (GTK_TREE_VIEW (list), FALSE);
 		gtk_tree_view_append_column (GTK_TREE_VIEW (list), gtk_tree_view_column_new_with_attributes ("IO", gtk_cell_renderer_text_new (), "text", 0, NULL));
 		GtkTreeSelection * selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (list));
-		GtkTreePath * path = gtk_tree_path_new_from_indices ((int) log2 ((double) requested_latency_buffer_size), -1);
+		GtkTreePath * path = gtk_tree_path_new_from_indices ((int) (log ((double) requested_latency_buffer_size) / log (2.0)), -1);
 		gtk_tree_selection_select_path (selection, path);
 		gtk_tree_path_free (path);
 		gtk_tree_selection_set_mode (selection, GTK_SELECTION_SINGLE);
 		g_signal_connect (selection, "changed", G_CALLBACK (OnLatencyBlockSizeSelected), this);
+		g_signal_connect (G_OBJECT (list_window), "key-press-event", G_CALLBACK (close_list), 0);
 		gtk_container_add (GTK_CONTAINER (list_window), list);
 		deleter = list_window;
 		gtk_widget_show_all (list_window);

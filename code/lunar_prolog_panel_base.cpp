@@ -137,8 +137,8 @@ gboolean CreateAudioModulePanelIdleCode (AudioModulePanel * action) {
 	if (action -> background_image != 0) gtk_window_resize (GTK_WINDOW (action -> viewport),
 											cairo_image_surface_get_width (action -> background_image),
 											cairo_image_surface_get_height (action -> background_image));
-	//gtk_window_move (GTK_WINDOW (action -> viewport), (int) action -> location . x, (int) action -> location . y);
-	gtk_window_set_position (GTK_WINDOW (action -> viewport), GTK_WIN_POS_CENTER);
+	gtk_window_move (GTK_WINDOW (action -> viewport), (int) action -> location . x, (int) action -> location . y);
+	//gtk_window_set_position (GTK_WINDOW (action -> viewport), GTK_WIN_POS_CENTER);
 	const GtkTargetEntry targets [3] = {{"text/plain", 0, 0}, {"text/uri-list", 0, 0}, {"application/x-rootwindow-drop", 0, 0}};
 	gtk_drag_dest_set (action -> area, GTK_DEST_DEFAULT_ALL, targets, 3, GDK_ACTION_COPY);
 	g_signal_connect (action -> area, "drag-drop", G_CALLBACK (dnd_drop), action);
@@ -185,7 +185,7 @@ void AudioModulePanel :: BuildPanel (void) {
 
 AudioModulePanel :: AudioModulePanel (PrologRoot * root, PrologAtom * atom, cairo_surface_t * background_image) {
 	captured_button = 0;
-	location = captured_location = point (0.0, 0.0);
+	location = captured_location = point (32.0, 32.0);
 	viewport = 0; area = 0; gtk_redrawer = 0;
 	not_ready_for_drop = true;
 	this -> root = root;

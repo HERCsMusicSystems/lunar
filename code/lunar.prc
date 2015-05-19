@@ -789,9 +789,6 @@ program lunar #machine := "prolog.lunar"
 	[inc InstrumentIndex]
 ]
 
-[[LunarDrop *x *y]]
-[[LunarDrop *x *y *file : *files] [batch *file] / [LunarDrop *x *y : *files]]
-
 auto := [
 			[var cb_callback cb_path cb_edit_path [InstrumentIndex 0]]
 			[ARRAY MIDI_CHANNELS 128]

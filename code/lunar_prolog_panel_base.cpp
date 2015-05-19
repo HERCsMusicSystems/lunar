@@ -108,6 +108,9 @@ static void dnd_receive (GtkWidget * widget, GdkDragContext * context, gint x, g
 	PrologElement * query = root -> earth ();
 	while (strncmp (ptr, "file:///", 8) == 0) {
 		ptr += 7;
+		#ifdef WIN32
+		ptr++;
+		#endif
 		char * cp = command;
 		while (* ptr >= ' ') * cp++ = * ptr++; * cp = '\0';
 		query = root -> pair (root -> text (command), query);

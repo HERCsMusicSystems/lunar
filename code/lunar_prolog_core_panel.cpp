@@ -225,7 +225,15 @@ public:
 		if (redraw) update ();
 	}
 	void MouseMove (point delta) {}
-	void FunctionKey (int key, int state) {}
+	void FunctionKey (int key, int state) {
+		if (key >= 65470 && key <= 65481) key = key - 65469 + 12 * state;
+		PrologDirectory * dir = root -> searchDirectory ("lunar"); if (dir == 0) return;
+		PrologAtom * F = dir -> searchAtom ("FUNCTION_KEY"); if (F == 0) return;
+		PrologElement * query = root -> pair (root -> atom (F), root -> pair (root -> integer (key), root -> earth ()));
+		query = root -> pair (root -> earth (), root -> pair (query, root -> earth ()));
+		root -> resolution (query);
+		delete query;
+	}
 	core_panel_action (GraphicResources * resources, PrologRoot * root, PrologAtom * atom,
 		PrologAtom * core, PrologAtom * reactor, PrologAtom * connect_all_moons, PrologAtom * command_centre, PrologAtom * commander) :
 		START (point (586.0, 38.0), 2, resources, true),

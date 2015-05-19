@@ -49,10 +49,10 @@ static gboolean RedrawAudioModulePanel (GtkWidget * viewport, GdkEvent * event, 
 }
 
 static gint AudioModulePanelKeyon (GtkWidget * viewport, GdkEventButton * event, AudioModulePanel * action) {
-	if (event -> type == GDK_BUTTON_PRESS && event -> button == 1 && event -> y < 20.0) {
-		gtk_window_begin_move_drag (GTK_WINDOW (gtk_widget_get_toplevel (viewport)), event -> button, event -> x_root, event -> y_root, event -> time);
-		return FALSE;
-	}
+	//if (event -> type == GDK_BUTTON_PRESS && event -> button == 1 && event -> y < 20.0) {
+	//	gtk_window_begin_move_drag (GTK_WINDOW (gtk_widget_get_toplevel (viewport)), event -> button, event -> x_root, event -> y_root, event -> time);
+	//	return FALSE;
+	//}
 	action -> captured_button = event -> button;
 	point location (event -> x, event -> y);
 	action -> captured_location = location;
@@ -124,7 +124,7 @@ static void dnd_receive (GtkWidget * widget, GdkDragContext * context, gint x, g
 gboolean CreateAudioModulePanelIdleCode (AudioModulePanel * action) {
 	action -> viewport = gtk_window_new (GTK_WINDOW_TOPLEVEL);
 	gtk_window_set_title (GTK_WINDOW (action -> viewport), action -> atom -> name ());
-	gtk_window_set_decorated (GTK_WINDOW (action -> viewport), FALSE);
+	//gtk_window_set_decorated (GTK_WINDOW (action -> viewport), FALSE);
 	g_signal_connect (action -> viewport, "delete-event", G_CALLBACK (AudioModulePanelDeleteEvent), action);
 	action -> area = gtk_drawing_area_new ();
 	gtk_container_add (GTK_CONTAINER (action -> viewport), action -> area);

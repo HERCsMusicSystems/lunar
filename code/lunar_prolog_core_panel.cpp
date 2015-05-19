@@ -131,6 +131,8 @@ public:
 	PrologAtom * core;
 	PrologAtom * reactor;
 	PrologAtom * connect_all_moons;
+	PrologAtom * command_centre;
+	PrologAtom * commander;
 	button_active_graphics START;
 	button_active_graphics RECORD;
 	int requested_sampling_rate;
@@ -176,6 +178,12 @@ public:
 		return ret;
 	}
 	void action_stop_recording (void) {audio . stopRecording ();}
+	void open_command_centre_action (void) {
+		PrologElement * query = root -> pair (root -> atom (command_centre), root -> pair (root -> atom (commander), root -> earth ()));
+		query = root -> pair (root -> earth (), root -> pair (query, root -> earth ()));
+		root -> resolution (query);
+		delete query;
+	}
 	void feedback (void) {
 		START . engaged = reactor != 0 ? reactor -> getMachine () != 0 : false;
 		RECORD . engaged = audio . outputFileActive ();
@@ -211,11 +219,15 @@ public:
 			else RECORD . engaged = action_start_recording ();
 			redraw = true;
 		}
+		if (rect (point (580.0, 92.0), point (50.0, 50.0)) . overlap (rect (location, point ()))) {
+			open_command_centre_action ();
+		}
 		if (redraw) update ();
 	}
 	void MouseMove (point delta) {}
 	void FunctionKey (int key, int state) {}
-	core_panel_action (GraphicResources * resources, PrologRoot * root, PrologAtom * atom, PrologAtom * core, PrologAtom * reactor, PrologAtom * connect_all_moons) :
+	core_panel_action (GraphicResources * resources, PrologRoot * root, PrologAtom * atom,
+		PrologAtom * core, PrologAtom * reactor, PrologAtom * connect_all_moons, PrologAtom * command_centre, PrologAtom * commander) :
 		START (point (586.0, 38.0), 2, resources, true),
 		RECORD (point (586.0, 68.0), 3, resources, true),
 		AudioModulePanel (root, atom, resources != 0 ? resources -> core_panel_surface : 0)
@@ -228,12 +240,16 @@ public:
 		this -> core = core; COLLECTOR_REFERENCE_INC (core);
 		this -> reactor = reactor; COLLECTOR_REFERENCE_INC (reactor);
 		this -> connect_all_moons = connect_all_moons; COLLECTOR_REFERENCE_INC (connect_all_moons);
+		this -> command_centre = command_centre; COLLECTOR_REFERENCE_INC (command_centre);
+		this -> commander = commander; COLLECTOR_REFERENCE_INC (commander);
 		feedback ();
 	}
 	~ core_panel_action (void) {
 		core -> removeAtom ();
 		reactor -> removeAtom ();
 		connect_all_moons -> removeAtom ();
+		command_centre -> removeAtom ();
+		commander -> removeAtom ();
 	}
 };
 
@@ -419,6 +435,8 @@ bool core_panel_class :: code (PrologElement * parameters, PrologResolution * re
 	PrologAtom * core = 0;
 	PrologAtom * reactor = 0;
 	PrologAtom * connect_all_moons = 0;
+	PrologAtom * command_centre = 0;
+	PrologAtom * commander = 0;
 	while (parameters -> isPair ()) {
 		PrologElement * el = parameters -> getLeft ();
 		if (el -> isVar ()) atom = el;
@@ -426,7 +444,9 @@ bool core_panel_class :: code (PrologElement * parameters, PrologResolution * re
 			if (atom == 0) atom = el;
 			else if (core == 0) core = el -> getAtom ();
 			else if (reactor == 0) reactor = el -> getAtom ();
-			else connect_all_moons = el -> getAtom ();
+			else if (connect_all_moons == 0) connect_all_moons = el -> getAtom ();
+			else if (command_centre == 0) command_centre = el -> getAtom ();
+			else if (commander == 0) commander = el -> getAtom ();
 		}
 		parameters = parameters -> getRight ();
 	}
@@ -437,11 +457,13 @@ bool core_panel_class :: code (PrologElement * parameters, PrologResolution * re
 		if (core == 0) core = dir -> searchAtom ("core");
 		if (reactor == 0) reactor = dir -> searchAtom ("reactor");
 		if (connect_all_moons == 0) connect_all_moons = dir -> searchAtom ("ConnectAllMoons");
+		if (command_centre == 0) command_centre = dir -> searchAtom ("CommandCentre");
+		if (commander == 0) commander = dir -> searchAtom ("commander");
 	}
 	if (core == 0 || reactor == 0) return false;
 	if (atom -> isVar ()) atom -> setAtom (new PrologAtom ());
 	if (atom -> getAtom () -> getMachine () != 0) return false;
-	core_panel_action * machine = new core_panel_action (resources, root, atom -> getAtom (), core, reactor, connect_all_moons);
+	core_panel_action * machine = new core_panel_action (resources, root, atom -> getAtom (), core, reactor, connect_all_moons, command_centre, commander);
 	if (! atom -> getAtom () -> setMachine (machine)) {delete machine; return false;}
 	machine -> BuildPanel ();
 	return true;

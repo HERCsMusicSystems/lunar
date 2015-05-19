@@ -46,7 +46,7 @@ program lunar #machine := "prolog.lunar"
 				LoopWave unicar
 				MIDI_CHANNELS MIDI_BACK income_midi
 				GenerateInstrumentName InstrumentIndex
-				radar reactor commander
+				radar reactor commander Core
 			]
 
 #machine small_keyboard := "small_keyboard"

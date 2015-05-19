@@ -157,8 +157,18 @@ void * studio_runner (void * parameter) {
 	PrologCommand * command = new PrologWindowsConsole ();
 	#endif
 	root -> insertCommander (command);
-	if (strlen (name) == 0) root -> resolution ();
-	else {
+	if (strlen (name) == 0) {
+		PrologLoader * loader = new PrologLoader (root);
+		loader -> load ("studio.prc");
+		loader -> load ("lunar.prc");
+		delete loader;
+		PrologElement * query = root -> pair (root -> earth (), root -> pair (
+			root -> pair (root -> atom ("CorePanel"), root -> pair (root -> atom ("Core"), root -> earth ())),
+			root -> pair (root -> pair (root -> atom ("command"), root -> earth ()),
+			root -> earth ())));
+		root -> resolution (query);
+		delete query;
+	} else {
 		if (strstr (name, ".prc") == 0 && strstr (name, ".prb") == 0) strcat (name, ".prc");
 		root -> resolution (name);
 	}

@@ -49,6 +49,10 @@ static gboolean RedrawAudioModulePanel (GtkWidget * viewport, GdkEvent * event, 
 }
 
 static gint AudioModulePanelKeyon (GtkWidget * viewport, GdkEventButton * event, AudioModulePanel * action) {
+	if (event -> type == GDK_BUTTON_PRESS && event -> button == 1 && event -> y < 20.0) {
+		gtk_window_begin_move_drag (GTK_WINDOW (gtk_widget_get_toplevel (viewport)), event -> button, event -> x_root, event -> y_root, event -> time);
+		return FALSE;
+	}
 	action -> captured_button = event -> button;
 	point location (event -> x, event -> y);
 	action -> captured_location = location;
@@ -76,8 +80,9 @@ static gboolean AudioModulePanelFunctionKey (GtkWidget * widget, GdkEventKey * e
 	return FALSE;
 }
 
-static gboolean dnd_drop (GtkWidget * widget, GdkDragContext * context, gint x, gint y, guint time, gpointer * ptr) {
+static gboolean dnd_drop (GtkWidget * widget, GdkDragContext * context, gint x, gint y, guint time, AudioModulePanel * action) {
 	GdkAtom target_type;
+	action -> not_ready_for_drop = false;
 	if (context -> targets) {
 		target_type = GDK_POINTER_TO_ATOM (g_list_nth_data (context -> targets, 0));
 		gtk_drag_get_data (widget, context, target_type, time);
@@ -89,7 +94,11 @@ static gboolean dnd_motion (GtkWidget * widget, GdkDragContext * context, gint x
 
 static void dnd_leave (GtkWidget * widget, GdkDragContext * context, guint time, gpointer * ptr) {}
 
-static void dnd_receive (GtkWidget * widget, GdkDragContext * context, gint x, gint y, GtkSelectionData * data, guint ttype, guint time, PrologRoot * root) {
+static void dnd_receive (GtkWidget * widget, GdkDragContext * context, gint x, gint y, GtkSelectionData * data, guint ttype, guint time, AudioModulePanel * action) {
+	if (action == 0) return;
+	if (action -> not_ready_for_drop) return;
+	action -> not_ready_for_drop = true;
+	PrologRoot * root = action -> root;
 	PrologDirectory * LunarDirectory = root -> searchDirectory ("lunar");
 	if (LunarDirectory == 0) return;
 	PrologAtom * LunarDrop = LunarDirectory -> searchAtom ("LunarDrop");
@@ -115,6 +124,7 @@ static void dnd_receive (GtkWidget * widget, GdkDragContext * context, gint x, g
 gboolean CreateAudioModulePanelIdleCode (AudioModulePanel * action) {
 	action -> viewport = gtk_window_new (GTK_WINDOW_TOPLEVEL);
 	gtk_window_set_title (GTK_WINDOW (action -> viewport), action -> atom -> name ());
+	gtk_window_set_decorated (GTK_WINDOW (action -> viewport), FALSE);
 	g_signal_connect (action -> viewport, "delete-event", G_CALLBACK (AudioModulePanelDeleteEvent), action);
 	action -> area = gtk_drawing_area_new ();
 	gtk_container_add (GTK_CONTAINER (action -> viewport), action -> area);
@@ -127,12 +137,13 @@ gboolean CreateAudioModulePanelIdleCode (AudioModulePanel * action) {
 	if (action -> background_image != 0) gtk_window_resize (GTK_WINDOW (action -> viewport),
 											cairo_image_surface_get_width (action -> background_image),
 											cairo_image_surface_get_height (action -> background_image));
-	gtk_window_move (GTK_WINDOW (action -> viewport), (int) action -> location . x, (int) action -> location . y);
-	const GtkTargetEntry targets [2] = {{"text/plain", 0, 0}, {"application/x-rootwindow-drop", 0, 0}};
-	gtk_drag_dest_set (action -> area, GTK_DEST_DEFAULT_ALL, targets, 2, GDK_ACTION_COPY);
-	g_signal_connect (action -> area, "drag-drop", G_CALLBACK (dnd_drop), 0);
+	//gtk_window_move (GTK_WINDOW (action -> viewport), (int) action -> location . x, (int) action -> location . y);
+	gtk_window_set_position (GTK_WINDOW (action -> viewport), GTK_WIN_POS_CENTER);
+	const GtkTargetEntry targets [3] = {{"text/plain", 0, 0}, {"text/uri-list", 0, 0}, {"application/x-rootwindow-drop", 0, 0}};
+	gtk_drag_dest_set (action -> area, GTK_DEST_DEFAULT_ALL, targets, 3, GDK_ACTION_COPY);
+	g_signal_connect (action -> area, "drag-drop", G_CALLBACK (dnd_drop), action);
 	g_signal_connect (action -> area, "drag-motion", G_CALLBACK (dnd_motion), 0);
-	g_signal_connect (action -> area, "drag-data-received", G_CALLBACK (dnd_receive), action -> root);
+	g_signal_connect (action -> area, "drag-data-received", G_CALLBACK (dnd_receive), action);
 	g_signal_connect (action -> area, "drag-leave", G_CALLBACK (dnd_leave), 0);
 	gtk_widget_show_all (action -> viewport);
 	return FALSE;
@@ -176,6 +187,7 @@ AudioModulePanel :: AudioModulePanel (PrologRoot * root, PrologAtom * atom, cair
 	captured_button = 0;
 	location = captured_location = point (0.0, 0.0);
 	viewport = 0; area = 0; gtk_redrawer = 0;
+	not_ready_for_drop = true;
 	this -> root = root;
 	this -> atom = atom; COLLECTOR_REFERENCE_INC (atom);
 	this -> background_image = background_image;

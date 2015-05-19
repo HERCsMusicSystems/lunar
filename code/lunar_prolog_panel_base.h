@@ -41,6 +41,7 @@ public:
 	GtkWidget * viewport;
 	GtkWidget * area;
 	int gtk_redrawer;
+	bool not_ready_for_drop;
 	bool remove (bool remove_gtk = true);
 	void update (void);
 	void reposition (void);

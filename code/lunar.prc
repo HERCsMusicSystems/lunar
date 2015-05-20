@@ -312,7 +312,7 @@ program lunar #machine := "prolog.lunar"
 	[MIDI_CHANNELS *index : *original]
 	[eq *original MIDI_BACK] /
 ]
-[[AllocateChannel *index *location] [++ *index *next] [MIDI_CHANNELS *next : *] / [AllocateChannel *index *location]]
+[[AllocateChannel *index *location] [++ *index *next] [MIDI_CHANNELS *next : *] / [AllocateChannel *next *location]]
 
 [[Moonbase *base *distributor *type *line]
 	[AllocateChannel 0 *index]
@@ -324,6 +324,8 @@ program lunar #machine := "prolog.lunar"
 ]
 
 [[Moonbase *base]
+	[delcl [[Moons *base *id : *x]]]
+	[MIDI_CHANNELS *id MIDI_BACK]
 	[*base *parameters *modules *callback : *]
 	[delallcl *base]
 	[TRY [*callback]]
@@ -331,16 +333,9 @@ program lunar #machine := "prolog.lunar"
 	[TRY [*modules *module : *selector] [*module []] [*module] fail]
 	[delallcl *parameters]
 	[delallcl *modules]
-	[delcl [[Moons *base *id : *x]]]
-	[MIDI_CHANNELS *id MIDI_BACK]
 ]
 
-[[CloseAllMoons]
-	[delcl [[Moons *moon *id : *x]]]
-	[Moonbase *moon]
-	[MIDI_CHANNELS *id MIDI_BACK]
-	/ [CloseAllMoons]
-]
+[[CloseAllMoons] [Moonbase *] / [CloseAllMoons]]
 [[CloseAllMoons]]
 
 [[ConnectAllMoons *reactor]

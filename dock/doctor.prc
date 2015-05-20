@@ -13,7 +13,6 @@ program doctor [
 
 [[BuildDoctor *polyphony *Doctor *DoctorCB *volume]
 	[TRY
-		[show "trying...."]
 		[wave DoctorWaveforms
 			"Doctor/snare_h.wav"
 			"Doctor/snare_m.wav"

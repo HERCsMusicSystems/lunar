@@ -1,9 +1,8 @@
 
-
 [import "doctor"]
 
-[res [GenerateInstrumentName Doctor *doctor] [BuildDoctor 2 *doctor *callback *line]]
+[BuildDoctor 6]
 
+[show "Doctor created."]
 
 [exit]
-

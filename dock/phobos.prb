@@ -1,0 +1,8 @@
+
+[import "phobos"]
+
+[BuildPhobos 6]
+
+[show "Phobos created."]
+
+[exit]

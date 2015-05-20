@@ -1,0 +1,8 @@
+
+[import "forman"]
+
+[BuildForman 6]
+
+[show "Forman created."]
+
+[exit]

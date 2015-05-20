@@ -323,7 +323,8 @@ program lunar #machine := "prolog.lunar"
 	[MIDI_CHANNELS *index *distributor]
 ]
 
-[[Moonbase *base]
+[[Moonbase *moon]
+	[SELECT [[eq *moon *base]] [[eq *moon *id]]]
 	[delcl [[Moons *base *id : *x]]]
 	[MIDI_CHANNELS *id MIDI_BACK]
 	[*base *parameters *modules *callback : *]

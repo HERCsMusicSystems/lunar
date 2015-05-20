@@ -135,6 +135,7 @@ public:
 	PrologAtom * commander;
 	button_active_graphics START;
 	button_active_graphics RECORD;
+	button_active_graphics COMMAND_CENTRE;
 	int requested_sampling_rate;
 	int requested_latency_buffer_size;
 	int requested_output_device;
@@ -193,7 +194,7 @@ public:
 		requested_latency_buffer_size = audio . getLatencyBufferSize ();
 	}
 	void redraw (cairo_t * cr) {
-		START . draw (cr); RECORD . draw (cr);
+		START . draw (cr); RECORD . draw (cr); COMMAND_CENTRE . draw (cr);
 		cairo_set_font_size (cr, 14.0);
 		cairo_set_source_rgb (cr, 0.0, 1.0, 0.0);
 		cairo_move_to (cr, 44.0, 42.0);
@@ -219,8 +220,10 @@ public:
 			else RECORD . engaged = action_start_recording ();
 			redraw = true;
 		}
-		if (rect (point (580.0, 92.0), point (50.0, 50.0)) . overlap (rect (location, point ()))) {
+		if (COMMAND_CENTRE . keyoff (location)) {
+			COMMAND_CENTRE . engaged = false;
 			open_command_centre_action ();
+			redraw = true;
 		}
 		if (redraw) update ();
 	}
@@ -236,8 +239,9 @@ public:
 	}
 	core_panel_action (GraphicResources * resources, PrologRoot * root, PrologAtom * atom,
 		PrologAtom * core, PrologAtom * reactor, PrologAtom * connect_all_moons, PrologAtom * command_centre, PrologAtom * commander) :
-		START (point (586.0, 38.0), 2, resources, true),
-		RECORD (point (586.0, 68.0), 3, resources, true),
+		START (point (586.0, 18.0), 2, resources, true),
+		RECORD (point (586.0, 38.0), 3, resources, true),
+		COMMAND_CENTRE (point (586.0, 68.0), 4, resources, true),
 		AudioModulePanel (root, atom, resources != 0 ? resources -> core_panel_surface : 0)
 	{
 		deleter = 0;
@@ -329,6 +333,7 @@ void core_panel_action :: MouseKeyon (point location, int button) {
 	bool redraw = false;
 	int screen_x, screen_y;
 	gtk_window_get_position (GTK_WINDOW (viewport), & screen_x, & screen_y);
+	if (COMMAND_CENTRE . keyon (location)) {COMMAND_CENTRE . engaged = redraw = true;}
 	if (rect (point (44.0, 28.0), point (100.0, 14.0)) . overlap (rect (location, point ()))) {
 		GtkWidget * list_window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
 		gtk_window_set_title (GTK_WINDOW (list_window), "INPUT");

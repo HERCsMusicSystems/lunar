@@ -75,6 +75,7 @@ program forman [Forman BuildForman BuildFormanPart]
 	[Lunar 128 *Forman lfo 1 sens]
 	[Lunar 1792 *Forman lfo 1 speed]
 	[Lunar 512 *Forman operator sens]
+	[Lunar -16384 *Forman noise amp]
 ]
 
 [[BuildFormanPart *Forman *FormanCB *chorus *vibrato *formant *pitch

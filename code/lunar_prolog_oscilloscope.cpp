@@ -37,7 +37,7 @@ public:
 	double previous;
 	GtkWidget * viewport;
 	bool no_redraw;
-	double wave [256];
+	double wave [512];
 	double fft [256];
 	int frame_count;
 	oscilloscope_class :: types type;
@@ -74,26 +74,26 @@ void lunar_oscilloscope :: move (void) {
 	if (current_base-- > 1) return;
 	wave [frame_count++] = signal;
 	current_base = base;
-	if (frame_count < 256) return;
-	current_shift = shift;
-	frame_count = - refresh_samples;
 	switch (type) {
-	case oscilloscope_class :: OSCILLOSCOPE: break;
+	case oscilloscope_class :: OSCILLOSCOPE: if (frame_count < 256) return; break;
 	case oscilloscope_class :: SPECTROSCOPE:
+		if (frame_count < 512) return;
 		for (int ind = 0; ind < 256; ind++) {
 			fft [ind] = 0.0;
 			int alpha = 0, step = 32 * ind;
 			double re = 0.0, im = 0.0;
-			for (int sub = 0; sub < 256; sub++) {
+			for (int sub = 0; sub < 512; sub++) {
 				re += core -> sine_wave [0x3fff & alpha] * wave [sub];
 				im += core -> sine_wave [0x3fff & (alpha + 4096)] * wave [sub];
 				alpha += step;
 			}
-			fft [ind] = 0.0078125 * sqrt (re * re + im * im);
+			fft [ind] = 0.00390625 * sqrt (re * re + im * im);
 		}
 		break;
 	default: break;
 	}
+	current_shift = shift;
+	frame_count = - refresh_samples;
 	g_idle_add ((GSourceFunc) RepaintOscilloscopeIdleCode, this);
 }
 

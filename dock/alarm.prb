@@ -1,0 +1,8 @@
+
+[import "alarm"]
+
+[BuildAlarm]
+
+[show "Alarm created."]
+
+[exit]

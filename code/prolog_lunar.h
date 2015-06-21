@@ -168,7 +168,7 @@ public:
 
 class oscilloscope_class : public PrologNativeOrbiterCreator {
 public:
-	enum types {OSCILLOSCOPE = 0, SPECTROSCOPE};
+	enum types {OSCILLOSCOPE = 0, SPECTROSCOPE, BIG_OSCILLOSCOPE, BIG_SPECTROSCOPE};
 	types type;
 	virtual orbiter * create_orbiter (PrologElement * parameters);
 	virtual PrologNativeOrbiter * create_native_orbiter (PrologAtom * atom, orbiter * module);

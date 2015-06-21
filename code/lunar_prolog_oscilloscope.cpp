@@ -37,8 +37,8 @@ public:
 	double previous;
 	GtkWidget * viewport;
 	bool no_redraw;
-	double wave [512];
-	double fft [256];
+	double wave [1024];
+	double fft [512];
 	int frame_count;
 	oscilloscope_class :: types type;
 	int base, shift, refresh_samples;
@@ -74,13 +74,14 @@ void lunar_oscilloscope :: move (void) {
 	if (current_base-- > 1) return;
 	wave [frame_count++] = signal;
 	current_base = base;
+	int step = 0;
 	switch (type) {
 	case oscilloscope_class :: OSCILLOSCOPE: if (frame_count < 256) return; break;
 	case oscilloscope_class :: SPECTROSCOPE:
 		if (frame_count < 512) return;
 		for (int ind = 0; ind < 256; ind++) {
 			fft [ind] = 0.0;
-			int alpha = 0, step = 32 * ind;
+			int alpha = 0;
 			double re = 0.0, im = 0.0;
 			for (int sub = 0; sub < 512; sub++) {
 				re += core -> sine_wave [0x3fff & alpha] * wave [sub];
@@ -88,6 +89,23 @@ void lunar_oscilloscope :: move (void) {
 				alpha += step;
 			}
 			fft [ind] = 0.00390625 * sqrt (re * re + im * im);
+			step += 32;
+		}
+		break;
+	case oscilloscope_class :: BIG_OSCILLOSCOPE: if (frame_count < 512) return; break;
+	case oscilloscope_class :: BIG_SPECTROSCOPE:
+		if (frame_count < 1024) return;
+		for (int ind = 0; ind < 512; ind++) {
+			fft [ind] = 0.0;
+			int alpha = 0;
+			double re = 0.0, im = 0.0;
+			for (int sub = 0; sub < 1024; sub++) {
+				re += core -> sine_wave [0x3fff & alpha] * wave [sub];
+				im += core -> sine_wave [0x3fff & (alpha + 4096)] * wave [sub];
+				alpha += step;
+			}
+			fft [ind] = 0.00390625 * sqrt (re * re + im * im);
+			step += 16;
 		}
 		break;
 	default: break;
@@ -103,8 +121,8 @@ public:
 	bool remove_gtk;
 	GtkWidget * drawing_area;
 	int gtk_redrawer;
-	char markings [5] [16];
-	int marking_locations [5];
+	char markings [9] [16];
+	int marking_locations [9];
 	bool need_to_calculate_markings;
 	void remove_by_gtk (void) {
 		remove_gtk = false;
@@ -157,7 +175,8 @@ static gboolean DeleteOscilloscopeEvent (GtkWidget * viewport, GdkEvent * event,
 static gboolean RedrawOscilloscope (GtkWidget * viewport, GdkEvent * event, oscilloscope_action * osc) {
 	cairo_t * cr = gdk_cairo_create (gtk_widget_get_window (viewport));
 	lunar_oscilloscope * losc = (lunar_oscilloscope *) osc -> module;
-	cairo_rectangle (cr, 0.0, 0.0, 302.0, 174.0);
+	if (osc -> type < oscilloscope_class :: BIG_OSCILLOSCOPE) cairo_rectangle (cr, 0.0, 0.0, 302.0, 174.0);
+	else cairo_rectangle (cr, 0.0, 0.0, 552.0, 296.0);
 	cairo_set_source_rgb (cr, 0.0, 0.0, 0.0);
 	cairo_fill (cr);
 	switch (osc -> type) {
@@ -249,6 +268,114 @@ static gboolean RedrawOscilloscope (GtkWidget * viewport, GdkEvent * event, osci
 			cairo_show_text (cr, osc -> markings [ind]);
 		}
 		break;
+	case oscilloscope_class :: BIG_OSCILLOSCOPE:
+		// grid
+		cairo_set_source_rgb (cr, 0.0, 0.0, 1.0);
+		cairo_move_to (cr, 20.0, 20.0); cairo_line_to (cr, 532.0, 20.0);
+		cairo_move_to (cr, 20.0, 52.0); cairo_line_to (cr, 532.0, 52.0);
+		cairo_move_to (cr, 20.0, 84.0); cairo_line_to (cr, 532.0, 84.0);
+		cairo_move_to (cr, 20.0, 116.0); cairo_line_to (cr, 532.0, 116.0);
+		cairo_move_to (cr, 20.0, 180.0); cairo_line_to (cr, 532.0, 180.0);
+		cairo_move_to (cr, 20.0, 212.0); cairo_line_to (cr, 532.0, 212.0);
+		cairo_move_to (cr, 20.0, 244.0); cairo_line_to (cr, 532.0, 244.0);
+		cairo_move_to (cr, 20.0, 276.0); cairo_line_to (cr, 532.0, 276.0);
+		cairo_move_to (cr, 20.0, 20.0); cairo_line_to (cr, 20.0, 276.0);
+		cairo_move_to (cr, 52.0, 20.0); cairo_line_to (cr, 52.0, 276.0);
+		cairo_move_to (cr, 84.0, 20.0); cairo_line_to (cr, 84.0, 276.0);
+		cairo_move_to (cr, 116.0, 20.0); cairo_line_to (cr, 116.0, 276.0);
+		cairo_move_to (cr, 148.0, 20.0); cairo_line_to (cr, 148.0, 276.0);
+		cairo_move_to (cr, 180.0, 20.0); cairo_line_to (cr, 180.0, 276.0);
+		cairo_move_to (cr, 212.0, 20.0); cairo_line_to (cr, 212.0, 276.0);
+		cairo_move_to (cr, 244.0, 20.0); cairo_line_to (cr, 244.0, 276.0);
+		cairo_move_to (cr, 308.0, 20.0); cairo_line_to (cr, 308.0, 276.0);
+		cairo_move_to (cr, 340.0, 20.0); cairo_line_to (cr, 340.0, 276.0);
+		cairo_move_to (cr, 372.0, 20.0); cairo_line_to (cr, 372.0, 276.0);
+		cairo_move_to (cr, 404.0, 20.0); cairo_line_to (cr, 404.0, 276.0);
+		cairo_move_to (cr, 436.0, 20.0); cairo_line_to (cr, 436.0, 276.0);
+		cairo_move_to (cr, 468.0, 20.0); cairo_line_to (cr, 468.0, 276.0);
+		cairo_move_to (cr, 500.0, 20.0); cairo_line_to (cr, 500.0, 276.0);
+		cairo_move_to (cr, 532.0, 20.0); cairo_line_to (cr, 532.0, 276.0);
+		cairo_stroke (cr);
+		cairo_set_source_rgb (cr, 1.0, 0.0, 0.0);
+		cairo_move_to (cr, 20.0, 148.0); cairo_line_to (cr, 532.0, 148.0);
+		cairo_move_to (cr, 276.0, 20.0); cairo_line_to (cr, 276.0, 276.0);
+		cairo_stroke (cr);
+		// wave
+		cairo_set_source_rgb (cr, 0.0, 1.0, 0.0);
+		cairo_move_to (cr, 20.0, 148.0 - losc -> wave [0] * 64.0);
+		for (int ind = 1; ind < 512; ind++) cairo_line_to (cr, 20.0 + (double) ind, 148.0 - losc -> wave [ind] * 64.0);
+		cairo_stroke (cr);
+		if (osc -> need_to_calculate_markings) {
+			for (int ind = 1; ind < 9; ind++) {
+				sprintf (osc -> markings [ind], "%iHz", (int) (4.0 * losc -> core -> sampling_frequency / (256.0 * (double) ind)));
+				cairo_text_extents_t extent;
+				cairo_text_extents (cr, osc -> markings [ind], & extent);
+				osc -> marking_locations [ind] = (int) (20.0 + 64.0 * (double) ind - extent . width * 0.5);
+			}
+			osc -> need_to_calculate_markings = false;
+		}
+		cairo_set_font_size (cr, 10);
+		cairo_set_source_rgb (cr, 1.0, 1.0, 0.0);
+		for (int ind = 1; ind < 9; ind++) {
+			cairo_move_to (cr, osc -> marking_locations [ind], 288.0);
+			cairo_show_text (cr, osc -> markings [ind]);
+		}
+		break;
+	case oscilloscope_class :: BIG_SPECTROSCOPE:
+		// grid
+		cairo_set_source_rgb (cr, 0.0, 0.0, 1.0);
+		cairo_move_to (cr, 20.0, 20.0); cairo_line_to (cr, 532.0, 20.0);
+		cairo_move_to (cr, 20.0, 52.0); cairo_line_to (cr, 532.0, 52.0);
+		cairo_move_to (cr, 20.0, 84.0); cairo_line_to (cr, 532.0, 84.0);
+		cairo_move_to (cr, 20.0, 116.0); cairo_line_to (cr, 532.0, 116.0);
+		cairo_move_to (cr, 20.0, 180.0); cairo_line_to (cr, 532.0, 180.0);
+		cairo_move_to (cr, 20.0, 212.0); cairo_line_to (cr, 532.0, 212.0);
+		cairo_move_to (cr, 20.0, 244.0); cairo_line_to (cr, 532.0, 244.0);
+		cairo_move_to (cr, 20.0, 276.0); cairo_line_to (cr, 532.0, 276.0);
+		cairo_move_to (cr, 20.0, 20.0); cairo_line_to (cr, 20.0, 276.0);
+		cairo_move_to (cr, 52.0, 20.0); cairo_line_to (cr, 52.0, 276.0);
+		cairo_move_to (cr, 84.0, 20.0); cairo_line_to (cr, 84.0, 276.0);
+		cairo_move_to (cr, 116.0, 20.0); cairo_line_to (cr, 116.0, 276.0);
+		cairo_move_to (cr, 148.0, 20.0); cairo_line_to (cr, 148.0, 276.0);
+		cairo_move_to (cr, 180.0, 20.0); cairo_line_to (cr, 180.0, 276.0);
+		cairo_move_to (cr, 212.0, 20.0); cairo_line_to (cr, 212.0, 276.0);
+		cairo_move_to (cr, 244.0, 20.0); cairo_line_to (cr, 244.0, 276.0);
+		cairo_move_to (cr, 308.0, 20.0); cairo_line_to (cr, 308.0, 276.0);
+		cairo_move_to (cr, 340.0, 20.0); cairo_line_to (cr, 340.0, 276.0);
+		cairo_move_to (cr, 372.0, 20.0); cairo_line_to (cr, 372.0, 276.0);
+		cairo_move_to (cr, 404.0, 20.0); cairo_line_to (cr, 404.0, 276.0);
+		cairo_move_to (cr, 436.0, 20.0); cairo_line_to (cr, 436.0, 276.0);
+		cairo_move_to (cr, 468.0, 20.0); cairo_line_to (cr, 468.0, 276.0);
+		cairo_move_to (cr, 500.0, 20.0); cairo_line_to (cr, 500.0, 276.0);
+		cairo_move_to (cr, 532.0, 20.0); cairo_line_to (cr, 532.0, 276.0);
+		cairo_stroke (cr);
+		cairo_set_source_rgb (cr, 1.0, 0.0, 0.0);
+		cairo_move_to (cr, 20.0, 148.0); cairo_line_to (cr, 532.0, 148.0);
+		cairo_move_to (cr, 276.0, 20.0); cairo_line_to (cr, 276.0, 276.0);
+		cairo_stroke (cr);
+		cairo_set_source_rgb (cr, 0.0, 1.0, 0.0);
+		for (int ind = 0; ind < 512; ind++) {
+			cairo_move_to (cr, 20.0 + (double) ind, 266.0);
+			cairo_line_to (cr, 20.0 + (double) ind, 266.0 - losc -> fft [ind] * 128.0);
+		}
+		cairo_stroke (cr);
+		if (osc -> need_to_calculate_markings) {
+			double cycle = losc -> core -> sampling_frequency / (512.0 * losc -> base);
+			for (int ind = 0; ind < 9; ind++) {
+				sprintf (osc -> markings [ind], "%iHz", (int) (ind == 0 ? cycle : (double) (ind * 32) * cycle));
+				cairo_text_extents_t extent;
+				cairo_text_extents (cr, osc -> markings [ind], & extent);
+				osc -> marking_locations [ind] = (int) (20.0 + 64.0 * (double) ind - extent . width * 0.5);
+			}
+			osc -> need_to_calculate_markings = false;
+		}
+		cairo_set_font_size (cr, 10);
+		cairo_set_source_rgb (cr, 1.0, 1.0, 0.0);
+		for (int ind = 0; ind < 9; ind++) {
+			cairo_move_to (cr, osc -> marking_locations [ind], 288.0);
+			cairo_show_text (cr, osc -> markings [ind]);
+		}
+		break;
 	default: break;
 	}
 	cairo_destroy (cr);
@@ -264,7 +391,8 @@ static gboolean CreateOscilloscopeIdleCode (oscilloscope_action * osc) {
 	gtk_container_add (GTK_CONTAINER (lo -> viewport), osc -> drawing_area);
 	osc -> gtk_redrawer = g_signal_connect (G_OBJECT (osc -> drawing_area), "expose-event", G_CALLBACK (RedrawOscilloscope), osc);
 	gtk_window_move (GTK_WINDOW (lo -> viewport), (int) lo -> location . x, (int) lo -> location . y);
-	gtk_window_resize (GTK_WINDOW (lo -> viewport), 302, 174);
+	if (osc -> type < oscilloscope_class :: BIG_OSCILLOSCOPE) gtk_window_resize (GTK_WINDOW (lo -> viewport), 302, 174);
+	else gtk_window_resize (GTK_WINDOW (lo -> viewport), 552, 296);
 	gtk_widget_show_all (lo -> viewport);
 	return FALSE;
 }
@@ -284,6 +412,8 @@ orbiter * oscilloscope_class :: create_orbiter (PrologElement * parameters) {
 		switch (type) {
 		case oscilloscope_class :: OSCILLOSCOPE: refresh_rate = 2000; break;
 		case oscilloscope_class :: SPECTROSCOPE: refresh_rate = 20000; break;
+		case oscilloscope_class :: BIG_OSCILLOSCOPE: refresh_rate = 2256; break;
+		case oscilloscope_class :: BIG_SPECTROSCOPE: refresh_rate = 20512; break;
 		default: break;
 		}
 	}

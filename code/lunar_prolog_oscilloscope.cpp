@@ -66,6 +66,67 @@ public:
 	}
 };
 static gboolean RepaintOscilloscopeIdleCode (lunar_oscilloscope * osc) {if (osc -> no_redraw) return FALSE; gtk_widget_queue_draw (osc -> viewport); return FALSE;}
+
+static void FFT (double * f, double * rec, double * ims, int count, double * sine_wave, int step, bool half) {
+	if (count == 4) {
+		rec [0] = (f [0] + f [1] + f [2] + f [3]) * 0.25;
+		rec [1] = (f [0] - f [2]) * 0.25;
+		rec [2] = (f [0] - f [1] + f [2] - f [3]) * 0.25;
+		rec [3] = rec [1];
+		ims [0] = 0;
+		ims [1] = (f [1] - f [3]) * 0.25;
+		ims [2] = 0;
+		ims [3] = - ims [1];
+		return;
+	}
+	int spectrum_length = count >> 1;
+	double * evens = new double [count + count + count];
+	double * odds = evens + spectrum_length;
+	double * evensrec = odds + spectrum_length;
+	double * evensims = evensrec + spectrum_length;
+	double * oddsrec = evensims + spectrum_length;
+	double * oddsims = oddsrec + spectrum_length;
+	int index = 0;
+	for (int ind = 0; ind < spectrum_length; ind++) {
+		evens [ind] = f [index++];
+		odds [ind] = f [index++];
+	}
+	int two_step = step << 1;
+	FFT (evens, evensrec, evensims, spectrum_length, sine_wave, two_step, false);
+	FFT (odds, oddsrec, oddsims, spectrum_length, sine_wave, two_step, false);
+	int omega = 0;
+	if (half) {
+		for (int ind = 0; ind < spectrum_length; ind++) {
+			double cosine = sine_wave [0x3fff & (omega + 4096)];
+			double sine = sine_wave [0x3fff & omega];
+			double re = oddsrec [ind];
+			double im = oddsims [ind];
+			double oddre = cosine * re - sine * im;
+			double oddim = cosine * im + sine * re;
+			rec [ind] = evensrec [ind] + oddre;
+			ims [ind] = evensims [ind] + oddim;
+			omega += step;
+		}
+	} else {
+		index = spectrum_length;
+		for (int ind = 0; ind < spectrum_length; ind++) {
+			double cosine = sine_wave [0x3fff & (omega + 4096)];
+			double sine = sine_wave [0x3fff & omega];
+			double re = oddsrec [ind];
+			double im = oddsims [ind];
+			double oddre = cosine * re - sine * im;
+			double oddim = cosine * im + sine * re;
+			rec [ind] = evensrec [ind] + oddre;
+			ims [ind] = evensims [ind] + oddim;
+			rec [index] = evensrec [ind] - oddre;
+			ims [index] = evensims [ind] - oddim;
+			omega += step;
+			index++;
+		}
+	}
+	delete [] evens;
+}
+
 void lunar_oscilloscope :: move (void) {
 	if (viewport == 0) return;
 	if (frame_count < 0) {frame_count++; previous = signal; return;}
@@ -75,11 +136,13 @@ void lunar_oscilloscope :: move (void) {
 	wave [frame_count++] = signal;
 	current_base = base;
 	int step = 0;
+	double rec [512];
+	double ims [512];
 	switch (type) {
 	case oscilloscope_class :: OSCILLOSCOPE: if (frame_count < 256) return; break;
 	case oscilloscope_class :: SPECTROSCOPE:
 		if (frame_count < 512) return;
-		for (int ind = 0; ind < 256; ind++) {
+		/*for (int ind = 0; ind < 256; ind++) {
 			fft [ind] = 0.0;
 			int alpha = 0;
 			double re = 0.0, im = 0.0;
@@ -90,23 +153,15 @@ void lunar_oscilloscope :: move (void) {
 			}
 			fft [ind] = 0.00390625 * sqrt (re * re + im * im);
 			step += 32;
-		}
+		}*/
+		FFT (wave, rec, ims, 512, core -> sine_wave, 32, true);
+		for (int ind = 0; ind < 256; ind++) fft [ind] = sqrt (rec [ind] * rec [ind] + ims [ind] * ims [ind]);
 		break;
 	case oscilloscope_class :: BIG_OSCILLOSCOPE: if (frame_count < 512) return; break;
 	case oscilloscope_class :: BIG_SPECTROSCOPE:
 		if (frame_count < 1024) return;
-		for (int ind = 0; ind < 512; ind++) {
-			fft [ind] = 0.0;
-			int alpha = 0;
-			double re = 0.0, im = 0.0;
-			for (int sub = 0; sub < 1024; sub++) {
-				re += core -> sine_wave [0x3fff & alpha] * wave [sub];
-				im += core -> sine_wave [0x3fff & (alpha + 4096)] * wave [sub];
-				alpha += step;
-			}
-			fft [ind] = 0.00390625 * sqrt (re * re + im * im);
-			step += 16;
-		}
+		FFT (wave, rec, ims, 1024, core -> sine_wave, 16, true);
+		for (int ind = 0; ind < 512; ind++) fft [ind] = sqrt (rec [ind] * rec [ind] + ims [ind] * ims [ind]);
 		break;
 	default: break;
 	}
@@ -248,7 +303,7 @@ static gboolean RedrawOscilloscope (GtkWidget * viewport, GdkEvent * event, osci
 		cairo_set_source_rgb (cr, 0.0, 1.0, 0.0);
 		for (int ind = 0; ind < 256; ind++) {
 			cairo_move_to (cr, 20.0 + (double) ind, 148.0);
-			cairo_line_to (cr, 20.0 + (double) ind, 148.0 - losc -> fft [ind] * 128.0);
+			cairo_line_to (cr, 20.0 + (double) ind, 148.0 - losc -> fft [ind] * 2.0);
 		}
 		cairo_stroke (cr);
 		if (osc -> need_to_calculate_markings) {
@@ -355,8 +410,8 @@ static gboolean RedrawOscilloscope (GtkWidget * viewport, GdkEvent * event, osci
 		cairo_stroke (cr);
 		cairo_set_source_rgb (cr, 0.0, 1.0, 0.0);
 		for (int ind = 0; ind < 512; ind++) {
-			cairo_move_to (cr, 20.0 + (double) ind, 266.0);
-			cairo_line_to (cr, 20.0 + (double) ind, 266.0 - losc -> fft [ind] * 128.0);
+			cairo_move_to (cr, 20.0 + (double) ind, 276.0);
+			cairo_line_to (cr, 20.0 + (double) ind, 276.0 - losc -> fft [ind] * 2.0);
 		}
 		cairo_stroke (cr);
 		if (osc -> need_to_calculate_markings) {

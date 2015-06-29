@@ -1399,3 +1399,50 @@ lunar_filter :: lunar_filter (orbiter_core * core) : orbiter (core) {
 	initialise (); activate ();
 }
 
+int lunar_dc_offset_filter :: numberOfInputs (void) {return 2;}
+char * lunar_dc_offset_filter :: inputName (int ind) {
+	switch (ind) {
+	case 0: return "LEFT"; break;
+	case 1: return "RIGHT"; break;
+	default: break;
+	}
+	return orbiter :: inputName (ind);
+}
+double * lunar_dc_offset_filter :: inputAddress (int ind) {
+	switch (ind) {
+	case 0: return & enter; break;
+	case 1: return & enter_right; break;
+	default: break;
+	}
+	return orbiter :: inputAddress (ind);
+}
+int lunar_dc_offset_filter :: numberOfOutputs (void) {return 2;}
+char * lunar_dc_offset_filter :: outputName (int ind) {
+	switch (ind) {
+	case 0: return "LEFT"; break;
+	case 1: return "RIGHT"; break;
+	default: break;
+	}
+	return orbiter :: outputName (ind);
+}
+double * lunar_dc_offset_filter :: outputAddress (int ind) {
+	switch (ind) {
+	case 0: return & signal; break;
+	case 1: return & signal_right; break;
+	default: break;
+	}
+	return orbiter :: outputAddress (ind);
+}
+void lunar_dc_offset_filter :: move (void) {
+	signal *= fractor;
+	signal += enter - previous_enter;
+	previous_enter = enter;
+	signal_right *= fractor;
+	signal_right += enter_right - previous_enter_right;
+	previous_enter_right = enter_right;
+}
+lunar_dc_offset_filter :: lunar_dc_offset_filter (double fractor, orbiter_core * core) : orbiter (core) {
+	previous_enter = enter = previous_enter_right = enter_right = signal_right = 0.0;
+	this -> fractor = 1.0 - fractor;
+	initialise (); activate ();
+}

@@ -983,3 +983,14 @@ orbiter * detector_class :: create_orbiter (PrologElement * parameters) {
 	return new lunar_detector (root, detector != 0 ? detector -> getNumber () : 0.0, query, core);
 }
 detector_class :: detector_class (PrologRoot * root, orbiter_core * core) : PrologNativeOrbiterCreator (core) {this -> root = root;}
+
+orbiter * DCOffsetFilter_class :: create_orbiter (PrologElement * parameters) {
+	double fractor = 0.00390625;
+	while (parameters -> isPair ()) {
+		PrologElement * el = parameters -> getLeft ();
+		if (el -> isDouble ()) fractor = el -> getDouble ();
+		parameters = parameters -> getRight ();
+	}
+	return new lunar_dc_offset_filter (fractor, core);
+}
+DCOffsetFilter_class :: DCOffsetFilter_class (orbiter_core * core) : PrologNativeOrbiterCreator (core) {}

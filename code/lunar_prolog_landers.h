@@ -256,5 +256,11 @@ public:
 	detector_class (PrologRoot * root, orbiter_core * core);
 };
 
+class DCOffsetFilter_class : public PrologNativeOrbiterCreator {
+public:
+	virtual orbiter * create_orbiter (PrologElement * parameters);
+	DCOffsetFilter_class (orbiter_core * core);
+};
+
 #endif
 

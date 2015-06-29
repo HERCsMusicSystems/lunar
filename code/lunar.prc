@@ -10,7 +10,7 @@ program lunar #machine := "prolog.lunar"
 				noise orbiter X Y modulation vibrato tremolo wahwah range
 				core base moonbase arpeggiator sequencer polysequencer operator parameter_block auto auto_data key_map velocity_map impulse
 				trigger inactive_trigger delay1 delay2 mixer stereo_mixer gateway stereo_gateway amplifier stereo_amplifier volume mono_volume
-				lfo adsr eg egscaling egscal vco
+				lfo adsr eg egscaling egscal vco DCOffsetFilter
 				index shift bias
 				square_operator fm4 fm6 dx9 dx7 saw_operator noise_operator sampler_operator sampler
 				sensitivity sens filter delay reverb freeverb chorus pan power_pan linear_pan stereo_pan stereo_power_pan stereo_linear_pan
@@ -107,6 +107,8 @@ program lunar #machine := "prolog.lunar"
 #machine sampler_operator := "sampler_operator"
 #machine vco := "vco"
 #machine filter := "filter"
+
+#machine DCOffsetFilter := "DCOffsetFilter"
 
 #machine orbiter := "orbiter"
 

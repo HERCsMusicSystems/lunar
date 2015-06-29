@@ -61,7 +61,7 @@ public:
 		viewport = 0;
 		no_redraw = false;
 		frame_count = 0;
-		for (int ind = 0; ind < 256; ind++) fft [ind] = wave [ind] = 0;
+		for (int ind = 0; ind < 512; ind++) fft [ind] = wave [ind] = 0;
 		initialise (); activate ();
 	}
 };

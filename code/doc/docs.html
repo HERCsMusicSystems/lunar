@@ -23,6 +23,7 @@
         <a href="#predicate_chorus">chorus</a>
         <a href="#predicate_control">control</a>
         <a href="#predicate_DCOffsetFilter">DCOffsetFilter</a>
+        <a href="#predicate_DCOffsetFilterMono">DCOffsetFilterMono</a>
         <a href="#predicate_delay">delay</a>
         <a href="#predicate_detector">detector</a>
         <a href="#predicate_drywet">drywet</a>
@@ -320,6 +321,20 @@ Core also functions as an audio source (connected directly to the sound hardware
         <div class="doc_predicate_body">
             <b>Signals:</b> [["LEFT" "RIGHT"] ["LEFT" "RIGHT"]]<br />
             High-pass filter for removing DC Offset from stereo signal.
+        </div>
+    </a>
+</div>
+
+<div class="doc_predicate">
+    <a id="predicate_DCOffsetFilterMono">
+        <div class="doc_predicate_header">
+            [DCOffsetFilterMono module] => Creates a dealy module.<br />
+            [DCOffsetFilterMono module fraction] => Creates a dealy module with specified coefficient (default = 0.00390625).<br />
+            <b>Note:</b> module adheres to <a href="#common_behaviour_of_predicates">Common Behaviour</a>.<br />
+        </div>
+        <div class="doc_predicate_body">
+            <b>Signals:</b> [["ENTER"] ["SIGNAL"]]<br />
+            High-pass filter for removing DC Offset from mono signal.
         </div>
     </a>
 </div>

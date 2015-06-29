@@ -282,7 +282,6 @@ program lunar #machine := "prolog.lunar"
 	[TRY
 		[cl *index [[*distributor *key *action]]]
 		[res : *action]
-		[show "Deleting " *index " => " *action]
 		[DELCL *index *distributor]
 	]
 	[*mx signal]

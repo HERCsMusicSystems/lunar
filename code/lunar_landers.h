@@ -535,5 +535,16 @@ public:
 	lunar_dc_offset_filter (double fractor, orbiter_core * core);
 };
 
+class lunar_dc_offset_filter_mono : public orbiter {
+private:
+	double enter, previous, fractor;
+public:
+	virtual int numberOfInputs (void);
+	virtual char * inputName (int ind);
+	virtual double * inputAddress (int ind);
+	virtual void move (void);
+	lunar_dc_offset_filter_mono (double fractor, orbiter_core * core);
+};
+
 #endif
 

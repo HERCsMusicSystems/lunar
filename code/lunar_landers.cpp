@@ -1446,3 +1446,23 @@ lunar_dc_offset_filter :: lunar_dc_offset_filter (double fractor, orbiter_core *
 	this -> fractor = 1.0 - fractor;
 	initialise (); activate ();
 }
+
+int lunar_dc_offset_filter_mono :: numberOfInputs (void) {return 1;}
+char * lunar_dc_offset_filter_mono :: inputName (int ind) {
+	if (ind == 0) return "ENTER";
+	return orbiter :: inputName (ind);
+}
+double * lunar_dc_offset_filter_mono :: inputAddress (int ind) {
+	if (ind == 0) return & enter;
+	return orbiter :: inputAddress (ind);
+}
+void lunar_dc_offset_filter_mono :: move (void) {
+	signal *= fractor;
+	signal += enter - previous;
+	previous = enter;
+}
+lunar_dc_offset_filter_mono :: lunar_dc_offset_filter_mono (double fractor, orbiter_core * core) : orbiter (core) {
+	previous = enter = 0.0;
+	this -> fractor = 1.0 - fractor;
+	initialise (); activate ();
+}

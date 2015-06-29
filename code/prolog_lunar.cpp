@@ -290,7 +290,8 @@ PrologNativeCode * PrologLunarServiceClass :: getNativeCode (char * name) {
 	if (strcmp (name, "fm4") == 0) return new fm4_operator_class (& core);
 	if (strcmp (name, "vco") == 0) return new vco_operator_class (& core);
 	if (strcmp (name, "filter") == 0) return new filter_class (& core);
-	if (strcmp (name, "DCOffsetFilter") == 0) return new DCOffsetFilter_class (& core);
+	if (strcmp (name, "DCOffsetFilter") == 0) return new DCOffsetFilter_class (& core, false);
+	if (strcmp (name, "DCOffsetFilterMono") == 0) return new DCOffsetFilter_class (& core, true);
 	if (strcmp (name, "parameter_block") == 0) return new parameter_block_class (& core);
 	if (strcmp (name, "auto_data") == 0) return new auto_data_class (& core);
 	if (strcmp (name, "auto") == 0) return new auto_class (& core);

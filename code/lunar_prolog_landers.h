@@ -258,8 +258,9 @@ public:
 
 class DCOffsetFilter_class : public PrologNativeOrbiterCreator {
 public:
+	bool mono;
 	virtual orbiter * create_orbiter (PrologElement * parameters);
-	DCOffsetFilter_class (orbiter_core * core);
+	DCOffsetFilter_class (orbiter_core * core, bool mono);
 };
 
 #endif

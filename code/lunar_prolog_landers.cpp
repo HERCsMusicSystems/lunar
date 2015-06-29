@@ -991,6 +991,7 @@ orbiter * DCOffsetFilter_class :: create_orbiter (PrologElement * parameters) {
 		if (el -> isDouble ()) fractor = el -> getDouble ();
 		parameters = parameters -> getRight ();
 	}
+	if (mono) return new lunar_dc_offset_filter_mono (fractor, core);
 	return new lunar_dc_offset_filter (fractor, core);
 }
-DCOffsetFilter_class :: DCOffsetFilter_class (orbiter_core * core) : PrologNativeOrbiterCreator (core) {}
+DCOffsetFilter_class :: DCOffsetFilter_class (orbiter_core * core, bool mono) : PrologNativeOrbiterCreator (core) {this -> mono = mono;}

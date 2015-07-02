@@ -51,9 +51,9 @@ program phobos [Phobos PhobosEditor BuildPhobos BuildPhobosPart Operator-1 Opera
 	[gateway *pitch_ctrl1] [gateway *pitch_ctrl2] [gateway *pitch_ctrl3] [gateway *pitch_ctrl4] [gateway *pitch_ctrlfilter]
 	[*pitch_ctrl1 *pitch] [*pitch_ctrl2 *pitch] [*pitch_ctrl3 *pitch] [*pitch_ctrl4 *pitch] [*pitch_ctrlfilter *pitch]
 
-	[pan *pan] [delay *delay] [drywet *mixer] [volume *volume] [chorus *chorus]
+	[stereo_pan *pan] [delay *delay] [drywet *mixer] [volume *volume] [stereo_chorus *chorus]
 	[*pan "pan" *lfo2pan]
-	[*pan *chorus]
+	[ConnectStereo *pan *chorus]
 	[ConnectStereo *delay *pan]
 	[ConnectDryWet *mixer *pan *delay]
 	[ConnectStereo *volume *mixer]

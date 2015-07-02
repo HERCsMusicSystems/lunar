@@ -13,7 +13,8 @@ program lunar #machine := "prolog.lunar"
 				lfo adsr eg egscaling egscal vco DCOffsetFilter DCOffsetFilterMono
 				index shift bias
 				square_operator fm4 fm6 dx9 dx7 saw_operator noise_operator sampler_operator sampler
-				sensitivity sens filter delay reverb freeverb chorus pan power_pan linear_pan stereo_pan stereo_power_pan stereo_linear_pan
+				sensitivity sens filter delay reverb freeverb chorus stereo_chorus
+				pan power_pan linear_pan stereo_pan stereo_power_pan stereo_linear_pan
 				drywet drywet_mono dry wet balance
 				level level1 level2 level3 level4 time1 time2 time3 time4 attack decay sustain release
 				freq amp ratio sync cutoff resonance formant hold busy portamento porta
@@ -82,6 +83,7 @@ program lunar #machine := "prolog.lunar"
 #machine delay := "delay"
 #machine freeverb := "freeverb"
 #machine chorus := "chorus"
+#machine stereo_chorus := "stereo_chorus"
 #machine pan := "pan"
 #machine power_pan := "power_pan"
 #machine linear_pan := "linear_pan"
@@ -503,6 +505,15 @@ program lunar #machine := "prolog.lunar"
 	[AddParameterBlock *parameters level *chorus *selector 0 "index"]
 	[AddParameterBlock *parameters time *chorus *selector 1024 "index"]
 	[AddParameterBlock *parameters speed *chorus *selector 0 "index"]
+	[AddParameterBlock *parameters amp *chorus *selector 8192 "index"]
+]
+
+[[InsertIO *parameters *chorus *selector [["MONO" "LEFT" "RIGHT" "LEVEL" "TIME" "BIAS" "SPEED" "PHASE" "AMP"] ["LEFT" "RIGHT"]]]
+	[AddParameterBlock *parameters level *chorus *selector 0 "index"]
+	[AddParameterBlock *parameters time *chorus *selector 1024 "index"]
+	[AddParameterBlock *parameters bias *chorus *selector 0 "index"]
+	[AddParameterBlock *parameters speed *chorus *selector 0 "index"]
+	[AddParameterBlock *parameters phase *chorus *selector 0 "index"]
 	[AddParameterBlock *parameters amp *chorus *selector 8192 "index"]
 ]
 

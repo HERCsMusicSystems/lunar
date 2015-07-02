@@ -1097,6 +1097,83 @@ lunar_chorus :: lunar_chorus (orbiter_core * core) : orbiter (core) {
 	initialise (); activate ();
 }
 
+int lunar_stereo_chorus :: numberOfInputs (void) {return 9;}
+char * lunar_stereo_chorus :: inputName (int ind) {
+	switch (ind) {
+	case 0: return "MONO"; break;
+	case 1: return "LEFT"; break;
+	case 2: return "RIGHT"; break;
+	case 3: return "LEVEL"; break;
+	case 4: return "TIME"; break;
+	case 5: return "BIAS"; break;
+	case 6: return "SPEED"; break;
+	case 7: return "PHASE"; break;
+	case 8: return "AMP"; break;
+	default: break;
+	}
+	return orbiter :: inputName (ind);
+}
+double * lunar_stereo_chorus :: inputAddress (int ind) {
+	switch (ind) {
+	case 0: return & mono; break;
+	case 1: return & left; break;
+	case 2: return & right; break;
+	case 3: return & level; break;
+	case 4: return & time; break;
+	case 5: return & bias; break;
+	case 6: return & speed; break;
+	case 7: return & phase; break;
+	case 8: return & amp; break;
+	default: break;
+	}
+	return orbiter :: inputAddress (ind);
+}
+int lunar_stereo_chorus :: numberOfOutputs (void) {return 2;}
+char * lunar_stereo_chorus :: outputName (int ind) {
+	switch (ind) {
+	case 0: return "LEFT"; break;
+	case 1: return "RIGHT"; break;
+	default: break;
+	}
+	return orbiter :: outputName (ind);
+}
+double * lunar_stereo_chorus :: outputAddress (int ind) {
+	switch (ind) {
+	case 0: return & signal; break;
+	case 1: return & signal_right; break;
+	default: break;
+	}
+	return orbiter :: outputAddress (ind);
+}
+void lunar_stereo_chorus :: move (void) {
+	double amp_divided = amp * DIV_16384;
+	double lfo_left = 1.0 + amp_divided * core -> SineApproximated (omega);
+	double lfo_right = 1.0 + amp_divided * core -> SineApproximated (omega + phase * DIV_16384);
+	omega += core -> ControlTimeDelta (speed);
+	while (omega >= 1.0) omega -= 1.0;
+	double level_divided = level * DIV_16384;
+	double location = (double) index - time * lfo_left * core -> DSP_CHORUS_time_fraction;
+	while (location < 0.0) location += 65536.0; while (location >= 65536.0) location -= 65536.0;
+	double ml = mono + left;
+	signal = ml + level_divided * interpolate (location, line);
+	location = (double) index - (time + bias) * lfo_right * core -> DSP_CHORUS_time_fraction;
+	while (location < 0.0) location += 65536.0; while (location >= 65536.0) location -= 65536.0;
+	double mr = mono + right;
+	signal_right = mr + level_divided * interpolate (location, line_right);
+	line [index] = ml;
+	line_right [index++] = mr;
+	if (index > 65535) index = 0;
+}
+lunar_stereo_chorus :: lunar_stereo_chorus (orbiter_core * core) : orbiter (core) {
+	for (int ind = 0; ind < 65536; ind++) line [ind] = line_right [ind] = 0.0;
+	mono = left = right = signal_right = time = omega = 0.0;
+	index = 0;
+	level = 0.0;
+	speed = 0.0; amp = 8192.0;
+	bias = phase = 0.0;
+	initialise (); activate ();
+}
+
 int lunar_drywet :: numberOfInputs (void) {return 5;}
 char * lunar_drywet :: inputName (int ind) {
 	switch (ind) {

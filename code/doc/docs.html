@@ -50,6 +50,7 @@
         <a href="#predicate_sensitivity">sensitivity</a>
         <a href="#predicate_square_operator">square_operator</a>
         <a href="#predicate_stereo_amplifier">stereo_amplifier</a>
+        <a href="#predicate_stereo_chorus">stereo_chorus</a>
         <a href="#predicate_stereo_gateway">stereo_gateway</a>
         <a href="#predicate_stereo_linear_pan">stereo_linear_pan</a>
         <a href="#predicate_stereo_mixer">stereo_mixer</a>
@@ -828,6 +829,32 @@ Core also functions as an audio source (connected directly to the sound hardware
             <b>Signals:</b> [["LEFT" "RIGHT" "GATEWAY"] ["LEFT" "RIGHT"]]<br />
             Works similar to <a href="#predicate_amplifer">amplifer</a> module, but with stereo signals (<b>"LEFT"</b> and <b>"RIGHT"</b>).
             Good for building linear stereo amplifiers.
+        </div>
+    </a>
+</div>
+
+<div class="doc_predicate">
+    <a id="predicate_stereo_chorus">
+        <div class="doc_predicate_header">
+            [stereo_chorus module] => Creates a stereo chorus module.<br />
+            <b>Note:</b> module adheres to <a href="#common_behaviour_of_predicates">Common Behaviour</a>.<br />
+        </div>
+        <div class="doc_predicate_body">
+            <b>Signals:</b> [["MONO" "LEFT" "RIGHT" "LEVEL" "TIME" "BIAS" "SPEED" "PHASE" "AMP"] ["LEFT" "RIGHT"]]<br />
+            Stereophonic chorus effect with integrated LFO block.<br />
+            <b>INPUTS:</b><br />
+            <b>Mono:</b> mono input signal.<br />
+            <b>Left:</b> left channel input signal.<br />
+            <b>Right:</b> right channel input signal.<br />
+            <b>Level:</b> mixing. Range between 0.0 .. 16384.0 linear, where 16384.0 represents equal mix.<br />
+            <b>Time:</b> shift. Range between 0.0 .. 16384.0 linear, where 8192.0 represents 1/10 of a second.<br />
+            <b>Bias:</b> additiona shift added to time. Range -8192.0 .. 8192.0.<br />
+            <b>Speed:</b> of LFO oscillation. Range identical as in <a href="#predicate_lfo">lfo</a>.<br />
+            <b>Phase:</b> shift of the right channel LFO oscillation. Range -8192.0 .. 8192 representing -180 .. 180 degrees.<br />
+            <b>Amp:</b> level of LFO oscillaction. Range 0.0 .. 16384.0 linear, where 16384.0 represents variation equals to two time shifts.<br />
+            <b>OUTPUTS:</b><br />
+            <b>Left:</b> output.<br />
+            <b>Right:</b> output.<br />
         </div>
     </a>
 </div>

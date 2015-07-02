@@ -396,6 +396,28 @@ public:
 	lunar_chorus (orbiter_core * core);
 };
 
+class lunar_stereo_chorus : public orbiter {
+private:
+	double mono, left, right;
+	double signal_right;
+	double level;
+	double time, speed, amp;
+	double bias, phase;
+	double line [65536];
+	double line_right [65536];
+	double omega;
+	int index;
+public:
+	virtual int numberOfInputs (void);
+	virtual char * inputName (int ind);
+	virtual double * inputAddress (int ind);
+	virtual int numberOfOutputs (void);
+	virtual char * outputName (int ind);
+	virtual double * outputAddress (int ind);
+	virtual void move (void);
+	lunar_stereo_chorus (orbiter_core * core);
+};
+
 class lunar_drywet : public orbiter {
 private:
 	double dry_left, dry_right;

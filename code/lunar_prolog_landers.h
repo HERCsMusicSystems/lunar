@@ -188,6 +188,12 @@ public:
 	chorus_class (orbiter_core * core);
 };
 
+class stereo_chorus_class : public PrologNativeOrbiterCreator {
+public:
+	virtual orbiter * create_orbiter (PrologElement * parameters);
+	stereo_chorus_class (orbiter_core * core);
+};
+
 class pan_class : public PrologNativeOrbiterCreator {
 public:
 	int type;

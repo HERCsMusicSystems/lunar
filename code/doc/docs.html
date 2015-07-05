@@ -101,6 +101,7 @@
         <a href="#predicate_BuildFreeverbPanel">BuildFreeverbPanel</a>
         <a href="#predicate_BuildLfoPanel">BuildLfoPanel</a>
         <a href="#predicate_BuildParameterBlockPanel">BuildParameterBlockPanel</a>
+        <a href="#predicate_BuildStereoChorusPanel">BuildStereoChorusPanel</a>
         <a href="#predicate_Connect">Connect</a>
         <a href="#predicate_ConnectDryWet">ConnectDryWet</a>
         <a href="#predicate_ConnectStereo">ConnectStereo</a>
@@ -136,6 +137,7 @@
         <a href="#predicate_ParameterBlockPanel">ParameterBlockPanel</a>
         <a href="#predicate_small_keyboard">small_keyboard</a>
         <a href="#predicate_spectroscope">spectroscope</a>
+        <a href="#predicate_StereoChorusPanel">StereoChorusPanel</a>
         <a href="#predicate_vector">vector</a>
     </li>
 </ul>
@@ -1580,6 +1582,18 @@ A typical construction of an instrument and inserting it into the superstructure
 </div>
 
 <div class="doc_predicate">
+    <a id="predicate_BuildStereoChorusPanel">
+        <div class="doc_predicate_header">
+            [BuildStereoChorusPanel module instrument : selector] => Builds a stereo chorus panel.<br />
+        </div>
+        <div class="doc_predicate_body">
+            This is a shortcut designed to find the appropriate parameter blocks in superstructure
+            and build a stereo chorus panel.
+        </div>
+    </a>
+</div>
+
+<div class="doc_predicate">
     <a id="predicate_Connect">
         <div class="doc_predicate_header">
             [Connect : *modules] => Connects two modules.<br />
@@ -2085,6 +2099,23 @@ A typical construction of an instrument and inserting it into the superstructure
             Displays the spectrum of the input signal. Range of the signal is from -1.0 to 1.0.<br />
             The divisor (default = 1), shift (default = 0) and refresh rate (default = 20,000) parameters are optional.<br />
             <img src="dft.png" />
+        </div>
+    </a>
+</div>
+
+<div class="doc_predicate">
+    <a id="predicate_StereoChorusPanel">
+        <div class="doc_predicate_header">
+            [StereoChorusPanel module level time bias speed phase amp] => Creates a panel for a stereo chorus module.<br />
+            [module *x *y] => reposition on the screen<br />
+            [module] => closes the panel<br />
+        </div>
+        <div class="doc_predicate_body">
+            Creates a panel for 4 parameter blocks commonly associated with chorus module.
+            Ranges from -8192.0 .. 8192.0 for speed, bias and phase, and from 0 .. 16384 for all other parameters.
+            The resolution is 128 steps with left mouse button and 16384 with the right one.<br />
+            <b>Note:</b> do not use StereoChorusPanel directly. Use <a href="#predicate_BuildStereoChorusPanel">BuildStereoChorusPanel</a> instead.<br />
+            <img src="../../graphics/stereo_chorus_panel.png" />
         </div>
     </a>
 </div>

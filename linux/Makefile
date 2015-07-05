@@ -18,7 +18,7 @@ objects = \
 	lunar_prolog_vector.o lunar_prolog_control_panel.o graphics2d.o graphic_resources.o multiplatform_audio.o\
 	lunar_prolog_parameter_block_panel.o lunar_prolog_adsr_panel.o lunar_prolog_eg_panel.o\
 	lunar_prolog_fm4_panel.o lunar_prolog_core_panel.o lunar_prolog_lfo_panel.o lunar_prolog_filter_panel.o\
-	lunar_prolog_delay_panel.o lunar_prolog_chorus_panel.o lunar_prolog_freeverb_panel.o lunar_prolog_panel_base.o\
+	lunar_prolog_delay_panel.o lunar_prolog_chorus_panel.o lunar_prolog_schorus_panel.o lunar_prolog_freeverb_panel.o lunar_prolog_panel_base.o\
 	lunar_linux_midi.o prcgtk.o
 
 prc_resources = $(pi)studio_prc.o $(pi)conductor_prc.o $(pi)midi_prc.o $(pi)http_prc.o $(pi)store_prc.o $(pi)f1_prc.o $(pi)help_prc.o $(pi)record_prc.o\
@@ -110,6 +110,10 @@ lunar_prolog_delay_panel.o: ../code/lunar_prolog_delay_panel.cpp ../code/lunar.h
 lunar_prolog_chorus_panel.o: ../code/lunar_prolog_chorus_panel.cpp ../code/lunar.h ../code/prolog_lunar.h ../code/lunar_prolog_panel_base.h $(pc)prolog.h\
 			$(pc)graphics2d.h ../code/graphic_resources.h
 	g++ -Wno-write-strings -I. -I$(pc) ../code/lunar_prolog_chorus_panel.cpp -c -o lunar_prolog_chorus_panel.o `pkg-config --cflags gtk+-2.0`
+
+lunar_prolog_schorus_panel.o: ../code/lunar_prolog_schorus_panel.cpp ../code/lunar.h ../code/prolog_lunar.h ../code/lunar_prolog_panel_base.h $(pc)prolog.h\
+			$(pc)graphics2d.h ../code/graphic_resources.h
+	g++ -Wno-write-strings -I. -I$(pc) ../code/lunar_prolog_schorus_panel.cpp -c -o lunar_prolog_schorus_panel.o `pkg-config --cflags gtk+-2.0`
 
 lunar_prolog_freeverb_panel.o: ../code/lunar_prolog_freeverb_panel.cpp ../code/lunar.h ../code/prolog_lunar.h ../code/lunar_prolog_panel_base.h $(pc)prolog.h\
 			$(pc)graphics2d.h ../code/graphic_resources.h
@@ -307,6 +311,13 @@ chorus_panel.o: ../graphics/chorus_panel.png
 		../graphics/chorus_panel.png chorus_panel.o
 	objdump -t chorus_panel.o
 
+stereo_chorus_panel.o: ../graphics/stereo_chorus_panel.png
+	objcopy --input binary --output elf64-x86-64 --binary-architecture i386\
+		--redefine-sym _binary____graphics_stereo_chorus_panel_png_start=resource_stereo_chorus_panel_start\
+		--redefine-sym _binary____graphics_stereo_chorus_panel_png_end=resource_stereo_chorus_panel_end\
+		../graphics/stereo_chorus_panel.png stereo_chorus_panel.o
+	objdump -t stereo_chorus_panel.o
+
 freeverb_panel.o: ../graphics/freeverb_panel.png
 	objcopy --input binary --output elf64-x86-64 --binary-architecture i386\
 		--redefine-sym _binary____graphics_freeverb_panel_png_start=resource_freeverb_panel_start\
@@ -357,7 +368,7 @@ graphics = small_keyboard.o keyboard.o big_keyboard.o vector_frame.o vector_hand
 	knob_handle.o display.o button_on.o button_off.o encoder_surface.o encoder_handle.o slider_surface.o slider_handle.o\
 	command_centre.o adsr_panel.o eg_panel.o fm4_panel.o core_panel.o\
 	lfo_panel.o lfo_vibrato.o lfo_tremolo.o lfo_wah_wah.o lfo_pan.o filter_panel.o\
-	delay_panel.o chorus_panel.o freeverb_panel.o
+	delay_panel.o chorus_panel.o stereo_chorus_panel.o freeverb_panel.o
 
 ~/bin/lunar: $(lunar_objects) $(objects) $(graphics) $(prc_resources)
 	g++ $(lunar_objects) $(objects) $(prc_resources) $(graphics) \

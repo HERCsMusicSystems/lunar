@@ -37,9 +37,9 @@ program lunar #machine := "prolog.lunar"
 				Bbb Bb B B# Bx
 				midi
 				ParameterBlockPanel AdsrPanel EGPanel FEGPanel FM4Panel CorePanel LfoPanel FilterPanel
-				DelayPanel ChorusPanel FreeverbPanel
+				DelayPanel ChorusPanel StereoChorusPanel FreeverbPanel
 				BuildParameterBlockPanel BuildAdsrPanel BuildEGPanel BuildFEGPanel BuildFM4Panel BuildLfoPanel BuildFilterPanel
-				BuildDelayPanel BuildChorusPanel BuildFreeverbPanel
+				BuildDelayPanel BuildChorusPanel BuildStereoChorusPanel BuildFreeverbPanel
 				FindLfoKnob
 				MoveModules PropagateSignals MoveCore LunarDrop FUNCTION_KEY
 				CreateDistributor CloseDistributor Distribute Redistribute
@@ -127,6 +127,7 @@ program lunar #machine := "prolog.lunar"
 #machine FilterPanel := "FilterPanel"
 #machine DelayPanel := "DelayPanel"
 #machine ChorusPanel := "ChorusPanel"
+#machine StereoChorusPanel := "StereoChorusPanel"
 #machine FreeverbPanel := "FreeverbPanel"
 
 #machine MoveModules := "MoveModules"
@@ -241,6 +242,17 @@ program lunar #machine := "prolog.lunar"
 	[APPEND *path [speed] *speed_path] [*parameters *speed : *speed_path]
 	[APPEND *path [amp] *amp_path] [*parameters *amp : *amp_path]
 	[ChorusPanel *panel *level *time *speed *amp]
+]
+
+[[BuildStereoChorusPanel *panel *instrument : *path]
+	[*instrument *parameters : *]
+	[APPEND *path [level] *level_path] [*parameters *level : *level_path]
+	[APPEND *path [time] *time_path] [*parameters *time : *time_path]
+	[APPEND *path [bias] *bias_path] [*parameters *bias : *bias_path]
+	[APPEND *path [speed] *speed_path] [*parameters *speed : *speed_path]
+	[APPEND *path [phase] *phase_path] [*parameters *phase : *phase_path]
+	[APPEND *path [amp] *amp_path] [*parameters *amp : *amp_path]
+	[StereoChorusPanel *panel *level *time *bias *speed *phase *amp]
 ]
 
 [[BuildFreeverbPanel *panel *instrument : *path]

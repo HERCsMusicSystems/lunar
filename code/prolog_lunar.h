@@ -158,6 +158,14 @@ public:
 	chorus_panel_class (PrologLunarServiceClass * servo);
 };
 
+class stereo_chorus_panel_class : public PrologNativeCode {
+public:
+	PrologRoot * root;
+	GraphicResources * resources;
+	bool code (PrologElement * parameters, PrologResolution * resolution);
+	stereo_chorus_panel_class (PrologLunarServiceClass * servo);
+};
+
 class freeverb_panel_class : public PrologNativeCode {
 public:
 	PrologRoot * root;

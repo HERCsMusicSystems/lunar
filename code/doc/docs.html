@@ -122,6 +122,8 @@
         <br />
         <a href="#predicate_AdsrPanel">AdsrPanel</a>
         <a href="#predicate_big_keyboard">big_keyboard</a>
+        <a href="#predicate_big_oscilloscope">big_oscilloscope</a>
+        <a href="#predicate_big_spectroscope">big_spectroscope</a>
         <a href="#predicate_ChorusPanel">ChorusPanel</a>
         <a href="#predicate_command_centre">CommandCentre</a>
         <a href="#predicate_CorePanel">CorePanel</a>
@@ -1842,6 +1844,40 @@ A typical construction of an instrument and inserting it into the superstructure
         <div class="doc_predicate_body">
             Creates a panel containing a big keyboard.<br />
             <img src="../../graphics/big_keyboard.png" />
+        </div>
+    </a>
+</div>
+
+<div class="doc_predicate">
+    <a id="predicate_big_oscilloscope">
+        <div class="doc_predicate_header">
+            [big_oscilloscope module divisor shift refresh] => Creates a large oscilloscope window.<br />
+            [module *x *y] => reposition on the screen<br />
+            [module] => closes the panel<br />
+            <b>Note:</b> module adheres to <a href="#common_behaviour_of_predicates">Common Behaviour</a>.
+        </div>
+        <div class="doc_predicate_body">
+            <b>Signals:</b> [["SIGNAL"] ["SIGNAL"]]<br />
+            Displays the input signal. Range of the signal is from -1.0 to 1.0.<br />
+            The divisor (default = 1), shift (default = 0) and refresh rate (default = 2,000) parameters are optional.<br />
+            <img src="radar.png" />
+        </div>
+    </a>
+</div>
+
+<div class="doc_predicate">
+    <a id="predicate_big_spectroscope">
+        <div class="doc_predicate_header">
+            [big_spectroscope module divisor shift refresh] => Creates a large spectroscope window.<br />
+            [module *x *y] => reposition on the screen<br />
+            [module] => closes the panel<br />
+            <b>Note:</b> module adheres to <a href="#common_behaviour_of_predicates">Common Behaviour</a>.
+        </div>
+        <div class="doc_predicate_body">
+            <b>Signals:</b> [["SIGNAL"] ["SIGNAL"]]<br />
+            Displays the spectrum of the input signal. Range of the signal is from -1.0 to 1.0.<br />
+            The divisor (default = 1), shift (default = 0) and refresh rate (default = 20,000) parameters are optional.<br />
+            <img src="dft.png" />
         </div>
     </a>
 </div>

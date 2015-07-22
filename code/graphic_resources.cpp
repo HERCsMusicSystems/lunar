@@ -28,9 +28,10 @@
 #include "lunar_resource.h"
 #include <Windows.h>
 static char * GetResource (int ind) {
-	HRSRC resource = FindResource (NULL, MAKEINTRESOURCE (ind), RT_RCDATA);
+	HMODULE hm = GetModuleHandle ("lunar.dll");
+	HRSRC resource = FindResource (hm, MAKEINTRESOURCE (ind), RT_RCDATA);
 	if (! resource) return 0;
-	HGLOBAL loader = LoadResource (0, resource);
+	HGLOBAL loader = LoadResource (hm, resource);
 	if (! loader) return 0;
 	return (char *) LockResource (loader);
 }

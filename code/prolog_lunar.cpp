@@ -361,3 +361,17 @@ PrologLunarServiceClass :: ~ PrologLunarServiceClass (void) {
 	printf ("orbiter counter [%i]\n", orbiter_count);
 }
 
+#ifdef WINDOWS_OPERATING_SYSTEM
+#include "lunar_resource.h"
+extern "C" {
+	__declspec (dllexport) char * get_module_code (void) {
+		HMODULE hm = GetModuleHandle ("lunar.dll");
+		HRSRC resource = FindResource (hm, MAKEINTRESOURCE (LUNAR_PRC), RT_RCDATA);
+		if (resource == 0) return 0;
+		HGLOBAL loader = LoadResource (hm, resource);
+		if (loader == 0) return 0;
+		return (char *) LockResource (loader);
+	}
+	__declspec (dllexport) PrologServiceClass * create_service_class (void) {return new PrologLunarServiceClass ();}
+}
+#endif

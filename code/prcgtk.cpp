@@ -128,7 +128,7 @@ public:
 		if (strcmp (name, "prolog.xml") == 0) return new PrologXMLServiceClass ();
 		if (strcmp (name, "prolog.distribution") == 0) return new PrologDistributionServiceClass ();
 		if (strcmp (name, "prolog.control") == 0) return new PrologControlServiceClass ();
-		if (strcmp (name, "prolog.lunar") == 0) return new PrologLunarServiceClass ();
+		if (strcmp (name, "lunar") == 0) return new PrologLunarServiceClass ();
 		return NULL;
 	}
 } service_class_loader;

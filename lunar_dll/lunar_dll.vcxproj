@@ -1,0 +1,138 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{34CBC4AE-2B0B-4836-AF21-F4EC6A1A4571}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>lunar_dll</RootNamespace>
+    <ProjectName>lunar</ProjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v120</PlatformToolset>
+    <CharacterSet>NotSet</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v120</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>PTW32_STATIC_LIB;_CRT_SECURE_NO_DEPRECATE;WIN32;_DEBUG;_WINDOWS;_USRDLL;LUNAR_DLL_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>.;..\..\pthread;..\..\prolog\code\prolog;..\..\gtk+-bundle_2.24.10-20120208_win32\include\gtk-2.0;..\..\gtk+-bundle_2.24.10-20120208_win32\lib\gtk-2.0\include;..\..\gtk+-bundle_2.24.10-20120208_win32\include\glib-2.0;..\..\gtk+-bundle_2.24.10-20120208_win32\lib\glib-2.0\include;..\..\gtk+-bundle_2.24.10-20120208_win32\include\cairo;..\..\gtk+-bundle_2.24.10-20120208_win32\include\pango-1.0;..\..\gtk+-bundle_2.24.10-20120208_win32\include\gdk-pixbuf-2.0;..\..\gtk+-bundle_2.24.10-20120208_win32\include\atk-1.0;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>atk-1.0.lib;cairo.lib;expat.lib;fontconfig.lib;freetype.lib;gailutil.lib;gdk_pixbuf-2.0.lib;gdk-win32-2.0.lib;gio-2.0.lib;glib-2.0.lib;gmodule-2.0.lib;gobject-2.0.lib;gtk-win32-2.0.lib;intl.lib;libpng.lib;pango-1.0.lib;pangocairo-1.0.lib;pangoft2-1.0.lib;pangowin32-1.0.lib;zdll.lib;..\..\Debug\studio.lib;pthread.lib;dsound.lib;dxguid.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\..\gtk+-bundle_2.24.10-20120208_win32\lib;..\..\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;LUNAR_DLL_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\prolog\code\prolog\graphics2d.cpp" />
+    <ClCompile Include="..\code\chromatic.cpp" />
+    <ClCompile Include="..\code\graphic_resources.cpp" />
+    <ClCompile Include="..\code\keyboard_calculator.cpp" />
+    <ClCompile Include="..\code\lunar.cpp" />
+    <ClCompile Include="..\code\lunar_landers.cpp" />
+    <ClCompile Include="..\code\lunar_moonbase.cpp" />
+    <ClCompile Include="..\code\lunar_operator.cpp" />
+    <ClCompile Include="..\code\lunar_prolog_adsr_panel.cpp" />
+    <ClCompile Include="..\code\lunar_prolog_chorus_panel.cpp" />
+    <ClCompile Include="..\code\lunar_prolog_control_panel.cpp" />
+    <ClCompile Include="..\code\lunar_prolog_core_panel.cpp" />
+    <ClCompile Include="..\code\lunar_prolog_delay_panel.cpp" />
+    <ClCompile Include="..\code\lunar_prolog_eg_panel.cpp" />
+    <ClCompile Include="..\code\lunar_prolog_filter_panel.cpp" />
+    <ClCompile Include="..\code\lunar_prolog_fm4_panel.cpp" />
+    <ClCompile Include="..\code\lunar_prolog_freeverb_panel.cpp" />
+    <ClCompile Include="..\code\lunar_prolog_keyboard.cpp" />
+    <ClCompile Include="..\code\lunar_prolog_landers.cpp" />
+    <ClCompile Include="..\code\lunar_prolog_lfo_panel.cpp" />
+    <ClCompile Include="..\code\lunar_prolog_moonbase.cpp" />
+    <ClCompile Include="..\code\lunar_prolog_operator.cpp" />
+    <ClCompile Include="..\code\lunar_prolog_oscilloscope.cpp" />
+    <ClCompile Include="..\code\lunar_prolog_panel_base.cpp" />
+    <ClCompile Include="..\code\lunar_prolog_parameter_block_panel.cpp" />
+    <ClCompile Include="..\code\lunar_prolog_schorus_panel.cpp" />
+    <ClCompile Include="..\code\lunar_prolog_vector.cpp" />
+    <ClCompile Include="..\code\lunar_wave.cpp" />
+    <ClCompile Include="..\code\multiplatform_audio.cpp" />
+    <ClCompile Include="..\code\prolog_lunar.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\prolog\code\prolog\graphics2d.h" />
+    <ClInclude Include="..\code\chromatic.h" />
+    <ClInclude Include="..\code\graphic_resources.h" />
+    <ClInclude Include="..\code\keyboard_calculator.h" />
+    <ClInclude Include="..\code\lunar.h" />
+    <ClInclude Include="..\code\lunar_landers.h" />
+    <ClInclude Include="..\code\lunar_moonbase.h" />
+    <ClInclude Include="..\code\lunar_operator.h" />
+    <ClInclude Include="..\code\lunar_prolog_landers.h" />
+    <ClInclude Include="..\code\lunar_prolog_panel_base.h" />
+    <ClInclude Include="..\code\lunar_wave.h" />
+    <ClInclude Include="..\code\multiplatform_audio.h" />
+    <ClInclude Include="..\code\prolog_lunar.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\code\lunar.prc" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="lunar.rc" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

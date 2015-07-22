@@ -12,7 +12,11 @@
 //#define WINDOWS_DIRECT_X
 //#define WINDOWS_MEDIA
 
-#include "operating_system.h"
+#ifdef WIN32
+#define WINDOWS_OPERATING_SYSTEM
+#else
+#define LINUX_OPERATING_SYSTEM
+#endif
 
 #ifdef LINUX_OPERATING_SYSTEM
 #ifdef MAC_OPERATING_SYSTEM

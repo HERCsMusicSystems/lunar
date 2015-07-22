@@ -13,6 +13,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Prolog Files">
+      <UniqueIdentifier>{3bea2fbf-51e2-45e6-933d-8a33be6fb293}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\code\prcgtk.cpp">
@@ -192,6 +195,9 @@
     <ClCompile Include="..\code\lunar_prolog_freeverb_panel.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\code\lunar_prolog_schorus_panel.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\..\prolog\windows\studio.rc">
@@ -219,6 +225,8 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\code\lunar.prc" />
+    <None Include="..\code\lunar.prc">
+      <Filter>Prolog Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

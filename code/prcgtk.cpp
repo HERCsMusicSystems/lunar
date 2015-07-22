@@ -139,10 +139,8 @@ static char * * ARGV;
 void * studio_runner (void * parameter) {
 	PrologRoot * root = new PrologRoot ();
 	root -> get_search_directories_from_environment ("STUDIO_HOME");
-	#ifdef INTERNAL_RESOURCES
 	root -> setResourceLoader (& resource_loader);
 	root -> setServiceClassLoader (& service_class_loader);
-	#endif
 	root -> set_uap32_captions ();
 	PROLOG_STRING name; strcpy (name, "");
 	for (int ind = 1; ind < ARGS; ind++) {

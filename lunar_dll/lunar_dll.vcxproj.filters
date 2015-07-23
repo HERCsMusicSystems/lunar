@@ -146,12 +146,15 @@
     <ClInclude Include="..\code\chromatic.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\code\lunar_resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\code\lunar.prc" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="lunar.rc">
+    <ResourceCompile Include="..\code\lunar.rc">
       <Filter>Resource Files</Filter>
     </ResourceCompile>
   </ItemGroup>

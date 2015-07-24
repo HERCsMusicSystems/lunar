@@ -375,3 +375,14 @@ extern "C" {
 	__declspec (dllexport) PrologServiceClass * create_service_class (void) {return new PrologLunarServiceClass ();}
 }
 #endif
+
+#ifdef LINUX_OPERATING_SYSTEM
+extern "C" {
+	extern char * get_module_code (void);
+	extern PrologServiceClass * create_service_class (void);
+}
+extern char resource_lunar;
+char * get_module_code (void) {return & resource_lunar;}
+PrologServiceClass * create_service_class (void) {return new PrologLunarServiceClass ();}
+#endif
+

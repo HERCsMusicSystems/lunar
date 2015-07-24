@@ -25,115 +25,116 @@ prc_resources = $(pi)studio_prc.o $(pi)conductor_prc.o $(pi)midi_prc.o $(pi)http
 	$(pi)neural_prc.o $(pi)keyboard_prc.o $(pi)sql_prc.o $(pi)test_prc.o $(pi)xml_prc.o $(pi)distribution_prc.o $(pi)control_prc.o lunar_prc.o
 
 multiplatform_audio.o: ../code/multiplatform_audio.cpp ../code/multiplatform_audio.h
-	g++ -Wno-write-strings -I. -I$(pc) ../code/multiplatform_audio.cpp -c -o multiplatform_audio.o
+	g++ -Wno-write-strings -I. -I$(pc) ../code/multiplatform_audio.cpp -c -o multiplatform_audio.o -fPIC
 
 keyboard_calculator.o: ../code/keyboard_calculator.cpp ../code/keyboard_calculator.h
-	g++ -Wno-write-strings ../code/keyboard_calculator.cpp -c -o keyboard_calculator.o
+	g++ -Wno-write-strings ../code/keyboard_calculator.cpp -c -o keyboard_calculator.o -fPIC
 
 lunar_core.o: ../code/lunar.h ../code/lunar.cpp
-	g++ -fopenmp -Wno-write-strings ../code/lunar.cpp -c -o lunar_core.o
+	g++ -fopenmp -Wno-write-strings ../code/lunar.cpp -c -o lunar_core.o -fPIC
 
 lunar_prolog_oscilloscope.o: ../code/lunar_prolog_oscilloscope.cpp ../code/lunar.h ../code/prolog_lunar.h $(pc)prolog.h $(pc)graphics2d.h
-	g++ -Wno-write-strings -I. -I$(pc) ../code/lunar_prolog_oscilloscope.cpp -c -o lunar_prolog_oscilloscope.o `pkg-config --cflags gtk+-2.0`
+	g++ -Wno-write-strings -I. -I$(pc) ../code/lunar_prolog_oscilloscope.cpp -c -o lunar_prolog_oscilloscope.o `pkg-config --cflags gtk+-2.0` -fPIC
 
 lunar_moonbase.o: ../code/lunar_moonbase.cpp ../code/lunar_moonbase.h ../code/lunar.h ../code/lunar_landers.h
-	g++ -Wno-write-strings ../code/lunar_moonbase.cpp -c -o lunar_moonbase.o
+	g++ -Wno-write-strings ../code/lunar_moonbase.cpp -c -o lunar_moonbase.o -fPIC
 
 lunar_prolog_operator.o: ../code/lunar_prolog_operator.cpp ../code/prolog_lunar.h ../code/lunar_operator.h\
 	../code/lunar.h ../code/lunar_landers.h ../code/lunar_prolog_landers.h $(pc)prolog.h
-	g++ -Wno-write-strings -I. -I$(pc) ../code/lunar_prolog_operator.cpp -c -o lunar_prolog_operator.o
+	g++ -Wno-write-strings -I. -I$(pc) ../code/lunar_prolog_operator.cpp -c -o lunar_prolog_operator.o -fPIC
 
 lunar_operator.o: ../code/lunar_operator.cpp ../code/lunar_operator.h ../code/lunar.h ../code/lunar_wave.h
-	g++ -Wno-write-strings ../code/lunar_operator.cpp -c -o lunar_operator.o
+	g++ -Wno-write-strings ../code/lunar_operator.cpp -c -o lunar_operator.o -fPIC
 
 lunar_landers.o: ../code/lunar_landers.cpp ../code/lunar_landers.h ../code/lunar.h
-	g++ -Wno-write-strings ../code/lunar_landers.cpp -c -o lunar_landers.o
+	g++ -Wno-write-strings ../code/lunar_landers.cpp -c -o lunar_landers.o -fPIC
 
 lunar_wave.o: ../code/lunar_wave.cpp ../code/lunar_wave.h ../code/lunar.h
-	g++ -Wno-write-strings ../code/lunar_wave.cpp -c -o lunar_wave.o
+	g++ -Wno-write-strings ../code/lunar_wave.cpp -c -o lunar_wave.o -fPIC
 
 lunar_prolog_moonbase.o: ../code/lunar_prolog_moonbase.cpp ../code/lunar_moonbase.h ../code/prolog_lunar.h ../code/multiplatform_audio.h\
 	$(pc)prolog.h ../code/lunar.h
-	g++ -Wno-write-strings -I. -I$(pc) ../code/lunar_prolog_moonbase.cpp -c -o lunar_prolog_moonbase.o
+	g++ -Wno-write-strings -I. -I$(pc) ../code/lunar_prolog_moonbase.cpp -c -o lunar_prolog_moonbase.o -fPIC
 
 lunar_prolog_landers.o: ../code/lunar_prolog_landers.cpp ../code/lunar_prolog_landers.h ../code/chromatic.h\
 			 ../code/prolog_lunar.h $(pc)prolog.h ../code/lunar.h ../code/lunar_landers.h ../code/lunar_wave.h ../code/lunar_moonbase.h
-	g++ -Wno-write-strings -I. -I$(pc) ../code/lunar_prolog_landers.cpp -c -o lunar_prolog_landers.o
+	g++ -Wno-write-strings -I. -I$(pc) ../code/lunar_prolog_landers.cpp -c -o lunar_prolog_landers.o -fPIC
 
 chromatic.o: ../code/chromatic.h ../code/chromatic.cpp $(pc)prolog.h
-	g++ -Wno-write-strings -I. -I$(pc) ../code/chromatic.cpp -c -o chromatic.o
+	g++ -Wno-write-strings -I. -I$(pc) ../code/chromatic.cpp -c -o chromatic.o -fPIC
 
 lunar_prolog_keyboard.o: ../code/lunar_prolog_keyboard.cpp ../code/lunar.h\
 			 ../code/prolog_lunar.h $(pc)prolog.h ../code/keyboard_calculator.h ../code/graphic_resources.h $(pc)graphics2d.h
-	g++ -Wno-write-strings -I. -I$(pc) ../code/lunar_prolog_keyboard.cpp -c -o lunar_prolog_keyboard.o `pkg-config --cflags gtk+-2.0`
+	g++ -Wno-write-strings -I. -I$(pc) ../code/lunar_prolog_keyboard.cpp -c -o lunar_prolog_keyboard.o `pkg-config --cflags gtk+-2.0` -fPIC
 
 lunar_prolog_vector.o: ../code/lunar_prolog_vector.cpp ../code/lunar.h ../code/prolog_lunar.h ../code/lunar_prolog_panel_base.h\
 			$(pc)prolog.h $(pc)graphics2d.h ../code/graphic_resources.h
-	g++ -Wno-write-strings -I. -I$(pc) ../code/lunar_prolog_vector.cpp -c -o lunar_prolog_vector.o `pkg-config --cflags gtk+-2.0`
+	g++ -Wno-write-strings -I. -I$(pc) ../code/lunar_prolog_vector.cpp -c -o lunar_prolog_vector.o `pkg-config --cflags gtk+-2.0` -fPIC
 
 lunar_prolog_control_panel.o: ../code/lunar_prolog_control_panel.cpp ../code/lunar.h ../code/prolog_lunar.h $(pc)prolog.h\
 			../code/lunar_prolog_panel_base.h $(pc)graphics2d.h ../code/graphic_resources.h
-	g++ -Wno-write-strings -I. -I$(pc) ../code/lunar_prolog_control_panel.cpp -c -o lunar_prolog_control_panel.o `pkg-config --cflags gtk+-2.0`
+	g++ -Wno-write-strings -I. -I$(pc) ../code/lunar_prolog_control_panel.cpp -c -o lunar_prolog_control_panel.o `pkg-config --cflags gtk+-2.0` -fPIC
 
 lunar_prolog_parameter_block_panel.o: ../code/lunar_prolog_parameter_block_panel.cpp ../code/lunar.h ../code/prolog_lunar.h $(pc)prolog.h\
 			$(pc)graphics2d.h ../code/graphic_resources.h ../code/lunar_prolog_panel_base.h
-	g++ -Wno-write-strings -I. -I$(pc) ../code/lunar_prolog_parameter_block_panel.cpp -c -o lunar_prolog_parameter_block_panel.o `pkg-config --cflags gtk+-2.0`
+	g++ -Wno-write-strings -I. -I$(pc) ../code/lunar_prolog_parameter_block_panel.cpp -c -o lunar_prolog_parameter_block_panel.o \
+		`pkg-config --cflags gtk+-2.0` -fPIC
 
 lunar_prolog_adsr_panel.o: ../code/lunar_prolog_adsr_panel.cpp ../code/lunar.h ../code/prolog_lunar.h ../code/lunar_prolog_panel_base.h $(pc)prolog.h\
 			$(pc)graphics2d.h ../code/graphic_resources.h
-	g++ -Wno-write-strings -I. -I$(pc) ../code/lunar_prolog_adsr_panel.cpp -c -o lunar_prolog_adsr_panel.o `pkg-config --cflags gtk+-2.0`
+	g++ -Wno-write-strings -I. -I$(pc) ../code/lunar_prolog_adsr_panel.cpp -c -o lunar_prolog_adsr_panel.o `pkg-config --cflags gtk+-2.0` -fPIC
 
 lunar_prolog_eg_panel.o: ../code/lunar_prolog_eg_panel.cpp ../code/lunar.h ../code/prolog_lunar.h ../code/lunar_prolog_panel_base.h $(pc)prolog.h\
 			$(pc)graphics2d.h ../code/graphic_resources.h
-	g++ -Wno-write-strings -I. -I$(pc) ../code/lunar_prolog_eg_panel.cpp -c -o lunar_prolog_eg_panel.o `pkg-config --cflags gtk+-2.0`
+	g++ -Wno-write-strings -I. -I$(pc) ../code/lunar_prolog_eg_panel.cpp -c -o lunar_prolog_eg_panel.o `pkg-config --cflags gtk+-2.0` -fPIC
 
 lunar_prolog_fm4_panel.o: ../code/lunar_prolog_fm4_panel.cpp ../code/lunar.h ../code/prolog_lunar.h ../code/lunar_prolog_panel_base.h $(pc)prolog.h\
 			$(pc)graphics2d.h ../code/graphic_resources.h
-	g++ -Wno-write-strings -I. -I$(pc) ../code/lunar_prolog_fm4_panel.cpp -c -o lunar_prolog_fm4_panel.o `pkg-config --cflags gtk+-2.0`
+	g++ -Wno-write-strings -I. -I$(pc) ../code/lunar_prolog_fm4_panel.cpp -c -o lunar_prolog_fm4_panel.o `pkg-config --cflags gtk+-2.0` -fPIC
 
 lunar_prolog_core_panel.o: ../code/lunar_prolog_core_panel.cpp ../code/lunar.h ../code/prolog_lunar.h $(pc)prolog.h\
 			$(pc)graphics2d.h ../code/graphic_resources.h
-	g++ -Wno-write-strings -I. -I$(pc) ../code/lunar_prolog_core_panel.cpp -c -o lunar_prolog_core_panel.o `pkg-config --cflags gtk+-2.0`
+	g++ -Wno-write-strings -I. -I$(pc) ../code/lunar_prolog_core_panel.cpp -c -o lunar_prolog_core_panel.o `pkg-config --cflags gtk+-2.0` -fPIC
 
 lunar_prolog_lfo_panel.o: ../code/lunar_prolog_lfo_panel.cpp ../code/lunar.h ../code/prolog_lunar.h ../code/lunar_prolog_panel_base.h $(pc)prolog.h\
 			$(pc)graphics2d.h ../code/graphic_resources.h
-	g++ -Wno-write-strings -I. -I$(pc) ../code/lunar_prolog_lfo_panel.cpp -c -o lunar_prolog_lfo_panel.o `pkg-config --cflags gtk+-2.0`
+	g++ -Wno-write-strings -I. -I$(pc) ../code/lunar_prolog_lfo_panel.cpp -c -o lunar_prolog_lfo_panel.o `pkg-config --cflags gtk+-2.0` -fPIC
 
 lunar_prolog_filter_panel.o: ../code/lunar_prolog_filter_panel.cpp ../code/lunar.h ../code/prolog_lunar.h ../code/lunar_prolog_panel_base.h $(pc)prolog.h\
 			$(pc)graphics2d.h ../code/graphic_resources.h
-	g++ -Wno-write-strings -I. -I$(pc) ../code/lunar_prolog_filter_panel.cpp -c -o lunar_prolog_filter_panel.o `pkg-config --cflags gtk+-2.0`
+	g++ -Wno-write-strings -I. -I$(pc) ../code/lunar_prolog_filter_panel.cpp -c -o lunar_prolog_filter_panel.o `pkg-config --cflags gtk+-2.0` -fPIC
 
 lunar_prolog_delay_panel.o: ../code/lunar_prolog_delay_panel.cpp ../code/lunar.h ../code/prolog_lunar.h ../code/lunar_prolog_panel_base.h $(pc)prolog.h\
 			$(pc)graphics2d.h ../code/graphic_resources.h
-	g++ -Wno-write-strings -I. -I$(pc) ../code/lunar_prolog_delay_panel.cpp -c -o lunar_prolog_delay_panel.o `pkg-config --cflags gtk+-2.0`
+	g++ -Wno-write-strings -I. -I$(pc) ../code/lunar_prolog_delay_panel.cpp -c -o lunar_prolog_delay_panel.o `pkg-config --cflags gtk+-2.0` -fPIC
 
 lunar_prolog_chorus_panel.o: ../code/lunar_prolog_chorus_panel.cpp ../code/lunar.h ../code/prolog_lunar.h ../code/lunar_prolog_panel_base.h $(pc)prolog.h\
 			$(pc)graphics2d.h ../code/graphic_resources.h
-	g++ -Wno-write-strings -I. -I$(pc) ../code/lunar_prolog_chorus_panel.cpp -c -o lunar_prolog_chorus_panel.o `pkg-config --cflags gtk+-2.0`
+	g++ -Wno-write-strings -I. -I$(pc) ../code/lunar_prolog_chorus_panel.cpp -c -o lunar_prolog_chorus_panel.o `pkg-config --cflags gtk+-2.0` -fPIC
 
 lunar_prolog_schorus_panel.o: ../code/lunar_prolog_schorus_panel.cpp ../code/lunar.h ../code/prolog_lunar.h ../code/lunar_prolog_panel_base.h $(pc)prolog.h\
 			$(pc)graphics2d.h ../code/graphic_resources.h
-	g++ -Wno-write-strings -I. -I$(pc) ../code/lunar_prolog_schorus_panel.cpp -c -o lunar_prolog_schorus_panel.o `pkg-config --cflags gtk+-2.0`
+	g++ -Wno-write-strings -I. -I$(pc) ../code/lunar_prolog_schorus_panel.cpp -c -o lunar_prolog_schorus_panel.o `pkg-config --cflags gtk+-2.0` -fPIC
 
 lunar_prolog_freeverb_panel.o: ../code/lunar_prolog_freeverb_panel.cpp ../code/lunar.h ../code/prolog_lunar.h ../code/lunar_prolog_panel_base.h $(pc)prolog.h\
 			$(pc)graphics2d.h ../code/graphic_resources.h
-	g++ -Wno-write-strings -I. -I$(pc) ../code/lunar_prolog_freeverb_panel.cpp -c -o lunar_prolog_freeverb_panel.o `pkg-config --cflags gtk+-2.0`
+	g++ -Wno-write-strings -I. -I$(pc) ../code/lunar_prolog_freeverb_panel.cpp -c -o lunar_prolog_freeverb_panel.o `pkg-config --cflags gtk+-2.0` -fPIC
 
 lunar_prolog_panel_base.o: ../code/lunar_prolog_panel_base.cpp ../code/lunar.h ../code/prolog_lunar.h ../code/lunar_prolog_panel_base.h $(pc)prolog.h\
 			$(pc)graphics2d.h ../code/graphic_resources.h
-	g++ -Wno-write-strings -I. -I$(pc) ../code/lunar_prolog_panel_base.cpp -c -o lunar_prolog_panel_base.o `pkg-config --cflags gtk+-2.0`
+	g++ -Wno-write-strings -I. -I$(pc) ../code/lunar_prolog_panel_base.cpp -c -o lunar_prolog_panel_base.o `pkg-config --cflags gtk+-2.0` -fPIC
 
 prolog_lunar.o: ../code/prolog_lunar.h ../code/prolog_lunar.cpp ../code/lunar.h $(pc)prolog.h ../code/lunar_linux_midi.h ../code/lunar_prolog_landers.h
-	g++ -Wno-write-strings -I. -I$(pc) ../code/prolog_lunar.cpp -c -o prolog_lunar.o
+	g++ -Wno-write-strings -I. -I$(pc) ../code/prolog_lunar.cpp -c -o prolog_lunar.o -fPIC
 
 lunar_linux_midi.o: ../code/lunar_linux_midi.h ../code/lunar_linux_midi.cpp $(pc)prolog.h ../code/chromatic.h
-	g++ -Wno-write-strings -I. -I$(pc) ../code/lunar_linux_midi.cpp -c -o lunar_linux_midi.o
+	g++ -Wno-write-strings -I. -I$(pc) ../code/lunar_linux_midi.cpp -c -o lunar_linux_midi.o -fPIC
 
 graphics2d.o: $(pc)graphics2d.cpp $(pc)graphics2d.h
-	g++ -Wno-write-strings -I. -I$(pc) $(pc)graphics2d.cpp -c -o graphics2d.o
+	g++ -Wno-write-strings -I. -I$(pc) $(pc)graphics2d.cpp -c -o graphics2d.o -fPIC
 
 graphic_resources.o: ../code/graphic_resources.h ../code/graphic_resources.cpp $(pc)graphics2d.h
-	g++ -Wno-write-strings -I$(pc) ../code/graphic_resources.cpp -c -o graphic_resources.o `pkg-config --cflags gtk+-2.0`
+	g++ -Wno-write-strings -I$(pc) ../code/graphic_resources.cpp -c -o graphic_resources.o `pkg-config --cflags gtk+-2.0` -fPIC
 
 small_keyboard.o: ../graphics/small_keyboard.png
 	objcopy --input binary --output elf64-x86-64 --binary-architecture i386\
@@ -370,9 +371,23 @@ graphics = small_keyboard.o keyboard.o big_keyboard.o vector_frame.o vector_hand
 	lfo_panel.o lfo_vibrato.o lfo_tremolo.o lfo_wah_wah.o lfo_pan.o filter_panel.o\
 	delay_panel.o chorus_panel.o stereo_chorus_panel.o freeverb_panel.o
 
+lunar_objects = \
+	prolog_lunar.o lunar_core.o lunar_prolog_oscilloscope.o lunar_prolog_keyboard.o lunar_prolog_operator.o lunar_operator.o\
+	keyboard_calculator.o lunar_prolog_moonbase.o lunar_moonbase.o lunar_prolog_landers.o chromatic.o lunar_landers.o lunar_wave.o\
+	lunar_prolog_vector.o lunar_prolog_control_panel.o graphics2d.o graphic_resources.o multiplatform_audio.o\
+	lunar_prolog_parameter_block_panel.o lunar_prolog_adsr_panel.o lunar_prolog_eg_panel.o\
+	lunar_prolog_fm4_panel.o lunar_prolog_core_panel.o lunar_prolog_lfo_panel.o lunar_prolog_filter_panel.o\
+	lunar_prolog_delay_panel.o lunar_prolog_chorus_panel.o lunar_prolog_schorus_panel.o lunar_prolog_freeverb_panel.o lunar_prolog_panel_base.o\
+	lunar_linux_midi.o
+
 ~/bin/lunar: $(lunar_objects) $(objects) $(graphics) $(prc_resources)
 	g++ $(lunar_objects) $(objects) $(prc_resources) $(graphics) \
 	-o ~/bin/lunar -lpthread -ldl -lreadline -lasound `pkg-config --libs gtk+-2.0` -fopenmp
 
-lunar: ~/bin/lunar
+/usr/lib/lunar.so: $(lunar_objects) lunar_prc.o $(graphics)
+	g++ $(lunar_objects) lunar_prc.o $(graphics) \
+	-o /usr/lib/lunar.so -lpthread -lreadline -lasound -ldl -shared -fPIC `pkg-config --libs gtk+-2.0` -fopenmp
+
+#lunar: ~/bin/lunar
+lunar: /usr/lib/lunar.so
 

@@ -35,7 +35,7 @@ int tmread (int fd) {
 	timeval timeout;
 	timeout . tv_sec = 1;
 	timeout . tv_usec = 0;
-	if (select (fd + 1, & readset, 0, 0, & timeout) > 0) {int v; read (fd, & v, 1); return v;}
+	if (select (fd + 1, & readset, 0, 0, & timeout) > 0) {int v = 0; read (fd, & v, 1); return v;}
 	return -1;
 }
 #else

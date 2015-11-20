@@ -59,7 +59,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>atk-1.0.lib;cairo.lib;expat.lib;fontconfig.lib;freetype.lib;gailutil.lib;gdk_pixbuf-2.0.lib;gdk-win32-2.0.lib;gio-2.0.lib;glib-2.0.lib;gmodule-2.0.lib;gobject-2.0.lib;gtk-win32-2.0.lib;intl.lib;libpng.lib;pango-1.0.lib;pangocairo-1.0.lib;pangoft2-1.0.lib;pangowin32-1.0.lib;zdll.lib;dsound.lib;dxguid.lib;studio.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>atk-1.0.lib;cairo.lib;expat.lib;fontconfig.lib;freetype.lib;gailutil.lib;gdk_pixbuf-2.0.lib;gdk-win32-2.0.lib;gio-2.0.lib;glib-2.0.lib;gmodule-2.0.lib;gobject-2.0.lib;gtk-win32-2.0.lib;intl.lib;libpng.lib;pango-1.0.lib;pangocairo-1.0.lib;pangoft2-1.0.lib;pangowin32-1.0.lib;zdll.lib;dsound.lib;dxguid.lib;winmm.lib;studio.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>..\..\gtk+-bundle_2.24.10-20120208_win32\lib;..\..\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
@@ -113,6 +113,7 @@
     <ClCompile Include="..\code\lunar_prolog_schorus_panel.cpp" />
     <ClCompile Include="..\code\lunar_prolog_vector.cpp" />
     <ClCompile Include="..\code\lunar_wave.cpp" />
+    <ClCompile Include="..\code\lunar_windows_midi.cpp" />
     <ClCompile Include="..\code\multiplatform_audio.cpp" />
     <ClCompile Include="..\code\prolog_lunar.cpp" />
   </ItemGroup>

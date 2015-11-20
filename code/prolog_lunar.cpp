@@ -182,15 +182,11 @@ public:
 		char * midi_location;
 		if (location != 0) midi_location = location -> getText ();
 		else midi_location = "/dev/snd/midiC2D0";
-#ifdef WIN32
-		return false;
-#else
 		midi_code * mc = new midi_code (root, directory, atom -> getAtom (), callback, midi_location);
 		if (mc -> fd < 0) {delete mc; return false;}
 		if (atom -> getAtom () -> setMachine (mc)) return true;
 		delete mc;
 		return false;
-#endif
 	}
 	midi_class (PrologRoot * root, PrologDirectory * directory) {this -> root = root; this -> directory = directory;}
 };

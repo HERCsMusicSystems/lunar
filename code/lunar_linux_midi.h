@@ -41,6 +41,8 @@ public:
 	bool out_port_active;
 	bool in_port_active;
 	bool drop_system_exclusive (PrologElement * parameters);
+	MIDIHDR hdr1, hdr2;
+	unsigned char sxb1 [1024], sxb2 [1024];
 #else
 	int fd;
 	int tc;
@@ -56,9 +58,11 @@ public:
 	pthread_mutex_t locker;
 	chromatograph graph;
 	void run (void);
+	void no_parameters (void);
 	void one_parameter (void);
 	void two_parameters (void);
 	void many_parameter (void);
+	void sysex_parameters (unsigned char * data, int size);
 	void send_one (int command);
 	void send_two (int command, int key);
 	void send_three (int command, int key, int velocity);

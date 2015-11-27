@@ -26,6 +26,39 @@
 
 #include "lunar_linux_midi.h"
 
+static void CALLBACK midi_in_procedure (HMIDIIN in, UINT msg, DWORD instance, DWORD dwParam1, DWORD dwParam2) {
+	midi_code * rec = (midi_code *) ((DWORDLONG) instance);
+	MIDIHDR * hdr;
+	switch (msg) {
+	case MIM_DATA:
+		rec -> command = dwParam1 & 0xff;
+		rec -> channel = rec -> command & 0xf;
+		rec -> command &= 0xf0;
+		rec -> v1 = (dwParam1 >> 8) & 0xff;
+		rec -> v2 = (dwParam1 >> 16) & 0xff;
+		switch (rec -> command) {
+		case 0x80: case 0x90: case 0xa0: case 0xb0: case 0xe0: rec -> two_parameters (); break;
+		case 0xc0: case 0xd0: rec -> one_parameter (); break;
+		case 0xf0:
+			switch (rec -> channel) {
+			case 0x1: case 0x3: rec -> one_parameter (); break;
+			case 0x2: rec -> two_parameters (); break;
+			default: rec -> no_parameters (); break;
+			}
+			break;
+		default: break;
+		}
+		break;
+	case MIM_LONGDATA:
+		hdr = (MIDIHDR *) dwParam1;
+		rec -> sysex_parameters ((unsigned char *) hdr -> lpData + 1, (int) hdr -> dwBytesRecorded - 2);
+		midiInPrepareHeader (rec -> in_port_handle, hdr, sizeof (MIDIHDR));
+		midiInAddBuffer (rec -> in_port_handle, hdr, sizeof (MIDIHDR));
+		break;
+	default: break;
+	}
+}
+
 bool midi_code :: drop_system_exclusive (PrologElement * parameters) {
 	unsigned char buffer [1024];
 	buffer [0] = 0xf0;
@@ -44,6 +77,62 @@ bool midi_code :: drop_system_exclusive (PrologElement * parameters) {
 	if (midiOutLongMsg (out_port_handle, & midihdr, sizeof (MIDIHDR))) return false;
 	while (MIDIERR_STILLPLAYING == midiOutUnprepareHeader (out_port_handle, & midihdr, sizeof (MIDIHDR))) Sleep (10);
 	return true;
+}
+
+void midi_code :: no_parameters (void) {
+	PrologAtom * command_atom;
+	switch (channel) {
+	case 0x8: command_atom = timingclock; break;
+	case 0xa: command_atom = start; break;
+	case 0xb: command_atom = cont; break;
+	case 0xc: command_atom = stop; break;
+	case 0xe: command_atom = activesensing; break;
+	default: command_atom = sysex; break;
+	}
+	PrologElement * query = root -> pair (root -> head (0), root -> pair (root -> pair (root -> atom (callback), root -> pair (root -> atom (command_atom), root -> earth ())), root -> earth ()));
+	root -> resolution (query); delete query;
+}
+
+void midi_code :: one_parameter (void) {
+	PrologElement * query = root -> pair (root -> atom (callback),
+								root -> pair (root -> atom (command < 0xd0 ? programchange : aftertouch),
+								root -> pair (root -> integer (channel),
+								root -> pair (root -> integer (v1),
+								root -> earth ()))));
+	query = root -> pair (root -> head (0), root -> pair (query, root -> earth ()));
+	root -> resolution (query);
+	delete query;
+}
+
+void midi_code :: two_parameters (void) {
+	PrologAtom * command_atom;
+	switch (command) {
+	case 0x80: command_atom = keyoff; break;
+	case 0x90: command_atom = keyon; break;
+	case 0xa0: command_atom = polyaftertouch; break;
+	case 0xb0: command_atom = control; break;
+	case 0xe0: command_atom = pitch; break;
+	default: command_atom = sysex; break;
+	}
+	PrologElement * query = root -> pair (root -> atom (callback),
+								root -> pair (root -> atom (command_atom),
+								root -> pair (root -> integer (channel),
+								root -> pair (root -> integer (v1),
+								root -> pair (root -> integer (v2),
+								root -> earth ())))));
+	query = root -> pair (root -> head (0), root -> pair (query, root -> earth ()));
+	root -> resolution (query);
+	delete query;
+}
+
+void midi_code :: sysex_parameters (unsigned char * data, int size) {
+	PrologElement * el = root -> earth ();
+	PrologElement * query = root -> pair (root -> head (0), root -> pair (root -> pair (root -> atom (callback), root -> pair (root -> atom (sysex), el)), root -> earth ()));
+	for (int ind = 0; ind < size; ind++) {
+		el -> setPair (root -> integer ((int) data [ind]), root -> earth ());
+		el = el -> getRight ();
+	}
+	root -> resolution (query); delete query;
 }
 
 void midi_code :: send_one (int command) {midiOutShortMsg (out_port_handle, command);}
@@ -139,11 +228,36 @@ midi_code :: midi_code (PrologRoot * root, PrologDirectory * directory, PrologAt
 		midiOutGetDevCaps (ind, & out_info, sizeof (out_info));
 		if (strcmp (out_info . szPname, location) == 0) {out_port_active = midiOutOpen (& out_port_handle, ind, NULL, NULL, CALLBACK_NULL) == MMSYSERR_NOERROR; break;}
 	}
+	int number_of_inputs = midiInGetNumDevs ();
+	MIDIINCAPS in_info;
+	for (int ind = 0; ind < number_of_inputs; ind++) {
+		midiInGetDevCaps (ind, & in_info, sizeof (in_info));
+		if (strcmp (in_info . szPname, location) == 0) {
+			in_port_active = midiInOpen (& in_port_handle, ind, (DWORD_PTR) midi_in_procedure, (DWORD_PTR) this, CALLBACK_FUNCTION) == MMSYSERR_NOERROR;
+			hdr1 . lpData = (LPSTR) sxb1;
+			hdr1 . dwBufferLength = sizeof (sxb1);
+			hdr1 . dwBytesRecorded = hdr1 . dwFlags = hdr1 . dwUser = 0L;
+			hdr2 . lpData = (LPSTR) sxb2;
+			hdr2 . dwBufferLength = sizeof (sxb2);
+			hdr2 . dwBytesRecorded = hdr2 . dwFlags = hdr2 . dwUser = 0L;
+			midiInPrepareHeader (in_port_handle, & hdr1, sizeof (hdr1));
+			midiInPrepareHeader (in_port_handle, & hdr2, sizeof (hdr2));
+			midiInAddBuffer (in_port_handle, & hdr1, sizeof (hdr1));
+			midiInAddBuffer (in_port_handle, & hdr2, sizeof (hdr2));
+			midiInStart (in_port_handle);
+			break;
+		}
+	}
 }
 
 midi_code :: ~ midi_code (void) {
 	if (out_port_active) midiOutClose (out_port_handle);
-	if (in_port_active) midiInClose (in_port_handle);
+	if (in_port_active) {
+		midiInStop (in_port_handle);
+		midiInClose (in_port_handle);
+		midiInUnprepareHeader (in_port_handle, & hdr1, sizeof (hdr1));
+		midiInUnprepareHeader (in_port_handle, & hdr2, sizeof (hdr2));
+	}
 	if (callback != 0) callback -> removeAtom (); callback = 0;
 }
 

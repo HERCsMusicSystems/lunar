@@ -174,7 +174,7 @@ public:
 			if (el -> isText ()) location = el;
 			parameters = parameters -> getRight ();
 		}
-		if (atom == 0) return false;
+		if (atom == 0) return midi_code :: info ();
 		if (atom -> isVar ()) atom -> setAtom (new PrologAtom ());
 		if (callback == 0) callback = directory -> searchAtom ("income_midi");
 		if (callback == 0) return false;
@@ -183,7 +183,7 @@ public:
 		if (location != 0) midi_location = location -> getText ();
 		else midi_location = "/dev/snd/midiC2D0";
 		midi_code * mc = new midi_code (root, directory, atom -> getAtom (), callback, midi_location);
-		if (mc -> fd < 0) {delete mc; return false;}
+		if (mc -> inactive ()) {delete mc; return false;}
 		if (atom -> getAtom () -> setMachine (mc)) return true;
 		delete mc;
 		return false;

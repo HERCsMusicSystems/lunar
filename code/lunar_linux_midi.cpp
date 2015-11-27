@@ -245,6 +245,8 @@ void midi_code :: send_three (int command, int key, int velocity) {
 	pthread_mutex_unlock (& locker);
 }
 
+bool midi_code :: inactive (void) {return fd < 0;}
+
 midi_code :: midi_code (PrologRoot * root, PrologDirectory * directory, PrologAtom * atom, PrologAtom * callback, char * location) : graph (directory) {
 	command = channel = 0;
 	keyoff = keyon = polyaftertouch = control = programchange = aftertouch = pitch = 0;
@@ -293,4 +295,6 @@ midi_code :: ~ midi_code (void) {
 	}
 	if (callback != 0) callback -> removeAtom (); callback = 0;
 }
+
+bool midi_code :: info (void) {return false;}
 

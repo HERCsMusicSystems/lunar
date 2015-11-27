@@ -35,8 +35,16 @@ public:
 	unsigned char command;
 	unsigned char channel;
 	unsigned char v1, v2;
+#ifdef WIN32
+	HMIDIOUT out_port_handle;
+	HMIDIIN in_port_handle;
+	bool out_port_active;
+	bool in_port_active;
+	bool drop_system_exclusive (PrologElement * parameters);
+#else
 	int fd;
 	int tc;
+#endif
 	int running_command;
 	pthread_t thread;
 	bool should_continue;
@@ -55,6 +63,8 @@ public:
 	void send_two (int command, int key);
 	void send_three (int command, int key, int velocity);
 	bool code (PrologElement * parameters, PrologResolution * resolution);
+	bool inactive (void);
+	static bool info (void);
 	midi_code (PrologRoot * root, PrologDirectory * directory, PrologAtom * atom, PrologAtom * callback, char * location);
 	~ midi_code (void);
 };

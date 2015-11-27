@@ -821,5 +821,5 @@ auto := [
 
 private [AddParameterBlock SubRestore cb_callback cb_path cb_edit_path CBsub process_mode FindLfoKnob]
 
-end .
+end := [[auto_atoms] [gtk_command]] .
 

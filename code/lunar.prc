@@ -36,7 +36,7 @@ program lunar #machine := "lunar"
 				Gbb Gb G G# Gx
 				Abb Ab A A# Ax
 				Bbb Bb B B# Bx
-				midi
+				midi midi_monitor
 				ParameterBlockPanel AdsrPanel EGPanel FEGPanel FM4Panel CorePanel LfoPanel FilterPanel
 				DelayPanel ChorusPanel StereoChorusPanel FreeverbPanel
 				BuildParameterBlockPanel BuildAdsrPanel BuildEGPanel BuildFEGPanel BuildFM4Panel BuildLfoPanel BuildFilterPanel
@@ -812,6 +812,9 @@ program lunar #machine := "lunar"
 	[create_atom *atom_name *name]
 	[inc InstrumentIndex]
 ]
+
+[[midi_monitor activesensing]]
+[[midi_monitor : *command] [show *command]]
 
 auto := [
 			[var cb_callback cb_path cb_edit_path [InstrumentIndex 0]]

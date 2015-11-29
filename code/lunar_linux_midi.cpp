@@ -201,7 +201,11 @@ bool midi_code :: code (PrologElement * parameters, PrologResolution * resolutio
 		data = 0xf0; write (tc, & data, 1);
 		while (parameters -> isPair ()) {
 			if (graph . get_key (& parameters, & key)) {data = (unsigned char) key; write (tc, & data, 1);}
-			else parameters = parameters -> getRight ();
+			else if (parameters -> getLeft () -> isText ()) {
+				char * cp = parameters -> getLeft () -> getText ();
+				while (* cp != '\0') {data = (unsigned char) * cp++; write (tc, & data, 1);}
+				parameters = parameters -> getRight ();
+			} else parameters = parameters -> getRight ();
 		}
 		data = 0xf7; write (tc, & data, 1);
 		return true;

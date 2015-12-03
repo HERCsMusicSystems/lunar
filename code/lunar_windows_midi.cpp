@@ -50,6 +50,7 @@ static void CALLBACK midi_in_procedure (HMIDIIN in, UINT msg, DWORD instance, DW
 		}
 		break;
 	case MIM_LONGDATA:
+		if (! rec -> in_port_active) return;
 		hdr = (MIDIHDR *) dwParam1;
 		rec -> sysex_parameters ((unsigned char *) hdr -> lpData + 1, (int) hdr -> dwBytesRecorded - 2);
 		midiInPrepareHeader (rec -> in_port_handle, hdr, sizeof (MIDIHDR));
@@ -66,7 +67,11 @@ bool midi_code :: drop_system_exclusive (PrologElement * parameters) {
 	int key;
 	while (parameters -> isPair ()) {
 		if (graph . get_key (& parameters, & key)) buffer [buffer_pointer++] = (unsigned char) key;
-		else parameters = parameters -> getRight ();
+		else if (parameters -> getLeft () -> isText ()) {
+			char * cp = parameters -> getLeft () -> getText ();
+			while (* cp != '\0') buffer [buffer_pointer++] = (unsigned char) * cp++;
+			parameters = parameters -> getRight ();
+		} else parameters = parameters -> getRight ();
 	}
 	buffer [buffer_pointer++] = 0xf7;
 	MIDIHDR midihdr;
@@ -253,7 +258,9 @@ midi_code :: midi_code (PrologRoot * root, PrologDirectory * directory, PrologAt
 midi_code :: ~ midi_code (void) {
 	if (out_port_active) midiOutClose (out_port_handle);
 	if (in_port_active) {
+		in_port_active = false;
 		midiInStop (in_port_handle);
+		midiInReset (in_port_handle);
 		midiInClose (in_port_handle);
 		midiInUnprepareHeader (in_port_handle, & hdr1, sizeof (hdr1));
 		midiInUnprepareHeader (in_port_handle, & hdr2, sizeof (hdr2));

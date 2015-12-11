@@ -36,7 +36,7 @@ program lunar #machine := "lunar"
 				Gbb Gb G G# Gx
 				Abb Ab A A# Ax
 				Bbb Bb B B# Bx
-				midi midi_monitor
+				midi
 				ParameterBlockPanel AdsrPanel EGPanel FEGPanel FM4Panel CorePanel LfoPanel FilterPanel
 				DelayPanel ChorusPanel StereoChorusPanel FreeverbPanel
 				BuildParameterBlockPanel BuildAdsrPanel BuildEGPanel BuildFEGPanel BuildFM4Panel BuildLfoPanel BuildFilterPanel
@@ -46,9 +46,11 @@ program lunar #machine := "lunar"
 				CreateDistributor CloseDistributor Distribute Redistribute
 				CCCB cb_callback cb_path cb_edit_path process_mode CBsub
 				LoopWave unicar
-				MIDI_CHANNELS MIDI_BACK income_midi
+				MIDI_CHANNELS midi_monitor income_midi
 				GenerateInstrumentName InstrumentIndex
 				radar reactor commander Core Midi
+				integrated_alarm
+				alb
 			]
 
 #machine small_keyboard := "small_keyboard"
@@ -138,6 +140,8 @@ program lunar #machine := "lunar"
 #machine LoopWave := "LoopWave"
 
 #machine unicar := "unicar"
+
+#machine integrated_alarm := "integrated_alarm"
 
 [[BuildParameterBlockPanel *panel *from *to *instrument : *path]
 	[*instrument *parameters : *] [*parameters *parameter : *path]
@@ -329,9 +333,16 @@ program lunar #machine := "lunar"
 
 [[AllocateChannel *index *index]
 	[MIDI_CHANNELS *index : *original]
-	[eq *original MIDI_BACK] /
+	[eq *original midi_monitor] /
 ]
 [[AllocateChannel *index *location] [++ *index *next] [MIDI_CHANNELS *next : *] / [AllocateChannel *next *location]]
+
+[[alb *base]
+	[AllocateChannel 0 *index]
+	[GenerateInstrumentName "Alarm" *base]
+	[integrated_alarm *machine]
+	[addcl [[Moons *base *index *machine *machine]]]
+]
 
 [[Moonbase *base *distributor *type *line]
 	[AllocateChannel 0 *index]
@@ -345,7 +356,7 @@ program lunar #machine := "lunar"
 [[Moonbase *moon]
 	[SELECT [[eq *moon *base]] [[eq *moon *id]]]
 	[delcl [[Moons *base *id : *x]]]
-	[MIDI_CHANNELS *id MIDI_BACK]
+	[MIDI_CHANNELS *id midi_monitor]
 	[*base *parameters *modules *callback : *]
 	[delallcl *base]
 	[TRY [*callback]]
@@ -798,8 +809,8 @@ program lunar #machine := "lunar"
 ]
 [[CBsub * * * []]]
 
-[[MIDI_BACK activesensing]]
-[[MIDI_BACK : *command] [show *command]]
+[[midi_monitor activesensing]]
+[[midi_monitor : *command] [show *command]]
 [[income_midi *command *ch : *t]
 	[MIDI_CHANNELS *ch : *cb]
 	[*cb *command : *t]
@@ -809,20 +820,20 @@ program lunar #machine := "lunar"
 [[GenerateInstrumentName *prefix *name]
 	[InstrumentIndex : *i]
 	[add *prefix "-" *i *atom_name]
-	[create_atom *atom_name *name]
+	[search_atom_c *atom_name *name]
 	[inc InstrumentIndex]
 ]
 
-[[midi_monitor activesensing]]
-[[midi_monitor : *command] [show *command]]
+[[LunarDrop *x *y]]
+[[LunarDrop *x *y *file : *files] [batch *file] / [LunarDrop *x *y : *files]]
 
 auto := [
 			[var cb_callback cb_path cb_edit_path [InstrumentIndex 0]]
 			[ARRAY MIDI_CHANNELS 128]
-			[FOR *i 0 127 1 [MIDI_CHANNELS *i MIDI_BACK]]
+			[FOR *i 0 127 1 [MIDI_CHANNELS *i midi_monitor]]
 		]
 
 private [AddParameterBlock SubRestore cb_callback cb_path cb_edit_path CBsub process_mode FindLfoKnob]
 
-end := [[auto_atoms] [gtk_command]] .
+end := [[auto_atoms] [CorePanel Core] [gtk_command] [TRY [Core]]] .
 

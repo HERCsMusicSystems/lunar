@@ -1125,6 +1125,7 @@ A typical construction of an instrument and inserting it into the superstructure
             [module keyon [note octave] velocity] => MIDI keyon message. Velocity is optional.<br />
             [module keyoff] => MIDI all keys off message.<br />
             [module keyoff key velocity] => MIDI keyoff message. Velocity is optional.<br />
+            [module keyoff [note octave] velocity] => MIDI keyoff message. Velocity is optional.<br />
             [module control index value] => MIDI control message. Value can be double.<br />
             [module pitch lsb msb] => MIDI pitch message. Equivalent to [module control 128 (msb + lsb / 128)].<br />
             [module timingclock] => MIDI timingclock message. Important for arpeggiators and sequencers.<br />
@@ -1140,9 +1141,9 @@ A typical construction of an instrument and inserting it into the superstructure
         </div>
         <div class="doc_predicate_body">
             <b>Signals:</b> [[] []]<br />
-            The purpose of the (moon)base module is to translate MIDI messages (or prolog commands) into contrilling signals
+            The purpose of the (moon)base module is to translate MIDI messages (or prolog commands) into controlling signals
             for triggers and parameter blocks (or more general audio modules).
-            The (moon)base can be either in either <b>poly</b> or <b>mono</b> mode.<br />
+            The (moon)base can be in either <b>poly</b> or <b>mono</b> mode.<br />
             In <b>poly</b> mode every new keyon message selects a trigger with its <b>busy</b> signal equal to zero.
             If no such trigger is available then it steals one of the busy triggers, most likely the one,
             which was busy for a while.<br />

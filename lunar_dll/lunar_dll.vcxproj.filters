@@ -108,6 +108,9 @@
     <ClCompile Include="..\code\lunar_windows_midi.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\code\lunar_integrated_alarm.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\code\prolog_lunar.h">

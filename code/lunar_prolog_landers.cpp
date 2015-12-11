@@ -439,110 +439,105 @@ orbiter * sensitivity_class :: create_orbiter (PrologElement * parameters) {retu
 sensitivity_class :: sensitivity_class (orbiter_core * core) : PrologNativeOrbiterCreator (core) {}
 
 static char * moonbase_action_code = "Moonbase Action";
-class native_moonbase : public PrologNativeOrbiter {
-private:
-	PrologAtom * keyon, * keyoff, *pitch, * control, * mono, * poly, * timingclock;
-	chromatograph graph;
-public:
-	static char * name (void) {return moonbase_action_code;}
-	bool isTypeOf (char * code_name) {return moonbase_action_code == code_name ? true : PrologNativeOrbiter :: isTypeOf (code_name);}
-	char * codeName (void) {return name ();}
-	virtual bool code (PrologElement * parameters, PrologResolution * resolution) {
-		PrologElement * atom = 0;
-		PrologElement * key = 0;
-		PrologElement * velocity = 0;
-		PrologElement * note = 0;
-		PrologElement * octave = 0;
-		PrologElement * var = 0;
-		PrologElement * pp = parameters;
-		while (pp -> isPair ()) {
-			PrologElement * el = pp -> getLeft ();
-			if (el -> isAtom ()) atom = el;
-			if (el -> isEarth ()) atom = el;
-			if (el -> isNumber ()) if (key == 0 && note == 0) key = el; else velocity = el;
-			if (el -> isVar ()) var = el;
-			if (el -> isPair ()) {
-				note = el -> getLeft ();
-				octave = el -> getRight ();
-				if (octave -> isPair ()) octave = octave -> getLeft ();
-				if (! note -> isAtom ()) note = 0;
-				if (! octave -> isInteger ()) octave = 0;
-			}
-			pp = pp -> getRight ();
+char * native_moonbase :: name (void) {return moonbase_action_code;}
+bool native_moonbase :: isTypeOf (char * code_name) {return moonbase_action_code == code_name ? true : PrologNativeOrbiter :: isTypeOf (code_name);}
+char * native_moonbase :: codeName (void) {return name ();}
+bool native_moonbase :: code (PrologElement * parameters, PrologResolution * resolution) {
+	PrologElement * atom = 0;
+	PrologElement * key = 0;
+	PrologElement * velocity = 0;
+	PrologElement * note = 0;
+	PrologElement * octave = 0;
+	PrologElement * var = 0;
+	PrologElement * pp = parameters;
+	while (pp -> isPair ()) {
+		PrologElement * el = pp -> getLeft ();
+		if (el -> isAtom ()) atom = el;
+		if (el -> isEarth ()) atom = el;
+		if (el -> isNumber ()) if (key == 0 && note == 0) key = el; else velocity = el;
+		if (el -> isVar ()) var = el;
+		if (el -> isPair ()) {
+			note = el -> getLeft ();
+			octave = el -> getRight ();
+			if (octave -> isPair ()) octave = octave -> getLeft ();
+			if (! note -> isAtom ()) note = 0;
+			if (! octave -> isInteger ()) octave = 0;
 		}
-		if (pp -> isVar ()) var = pp;
-		CommandModule * trigger = (CommandModule *) module;
-		if (atom != 0) {
-			if (atom -> isEarth ()) {
-				if (key != 0) return trigger -> insert_controller (0, (int) key -> getNumber (), 0);
+		pp = pp -> getRight ();
+	}
+	if (pp -> isVar ()) var = pp;
+	CommandModule * trigger = (CommandModule *) module;
+	if (atom != 0) {
+		if (atom -> isEarth ()) {
+			if (key != 0) return trigger -> insert_controller (0, (int) key -> getNumber (), 0);
+			return true;
+		}
+		if (atom -> isAtom ()) {
+			PrologAtom * a = atom -> getAtom ();
+			if (a == keyon) {
+				int key_note;
+				if (key != 0) key_note = (int) key -> getNumber ();
+				else if (note != 0 && octave != 0) key_note = graph . chromatic (note -> getAtom ()) + octave -> getInteger () * 12 + 48;
+				else return false;
+				if (velocity == 0) trigger -> keyon (key_note);
+				else trigger -> keyon (key_note, (int) velocity -> getNumber ());
 				return true;
 			}
-			if (atom -> isAtom ()) {
-				PrologAtom * a = atom -> getAtom ();
-				if (a == keyon) {
-					int key_note;
-					if (key != 0) key_note = (int) key -> getNumber ();
-					else if (note != 0 && octave != 0) key_note = graph . chromatic (note -> getAtom ()) + octave -> getInteger () * 12 + 48;
-					else return false;
-					if (velocity == 0) trigger -> keyon (key_note);
-					else trigger -> keyon (key_note, (int) velocity -> getNumber ());
+			if (a == keyoff) {
+				if (key != 0) trigger -> keyoff ((int) key -> getNumber (), velocity == 0 ? 0 : (int) velocity -> getNumber ());
+				else if (note != 0 && octave != 0)
+					trigger -> keyoff (graph . chromatic (note -> getAtom ()) + octave -> getInteger () * 12 + 48,
+																			velocity == 0 ? 0 : (int) velocity -> getNumber ());
+				else trigger -> keyoff ();
+				return true;
+			}
+			if (a == control) {
+				if (key != 0) {
+					if (var != 0) {var -> setDouble (trigger -> getControl ((int) key -> getNumber ())); return true;}
+					if (velocity != 0) {trigger -> control ((int) key -> getNumber (), velocity -> getNumber ()); return true;}
+				}
+				if (var != 0) {var -> setAtom (trigger -> isMonoMode () ? mono : poly); return true;}
+				return false;
+			}
+			if (a == pitch) {
+				if (key != 0 && velocity != 0) {
+					int lsb = (int) key -> getNumber ();
+					int msb = (int) velocity -> getNumber ();
+					if (msb == 127 && lsb == 127) {msb = 128; lsb = 0;}
+					trigger -> control (128, (double) msb + (double) lsb * 0.0078125);
 					return true;
 				}
-				if (a == keyoff) {
-					if (key != 0) trigger -> keyoff ((int) key -> getNumber (), velocity == 0 ? 0 : (int) velocity -> getNumber ());
-					else if (note != 0 && octave != 0)
-						trigger -> keyoff (graph . chromatic (note -> getAtom ()) + octave -> getInteger () * 12 + 48,
-																				velocity == 0 ? 0 : (int) velocity -> getNumber ());
-					else trigger -> keyoff ();
-					return true;
-				}
-				if (a == control) {
-					if (key != 0) {
-						if (var != 0) {var -> setDouble (trigger -> getControl ((int) key -> getNumber ())); return true;}
-						if (velocity != 0) {trigger -> control ((int) key -> getNumber (), velocity -> getNumber ()); return true;}
-					}
-					if (var != 0) {var -> setAtom (trigger -> isMonoMode () ? mono : poly); return true;}
-					return false;
-				}
-				if (a == pitch) {
-					if (key != 0 && velocity != 0) {
-						int lsb = (int) key -> getNumber ();
-						int msb = (int) velocity -> getNumber ();
-						if (msb == 127 && lsb == 127) {msb = 128; lsb = 0;}
-						trigger -> control (128, (double) msb + (double) lsb * 0.0078125);
-						return true;
-					}
-					if (var != 0) {var -> setDouble (trigger -> getControl (128)); return true;}
-					return false;
-				}
-				if (a == mono) {trigger -> mono (); return true;}
-				if (a == poly) {trigger -> poly (); return true;}
-				if (a == timingclock) {trigger -> timing_clock (); return true;}
-				PrologNativeCode * machine = a -> getMachine ();
-				if (machine == 0) return false;
-				if (machine -> isTypeOf (trigger_native_orbiter :: name ())) {
-					return trigger -> insert_trigger ((lunar_trigger *) ((trigger_native_orbiter *) machine) -> module);
-				}
-				if (machine -> isTypeOf (PrologNativeOrbiter :: name ()) && key != 0) {
-					return trigger -> insert_controller ((orbiter *) ((PrologNativeOrbiter *) machine) -> module,
-														(int) key -> getNumber (), velocity != 0 ? (int) velocity -> getNumber () : 0);
-				}
+				if (var != 0) {var -> setDouble (trigger -> getControl (128)); return true;}
+				return false;
+			}
+			if (a == mono) {trigger -> mono (); return true;}
+			if (a == poly) {trigger -> poly (); return true;}
+			if (a == timingclock) {trigger -> timing_clock (); return true;}
+			PrologNativeCode * machine = a -> getMachine ();
+			if (machine == 0) return false;
+			if (machine -> isTypeOf (trigger_native_orbiter :: name ())) {
+				return trigger -> insert_trigger ((lunar_trigger *) ((trigger_native_orbiter *) machine) -> module);
+			}
+			if (machine -> isTypeOf (PrologNativeOrbiter :: name ()) && key != 0) {
+				return trigger -> insert_controller ((orbiter *) ((PrologNativeOrbiter *) machine) -> module,
+													(int) key -> getNumber (), velocity != 0 ? (int) velocity -> getNumber () : 0);
 			}
 		}
-		return PrologNativeOrbiter :: code (parameters, resolution);
 	}
-	native_moonbase (PrologDirectory * dir, PrologAtom * atom, orbiter_core * core, orbiter * module) : graph (dir), PrologNativeOrbiter (atom, core, module) {
-		keyon = keyoff = pitch = control = mono = poly = timingclock = 0;
-		if (dir == 0) return;
-		keyon = dir -> searchAtom ("keyon");
-		keyoff = dir -> searchAtom ("keyoff");
-		pitch = dir -> searchAtom ("pitch");
-		control = dir -> searchAtom ("control");
-		mono = dir -> searchAtom ("mono");
-		poly = dir -> searchAtom ("poly");
-		timingclock = dir -> searchAtom ("timingclock");
-	}
-};
+	return PrologNativeOrbiter :: code (parameters, resolution);
+}
+native_moonbase :: native_moonbase (PrologDirectory * dir, PrologAtom * atom, orbiter_core * core, orbiter * module) : graph (dir), PrologNativeOrbiter (atom, core, module) {
+	keyon = keyoff = pitch = control = mono = poly = timingclock = 0;
+	if (dir == 0) return;
+	keyon = dir -> searchAtom ("keyon");
+	keyoff = dir -> searchAtom ("keyoff");
+	pitch = dir -> searchAtom ("pitch");
+	control = dir -> searchAtom ("control");
+	mono = dir -> searchAtom ("mono");
+	poly = dir -> searchAtom ("poly");
+	timingclock = dir -> searchAtom ("timingclock");
+}
+
 orbiter * moonbase_class :: create_orbiter (PrologElement * parameters) {return new moonbase (core);}
 PrologNativeOrbiter * moonbase_class :: create_native_orbiter (PrologAtom * atom, orbiter * module) {return new native_moonbase (dir, atom, core, module);}
 moonbase_class :: moonbase_class (PrologDirectory * dir, orbiter_core * core) : PrologNativeOrbiterCreator (core) {this -> dir = dir;}

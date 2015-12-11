@@ -346,6 +346,7 @@ PrologNativeCode * PrologLunarServiceClass :: getNativeCode (char * name) {
 	if (strcmp (name, "MoveCore") == 0) return new move_core_class (& core);
 	if (strcmp (name, "LoopWave") == 0) return new LoopWaveClass ();
 	if (strcmp (name, "unicar") == 0) return new unicar ();
+	if (strcmp (name, "integrated_alarm") == 0) return new integrated_alarm_class (& core, directory);
 	return 0;
 }
 

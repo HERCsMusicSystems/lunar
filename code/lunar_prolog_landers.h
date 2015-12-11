@@ -29,6 +29,7 @@
 
 #include "prolog_lunar.h"
 #include "lunar_landers.h"
+#include "chromatic.h"
 
 class parameter_block_class : public PrologNativeOrbiterCreator {
 public:
@@ -228,6 +229,17 @@ public:
 	moonbase_class (PrologDirectory * dir, orbiter_core * core);
 };
 
+class native_moonbase : public PrologNativeOrbiter {
+private:
+	PrologAtom * keyon, * keyoff, *pitch, * control, * mono, * poly, * timingclock;
+	chromatograph graph;
+public:
+	static char * name (void);
+	bool isTypeOf (char * code_name);
+	char * codeName (void);
+	virtual bool code (PrologElement * parameters, PrologResolution * resolution);
+	native_moonbase (PrologDirectory * dir, PrologAtom * atom, orbiter_core * core, orbiter * module);
+};
 class arpeggiator_class : public PrologNativeOrbiterCreator {
 private:
 	PrologDirectory * dir;
@@ -267,6 +279,14 @@ public:
 	bool mono;
 	virtual orbiter * create_orbiter (PrologElement * parameters);
 	DCOffsetFilter_class (orbiter_core * core, bool mono);
+};
+
+class integrated_alarm_class : public PrologNativeOrbiterCreator {
+public:
+	PrologDirectory * directory;
+	virtual orbiter * create_orbiter (PrologElement * parameters);
+	virtual PrologNativeOrbiter * create_native_orbiter (PrologAtom * atom, orbiter * module);
+	integrated_alarm_class (orbiter_core * core, PrologDirectory * directory);
 };
 
 #endif

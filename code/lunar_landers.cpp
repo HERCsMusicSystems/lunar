@@ -897,7 +897,6 @@ void lunar_delay :: move (void) {
 lunar_delay :: lunar_delay (orbiter_core * core) : orbiter (core) {
 	for (int ind = 0; ind < 262144; ind++) line [ind] = 0.0;
 	index = 0;
-	filter = 0.0;
 	enter = enter_right = signal_right = 0.0;
 	time = 8192.0; feedback = 0.0;
 	high_damp = previous_high_damp = 0.0; A = 1.0; B = 0.0;

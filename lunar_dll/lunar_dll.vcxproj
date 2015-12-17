@@ -91,6 +91,7 @@
     <ClCompile Include="..\code\keyboard_calculator.cpp" />
     <ClCompile Include="..\code\lunar.cpp" />
     <ClCompile Include="..\code\lunar_integrated_alarm.cpp" />
+    <ClCompile Include="..\code\lunar_integrated_components.cpp" />
     <ClCompile Include="..\code\lunar_landers.cpp" />
     <ClCompile Include="..\code\lunar_moonbase.cpp" />
     <ClCompile Include="..\code\lunar_operator.cpp" />
@@ -124,6 +125,7 @@
     <ClInclude Include="..\code\graphic_resources.h" />
     <ClInclude Include="..\code\keyboard_calculator.h" />
     <ClInclude Include="..\code\lunar.h" />
+    <ClInclude Include="..\code\lunar_integrated_components.h" />
     <ClInclude Include="..\code\lunar_landers.h" />
     <ClInclude Include="..\code\lunar_moonbase.h" />
     <ClInclude Include="..\code\lunar_operator.h" />

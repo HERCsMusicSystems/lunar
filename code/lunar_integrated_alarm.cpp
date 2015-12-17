@@ -27,6 +27,7 @@
 #include "lunar_prolog_landers.h"
 #include "lunar_landers.h"
 #include "lunar_moonbase.h"
+#include "lunar_integrated_components.h"
 
 /*
 Common Behaviour:
@@ -69,12 +70,19 @@ Otherwise defaults to common behaviour.
 
 class integrated_alarm : public CommandModule {
 public:
-	double volume, pan;
 	double delay_balance, delay_feedback, delay_time, delay_highdamp;
 	double porta_switch, porta_time, porta_legato, porta_hold;
-	double vco_freq, vco_amp, vco_ratio, vco_wave;
-	double attack, decay, sustain, release;
-	double lfo_speed, lfo_wave, lfo_pulse, lfo_phase, lfo_sync, lfo_vibrato, lfo_tremolo, lfo_pan;
+	integrated_adsr adsr;
+	integrated_lfo lfo;
+	double lfo_vibrato, lfo_tremolo, lfo_pan;
+	integrated_vco vco;
+	double freq, amp;
+	integrated_pan pan;
+	double pan_ctrl;;
+	integrated_delay delay;
+	integrated_drywet dry_wet;
+	integrated_stereo_amplifier volume;
+	double left_output, right_output;
 	bool insert_trigger (lunar_trigger * trigger) {return false;}
 	bool insert_controller (orbiter * controller, int location, double shift) {return false;}
 	void keyon (int key, int velocity) {printf ("keyon [%i %i]\n", key, velocity);}
@@ -87,14 +95,42 @@ public:
 	void control (int ctrl, double value) {}
 	double getControl (int ctrl) {return 0.0;}
 	void timing_clock (void) {}
-	integrated_alarm (orbiter_core * core) : CommandModule (core) {
-		volume = 12800.0;
-		pan = 0.0;
+	int numberOfOutputs (void) {return 2;}
+	char * outputName (int ind) {
+		switch (ind) {
+		case 0: return "LEFT"; break;
+		case 1: return "RIGHT"; break;
+		default: break;
+		}
+		return CommandModule :: outputName (ind);
+	}
+	double * outputAddress (int ind) {
+		switch (ind) {
+		case 0: return & left_output; break;
+		case 1: return & right_output; break;
+		default: break;
+		}
+		return CommandModule :: outputAddress (ind);
+	}
+	void move (void) {
+		adsr . move ();
+		lfo . move ();
+		vco . freq = freq + lfo . signal * lfo_vibrato;
+		vco . amp = amp + lfo . negative * lfo_tremolo;
+		vco . move ();
+		pan . pan = pan_ctrl + lfo . signal * lfo_pan;
+		pan . move ();
+		volume . volume_move ();
+		left_output = right_output = vco . signal;
+	}
+	integrated_alarm (orbiter_core * core) : CommandModule (core), adsr (core), lfo (core), vco (core), pan (core), delay (core), dry_wet (), volume (core, 12800.00) {
 		delay_balance = 0.0; delay_feedback = 8192.0; delay_time = 8192.0; delay_highdamp = 0.0;
 		porta_switch = porta_time = porta_legato = porta_hold = 0.0;
-		vco_freq = vco_amp = vco_wave = 0.0; vco_ratio = 1.0;
-		attack = decay = sustain = release = 0.0;
-		lfo_speed = lfo_wave = lfo_pulse = lfo_phase = lfo_vibrato = lfo_tremolo = lfo_pan = 0.0;
+		lfo_vibrato = lfo_tremolo = lfo_pan = 0.0;
+		freq = amp = 0.0;
+		pan_ctrl = 0.0;
+		left_output = right_output = 0.0;
+		initialise (); activate ();
 	}
 };
 
@@ -124,8 +160,8 @@ public:
 					se = path -> getLeft ();
 					if (se -> isAtom ()) {
 						sa = se -> getAtom ();
-						if (sa == volume) return update_value (& al -> volume, v);
-						if (sa == pan) return update_value (& al -> pan, v);
+						if (sa == volume) return update_value (& al -> volume . gateway, v);
+						if (sa == pan) return update_value (& al -> pan_ctrl, v);
 						if (sa == delay) {
 							path = path -> getRight ();
 							if (path -> isPair ()) {
@@ -160,10 +196,10 @@ public:
 								se = path -> getLeft ();
 								if (se -> isAtom ()) {
 									sa = se -> getAtom ();
-									if (sa == freq) return update_value (& al -> vco_freq, v);
-									if (sa == amp) return update_value (& al -> vco_amp, v);
-									if (sa == ratio) return update_value (& al -> vco_ratio, v);
-									if (sa == wave) return update_value (& al -> vco_wave, v);
+									if (sa == freq) return update_value (& al -> freq, v);
+									if (sa == amp) return update_value (& al -> amp, v);
+									if (sa == ratio) return update_value (& al -> vco . ratio, v);
+									if (sa == wave) return update_value (& al -> vco . wave, v);
 								}
 							}
 							return false;
@@ -174,10 +210,10 @@ public:
 								se = path -> getLeft ();
 								if (se -> isAtom ()) {
 									sa = se -> getAtom ();
-									if (sa == attack) return update_value (& al -> attack, v);
-									if (sa == decay) return update_value (& al -> decay, v);
-									if (sa == sustain) return update_value (& al -> sustain, v);
-									if (sa == release) return update_value (& al -> release, v);
+									if (sa == attack) return update_value (& al -> adsr . attack, v);
+									if (sa == decay) return update_value (& al -> adsr . decay, v);
+									if (sa == sustain) return update_value (& al -> adsr . sustain, v);
+									if (sa == release) return update_value (& al -> adsr . release, v);
 								}
 							}
 							return false;
@@ -188,11 +224,11 @@ public:
 								se = path -> getLeft ();
 								if (se -> isAtom ()) {
 									sa = se -> getAtom ();
-									if (sa == speed) return update_value (& al -> lfo_speed, v);
-									if (sa == wave) return update_value (& al -> lfo_wave, v);
-									if (sa == pulse) return update_value (& al -> lfo_pulse, v);
-									if (sa == phase) return update_value (& al -> lfo_phase, v);
-									if (sa == sync) return update_value (& al -> lfo_sync, v);
+									if (sa == speed) return update_value (& al -> lfo . speed, v);
+									if (sa == wave) return update_value (& al -> lfo . wave, v);
+									if (sa == pulse) return update_value (& al -> lfo . pulse, v);
+									if (sa == phase) return update_value (& al -> lfo . phase, v);
+									if (sa == sync) return update_value (& al -> lfo . sync, v);
 									if (sa == vibrato) return update_value (& al -> lfo_vibrato, v);
 									if (sa == tremolo) return update_value (& al -> lfo_tremolo, v);
 									if (sa == pan) return update_value (& al -> lfo_pan, v);

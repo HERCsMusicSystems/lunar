@@ -310,7 +310,6 @@ public:
 class lunar_delay : public orbiter {
 private:
 	double enter, enter_right;
-	double filter;
 	double feedback;
 	double time;
 	double high_damp;

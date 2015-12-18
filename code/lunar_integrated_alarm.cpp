@@ -70,8 +70,7 @@ Otherwise defaults to common behaviour.
 
 class integrated_alarm : public CommandModule {
 public:
-	double delay_balance, delay_feedback, delay_time, delay_highdamp;
-	double porta_switch, porta_time, porta_legato, porta_hold;
+	integrated_trigger trigger;
 	integrated_adsr adsr;
 	integrated_lfo lfo;
 	double lfo_vibrato, lfo_tremolo, lfo_pan;
@@ -82,13 +81,12 @@ public:
 	integrated_delay delay;
 	integrated_drywet dry_wet;
 	integrated_stereo_amplifier volume;
-	double left_output, right_output;
 	bool insert_trigger (lunar_trigger * trigger) {return false;}
 	bool insert_controller (orbiter * controller, int location, double shift) {return false;}
-	void keyon (int key, int velocity) {printf ("keyon [%i %i]\n", key, velocity);}
-	void keyon (int key) {}
-	void keyoff (void) {}
-	void keyoff (int key, int velocity) {}
+	void keyon (int key, int velocity) {trigger . keyon (key, velocity);}
+	void keyon (int key) {trigger . keyon (key);}
+	void keyoff (void) {trigger . keyoff ();}
+	void keyoff (int key, int velocity) {trigger . keyoff (key);}
 	void mono (void) {}
 	void poly (void) {}
 	bool isMonoMode (void) {return true;}
@@ -106,30 +104,39 @@ public:
 	}
 	double * outputAddress (int ind) {
 		switch (ind) {
-		case 0: return & left_output; break;
-		case 1: return & right_output; break;
+		case 0: return & volume . left; break;
+		case 1: return & volume . right; break;
 		default: break;
 		}
 		return CommandModule :: outputAddress (ind);
 	}
 	void move (void) {
+		trigger . move ();
+		adsr . trigger = trigger . trigger;
 		adsr . move ();
 		lfo . move ();
-		vco . freq = freq + lfo . signal * lfo_vibrato;
-		vco . amp = amp + lfo . negative * lfo_tremolo;
+		vco . freq = freq + trigger . signal + lfo . signal * lfo_vibrato;
+		vco . amp = amp + adsr . signal + lfo . negative * lfo_tremolo;
 		vco . move ();
+		pan . enter = vco . signal;
 		pan . pan = pan_ctrl + lfo . signal * lfo_pan;
 		pan . move ();
+		delay . enter = pan . left;
+		delay . enter_right = pan . right;
+		delay . move ();
+		dry_wet . dry_left = pan . left;
+		dry_wet . dry_right = pan . right;
+		dry_wet . wet_left = delay . signal;
+		dry_wet . wet_right = delay . signal_right;
+		dry_wet . move ();
+		volume . enter_left = dry_wet . left;
+		volume . enter_right = dry_wet . right;
 		volume . volume_move ();
-		left_output = right_output = vco . signal;
 	}
-	integrated_alarm (orbiter_core * core) : CommandModule (core), adsr (core), lfo (core), vco (core), pan (core), delay (core), dry_wet (), volume (core, 12800.00) {
-		delay_balance = 0.0; delay_feedback = 8192.0; delay_time = 8192.0; delay_highdamp = 0.0;
-		porta_switch = porta_time = porta_legato = porta_hold = 0.0;
+	integrated_alarm (orbiter_core * core) : CommandModule (core), trigger (core, true, 0), adsr (core), lfo (core), vco (core), pan (core), delay (core), dry_wet (), volume (core, 12800.00) {
 		lfo_vibrato = lfo_tremolo = lfo_pan = 0.0;
 		freq = amp = 0.0;
 		pan_ctrl = 0.0;
-		left_output = right_output = 0.0;
 		initialise (); activate ();
 	}
 };
@@ -168,10 +175,10 @@ public:
 								se = path -> getLeft ();
 								if (se -> isAtom ()) {
 									sa = se -> getAtom ();
-									if (sa == balance) return update_value (& al -> delay_balance, v);
-									if (sa == feedback) return update_value (& al -> delay_feedback, v);
-									if (sa == time) return update_value (& al -> delay_time, v);
-									if (sa == highdamp) return update_value (& al -> delay_highdamp, v);
+									if (sa == balance) return update_value (& al -> dry_wet . balance, v);
+									if (sa == feedback) return update_value (& al -> delay . feedback, v);
+									if (sa == time) return update_value (& al -> delay . time, v);
+									if (sa == highdamp) return update_value (& al -> delay .high_damp, v);
 								}
 							}
 							return false;
@@ -182,10 +189,10 @@ public:
 								se = path -> getLeft ();
 								if (se -> isAtom ()) {
 									sa = se -> getAtom ();
-									if (sa == porta) return update_value (& al -> porta_switch, v);
-									if (sa == time) return update_value (& al -> porta_time, v);
-									if (sa == legato) return update_value (& al -> porta_legato, v);
-									if (sa == hold) return update_value (& al -> porta_hold, v);
+									if (sa == porta) return update_value (& al -> trigger . porta, v);
+									if (sa == time) return update_value (& al -> trigger . time, v);
+									if (sa == legato) return update_value (& al -> trigger . legato, v);
+									if (sa == hold) return update_value (& al -> trigger . hold, v);
 								}
 							}
 							return false;

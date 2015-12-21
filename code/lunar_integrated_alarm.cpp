@@ -81,6 +81,7 @@ public:
 	integrated_delay delay;
 	integrated_drywet dry_wet;
 	integrated_stereo_amplifier volume;
+	double lsb;
 	bool insert_trigger (lunar_trigger * trigger) {return false;}
 	bool insert_controller (orbiter * controller, int location, double shift) {return false;}
 	void keyon (int key, int velocity) {trigger . keyon (key, velocity);}
@@ -90,8 +91,43 @@ public:
 	void mono (void) {}
 	void poly (void) {}
 	bool isMonoMode (void) {return true;}
-	void control (int ctrl, double value) {}
-	double getControl (int ctrl) {return 0.0;}
+	void control (int ctrl, double value) {
+		switch (ctrl) {
+		case 1: lfo_vibrato = value * 128.0 + lsb; lsb = 0.0; break;
+		case 71: lfo_tremolo = value * 128.0 + lsb; lsb = 0.0; break;
+		case 7: volume . gateway = value * 128.0 + lsb; lsb = 0.0; break;
+		case 10: pan . pan = value * 128.0 - 8192.0 + lsb; lsb = 0.0; break;
+		case 11: trigger . porta_time = value * 128.0 + lsb; lsb = 0.0; break;
+		case 65: trigger . porta = value * 128.0 + lsb; lsb = 0.0; break;
+		case 74: vco . freq = value * 128.0 - 8192.0 + lsb; lsb = 0.0; break;
+		case 91: dry_wet . balance = value * 128.0 -8192.0 + lsb; lsb = 0.0; break;
+		case 95: lfo . speed = value * 128.0 -8192.0 + lsb; lsb = 0.0; break;
+		case 73: adsr . attack = value * 128.0 + lsb; lsb = 0.0; break;
+		case 93: adsr . decay = value * 128.0 + lsb; lsb = 0.0; break;
+		case 94: adsr . sustain = value * 128.0 - 16384.0 + lsb; lsb = 0.0; break;
+		case 72: adsr . release = value * 128.0 + lsb; lsb = 0.0; break;
+		default: lsb = value; break;
+		}
+	}
+	double getControl (int ctrl) {
+		switch (ctrl) {
+		case 1: return lfo_vibrato * 0.0078125; break;
+		case 71: return lfo_tremolo * 0.0078125; break;
+		case 7: return volume . gateway * 0.0078125; break;
+		case 10: return pan . pan * 0.0078125 + 64.0; break;
+		case 11: return trigger . porta_time * 0.0078125; break;
+		case 65: return trigger . porta * 0.0078125; break;
+		case 74: return vco . freq * 0.0078125 + 64.0; break;
+		case 91: return dry_wet . balance * 0.0078125 + 64.0; break;
+		case 95: return lfo . speed * 0.0078125; + 64.0; break;
+		case 73: return adsr . attack * 0.0078125; break;
+		case 93: return adsr . decay * 0.0078125; break;
+		case 94: return adsr . sustain * 0.0078125 + 128.0; break;
+		case 72: return adsr . release * 0.0078125; break;
+		default: break;
+		}
+		return 64.0;
+	}
 	void timing_clock (void) {}
 	int numberOfOutputs (void) {return 2;}
 	char * outputName (int ind) {
@@ -134,6 +170,7 @@ public:
 		volume . volume_move ();
 	}
 	integrated_alarm (orbiter_core * core) : CommandModule (core), trigger (core, true, 0), adsr (core), lfo (core), vco (core), pan (core), delay (core), dry_wet (), volume (core, 12800.00) {
+		lsb = 0.0;
 		lfo_vibrato = lfo_tremolo = lfo_pan = 0.0;
 		freq = amp = 0.0;
 		pan_ctrl = 0.0;
@@ -190,7 +227,7 @@ public:
 								if (se -> isAtom ()) {
 									sa = se -> getAtom ();
 									if (sa == porta) return update_value (& al -> trigger . porta, v);
-									if (sa == time) return update_value (& al -> trigger . time, v);
+									if (sa == time) return update_value (& al -> trigger . porta_time, v);
 									if (sa == legato) return update_value (& al -> trigger . legato, v);
 									if (sa == hold) return update_value (& al -> trigger . hold, v);
 								}

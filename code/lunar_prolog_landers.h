@@ -31,6 +31,9 @@
 #include "lunar_landers.h"
 #include "chromatic.h"
 
+int toStyle (char * name);
+void formatToStyle (double signal, char * command, int style, orbiter_core * core);
+
 class parameter_block_class : public PrologNativeOrbiterCreator {
 public:
 	virtual orbiter * create_orbiter (PrologElement * parameters);

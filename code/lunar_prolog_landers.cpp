@@ -36,56 +36,7 @@
 #define strcasecmp _strcmpi
 #endif
 
-class pb_native_orbiter : public PrologNativeOrbiter {
-public:
-	bool code (PrologElement * parameters, PrologResolution * resolution) {
-		lunar_parameter_block * pb = (lunar_parameter_block *) module;
-		if (pb -> style != 0 && parameters -> isVar ()) {
-			char command [128];
-			switch (pb -> style) {
-			case 1: sprintf (command, "%i", (int) pb -> signal); break;
-			case 2: sprintf (command, "%i  (%.2f Hz)", (int) pb -> signal, core -> centre_frequency * pow (2.0, pb -> signal / 1536.0)); break;
-			case 3:
-				if (pb -> signal <= -16383.0) sprintf (command, "%i (ZERO)", (int) pb -> signal);
-				else sprintf (command, "%i  (%.2f Db)", (int) pb -> signal, 10.0 * log10 (core -> Amplitude (pb -> signal)));
-				break;
-			case 4: sprintf (command, "%i  (%.2f sec.)", (int) pb -> signal, pb -> signal <= 0.0 ? 0.0 : pow (2.0, (pb -> signal - 8192.0) / 768.0)); break;
-			case 5: if (pb -> signal == 0) sprintf (command, "off"); else sprintf (command, "on"); break;
-			case 6:
-				switch ((int) pb -> signal) {
-				case 0: sprintf (command, "0 (sine)"); break;
-				case 1: sprintf (command, "1 (triangle)"); break;
-				case 2: sprintf (command, "2 (square)"); break;
-				case 3: sprintf (command, "3 (random)"); break;
-				case 4: sprintf (command, "4 (S/H)"); break;
-				default: sprintf (command, "%i", (int) pb -> signal); break;
-				}
-				break;
-			case 7: sprintf (command, "* %g", pb -> signal); break;
-			case 8:
-				switch ((int) pb -> signal) {
-				case 0: sprintf (command, "0 (horizontal)"); break;
-				case 1: sprintf (command, "1 (half-horizontal)"); break;
-				case 2: sprintf (command, "2 (pyramid)"); break;
-				case 3: sprintf (command, "3 (double)"); break;
-				case 4: sprintf (command, "4 (low-tree)"); break;
-				case 5: sprintf (command, "5 (tree)"); break;
-				case 6: sprintf (command, "6 (high-tree)"); break;
-				case 7: sprintf (command, "7 (vertical)"); break;
-				default: sprintf (command, "%i (horizontal)", (int) pb -> signal); break;
-				}
-				break;
-			default: sprintf (command, "??"); break;
-			}
-			parameters -> setText (command);
-			return true;
-		}
-		return PrologNativeOrbiter :: code (parameters, resolution);
-	}
-	pb_native_orbiter (PrologAtom * atom, orbiter_core * core, orbiter * module) : PrologNativeOrbiter (atom, core, module) {}
-};
-
-static int toStyle (char * name) {
+int toStyle (char * name) {
 	if (name == 0) return 0;
 	if (strcasecmp (name, "index") == 0) return 1;
 	if (strcasecmp (name, "freq") == 0) return 2;
@@ -97,6 +48,60 @@ static int toStyle (char * name) {
 	if (strcasecmp (name, "fm4algo") == 0) return 8;
 	return 0;
 }
+
+void formatToStyle (double signal, char * command, int style, orbiter_core * core) {
+	switch (style) {
+	case 1: sprintf (command, "%i", (int) signal); break;
+	case 2: sprintf (command, "%i  (%.2f Hz)", (int) signal, core -> centre_frequency * pow (2.0, signal / 1536.0)); break;
+	case 3:
+		if (signal <= -16383.0) sprintf (command, "%i (ZERO)", (int) signal);
+		else sprintf (command, "%i  (%.2f Db)", (int) signal, 10.0 * log10 (core -> Amplitude (signal)));
+		break;
+	case 4: sprintf (command, "%i  (%.2f sec.)", (int) signal, signal <= 0.0 ? 0.0 : pow (2.0, (signal - 8192.0) / 768.0)); break;
+	case 5: if (signal == 0) sprintf (command, "off"); else sprintf (command, "on"); break;
+	case 6:
+		switch ((int) signal) {
+		case 0: sprintf (command, "0 (sine)"); break;
+		case 1: sprintf (command, "1 (triangle)"); break;
+		case 2: sprintf (command, "2 (square)"); break;
+		case 3: sprintf (command, "3 (random)"); break;
+		case 4: sprintf (command, "4 (S/H)"); break;
+		default: sprintf (command, "%i", (int) signal); break;
+		}
+		break;
+	case 7: sprintf (command, "* %g", signal); break;
+	case 8:
+		switch ((int) signal) {
+		case 0: sprintf (command, "0 (horizontal)"); break;
+		case 1: sprintf (command, "1 (half-horizontal)"); break;
+		case 2: sprintf (command, "2 (pyramid)"); break;
+		case 3: sprintf (command, "3 (double)"); break;
+		case 4: sprintf (command, "4 (low-tree)"); break;
+		case 5: sprintf (command, "5 (tree)"); break;
+		case 6: sprintf (command, "6 (high-tree)"); break;
+		case 7: sprintf (command, "7 (vertical)"); break;
+		default: sprintf (command, "%i (horizontal)", (int) signal); break;
+		}
+		break;
+	default: sprintf (command, "??"); break;
+	}
+}
+
+
+class pb_native_orbiter : public PrologNativeOrbiter {
+public:
+	bool code (PrologElement * parameters, PrologResolution * resolution) {
+		lunar_parameter_block * pb = (lunar_parameter_block *) module;
+		if (pb -> style != 0 && parameters -> isVar ()) {
+			char command [128];
+			formatToStyle (pb -> signal, command, pb -> style, core);
+			parameters -> setText (command);
+			return true;
+		}
+		return PrologNativeOrbiter :: code (parameters, resolution);
+	}
+	pb_native_orbiter (PrologAtom * atom, orbiter_core * core, orbiter * module) : PrologNativeOrbiter (atom, core, module) {}
+};
 
 orbiter * parameter_block_class :: create_orbiter (PrologElement * parameters) {
 	PrologElement * activity = 0;
@@ -470,7 +475,6 @@ bool native_moonbase :: code (PrologElement * parameters, PrologResolution * res
 	if (atom != 0) {
 		if (atom -> isEarth ()) {
 			if (key != 0) return trigger -> insert_controller (0, (int) key -> getNumber (), 0);
-			return true;
 		}
 		if (atom -> isAtom ()) {
 			PrologAtom * a = atom -> getAtom ();

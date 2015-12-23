@@ -481,3 +481,58 @@ void integrated_mono_drywet :: move (void) {
 	signal = dry * dry_balance + wet * wet_balance;
 }
 integrated_mono_drywet :: integrated_mono_drywet (void) {dry = wet = balance = signal = 0.0;}
+
+bool integrated_map :: return_content (PrologElement * parameters) {
+	bool clean = true;
+	for (int ind = 0; ind < 128; ind++) {if (map [ind] != (double) (initial + ind) * 128.0) clean = false;}
+	if (clean) {parameters -> setPair (); return true;}
+	for (int ind = 0; ind < 128; ind++) {
+		parameters -> setPair ();
+		parameters -> getLeft () -> setDouble (map [ind]);
+		parameters = parameters -> getRight ();
+	}
+	return true;
+}
+bool integrated_map :: read_content (PrologElement * parameters) {
+	int double_count = 0;
+	PrologElement * doubles [128];
+	PrologElement * ret = 0;
+	PrologElement * reset = 0;
+	while (parameters -> isPair ()) {
+		PrologElement * el = parameters -> getLeft ();
+		if (el -> isNumber ()) if (double_count < 128) doubles [double_count++] = el;
+		if (el -> isVar ()) ret = el;
+		if (el -> isEarth ()) reset = el;
+		if (el -> isPair ()) {
+			PrologElement * subel = el;
+			while (subel -> isPair ()) {
+				PrologElement * ell = subel -> getLeft ();
+				if (ell -> isEarth ()) reset = ell;
+				if (ell -> isNumber ()) if (double_count < 128) doubles [double_count++] = ell;
+				subel = subel -> getRight ();
+			}
+		}
+		parameters = parameters -> getRight ();
+	}
+	if (reset != 0) {this -> reset (); return true;}
+	if (parameters -> isVar ()) ret = parameters;
+	if (ret != 0) {
+		if (double_count < 1) return_content (ret);
+		if (! doubles [0] -> isInteger ()) return false;
+		int index = doubles [0] -> getInteger ();
+		if (index < 0 || index > 127) return false;
+		ret -> setDouble (map [index]);
+		return true;
+	}
+	if (double_count == 2) {
+		if (! doubles [0] -> isInteger ()) return false;
+		int index = doubles [0] -> getInteger ();
+		if (index < 0 || index > 127) return false;
+		map [index] = doubles [1] -> getNumber ();
+		return true;
+	}
+	if (double_count == 128) {for (int ind = 0; ind < 128; ind++) map [ind] = doubles [ind] -> getNumber (); return true;}
+	return false;
+}
+void integrated_map :: reset (void) {for (int ind = 0; ind < 128; ind++) map [ind] = (double) (initial + ind) * 128;}
+integrated_map :: integrated_map (int initial) {this -> initial = initial; reset ();}

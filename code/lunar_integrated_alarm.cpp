@@ -81,6 +81,7 @@ public:
 	integrated_delay delay;
 	integrated_drywet dry_wet;
 	integrated_stereo_amplifier volume;
+	integrated_map key_map;
 	double lsb;
 	bool insert_trigger (lunar_trigger * trigger) {return false;}
 	bool insert_controller (orbiter * controller, int location, double shift) {return false;}
@@ -98,7 +99,9 @@ public:
 		case 7: volume . gateway = value * 128.0 + lsb; lsb = 0.0; break;
 		case 10: pan . pan = value * 128.0 - 8192.0 + lsb; lsb = 0.0; break;
 		case 11: trigger . porta_time = value * 128.0 + lsb; lsb = 0.0; break;
+		case 64: trigger . hold = value * 128.0 + lsb; lsb = 0.0; break;
 		case 65: trigger . porta = value * 128.0 + lsb; lsb = 0.0; break;
+		case 68: trigger . legato = value * 128.0 + lsb; lsb = 0.0; break;
 		case 74: vco . freq = value * 128.0 - 8192.0 + lsb; lsb = 0.0; break;
 		case 91: dry_wet . balance = value * 128.0 -8192.0 + lsb; lsb = 0.0; break;
 		case 95: lfo . speed = value * 128.0 -8192.0 + lsb; lsb = 0.0; break;
@@ -106,6 +109,7 @@ public:
 		case 93: adsr . decay = value * 128.0 + lsb; lsb = 0.0; break;
 		case 94: adsr . sustain = value * 128.0 - 16384.0 + lsb; lsb = 0.0; break;
 		case 72: adsr . release = value * 128.0 + lsb; lsb = 0.0; break;
+		case 126: case 127: lsb = 0.0; break;
 		default: lsb = value; break;
 		}
 	}
@@ -116,7 +120,9 @@ public:
 		case 7: return volume . gateway * 0.0078125; break;
 		case 10: return pan . pan * 0.0078125 + 64.0; break;
 		case 11: return trigger . porta_time * 0.0078125; break;
+		case 64: return trigger . hold *  0.0078125; break;
 		case 65: return trigger . porta * 0.0078125; break;
+		case 68: return trigger . legato *  0.0078125; break;
 		case 74: return vco . freq * 0.0078125 + 64.0; break;
 		case 91: return dry_wet . balance * 0.0078125 + 64.0; break;
 		case 95: return lfo . speed * 0.0078125; + 64.0; break;
@@ -124,6 +130,8 @@ public:
 		case 93: return adsr . decay * 0.0078125; break;
 		case 94: return adsr . sustain * 0.0078125 + 128.0; break;
 		case 72: return adsr . release * 0.0078125; break;
+		case 126: return 1.0; break;
+		case 127: return 0.0; break;
 		default: break;
 		}
 		return 64.0;
@@ -174,6 +182,7 @@ public:
 		lfo_vibrato = lfo_tremolo = lfo_pan = 0.0;
 		freq = amp = 0.0;
 		pan_ctrl = 0.0;
+		trigger . key_map = & key_map;
 		initialise (); activate ();
 	}
 };
@@ -186,36 +195,46 @@ public:
 	PrologAtom * freq, * amp, * ratio, * wave;
 	PrologAtom * attack, * decay, * sustain, * release;
 	PrologAtom * speed, * pulse, * phase, * sync, * vibrato, * tremolo;
-	bool update_value (double * location, PrologElement * el) {
+	PrologAtom * key_map;
+	bool update_value (double * location, PrologElement * el, PrologElement * text, int style) {
 		if (el -> isNumber ()) * location = el -> getNumber ();
-		else el -> setDouble (* location);
+		else {
+			el -> setDouble (* location);
+			if (text != 0) {
+				char command [128];
+				formatToStyle (* location, command, style, core);
+				text -> setText (command);
+			}
+		}
 		return true;
 	}
 	bool code (PrologElement * parameters, PrologResolution * resolution) {
 		if (native_moonbase :: code (parameters, resolution)) return true;
 		if (parameters -> isPair ()) {
 			PrologElement * v = parameters -> getLeft ();
-			if (v -> isNumber () || v -> isVar ()) {
+			PrologElement * o = 0;
+			if (v -> isNumber () || v -> isPair () || v -> isEarth () || v -> isVar ()) {
 				integrated_alarm * al = (integrated_alarm *) module;
 				PrologElement * path = parameters -> getRight ();
+				if (path -> isPair () && path -> getLeft () -> isVar ()) {o = path -> getLeft (); path = path -> getRight ();}
 				PrologElement * se;
 				PrologAtom * sa;
 				if (path -> isPair ()) {
 					se = path -> getLeft ();
 					if (se -> isAtom ()) {
 						sa = se -> getAtom ();
-						if (sa == volume) return update_value (& al -> volume . gateway, v);
-						if (sa == pan) return update_value (& al -> pan_ctrl, v);
+						if (sa == volume) return update_value (& al -> volume . gateway, v, o, 1);
+						if (sa == pan) return update_value (& al -> pan_ctrl, v, o, 1);
 						if (sa == delay) {
 							path = path -> getRight ();
 							if (path -> isPair ()) {
 								se = path -> getLeft ();
 								if (se -> isAtom ()) {
 									sa = se -> getAtom ();
-									if (sa == balance) return update_value (& al -> dry_wet . balance, v);
-									if (sa == feedback) return update_value (& al -> delay . feedback, v);
-									if (sa == time) return update_value (& al -> delay . time, v);
-									if (sa == highdamp) return update_value (& al -> delay .high_damp, v);
+									if (sa == balance) return update_value (& al -> dry_wet . balance, v, o, 1);
+									if (sa == feedback) return update_value (& al -> delay . feedback, v, o, 1);
+									if (sa == time) return update_value (& al -> delay . time, v, o, 4);
+									if (sa == highdamp) return update_value (& al -> delay . high_damp, v, o, 1);
 								}
 							}
 							return false;
@@ -226,10 +245,10 @@ public:
 								se = path -> getLeft ();
 								if (se -> isAtom ()) {
 									sa = se -> getAtom ();
-									if (sa == porta) return update_value (& al -> trigger . porta, v);
-									if (sa == time) return update_value (& al -> trigger . porta_time, v);
-									if (sa == legato) return update_value (& al -> trigger . legato, v);
-									if (sa == hold) return update_value (& al -> trigger . hold, v);
+									if (sa == porta) return update_value (& al -> trigger . porta, v, o, 5);
+									if (sa == time) return update_value (& al -> trigger . porta_time, v, o, 4);
+									if (sa == legato) return update_value (& al -> trigger . legato, v, o, 5);
+									if (sa == hold) return update_value (& al -> trigger . hold, v, o, 5);
 								}
 							}
 							return false;
@@ -240,10 +259,10 @@ public:
 								se = path -> getLeft ();
 								if (se -> isAtom ()) {
 									sa = se -> getAtom ();
-									if (sa == freq) return update_value (& al -> freq, v);
-									if (sa == amp) return update_value (& al -> amp, v);
-									if (sa == ratio) return update_value (& al -> vco . ratio, v);
-									if (sa == wave) return update_value (& al -> vco . wave, v);
+									if (sa == freq) return update_value (& al -> freq, v, o, 2);
+									if (sa == amp) return update_value (& al -> amp, v, o, 3);
+									if (sa == ratio) return update_value (& al -> vco . ratio, v, o, 7);
+									if (sa == wave) return update_value (& al -> vco . wave, v, o, 1);
 								}
 							}
 							return false;
@@ -254,10 +273,10 @@ public:
 								se = path -> getLeft ();
 								if (se -> isAtom ()) {
 									sa = se -> getAtom ();
-									if (sa == attack) return update_value (& al -> adsr . attack, v);
-									if (sa == decay) return update_value (& al -> adsr . decay, v);
-									if (sa == sustain) return update_value (& al -> adsr . sustain, v);
-									if (sa == release) return update_value (& al -> adsr . release, v);
+									if (sa == attack) return update_value (& al -> adsr . attack, v, o, 4);
+									if (sa == decay) return update_value (& al -> adsr . decay, v, o, 4);
+									if (sa == sustain) return update_value (& al -> adsr . sustain, v, o, 3);
+									if (sa == release) return update_value (& al -> adsr . release, v, o, 4);
 								}
 							}
 							return false;
@@ -268,16 +287,21 @@ public:
 								se = path -> getLeft ();
 								if (se -> isAtom ()) {
 									sa = se -> getAtom ();
-									if (sa == speed) return update_value (& al -> lfo . speed, v);
-									if (sa == wave) return update_value (& al -> lfo . wave, v);
-									if (sa == pulse) return update_value (& al -> lfo . pulse, v);
-									if (sa == phase) return update_value (& al -> lfo . phase, v);
-									if (sa == sync) return update_value (& al -> lfo . sync, v);
-									if (sa == vibrato) return update_value (& al -> lfo_vibrato, v);
-									if (sa == tremolo) return update_value (& al -> lfo_tremolo, v);
-									if (sa == pan) return update_value (& al -> lfo_pan, v);
+									if (sa == speed) return update_value (& al -> lfo . speed, v, o, 1);
+									if (sa == wave) return update_value (& al -> lfo . wave, v, o, 6);
+									if (sa == pulse) return update_value (& al -> lfo . pulse, v, o, 1);
+									if (sa == phase) return update_value (& al -> lfo . phase, v, o, 1);
+									if (sa == sync) return update_value (& al -> lfo . sync, v, o, 5);
+									if (sa == vibrato) return update_value (& al -> lfo_vibrato, v, o, 1);
+									if (sa == tremolo) return update_value (& al -> lfo_tremolo, v, o, 1);
+									if (sa == pan) return update_value (& al -> lfo_pan, v, o, 1);
 								}
 							}
+							return false;
+						}
+						if (sa == key_map) {
+							if (v -> isVar ()) return al -> key_map . return_content (v);
+							if (v -> isPair ()) return al -> key_map . read_content (v);
 							return false;
 						}
 					}
@@ -285,7 +309,7 @@ public:
 				}
 			}
 		}
-		return PrologNativeOrbiter :: code (parameters, resolution);
+		return false;
 	}
 	native_integrated_alarm (PrologAtom * atom, orbiter_core * core, orbiter * module, PrologDirectory * directory) : native_moonbase (directory, atom, core, module) {
 		volume = pan = delay = portamento = vco = adsr = lfo = 0;
@@ -294,6 +318,7 @@ public:
 		freq = amp = ratio = wave = 0;
 		attack = decay = sustain = release = 0;
 		speed = pulse = phase = sync = vibrato = tremolo = 0;
+		key_map = 0;
 		if (directory == 0) return;
 		volume = directory -> searchAtom ("volume");
 		pan = directory -> searchAtom ("pan");
@@ -323,6 +348,7 @@ public:
 		sync = directory -> searchAtom ("sync");
 		vibrato = directory -> searchAtom ("vibrato");
 		tremolo = directory -> searchAtom ("tremolo");
+		key_map = directory -> searchAtom ("key_map");
 	}
 };
 

@@ -44,13 +44,13 @@ program lunar #machine := "lunar"
 				FindLfoKnob
 				MoveModules PropagateSignals MoveCore LunarDrop FUNCTION_KEY
 				CreateDistributor CloseDistributor Distribute Redistribute
-				CCCB cb_callback cb_path cb_edit_path process_mode CBsub
+				CCCB CCCBContinuation cb_callback cb_path cb_edit_path process_mode CBsub ICBsub
 				LoopWave unicar
 				MIDI_CHANNELS midi_monitor income_midi
 				GenerateInstrumentName InstrumentIndex
 				radar reactor commander Core Midi
 				integrated_alarm
-				alb
+				alb Alarm AlarmBlocks
 			]
 
 #machine small_keyboard := "small_keyboard"
@@ -342,7 +342,37 @@ program lunar #machine := "lunar"
 	[GenerateInstrumentName "Alarm" *base]
 	[integrated_alarm *machine]
 	[addcl [[Moons *base *index *machine *machine]]]
+	[addcl [[*base Alarm *machine AlarmBlocks]]]
+	[MIDI_CHANNELS 0 *machine]
 ]
+
+[[Alarm volume]]
+[[Alarm pan]]
+[[Alarm delay balance]]
+[[Alarm delay feedback]]
+[[Alarm delay time]]
+[[Alarm delay highdamp]]
+[[Alarm portamento porta]]
+[[Alarm portamento time]]
+[[Alarm portamento legato]]
+[[Alarm portamento hold]]
+[[Alarm vco freq]]
+[[Alarm vco amp]]
+[[Alarm vco ratio]]
+[[Alarm vco wave]]
+[[Alarm adsr attack]]
+[[Alarm adsr decay]]
+[[Alarm adsr sustain]]
+[[Alarm adsr release]]
+[[Alarm lfo speed]]
+[[Alarm lfo wave]]
+[[Alarm lfo pulse]]
+[[Alarm lfo phase]]
+[[Alarm lfo sync]]
+[[Alarm lfo vibrato]]
+[[Alarm lfo tremolo]]
+[[Alarm lfo pan]]
+[[AlarmBlocks key_map]]
 
 [[Moonbase *base *distributor *type *line]
 	[AllocateChannel 0 *index]
@@ -357,13 +387,18 @@ program lunar #machine := "lunar"
 	[SELECT [[eq *moon *base]] [[eq *moon *id]]]
 	[delcl [[Moons *base *id : *x]]]
 	[MIDI_CHANNELS *id midi_monitor]
-	[*base *parameters *modules *callback : *]
-	[delallcl *base]
-	[TRY [*callback]]
-	[TRY [*parameters *parameter : *selector] [*parameter] fail]
-	[TRY [*modules *module : *selector] [*module []] [*module] fail]
-	[delallcl *parameters]
-	[delallcl *modules]
+	[SELECT
+		[
+			[*base *parameters *modules *callback * : *] /
+			[delallcl *base]
+			[TRY [*callback]]
+			[TRY [*parameters *parameter : *selector] [*parameter] fail]
+			[TRY [*modules *module : *selector] [*module []] [*module] fail]
+			[delallcl *parameters]
+			[delallcl *modules]
+		]
+		[[*base *type *module *blocks] [delallcl *base] [*module []] [*module] [delallcl *module]]
+	]
 ]
 
 [[CloseAllMoons] [Moonbase *] / [CloseAllMoons]]
@@ -498,7 +533,7 @@ program lunar #machine := "lunar"
 ]
 
 [[InsertIO *parameters *lfo *selector [["TRIGGER" "SPEED" "WAVE" "PULSE" "PHASE" "SYNC" : *] *]]
-	[AddParameterBlock *parameters speed *lfo *selector 0 "time"]
+	[AddParameterBlock *parameters speed *lfo *selector 0 "index"]
 	[AddParameterBlock *parameters wave *lfo *selector 0 "wave"]
 	[AddParameterBlock *parameters pulse *lfo *selector 0 "index"]
 	[AddParameterBlock *parameters phase *lfo *selector 0 "index"]
@@ -617,17 +652,18 @@ program lunar #machine := "lunar"
 
 [[Lander *base *moonbase : *selector] [*moonbase * *modules : *] [*modules *base : *selector]]
 
+[[Lunar *v *moonbase : *selector] [*moonbase *type *module *blocks] / [*module *v : *selector]]
 [[Lunar *v *moonbase : *selector] [*moonbase *parameters : *] [*parameters *base : *selector] [*base 0 *v]]
 
 [[Store *moonbase *program]
 	[is_integer *program] /
-	[*moonbase * * * *type : *]
+	[SELECT [[*moonbase * * * *type : *]] [[*moonbase *type * *]]]
 	[add *file_name *type "/" *program ".txt"]
 	[Store *moonbase *file_name]
 ]
 
 [[Store *moonbase *file_name]
-	[*moonbase *parameters *modules *cb *type *blocks : *]
+	[*moonbase *parameters *modules *cb *type *blocks : *] /
 	[file_writer *tc *file_name]
 	[*tc [*type] "\n"]
 	[*cb control : *mono] [*tc [*mono] "\n"] [show *mono]
@@ -649,17 +685,39 @@ program lunar #machine := "lunar"
 	[*tc]
 ]
 
+[[Store *moonbase *file_name]
+	[*moonbase *type *cb *blocks]
+	[file_writer *tc *file_name]
+	[*tc [*type] "\n"]
+	[*cb control : *mono] [*tc [*mono] "\n"]
+	[TRY
+		[*type : *selector]
+		[*cb *v : *selector]
+		[*tc [*selector] [*v] "\n"]
+		fail
+	]
+	[TRY
+		[*blocks : *selector]
+		[*cb *v : *selector]
+		[*tc [*selector] [*v] "\n"]
+		fail
+	]
+	[*tc "\n"]
+	[*tc]
+]
+
 [[Restore *moonbase *program]
 	[is_integer *program] /
-	[*moonbase * * * *type : *]
+	[SELECT [[*moonbase * * * *type : *]] [[*moonbase *type **]]] /
 	[add *file_name *type "/" *program ".txt"]
 	[Restore *moonbase *file_name]
 ]
 
 [[Restore *moonbase *file_name]
 	[file_reader *fr *file_name]
-	[*moonbase * * *cb *type : *]
 	[*fr *type]
+	[list *moonbase]
+	[SELECT [[*moonbase * * *cb *type : *]] [[*moonbase *type *cb *blocks]]] /
 	[*fr *mono] [*cb *mono] [show [*cb *mono]]
 	[SubRestore *moonbase *fr]
 	[*fr]
@@ -671,6 +729,7 @@ program lunar #machine := "lunar"
 	[SELECT
 		[[is_number *two] [Lunar *two *moonbase : *one]]
 		[[*moonbase *parameters *modules *cb *type *blocks] [*blocks *block : *one] [*block *two]]
+		[[*moonbase * *cb *blocks] [*cb *two : *one]]
 	]
 	/ [SubRestore *moonbase *fr]
 ]
@@ -758,13 +817,11 @@ program lunar #machine := "lunar"
 
 [[CCCB *ret [] *delta]
 	[cb_path : *path]
-	[eq *path [*m : *p]]
-	[*m *parameters : *]
-	[*parameters *pb : *p]
-	[*pb *v1]
-	[add *v1 *delta *v2]
-	[*pb *v2]
-	[*pb : *v3]
+	[eq *path [*moon : *p]]
+	[SELECT
+		[[*moon * *callback *] / [*callback *v1 : *p] [add *v1 *delta *v2] [*callback *v2 : *p] [*callback * *v3 : *p]]
+		[[*moon *parameters : *] [*parameters *pb : *p] [*pb *v1] [add *v1 *delta *v2] [*pb *v2] [*pb : *v3]]
+	]
 	[cb_edit_path : *edit_path]
 	[text_term *pather *edit_path]
 	[add *ret *pather " = " *v3]
@@ -775,15 +832,19 @@ program lunar #machine := "lunar"
 	[AT *i1 *moon *y]
 	[cb_path [*moon]]
 	[cb_edit_path [*moon]]
-	[*moon * * *moon_callback *type : *]
+	[SELECT [[*moon * * *moon_callback *type : *]] [[*moon *type *moon_callback *]]]
 	[cb_callback *moon_callback]
-	[add *program *type]
+	[add *program "[" *i1 "] " *type " = " *moon]
 ]
 
 [[CCCB *program *mode *i1 : *is]
 	[isallr *y *x [Moons *x : *]]
 	[AT *i1 *moon *y]
-	[*moon *parameters : *]
+	[CCCBContinuation *program *mode *moon : *is]
+]
+
+[[CCCBContinuation *program *mode *moon : *is]
+	[*moon *parameters * *moon_callback * : *] /
 	[CBsub *parameters *is *path *path]
 	[process_mode [*moon : *path] *mode *processed]
 	[text_term *pather *processed]
@@ -791,7 +852,18 @@ program lunar #machine := "lunar"
 	[add *program *pather " = " *v]
 	[cb_path [*moon : *path]]
 	[cb_edit_path *processed]
-	[*moon * * *moon_callback : *]
+	[cb_callback *moon_callback]
+]
+
+[[CCCBContinuation *program *mode *moon : *is]
+	[*moon *parameters *moon_callback *]
+	[ICBsub *parameters *is *path *path]
+	[process_mode [*moon : *path] *mode *processed]
+	[text_term *pather *processed]
+	[*moon_callback * *v : *path]
+	[add *program *pather " = " *v]
+	[cb_path [*moon : *path]]
+	[cb_edit_path *processed]
 	[cb_callback *moon_callback]
 ]
 
@@ -803,11 +875,17 @@ program lunar #machine := "lunar"
 
 [[CBsub *moon [*i : *is] *path [*pp : *tail]]
 	[unicar *unicar] [TRY [*moon * : *path] [*unicar *pp] fail] [*unicar : *pn] [*unicar]
-	;[isall *pr *pp [*moon * : *path]] [NODUP *pr *pnr] [REVERSE *pnr *pn]
 	[AT *i *pp *pn]
 	/ [CBsub *moon *is *path *tail]
 ]
 [[CBsub * * * []]]
+
+[[ICBsub *moon [*i : *is] *path [*pp : *tail]]
+	[unicar *unicar] [TRY [*moon : *path] [*unicar *pp] fail] [*unicar : *pn] [*unicar]
+	[AT *i *pp *pn]
+	/ [ICBsub *moon *is *path *tail]
+]
+[[ICBsub * * * []]]
 
 [[midi_monitor activesensing]]
 [[midi_monitor : *command] [show *command]]
@@ -833,7 +911,7 @@ auto := [
 			[FOR *i 0 127 1 [MIDI_CHANNELS *i midi_monitor]]
 		]
 
-private [AddParameterBlock SubRestore cb_callback cb_path cb_edit_path CBsub process_mode FindLfoKnob]
+private [AddParameterBlock SubRestore cb_callback cb_path cb_edit_path CBsub ICBSub process_mode FindLfoKnob]
 
 end := [[auto_atoms] [CorePanel Core] [gtk_command] [TRY [Core]]] .
 

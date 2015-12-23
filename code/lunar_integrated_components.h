@@ -28,6 +28,7 @@
 #define _LUNAR_INTEGRATED_COMPONENTS_
 
 #include "lunar.h"
+#include "prolog.h"
 
 class integrated_vco {
 private:
@@ -74,12 +75,15 @@ public:
 class integrated_map {
 public:
 	double map [128];
+	int initial;
+	void reset (void);
+	bool return_content (PrologElement * parameters);
+	bool read_content (PrologElement * parameters);
+	integrated_map (int initial = -64);
 };
 
 class integrated_trigger {
 private:
-	integrated_map * key_map;
-	integrated_map * velocity_map;
 	int request; // 0 = none, 1 = keyoff (key), 2 = keyoff (), 3 = keyon (key), 4 = keyon (key, vel), 5 = ground (key, vel, base, prev);
 	int request_key, request_velocity, request_base, request_previous;
 	int keystack [16];
@@ -103,6 +107,8 @@ public:
 	// ==== OUTPUT ====
 	double signal, velocity, trigger, index;
 	// ==== INPUT ====
+	integrated_map * key_map;
+	integrated_map * velocity_map;
 	double busy, hold, porta, porta_time, legato;
 	// ==== PROCESSING ====
 	void keyon (int key);

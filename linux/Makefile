@@ -130,6 +130,13 @@ prolog_lunar.o: ../code/prolog_lunar.h ../code/prolog_lunar.cpp ../code/lunar.h 
 lunar_linux_midi.o: ../code/lunar_linux_midi.h ../code/lunar_linux_midi.cpp $(pc)prolog.h ../code/chromatic.h
 	g++ -Wno-write-strings -I. -I$(pc) ../code/lunar_linux_midi.cpp -c -o lunar_linux_midi.o -fPIC
 
+lunar_integrated_components.o: ../code/lunar_integrated_components.cpp ../code/lunar_integrated_components.h ../code/lunar.h $(pc)prolog.h
+	g++ -Wno-write-strings -I. -I$(pc) ../code/lunar_integrated_components.cpp -c -o lunar_integrated_components.o -fPIC
+
+lunar_integrated_alarm.o: ../code/lunar_integrated_alarm.cpp ../code/lunar_prolog_landers.h ../code/prolog_lunar.h ../code/chromatic.h\
+			../code/lunar_moonbase.h ../code/lunar_landers.h ../code/lunar_integrated_components.h ../code/lunar.h $(pc)prolog.h
+	g++ -Wno-write-strings -I. -I$(pc) ../code/lunar_integrated_alarm.cpp -c -o lunar_integrated_alarm.o -fPIC
+
 graphics2d.o: $(pc)graphics2d.cpp $(pc)graphics2d.h
 	g++ -Wno-write-strings -I. -I$(pc) $(pc)graphics2d.cpp -c -o graphics2d.o -fPIC
 
@@ -378,6 +385,7 @@ lunar_objects = \
 	lunar_prolog_parameter_block_panel.o lunar_prolog_adsr_panel.o lunar_prolog_eg_panel.o\
 	lunar_prolog_fm4_panel.o lunar_prolog_core_panel.o lunar_prolog_lfo_panel.o lunar_prolog_filter_panel.o\
 	lunar_prolog_delay_panel.o lunar_prolog_chorus_panel.o lunar_prolog_schorus_panel.o lunar_prolog_freeverb_panel.o lunar_prolog_panel_base.o\
+	lunar_integrated_components.o lunar_integrated_alarm.o\
 	lunar_linux_midi.o
 
 ~/bin/lunar: $(lunar_objects) $(objects) $(graphics) $(prc_resources)

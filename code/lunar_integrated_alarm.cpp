@@ -25,7 +25,6 @@
 ///////////////////////////////////////////////////////////////////////////
 
 #include "lunar_prolog_landers.h"
-#include "lunar_landers.h"
 #include "lunar_moonbase.h"
 #include "lunar_integrated_components.h"
 

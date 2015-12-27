@@ -911,7 +911,7 @@ auto := [
 			[FOR *i 0 127 1 [MIDI_CHANNELS *i midi_monitor]]
 		]
 
-private [AddParameterBlock SubRestore cb_callback cb_path cb_edit_path CBsub ICBSub process_mode FindLfoKnob]
+private [AddParameterBlock SubRestore cb_callback cb_path cb_edit_path CBsub ICBsub process_mode FindLfoKnob]
 
 end := [[auto_atoms] [CorePanel Core] [gtk_command] [TRY [Core]]] .
 

@@ -159,9 +159,9 @@ public:
 		adsr . move ();
 		lfo . move ();
 		vco . freq = freq + trigger . signal + lfo . signal * lfo_vibrato;
-		vco . amp = amp + adsr . signal + lfo . negative * lfo_tremolo;
+		vco . amp = amp + lfo . negative * lfo_tremolo;
 		vco . move ();
-		pan . enter = vco . signal;
+		pan . enter = vco . signal * adsr . signal;
 		pan . pan = pan_ctrl + lfo . signal * lfo_pan;
 		pan . move ();
 		delay . enter = pan . left;

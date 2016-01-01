@@ -124,7 +124,7 @@ public:
 class integrated_adsr {
 private:
 	int stage;
-	double time;
+	double threshold;
 	orbiter_core * core;
 public:
 	// ==== OUTPUT ====

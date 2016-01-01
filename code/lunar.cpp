@@ -68,6 +68,7 @@ orbiter_core :: orbiter_core (void) {
 		power_pans [ind] = sqrt ((double) ind / 16384.0);
 		linear_pans [ind] = (double) ind / 16384.0;
 	}
+	amplitude_zero = pow (2.0, -16383.0 / 1536.0);
 	recalculate ();
 }
 
@@ -106,6 +107,8 @@ void orbiter_core :: recalculate (void) {
 	for (int ind = 0; ind < 32768; ind++) sampler_time_deltas [ind] = delay * pow (2.0, ((double) (ind - 16384) / 1536.0));
 	for (int ind = 0; ind < 16384; ind++) control_time_deltas [ind] = delay * pow (2.0, ((double) (ind - 8192) / 768.0));
 	for (int ind = 0; ind < 16384; ind++) waiting_times_16384 [ind] = 16384.0 * (waiting_times [ind] = delay * pow (2.0, ((double) (ind - 8192) / -768.0)));
+	double power_fraction = 16384.0 / 768.0;
+	for (int ind = 0; ind < 16384; ind++) waiting_powers [ind] = pow (0.5, power_fraction / (sampling_frequency * pow (2.0, ((double) ind - 8192.0) / 768.0)));
 	for (int ind = 0; ind < 16384; ind++) filter_freqs [ind] = 2.0 * sin (M_PI * 0.5 * centre_frequency * pow (2.0, (double) (ind - 8192) / 1536.0) / sampling_frequency);
 	for (int ind = 0; ind < 16384; ind++) if (filter_freqs [ind] > 0.996) filter_freqs [ind] = 0.996;
 	// .... FREEVERB SIZES
@@ -218,6 +221,13 @@ double orbiter_core :: WaitingTime16384 (double time) {
 	if (ind < 0) return * waiting_times_16384;
 	if (ind > 16384) return * (waiting_times_16384 + 16383);
 	return waiting_times_16384 [ind];
+}
+
+double orbiter_core :: WaitingPower (double time) {
+	int ind = (int) time;
+	if (ind < 0) return * waiting_powers;
+	if (ind > 16384) return * (waiting_powers + 16383);
+	return waiting_powers [ind];
 }
 
 double orbiter_core :: MinBlep (int index) {

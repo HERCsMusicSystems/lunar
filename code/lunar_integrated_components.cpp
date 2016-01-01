@@ -297,68 +297,55 @@ void integrated_adsr :: move (void) {
 	if (trigger >= 16384.0) {
 		busy = 1.0;
 		if (attack == 0.0) {
-			if (decay == 0.0) {signal = sustain; stage = 3; return;}
-			signal = 0.0; stage = 2; time = core -> WaitingTime (decay); return;
+			if (decay == 0.0) {stage = 3; signal = (16384.0 + sustain) * DIV_16384; return;}
+			stage = 2; signal = 1.0;
+			threshold = (16384.0 + sustain) * DIV_16384;
+			if (threshold < core -> amplitude_zero) threshold = core -> amplitude_zero;
+			return;
 		}
-		signal = -16384.0; stage = 1; time = core -> WaitingTime (attack); return;
+		stage = 1; signal = core -> WaitingTime (attack); return;
 	}
 	if (trigger == 0.0) {
 		if (stage == 0) return;
 		if (stage == 4) {
-			if (time < 1.0) {signal = time * -16384.0; time += core -> WaitingTime (release); return;}
-			time = 0.0; signal = -16384.0; stage = 0; busy = 0.0; return;
+			signal *= core -> WaitingPower (release);
+			if (signal <= core -> amplitude_zero) {stage = 0; signal = 0.0; busy = 0.0; return;}
+			return;
 		}
-		if (release == 0.0) {time = 0.0; signal = -16384; stage = 0; busy = 0.0; return;}
-		if (time < 1.0) {
-			if (stage == 1) signal = time * 16384.0 - 16384.0;
-			if (stage == 2) signal = time * -16384.0;
-		}
-		time = signal / -16384.0;
-		time += core -> WaitingTime (release);
+		if (release <= 0.0) {stage = 0; signal = 0.0; busy = 0.0; return;}
 		stage = 4;
 		return;
 	} else {
 		switch (stage) {
 		case 0:
-			time = 0.0; signal = -16384; busy = 1.0;
+			busy = 1.0;
 			if (attack == 0.0) {
-				if (decay == 0.0) {signal = sustain; stage = 3; return;}
-				signal = 0.0;
-				stage = 2;
-				time += core -> WaitingTime (decay);
+				if (decay == 0.0) {stage = 3; signal = (16384.0 + sustain) * DIV_16384; return;}
+				stage = 2; signal = 1.0;
+				threshold = (16384.0 + sustain) * DIV_16384;
+				if (threshold < core -> amplitude_zero) threshold = core -> amplitude_zero;
 				return;
 			}
-			stage = 1;
-			time += core -> WaitingTime (attack);
-			return;
+			stage = 1; signal = core -> WaitingTime (attack); return;
+			break;
 		case 1:
-			if (time < 1.0) {signal = time * 16384.0 - 16384.0; time += core -> WaitingTime (attack); return;}
-			time = 0.0;
-			if (decay == 0.0) {signal = sustain; stage = 3; return;}
-			signal = 0.0;
-			stage = 2;
-			time += core -> WaitingTime (decay);
-			return;
+			signal += core -> WaitingTime (attack);
+			if (signal >= 1.0) {
+				if (decay == 0.0) {stage = 3; signal = (16384.0 + sustain) * DIV_16384; return;}
+				stage = 2; signal = 1.0;
+				threshold = (16384.0 + sustain) * DIV_16384;
+				if (threshold < core -> amplitude_zero) threshold = core -> amplitude_zero;
+				return;
+			}
 			break;
 		case 2:
-			if (time < 1.0) signal = time * -16384.0;
-			if (signal <= sustain) {time = 0.0; signal = sustain; stage = 3; return;}
-			time += core -> WaitingTime (decay);
+			signal *= core -> WaitingPower (decay);
+			if (signal <= threshold) stage = 3;
 			return;
 			break;
-		case 4:
-			if (attack == 0.0) {
-				time = 0.0;
-				if (decay == 0.0) {signal = sustain; stage = 3; return;}
-				signal = 0.0; stage = 2; time += core -> WaitingTime (decay);
-				return;
-			}
-			time = 1 + signal / 16384.0;
-			stage = 1;
-			time += core -> WaitingTime (attack);
-			return;
-			break;
-		default: return; break;
+		case 3: return; break;
+		case 4: stage = 1; return; break;
+		default: break;
 		}
 	}
 }
@@ -366,7 +353,7 @@ void integrated_adsr :: move (void) {
 integrated_adsr :: integrated_adsr (orbiter_core * core) {
 	this -> core = core;
 	attack = decay = sustain = release = trigger = 0.0;
-	signal = -16384.0; time = busy = 0.0;
+	signal = 0.0; busy = 0.0; threshold = 0.0;
 	stage = 0;
 }
 

@@ -62,6 +62,7 @@ public:
 	double sine_wave [16385];
 	double waiting_times [16384];
 	double waiting_times_16384 [16384];
+	double waiting_powers [16384];
 	double min_blep [16384];
 	double filter_freqs [16384];
 	double * filter_freq;
@@ -73,6 +74,7 @@ public:
 	double * linear_pan;
 	double DSP_time_fraction;
 	double DSP_CHORUS_time_fraction;
+	double amplitude_zero;
 	int noise24b;
 	int left_freeverb_comb_sizes [8];
 	int right_freeverb_comb_sizes [8];
@@ -93,6 +95,7 @@ public:
 	double SineApproximated (double angle);
 	double WaitingTime (double time);
 	double WaitingTime16384 (double time);
+	double WaitingPower (double time);
 	double MinBlep (int index);
 	void recalculate (void);
 	int size_limit (int size, int limit);

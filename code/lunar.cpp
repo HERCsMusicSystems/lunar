@@ -107,7 +107,7 @@ void orbiter_core :: recalculate (void) {
 	for (int ind = 0; ind < 32768; ind++) sampler_time_deltas [ind] = delay * pow (2.0, ((double) (ind - 16384) / 1536.0));
 	for (int ind = 0; ind < 16384; ind++) control_time_deltas [ind] = delay * pow (2.0, ((double) (ind - 8192) / 768.0));
 	for (int ind = 0; ind < 16384; ind++) waiting_times_16384 [ind] = 16384.0 * (waiting_times [ind] = delay * pow (2.0, ((double) (ind - 8192) / -768.0)));
-	double power_fraction = 16384.0 / 768.0;
+	double power_fraction = 16384.0 / 1536.0;
 	for (int ind = 0; ind < 16384; ind++) waiting_powers [ind] = pow (0.5, power_fraction / (sampling_frequency * pow (2.0, ((double) ind - 8192.0) / 768.0)));
 	for (int ind = 0; ind < 16384; ind++) filter_freqs [ind] = 2.0 * sin (M_PI * 0.5 * centre_frequency * pow (2.0, (double) (ind - 8192) / 1536.0) / sampling_frequency);
 	for (int ind = 0; ind < 16384; ind++) if (filter_freqs [ind] > 0.996) filter_freqs [ind] = 0.996;

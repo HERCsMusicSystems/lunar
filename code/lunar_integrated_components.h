@@ -131,12 +131,28 @@ private:
 public:
 	// ==== OUTPUT ====
 	double signal, busy;
-	// ==== INPUPT ====
+	// ==== INUPT ====
 	double trigger;
 	double attack, decay, sustain, release;
 	// ==== PROCESSING ====
 	void move (void);
 	integrated_adsr (orbiter_core * core);
+};
+
+class integrated_eg {
+private:
+	int stage;
+	orbiter_core * core;
+public:
+	// ==== OUTPUT ====
+	double signal, busy;
+	// ==== INPUT ====
+	double trigger;
+	double time1, time2, time3, time4;
+	double level1, level2, level3, level4;
+	// ==== PROCESSING ====
+	void move (void);
+	integrated_eg (orbiter_core * core);
 };
 
 class integrated_pan {

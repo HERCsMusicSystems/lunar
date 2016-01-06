@@ -730,7 +730,7 @@ lunar_adsr :: lunar_adsr (orbiter_core * core, double correction) : orbiter (cor
 	initialise (); activate ();
 }
 
-static bool between (double x, double from, double to) {
+static bool stage_between (double x, double from, double to) {
 	if (x > from) return x <= to;
 	if (x < from) return x >= to;
 	return true;
@@ -847,7 +847,7 @@ void lunar_eg :: move (void) {
 			}
 			break;
 		case 5:
-			if (between (signal, level4, level1)) {
+			if (stage_between (signal, level4, level1)) {
 				if (time1 == 0.0) {
 					if (time2 == 0.0) {
 						if (time3 == 0.0) {signal = level3; stage = 4;}
@@ -856,14 +856,14 @@ void lunar_eg :: move (void) {
 				} else {stage = 1;}
 				return;
 			}
-			if (between (signal, level1, level2)) {
+			if (stage_between (signal, level1, level2)) {
 				if (time2 == 0.0) {
 					if (time3 == 0.0) {signal = level3; stage = 4;}
 					else {signal = level2; stage = 3;}
 				} else {stage = 2;}
 				return;
 			}
-			if (between (signal, level2, level3)) {
+			if (stage_between (signal, level2, level3)) {
 				if (time3 == 0.0) {signal = level3; stage = 4;}
 				else {stage = 3;}
 				return;
@@ -1116,7 +1116,7 @@ void lunar_vcaeg :: move (void) {
 			break;
 		case 5:
 			threshold = (0.0 - envelope) * 16384.0;
-			if (between (threshold, level4, level1)) {
+			if (stage_between (threshold, level4, level1)) {
 				if (time1 == 0.0) {
 					if (time2 == 0.0) {
 						if (time3 == 0.0) {ENVE (level3); stage = 4;}
@@ -1125,14 +1125,14 @@ void lunar_vcaeg :: move (void) {
 				} else {stage = 1;}
 				RETVCA;
 			}
-			if (between (threshold, level1, level2)) {
+			if (stage_between (threshold, level1, level2)) {
 				if (time2 == 0.0) {
 					if (time3 == 0.0) {ENVE (level3); stage = 4;}
 					else {ENVE (level2); stage = 3; THREVE (level3);}
 				} else {stage = 2;}
 				RETVCA;
 			}
-			if (between (threshold, level2, level3)) {
+			if (stage_between (threshold, level2, level3)) {
 				if (time3 == 0.0) {ENVE (level3); stage = 4;}
 				else {ENVE (level2); stage = 3; THREVE (level3);}
 				RETVCA;

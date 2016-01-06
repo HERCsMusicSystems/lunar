@@ -363,6 +363,124 @@ integrated_adsr :: integrated_adsr (orbiter_core * core) {
 	stage = 0;
 }
 
+static bool stage_between (double x, double from, double to) {
+	if (x > from) return x <= to;
+	if (x < from) return x >= to;
+	return true;
+}
+
+void integrated_eg :: move (void) {
+	if (trigger >= 16384.0) {
+		busy = 1.0;
+		if (time1 == 0.0) {
+			if (time2 == 0.0) {
+				if (time3 == 0) {signal = level3; stage = 4; return;}
+				signal = level2; stage = 3; return;
+			}
+			signal = level1; stage = 2; return;
+		}
+		signal = level4; stage = 1; return;
+	}
+	if (trigger == 0.0) {
+		if (stage < 1) return;
+		if (time4 == 0.0) {signal = level4; stage = 0; return;}
+		if (stage < 5) stage = 5;
+		if (level4 < signal) {
+			signal -= core -> WaitingTime16384 (time4);
+			if (signal < level4) {signal = level4; stage = 0;}
+		} else {
+			signal += core -> WaitingTime16384 (time4);
+			if (signal > level4) {signal = level4; stage = 0;}
+		}
+	} else {
+		switch (stage) {
+		case 0:
+			if (time1 == 0.0) {
+				if (time2 == 0.0) {
+					if (time3 == 0.0) {signal = level3; stage = 4;}
+					else {signal = level2; stage = 3;}
+				} else {signal = level1; stage = 2;}
+			} else {signal = level4; stage = 1;}
+			return; break;
+		case 1:
+			if (level1 > signal) {
+				signal += core -> WaitingTime16384 (time1);
+				if (signal >= level1) {
+					if (time2 == 0.0) {
+						if (time3 == 0.0) {signal = level3; stage = 4;}
+						else {signal = level2; stage = 3;}
+					} else {signal = level1; stage = 2;}
+				}
+			} else {
+				signal -= core -> WaitingTime16384 (time1);
+				if (signal <= level1) {
+					if (time2 == 0.0) {
+						if (time3 == 0.0) {signal = level3; stage = 4;}
+						else {signal = level2; stage = 3;}
+					} else {signal = level1; stage = 2;}
+				}
+			}
+			break;
+		case 2:
+			if (level2 > signal) {
+				signal += core -> WaitingTime16384 (time2);
+				if (signal >= level2) {
+					if (time3 == 0.0) {signal = level3; stage = 4;}
+					else {signal = level2; stage = 3;}
+				}
+			} else {
+				signal -= core -> WaitingTime16384 (time2);
+				if (signal <= level2) {
+					if (time3 == 0.0) {signal = level3; stage = 4;}
+					else {signal = level2; stage = 3;}
+				}
+			}
+			break;
+		case 3:
+			if (level3 > signal) {
+				signal += core -> WaitingTime16384 (time3);
+				if (signal >= level3) {signal = level3; stage = 4;}
+			} else {
+				signal -= core -> WaitingTime16384 (time3);
+				if (signal <= level3) {signal = level3; stage = 4;}
+			}
+			break;
+		case 5:
+			if (stage_between (signal, level4, level1)) {
+				if (time1 == 0.0) {
+					if (time2 == 0.0) {
+						if (time3 == 0.0) {signal = level3; stage = 4;}
+						else {signal = level2; stage = 3;}
+					} else {signal = level1; stage = 2;}
+				} else {stage = 1;}
+				return;
+			}
+			if (stage_between (signal, level1, level2)) {
+				if (time2 == 0.0) {
+					if (time3 == 0.0) {signal = level3; stage = 4;}
+					else {signal = level2; stage = 3;}
+				} else {stage = 2;}
+				return;
+			}
+			if (stage_between (signal, level2, level3)) {
+				if (time3 == 0.0) {signal = level3; stage = 4;}
+				else {stage = 3;}
+				return;
+			}
+			break;
+		default: break;
+		}
+	}
+}
+
+integrated_eg :: integrated_eg (orbiter_core * core) {
+	this -> core = core;
+	time1 = time2 = time3 = time4 = 0.0;
+	level1 = level2 = level3 = level4 = 0.0;
+	signal = 0.0; busy = 0.0;
+	stage = 0;
+}
+
 void integrated_pan :: move (void) {
 	int ind = (int) pan;
 	if (ind > 8192) ind = 8192; if (ind < -8192) ind = -8192;

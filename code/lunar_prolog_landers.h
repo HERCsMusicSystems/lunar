@@ -174,6 +174,18 @@ public:
 	eg_class (orbiter_core * core);
 };
 
+class vca_class : public PrologNativeOrbiterCreator {
+public:
+	virtual orbiter * create_orbiter (PrologElement * parameters);
+	vca_class (orbiter_core * core);
+};
+
+class vcaeg_class : public PrologNativeOrbiterCreator {
+public:
+	virtual orbiter * create_orbiter (PrologElement * parameters);
+	vcaeg_class (orbiter_core * core);
+};
+
 class delay_class : public PrologNativeOrbiterCreator {
 public:
 	virtual orbiter * create_orbiter (PrologElement * parameters);

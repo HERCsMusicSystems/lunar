@@ -409,6 +409,10 @@ adsr_class :: adsr_class (orbiter_core * core) : PrologNativeOrbiterCreator (cor
 
 orbiter * eg_class :: create_orbiter (PrologElement * parameters) {return new lunar_eg (core);}
 eg_class :: eg_class (orbiter_core * core) : PrologNativeOrbiterCreator (core) {}
+orbiter * vca_class :: create_orbiter (PrologElement * parameters) {return new lunar_vca (core);}
+vca_class :: vca_class (orbiter_core * core) : PrologNativeOrbiterCreator (core) {}
+orbiter * vcaeg_class :: create_orbiter (PrologElement * parameters) {return new lunar_vcaeg (core);}
+vcaeg_class :: vcaeg_class (orbiter_core * core) : PrologNativeOrbiterCreator (core) {}
 
 orbiter * delay_class :: create_orbiter (PrologElement * parameters) {return new lunar_delay (core);}
 delay_class :: delay_class (orbiter_core * core) : PrologNativeOrbiterCreator (core) {}

@@ -65,8 +65,10 @@ private:
 public:
 	// ==== OUTPUT ====
 	double signal, positive, negative;
+	double vibrato_signal, tremolo_signal, wahwah_signal, pan_signal;
 	// ==== INPUT ====
 	double speed, wave, pulse, phase, sync;
+	double vibrato, tremolo, wahwah, pan;
 	// ==== PROCESSING ====
 	void move (void);
 	integrated_lfo (orbiter_core * core);

@@ -256,6 +256,8 @@ private:
 	double speed, wave, pulse, phase, sync;
 	double positive, negative;
 	double trigger, previous_trigger;
+	double vibrato, tremolo, wahwah, pan;
+	double vibrato_signal, tremolo_signal, wahwah_signal, pan_signal;
 public:
 	virtual int numberOfInputs (void);
 	virtual char * inputName (int ind);

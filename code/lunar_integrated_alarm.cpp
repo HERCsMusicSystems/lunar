@@ -72,7 +72,6 @@ public:
 	integrated_trigger trigger;
 	integrated_adsr adsr;
 	integrated_lfo lfo;
-	double lfo_vibrato, lfo_tremolo, lfo_pan;
 	integrated_vco vco;
 	double freq, amp;
 	integrated_pan pan;
@@ -93,8 +92,8 @@ public:
 	bool isMonoMode (void) {return true;}
 	void control (int ctrl, double value) {
 		switch (ctrl) {
-		case 1: lfo_vibrato = value * 128.0 + lsb; lsb = 0.0; break;
-		case 71: lfo_tremolo = value * 128.0 + lsb; lsb = 0.0; break;
+		case 1: lfo . vibrato = value * 128.0 + lsb; lsb = 0.0; break;
+		case 71: lfo . tremolo = value * 128.0 + lsb; lsb = 0.0; break;
 		case 7: volume . gateway = value * 128.0 + lsb; lsb = 0.0; break;
 		case 10: pan . pan = value * 128.0 - 8192.0 + lsb; lsb = 0.0; break;
 		case 11: trigger . porta_time = value * 128.0 + lsb; lsb = 0.0; break;
@@ -114,8 +113,8 @@ public:
 	}
 	double getControl (int ctrl) {
 		switch (ctrl) {
-		case 1: return lfo_vibrato * 0.0078125; break;
-		case 71: return lfo_tremolo * 0.0078125; break;
+		case 1: return lfo . vibrato * 0.0078125; break;
+		case 71: return lfo . tremolo * 0.0078125; break;
 		case 7: return volume . gateway * 0.0078125; break;
 		case 10: return pan . pan * 0.0078125 + 64.0; break;
 		case 11: return trigger . porta_time * 0.0078125; break;
@@ -158,11 +157,11 @@ public:
 		adsr . trigger = trigger . trigger;
 		adsr . move ();
 		lfo . move ();
-		vco . freq = freq + trigger . signal + lfo . signal * lfo_vibrato;
-		vco . amp = amp + lfo . negative * lfo_tremolo;
+		vco . freq = freq + trigger . signal + lfo . vibrato_signal;
+		vco . amp = amp + lfo . tremolo_signal;
 		vco . move ();
 		pan . enter = vco . signal * adsr . signal;
-		pan . pan = pan_ctrl + lfo . signal * lfo_pan;
+		pan . pan = pan_ctrl + lfo . pan_signal;
 		pan . move ();
 		delay . enter = pan . left;
 		delay . enter_right = pan . right;
@@ -178,7 +177,6 @@ public:
 	}
 	integrated_alarm (orbiter_core * core) : CommandModule (core), trigger (core, true, 0), adsr (core), lfo (core), vco (core), pan (core), delay (core), dry_wet (), volume (core, 12800.00) {
 		lsb = 0.0;
-		lfo_vibrato = lfo_tremolo = lfo_pan = 0.0;
 		freq = amp = 0.0;
 		pan_ctrl = 0.0;
 		trigger . key_map = & key_map;
@@ -291,9 +289,9 @@ public:
 									if (sa == pulse) return update_value (& al -> lfo . pulse, v, o, 1);
 									if (sa == phase) return update_value (& al -> lfo . phase, v, o, 1);
 									if (sa == sync) return update_value (& al -> lfo . sync, v, o, 5);
-									if (sa == vibrato) return update_value (& al -> lfo_vibrato, v, o, 1);
-									if (sa == tremolo) return update_value (& al -> lfo_tremolo, v, o, 1);
-									if (sa == pan) return update_value (& al -> lfo_pan, v, o, 1);
+									if (sa == vibrato) return update_value (& al -> lfo . vibrato, v, o, 1);
+									if (sa == tremolo) return update_value (& al -> lfo . tremolo, v, o, 1);
+									if (sa == pan) return update_value (& al -> lfo . pan, v, o, 1);
 								}
 							}
 							return false;

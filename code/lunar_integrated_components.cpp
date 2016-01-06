@@ -141,6 +141,10 @@ void integrated_lfo :: move (void) {
 	}
 	time += core -> ControlTimeDelta (speed);
 	while (time >= 1.0) time -= 1.0;
+	vibrato_signal = signal * vibrato;
+	tremolo_signal = negative * tremolo;
+	wahwah_signal = negative * wahwah;
+	pan_signal = signal * pan;
 }
 
 integrated_lfo :: integrated_lfo (orbiter_core * core) {
@@ -148,6 +152,8 @@ integrated_lfo :: integrated_lfo (orbiter_core * core) {
 	stage_one = true;
 	origin = target = delta = 0.0;
 	time = speed = wave = pulse = phase = sync = positive = negative = 0.0;
+	vibrato = tremolo = wahwah = pan = 0.0;
+	vibrato_signal = tremolo_signal = wahwah_signal = pan_signal = 0.0;
 	trigger = previous_trigger = 0.0;
 }
 

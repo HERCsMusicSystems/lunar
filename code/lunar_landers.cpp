@@ -495,7 +495,7 @@ double * lunar_impulse :: inputAddress (int ind) {return ind == 0 ? & enter : or
 void lunar_impulse :: move (void) {signal = enter > 0.0 && sync == 0.0 ? 1.0 : 0.0; sync = enter;}
 lunar_impulse :: lunar_impulse (orbiter_core * core) : orbiter (core) {enter = sync = 0.0; initialise (); activate ();}
 
-int lunar_lfo :: numberOfInputs (void) {return 6;}
+int lunar_lfo :: numberOfInputs (void) {return 10;}
 char * lunar_lfo :: inputName (int ind) {
 	switch (ind) {
 	case 0: return "TRIGGER"; break;
@@ -504,6 +504,10 @@ char * lunar_lfo :: inputName (int ind) {
 	case 3: return "PULSE"; break;
 	case 4: return "PHASE"; break;
 	case 5: return "SYNC"; break;
+	case 6: return "VIBRATO"; break;
+	case 7: return "TREMOLO"; break;
+	case 8: return "WAHWAH"; break;
+	case 9: return "PAN"; break;
 	default: break;
 	}
 	return orbiter :: inputName (ind);
@@ -516,15 +520,23 @@ double * lunar_lfo :: inputAddress (int ind) {
 	case 3: return & pulse; break;
 	case 4: return & phase; break;
 	case 5: return & sync; break;
+	case 6: return & vibrato; break;
+	case 7: return & tremolo; break;
+	case 8: return & wahwah; break;
+	case 9: return & pan; break;
 	default: break;
 	}
 	return orbiter :: inputAddress (ind);
 }
-int lunar_lfo :: numberOfOutputs (void) {return 3;}
+int lunar_lfo :: numberOfOutputs (void) {return 7;}
 char * lunar_lfo :: outputName (int ind) {
 	switch (ind) {
 	case 1: return "NEGATIVE"; break;
 	case 2: return "POSITIVE"; break;
+	case 3: return "VIBRATO"; break;
+	case 4: return "TREMOLO"; break;
+	case 5: return "WAHWAH"; break;
+	case 6: return "PAN"; break;
 	default: break;
 	}
 	return orbiter :: outputName (ind);
@@ -533,6 +545,10 @@ double * lunar_lfo :: outputAddress (int ind) {
 	switch (ind) {
 	case 1: return & negative; break;
 	case 2: return & positive; break;
+	case 3: return & vibrato_signal; break;
+	case 4: return & tremolo_signal; break;
+	case 5: return & wahwah_signal; break;
+	case 6: return & pan_signal; break;
 	default: break;
 	}
 	return orbiter :: outputAddress (ind);
@@ -596,12 +612,18 @@ void lunar_lfo :: move (void) {
 	}
 	time += core -> ControlTimeDelta (speed);
 	while (time >= 1.0) time -= 1.0;
+	vibrato_signal = signal * vibrato;
+	tremolo_signal = negative * tremolo;
+	wahwah_signal = negative * wahwah;
+	pan_signal = signal * pan;
 }
 lunar_lfo :: lunar_lfo (orbiter_core * core) : orbiter (core) {
 	stage_one = true;
 	origin = target = delta = 0.0;
 	time = speed = wave = pulse = phase = sync = positive = negative = 0.0;
 	trigger = previous_trigger = 0.0;
+	vibrato = tremolo = wahwah = pan = 0.0;
+	vibrato_signal = tremolo_signal = wahwah_signal = pan_signal = 0.0;
 	initialise (); activate ();
 }
 

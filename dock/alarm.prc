@@ -1,10 +1,9 @@
 
 import lunar
 
-program alarm [Alarm BuildAlarm AlarmEditor Lfo-1 Adsr-1 Vco-1]
+program alarm [BuildAlarm AlarmEditor Lfo-1 Adsr-1 Vco-1]
 
 
-[[BuildAlarm] [BuildAlarm * * *]]
 
 [[AlarmEditor *alarm]
 	[BuildLfoPanel Lfo-1 *alarm [lfo] [lfo vibrato] [lfo tremolo] [] [lfo pan]] [Lfo-1 100 100]
@@ -13,39 +12,28 @@ program alarm [Alarm BuildAlarm AlarmEditor Lfo-1 Adsr-1 Vco-1]
 
 [[AlarmEditor] [TRY [Lfo-1]] [TRY [Adsr-1]]]
 
+[[BuildAlarm] [BuildAlarm * * *]]
+
 [[BuildAlarm *alarm *alarmcb *volume]
 	[Moonbase *alarm *alarmcb Alarm *volume]
 	[moonbase *alarmcb] [*alarmcb mono]
-	[pan *pan]
-	[delay *delay]
-	[drywet *drywet]
-	[volume *volume]
-	[ConnectStereo *delay *pan]
-	[ConnectDryWet *drywet *pan *delay]
+	[pan *pan] [delay *delay] [drywet *drywet] [volume *volume]
 	[ConnectStereo *volume *drywet]
+	[ConnectDryWet *drywet *pan *delay]
+	[ConnectStereo *delay *pan]
 	[Insert *volume *alarm]
 	[Insert *pan *alarm]
 	[Insert *drywet *alarm delay]
 	[Insert *delay *alarm delay]
-	;;;;;;;;;
+	;;;;;;;;;;;;;;;;;
 	[trigger *trigger] [adsr *adsr] [vco *vco] [lfo *lfo]
-	[control *vibrato] [control *tremolo] [control *autopan]
-	[*vibrato *lfo] [*tremolo "enter" *lfo "negative"] [*autopan *lfo]
-	[*alarmcb *trigger]
-	[*adsr "trigger" *trigger "trigger"] [*trigger "busy" *adsr "busy"]
-	[*vco "amp" *adsr]
-	[*vco "amp" *tremolo]
-	[*vco "freq" *trigger "key"]
-	[*vco "freq" *vibrato]
-	[*pan *vco]
-	[*pan "pan" *autopan]
+	[*alarmcb *trigger] [*adsr "trigger" *trigger "trigger"] [*trigger "busy" *adsr "busy"]
+	[*vco "freq" *trigger "key"] [*vco "freq" *lfo "vibrato"] [*vco "amp" *adsr] [*vco "amp" *lfo "tremolo"]
+	[*pan *vco] [*pan "pan" *lfo "pan"]
 	[Insert *trigger *alarm portamento]
 	[Insert *vco *alarm vco]
 	[Insert *adsr *alarm adsr]
 	[Insert *lfo *alarm lfo]
-	[Insert *vibrato *alarm lfo vibrato]
-	[Insert *tremolo *alarm lfo tremolo]
-	[Insert *autopan *alarm lfo pan]
 	[InsertController 1 *alarm lfo vibrato]
 	[InsertController 71 *alarm lfo tremolo]
 	[InsertController 7 *alarm volume]

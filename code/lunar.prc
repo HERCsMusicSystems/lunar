@@ -536,12 +536,16 @@ program lunar #machine := "lunar"
 	[AddParameterBlock *parameters hold *trigger *selector 0 "onoff"]
 ]
 
-[[InsertIO *parameters *lfo *selector [["TRIGGER" "SPEED" "WAVE" "PULSE" "PHASE" "SYNC" : *] *]]
+[[InsertIO *parameters *lfo *selector [["TRIGGER" "SPEED" "WAVE" "PULSE" "PHASE" "SYNC" "VIBRATO" "TREMOLO" "WAHWAH" "PAN" : *] *]]
 	[AddParameterBlock *parameters speed *lfo *selector 0 "index"]
 	[AddParameterBlock *parameters wave *lfo *selector 0 "wave"]
 	[AddParameterBlock *parameters pulse *lfo *selector 0 "index"]
 	[AddParameterBlock *parameters phase *lfo *selector 0 "index"]
 	[AddParameterBlock *parameters sync *lfo *selector 0 "onoff"]
+	[AddParameterBlock *parameters vibrato *lfo *selector 0 "index"]
+	[AddParameterBlock *parameters tremolo *lfo *selector 0 "index"]
+	[AddParameterBlock *parameters wahwah *lfo *selector 0 "index"]
+	[AddParameterBlock *parameters pan *lfo *selector 0 "index"]
 ]
 
 [[InsertIO *parameters *filter *selector [["ENTER" "FREQ" "RESONANCE" "AMP" : *] *]]

@@ -142,6 +142,7 @@ private:
 	double time1, time2, time3, time4;
 	double freq1, freq2, freq3, freq4;
 	double amp1, amp2, amp3, amp4;
+	double gain1, gain2, gain3, gain4;
 	double ratio1, ratio2, ratio3, ratio4;
 	double feedback1, feedback2, feedback3, feedback4;
 	double (* algo) (lunar_fm4_block * block);

@@ -18,7 +18,7 @@ program lunar #machine := "lunar"
 				pan power_pan linear_pan stereo_pan stereo_power_pan stereo_linear_pan
 				drywet drywet_mono dry wet balance
 				level level1 level2 level3 level4 time1 time2 time3 time4 attack decay sustain release
-				freq amp ratio sync cutoff resonance formant hold busy portamento porta
+				freq amp gain ratio sync cutoff resonance formant hold busy portamento porta
 				legato time speed wave pulse phase poly feedback highdamp diffusion
 				mono left right mic mic_left mic_right breakpoint BP algo key_ratio
 				key velocity keyon keyoff polyaftertouch control programchange aftertouch pitch
@@ -49,8 +49,8 @@ program lunar #machine := "lunar"
 				MIDI_CHANNELS midi_monitor income_midi
 				GenerateInstrumentName InstrumentIndex
 				radar reactor commander Core Midi
-				integrated_alarm
-				alb Alarm AlarmBlocks
+				BuildIntegrated
+				BuildIntegratedAlarm integrated_alarm Alarm AlarmBlocks
 			]
 
 #machine small_keyboard := "small_keyboard"
@@ -339,14 +339,16 @@ program lunar #machine := "lunar"
 ]
 [[AllocateChannel *index *location] [++ *index *next] [MIDI_CHANNELS *next : *] / [AllocateChannel *next *location]]
 
-[[alb *base]
+[[BuildIntegrated *base *type *creator *blocks]
 	[AllocateChannel 0 *index]
-	[GenerateInstrumentName "Alarm" *base]
-	[integrated_alarm *machine]
+	[GenerateInstrumentName *type *base]
+	[*creator *machine]
 	[addcl [[Moons *base *index *machine *machine]]]
-	[addcl [[*base Alarm *machine AlarmBlocks]]]
-	[MIDI_CHANNELS 0 *machine]
+	[addcl [[*base *type *machine *blocks]]]
+	[MIDI_CHANNELS *index *machine]
 ]
+
+[[BuildIntegratedAlarm *base] [BuildIntegrated *base Alarm integrated_alarm AlarmBlocks]]
 
 [[Alarm volume]]
 [[Alarm pan]]

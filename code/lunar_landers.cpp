@@ -977,6 +977,7 @@ void lunar_vca :: move (void) {
 		default: break;
 		}
 	}
+	RETVCA;
 }
 lunar_vca :: lunar_vca (orbiter_core * core) : orbiter (core) {
 	enter = gateway = trigger = attack = decay = sustain = release = 0.0;

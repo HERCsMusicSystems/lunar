@@ -1621,15 +1621,11 @@ A typical construction of an instrument and inserting it into the superstructure
 <div class="doc_predicate">
     <a id="predicate_BuildLfoPanel">
         <div class="doc_predicate_header">
-            [BuildLfoPanel module instrument lfo vibrato tremolo wah_wah pan] => Builds an ADSR panel.<br />
+            [BuildLfoPanel module instrument : selector] => Builds an LFO panel.<br />
         </div>
         <div class="doc_predicate_body">
             This is a shortcut designed to find the appropriate parameter blocks in superstructure
-            and build an LFO panel.<br />
-            <b>Note:</b> contrary to other builders, this one require passing 5 paths and as such they are in fact lists.
-            The first path specifies the access to common lfo parameters, such as speed, wave, pulse, phase and sync.
-            The remaining four paths point to lfo amplitude controllers and can be empty ([]).
-            A typical example would be: [BuildLfoPanel panel Phobos [lfo 2] [lfo 2 vibrato] [lfo 2 tremolo] [] [lfo 2 pan]].
+            and build an LFO panel.
         </div>
     </a>
 </div>

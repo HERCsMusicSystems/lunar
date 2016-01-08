@@ -279,7 +279,6 @@ private:
 	double busy;
 	double time;
 	int stage;
-	double correction;
 public:
 	virtual int numberOfInputs (void);
 	virtual char * inputName (int ind);
@@ -288,7 +287,7 @@ public:
 	virtual char * outputName (int ind);
 	virtual double * outputAddress (int ind);
 	virtual void move (void);
-	lunar_adsr (orbiter_core * core, double correction = 0.125);
+	lunar_adsr (orbiter_core * core);
 };
 
 class lunar_eg : public orbiter {

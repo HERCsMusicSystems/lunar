@@ -57,6 +57,8 @@
         <a href="#predicate_stereo_pan">stereo_pan</a>
         <a href="#predicate_stereo_power_pan">stereo_power_pan</a>
         <a href="#predicate_trigger">trigger</a>
+        <a href="#predicate_vca">vca</a>
+        <a href="#predicate_vcaeg">vcaeg</a>
         <a href="#predicate_vco">vco</a>
         <a href="#predicate_velocity_map">velocity_map</a>
         <a href="#predicate_volume">volume</a>
@@ -204,16 +206,18 @@ Core also functions as an audio source (connected directly to the sound hardware
 <div class="doc_predicate">
     <a id="predicate_adsr">
         <div class="doc_predicate_header">
-            [adsr module corrector] => Creates an adsr module. The optional corrector (default = 0.125) specifies attack curve correction.<br />
+            [adsr module] => Creates an adsr module.<br />
             <b>Note:</b> module adheres to <a href="#common_behaviour_of_predicates">Common Behaviour</a>.<br />
         </div>
         <div class="doc_predicate_body">
-            <b>Signals:</b> [["ENTER" "GATEWAY"] ["SIGNAL"]]<br />
+            <b>Signals:</b> [["TRIGGER" "ATTACK" "DECAY" "SUSTAIN" "RELEASE"] ["SIGNAL" "BUSY"]]<br />
             ADSR module. It works on a constant slope basis.
+            The slopes are linear and are indended to be used with <a href="#predicate_amplifier">exponential amplifier</a>.
+            For linear raising and exponential falling slopes use <a href="#predicate_vca">vca</a> module with integrated envelope generators.
             <br />
             <b>INPUTS:</b><br />
             <b>Trigger:</b> key on/off input. Range between 0.0 .. 1.0.<br />
-            <b>Attack:</b> time. Range between 0.0 .. 16384.0, where 8192.0 = 1 second (at correction = 0.0).
+            <b>Attack:</b> time. Range between 0.0 .. 16384.0, where 8192.0 = 1 second.
             Every step of 768 (6 * 128) multiplies time by 2.<br />
             <b>Decay:</b> time. Range same as above.<br />
             <b>Sustain:</b> level. Range between -16384.0 .. 0.0.<br />
@@ -422,10 +426,12 @@ Core also functions as an audio source (connected directly to the sound hardware
             Envelope Generator module. It works on a constant slope basis.
             I.e. the times are based on transitions across 16384.0 change between levels.
             As such, smaller differences between levels will cause the times to get shortened.<br />
-            <b>Note:</b> if retriggered before reaching <b>level 4</b>, it may start from a point between levels 4, 1 or 2.<br />
+            The slopes are linear and are indended to be used with <a href="#predicate_amplifier">exponential amplifier</a>.
+            For linear raising and exponential falling slopes use <a href="#predicate_vcaeg">vcaeg</a> module with integrated envelope generators.<br/>
+            <b>Note:</b> if retriggered before reaching <b>level 4</b>, it may start from a point between levels 4, 1, 2 or 3.<br />
             <b>INPUTS:</b><br />
             <b>Trigger:</b> key on/off input. Range between 0.0 .. 1.0.<br />
-            <b>Time 1 - 4:</b> range between 0.0 .. 16384.0, where 8192.0 = 1 second (at correction = 0.0).
+            <b>Time 1 - 4:</b> range between 0.0 .. 16384.0, where 8192.0 = 1 second.
             Every step of 768 (6 * 128) multiplies time by 2.<br />
             <b>Level 1 - 4:</b> range between -8192.0 .. 8192.0 (however, can be more really).<br />
             <b>OUTPUTS:</b><br />
@@ -467,10 +473,10 @@ Core also functions as an audio source (connected directly to the sound hardware
         </div>
         <div class="doc_predicate_body">
             <b>Signals:</b> [["ALGO" "TRIGGER"
-            "FREQ1" "AMP1" "RATIO1" "FEEDBACK1"
-            "FREQ2" "AMP2" "RATIO2" "FEEDBACK2"
-            "FREQ3" "AMP3" "RATIO3" "FEEDBACK3"
-            "FREQ4" "AMP4" "RATIO4" "FEEDBACK4"
+            "FREQ1" "AMP1" "GAIN1" "RATIO1" "FEEDBACK1"
+            "FREQ2" "AMP2" "GAIN2" "RATIO2" "FEEDBACK2"
+            "FREQ3" "AMP3" "GAIN3" "RATIO3" "FEEDBACK3"
+            "FREQ4" "AMP4" "GAIN4" "RATIO4" "FEEDBACK4"
             ] ["SIGNAL"]]<br />
             FM4 Block containing 4 FM operators.<br />
             <b>INPUTS:</b><br />
@@ -478,6 +484,7 @@ Core also functions as an audio source (connected directly to the sound hardware
             <b>Trigger:</b> value of 16384.0 or higher keeps the internal clock at time = ZERO.<br />
             <b>Freq1..4:</b> signal's frequency. Range between -8192.0 .. 8192.0 exponential. Zero = middle E with 128 steps per semitone.<br />
             <b>Amp1..4:</b> signal's amplitude. Range between -16384.0 .. 0.0 exponential. Zero = 0 dB. Every 1536 divides the amplitude by half.<br />
+            <b>Gain1..4</b> signal's amplification. Range between 0.0 .. 1.0 linear.<br/>
             <b>Ratio1..4:</b> frequency multiplier (literally).<br />
             <b>Feedback1..4:</b> level. Range between 0.0 .. 16384.0 linear (can be higher).<br />
             <b>OUTPUTS:</b><br />
@@ -967,7 +974,62 @@ Core also functions as an audio source (connected directly to the sound hardware
     </a>
 </div>
 
-<div class="doc_predicate">
+  <div class="doc_predicate">
+    <a id="predicate_vca">
+      <div class="doc_predicate_header">
+        [vca module] => Creates a vca module with integrated ADSR.<br />
+        <b>Note:</b> module adheres to <a href="#common_behaviour_of_predicates">Common Behaviour</a>.<br />
+      </div>
+      <div class="doc_predicate_body">
+        <b>Signals:</b> [["ENTER" "GATEWAY" "TRIGGER" "ATTACK" "DECAY" "SUSTAIN" "RELEASE"] ["SIGNAL" "ENVELOPE" "BUSY"]]<br />
+        The attack slope is linear. The decay and release slopes are exponential.
+        <br />
+        <b>INPUTS:</b><br />
+        <b>Enter:</b> is an input audio signal. Range between -1.0 .. 1.0.<br/>
+        <b>Gateway:</b> is an exponential audio amplification. Range between -16384.0 .. 0.0.<br/>
+        <b>Trigger:</b> key on/off input. Range between 0.0 .. 1.0.<br />
+        <b>Attack:</b> time. Attack is <b>linear</b>. Range between 0.0 .. 16384.0, where 8192.0 = 1 second.
+        Every step of 768 (6 * 128) multiplies time by 2.<br />
+        <b>Decay:</b> time. Decay is <b>exponentnial</b> Range same as above.<br />
+        <b>Sustain:</b> level. Range between -16384.0 .. 0.0.<br />
+        <b>Release:</b> time. Release is <b>exponential</b> Range same as above.<br />
+        <b>OUTPUTS:</b><br />
+        <b>Signal:</b> output value. Range between -16384.0 .. 0.0.<br />
+        <b>Envelope:</b> multiplication signal. Range between 0.0 .. 1.0.<br/>
+        <b>Busy:</b> 0.0 = if finished release stage, 1.0 = otherwise.<br />
+      </div>
+    </a>
+  </div>
+
+  <div class="doc_predicate">
+    <a id="predicate_vcaeg">
+      <div class="doc_predicate_header">
+        [vcaeg module] => Creates a vca module with integrated eg.<br />
+        <b>Note:</b> module adheres to <a href="#common_behaviour_of_predicates">Common Behaviour</a>.<br />
+      </div>
+      <div class="doc_predicate_body">
+        <b>Signals:</b> [["ENTER" "GATEWAY" "TRIGGER" "TIME1" "TIME2" "TIME3" "TIME4" "LEVEL1" "LEVEL2" "LEVEL3" "LEVEL4"] ["SIGNAL" "ENVELOPE" "BUSY"]]<br />
+        Envelope Generator module. It works on a constant slope basis.
+        I.e. the times are based on transitions across 16384.0 change between levels.
+        As such, smaller differences between levels will cause the times to get shortened.<br />
+        Raising slopes are linear. Falling sloper are exponential.<br/>
+        <b>Note:</b> if retriggered before reaching <b>level 4</b>, it may start from a point between levels 4, 1, 2 or 3.<br />
+        <b>INPUTS:</b><br />
+        <b>Enter:</b> is an input audio signal. Range between -1.0 .. 1.0.<br/>
+        <b>Gateway:</b> is an exponential audio amplification. Range between -16384.0 .. 0.0.<br/>
+        <b>Trigger:</b> key on/off input. Range between 0.0 .. 1.0.<br />
+        <b>Time 1 - 4:</b> range between 0.0 .. 16384.0, where 8192.0 = 1 second.
+        Every step of 768 (6 * 128) multiplies time by 2.<br />
+        <b>Level 1 - 4:</b> range between -8192.0 .. 8192.0 (however, can be more really).<br />
+        <b>OUTPUTS:</b><br />
+        <b>Signal:</b> output value. Range between -16384.0 .. 0.0.<br />
+        <b>Envelope:</b> multiplication signal. Range between 0.0 .. 1.0.<br/>
+        <b>Busy:</b> 0.0 = if finished release stage, 1.0 = otherwise.<br />
+      </div>
+    </a>
+  </div>
+
+  <div class="doc_predicate">
     <a id="predicate_vco">
         <div class="doc_predicate_header">
             [vco module] => Creates a Voltage-Controlled-Oscillator module.<br />

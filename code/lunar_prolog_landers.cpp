@@ -395,16 +395,7 @@ mono_volume_class :: mono_volume_class (orbiter_core * core) : PrologNativeOrbit
 orbiter * lfo_class :: create_orbiter (PrologElement * parameters) {return new lunar_lfo (core);}
 lfo_class :: lfo_class (orbiter_core * core) : PrologNativeOrbiterCreator (core) {}
 
-orbiter * adsr_class :: create_orbiter (PrologElement * parameters) {
-	PrologElement * correction = 0;
-	while (parameters -> isPair ()) {
-		PrologElement * el = parameters -> getLeft ();
-		if (el -> isNumber ()) correction = el;
-		parameters = parameters -> getRight ();
-	}
-	if (correction != 0) return new lunar_adsr (core, correction -> getNumber ());
-	return new lunar_adsr (core);
-}
+orbiter * adsr_class :: create_orbiter (PrologElement * parameters) {return new lunar_adsr (core);}
 adsr_class :: adsr_class (orbiter_core * core) : PrologNativeOrbiterCreator (core) {}
 
 orbiter * eg_class :: create_orbiter (PrologElement * parameters) {return new lunar_eg (core);}

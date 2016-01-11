@@ -492,7 +492,7 @@ lunar_trigger :: ~ lunar_trigger (void) {pthread_mutex_destroy (& critical);}
 int lunar_impulse :: numberOfInputs (void) {return 1;}
 char * lunar_impulse :: inputName (int ind) {if (ind == 0) return "ENTER"; else return orbiter :: inputName (ind);}
 double * lunar_impulse :: inputAddress (int ind) {return ind == 0 ? & enter : orbiter :: inputAddress (ind);}
-void lunar_impulse :: move (void) {signal = enter > 0.0 && sync == 0.0 ? 1.0 : 0.0; sync = enter;}
+void lunar_impulse :: move (void) {signal = enter > 0.0 && sync == 0.0 ? enter : 0.0; sync = enter;}
 lunar_impulse :: lunar_impulse (orbiter_core * core) : orbiter (core) {enter = sync = 0.0; initialise (); activate ();}
 
 int lunar_lfo :: numberOfInputs (void) {return 10;}

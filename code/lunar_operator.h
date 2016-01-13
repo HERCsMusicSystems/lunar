@@ -36,7 +36,7 @@ protected:
 	double freq;
 	double ratio;
 	double trigger;
-	double amp;
+	double amp, gain;
 	virtual int numberOfInputs (void);
 	virtual char * inputName (int ind);
 	virtual double * inputAddress (int ind);
@@ -99,7 +99,7 @@ public:
 
 class noise_operator : public orbiter {
 private:
-	double amp;
+	double amp, gain;
 public:
 	virtual int numberOfInputs (void);
 	virtual char * inputName (int ind);
@@ -113,7 +113,7 @@ private:
 	double time;
 	double freq;
 	double ratio;
-	double amp;
+	double amp, gain;
 	double index;
 	double trigger;
 	double signal_right;

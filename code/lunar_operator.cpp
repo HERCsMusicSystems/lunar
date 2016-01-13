@@ -30,13 +30,14 @@
 // LUNAR OSCILLATOR //
 //////////////////////
 
-int lunar_oscillator :: numberOfInputs (void) {return 4;}
+int lunar_oscillator :: numberOfInputs (void) {return 5;}
 char * lunar_oscillator :: inputName (int ind) {
 	switch (ind) {
 	case 0: return "FREQ"; break;
 	case 1: return "AMP"; break;
-	case 2: return "RATIO"; break;
-	case 3: return "TRIGGER"; break;
+	case 2: return "GAIN"; break;
+	case 3: return "RATIO"; break;
+	case 4: return "TRIGGER"; break;
 	default: break;
 	}
 	return orbiter :: inputName (ind);
@@ -45,27 +46,28 @@ double * lunar_oscillator :: inputAddress (int ind) {
 	switch (ind) {
 	case 0: return & freq; break;
 	case 1: return & amp; break;
-	case 2: return & ratio; break;
-	case 3: return & trigger; break;
+	case 2: return & gain; break;
+	case 3: return & ratio; break;
+	case 4: return & trigger; break;
 	default: break;
 	}
 	return 0;
 }
 lunar_oscillator :: lunar_oscillator (orbiter_core * core) : orbiter (core) {
 	freq = amp = trigger = time = 0.0;
-	ratio = 1.0;
+	ratio = 1.0; gain = 1.0;
 }
 
 ///////////////////////
 // LUNAR OPERATOR FM //
 ///////////////////////
 
-int lunar_operator :: numberOfInputs (void) {return 5;}
-char * lunar_operator :: inputName (int ind) {if (ind == 4) return "SHIFT"; return lunar_oscillator :: inputName (ind);}
-double * lunar_operator :: inputAddress (int ind) {if (ind == 4) return & shift; return lunar_oscillator :: inputAddress (ind);}
+int lunar_operator :: numberOfInputs (void) {return 6;}
+char * lunar_operator :: inputName (int ind) {if (ind == 5) return "SHIFT"; return lunar_oscillator :: inputName (ind);}
+double * lunar_operator :: inputAddress (int ind) {if (ind == 5) return & shift; return lunar_oscillator :: inputAddress (ind);}
 void lunar_operator :: move (void) {
 	if (trigger >= 16384.0) time = 0.0;
-	this -> signal = core -> Amplitude (amp) * core -> Sine (time + shift);
+	this -> signal = gain * core -> Amplitude (amp) * core -> Sine (time + shift);
 	time += core -> TimeDelta (freq) * ratio;
 	while (time >= 1.0) time -= 1.0;
 }
@@ -78,7 +80,7 @@ lunar_operator :: lunar_operator (orbiter_core * core) : lunar_oscillator (core)
 void lunar_aliased_saw_operator :: move (void) {
 	if (trigger >= 16384.0) time = 0.0;
 	signal = 1.0 - 2.0 * time;
-	signal *= core -> Amplitude (amp);
+	signal *= gain * core -> Amplitude (amp);
 	time += core -> TimeDelta (freq) * ratio;
 	while (time >= 1.0) time -= 1.0;
 }
@@ -87,7 +89,7 @@ void lunar_saw_operator :: move (void) {
 	if (trigger >= 16384.0) time = 0.0;
 	double delta = core -> TimeDelta (freq) * ratio;
 	signal = core -> MinBlep (blep_index) - 1.0 - 2.0 * time;
-	signal *= core -> Amplitude (amp);
+	signal *= gain * core -> Amplitude (amp);
 	time += delta;
 	blep_index += 512;
 	while (time >= 1.0) {time -= 1.0; blep_index = (int) (time * 512.0 / (delta > 0.0 ? delta : 1.0));}
@@ -105,8 +107,8 @@ lunar_saw_operator * lunar_saw_operator :: create (orbiter_core * core) {
 
 void lunar_aliased_square_operator :: move (void) {
 	if (trigger >= 16384.0) time = 0.0;
-	if (time < 0.5) signal = core -> Amplitude (amp);
-	else signal = - core -> Amplitude (amp);
+	if (time < 0.5) signal = gain * core -> Amplitude (amp);
+	else signal = - gain * core -> Amplitude (amp);
 	time += core -> TimeDelta (freq) * ratio;
 	while (time >= 1.0) time -= 1.0;
 }
@@ -120,7 +122,7 @@ void lunar_square_operator :: move (void) {
 	blep_index += 512;
 	if (stage && time > 0.5) {stage = false; blep_index = (int) ((time - 0.5) * 512.0 / (delta > 0.0 ? delta : 1.0));}
 	while (time >= 1.0) {stage = true; time -= 1.0; blep_index = (int) (time * 512.0 / (delta > 0.0 ? delta : 1.0));}
-	signal *= core -> Amplitude (amp);
+	signal *= gain * core -> Amplitude (amp);
 }
 lunar_square_operator :: lunar_square_operator (orbiter_core * core) : lunar_saw_operator (core) {stage = true;}
 lunar_square_operator * lunar_square_operator :: create (orbiter_core * core) {
@@ -133,17 +135,17 @@ lunar_square_operator * lunar_square_operator :: create (orbiter_core * core) {
 // VCO //
 /////////
 
-int vco_operator :: numberOfInputs (void) {return 5;}
-char * vco_operator :: inputName (int ind) {if (ind == 4) return "WAVE"; return lunar_square_operator :: inputName (ind);}
-double * vco_operator :: inputAddress (int ind) {if (ind == 4) return & wave; return lunar_square_operator :: inputAddress (ind);}
+int vco_operator :: numberOfInputs (void) {return 6;}
+char * vco_operator :: inputName (int ind) {if (ind == 5) return "WAVE"; return lunar_square_operator :: inputName (ind);}
+double * vco_operator :: inputAddress (int ind) {if (ind == 5) return & wave; return lunar_square_operator :: inputAddress (ind);}
 void vco_operator :: move (void) {
 	switch ((int) wave) {
 	case 1: lunar_saw_operator :: move (); break;
 	case 2: lunar_square_operator :: move (); break;
-	case 3: signal = core -> Amplitude (amp) * (0.00000011920928955078125 * (double) core -> noise24b - 1.0); break;
+	case 3: signal = gain * core -> Amplitude (amp) * (0.00000011920928955078125 * (double) core -> noise24b - 1.0); break;
 	default:
 		if (trigger >= 16384.0) time = 0.0;
-		this -> signal = core -> Amplitude (amp) * core -> Sine (time);
+		this -> signal = gain * core -> Amplitude (amp) * core -> Sine (time);
 		time += core -> TimeDelta (freq) * ratio;
 		while (time >= 1.0) time -= 1.0;
 		break;
@@ -155,24 +157,39 @@ vco_operator :: vco_operator (orbiter_core * core) : lunar_square_operator (core
 // NOISE //
 ///////////
 
-int noise_operator :: numberOfInputs (void) {return 1;}
-char * noise_operator :: inputName (int ind) {if (ind == 0) return "AMP"; return orbiter :: inputName (ind);}
-double * noise_operator :: inputAddress (int ind) {if (ind == 0) return & amp; return orbiter :: inputAddress (ind);}
-void noise_operator :: move (void) {signal = core -> Amplitude (amp) * (0.00000011920928955078125 * (double) core -> noise24b - 1.0);}
-noise_operator :: noise_operator (orbiter_core * core) : orbiter (core) {amp = 0.0; initialise (); activate ();}
+int noise_operator :: numberOfInputs (void) {return 2;}
+char * noise_operator :: inputName (int ind) {
+	switch (ind) {
+	case 0: return "AMP"; break;
+	case 1: return "GAIN"; break;
+	default: break;
+	}
+	return orbiter :: inputName (ind);
+}
+double * noise_operator :: inputAddress (int ind) {
+	switch (ind) {
+	case 0: return & amp; break;
+	case 1: return & gain; break;
+	default: break;
+	}
+	return orbiter :: inputAddress (ind);
+}
+void noise_operator :: move (void) {signal = gain * core -> Amplitude (amp) * (0.00000011920928955078125 * (double) core -> noise24b - 1.0);}
+noise_operator :: noise_operator (orbiter_core * core) : orbiter (core) {amp = 0.0; gain = 1.0; initialise (); activate ();}
 
 ///////////////////
 // LUNAR SAMPLER //
 ///////////////////
 
-int lunar_sampler_operator :: numberOfInputs (void) {return 5;}
+int lunar_sampler_operator :: numberOfInputs (void) {return 6;}
 char * lunar_sampler_operator :: inputName (int ind) {
 	switch (ind) {
 	case 0: return "FREQ"; break;
 	case 1: return "AMP"; break;
-	case 2: return "RATIO"; break;
-	case 3: return "INDEX"; break;
-	case 4: return "TRIGGER"; break;
+	case 2: return "GAIN"; break;
+	case 3: return "RATIO"; break;
+	case 4: return "INDEX"; break;
+	case 5: return "TRIGGER"; break;
 	default: break;
 	}
 	return orbiter :: inputName (ind);
@@ -181,9 +198,10 @@ double * lunar_sampler_operator :: inputAddress (int ind) {
 	switch (ind) {
 	case 0: return & freq; break;
 	case 1: return & amp; break;
-	case 2: return & ratio; break;
-	case 3: return & index; break;
-	case 4: return & trigger; break;
+	case 2: return & gain; break;
+	case 3: return & ratio; break;
+	case 4: return & index; break;
+	case 5: return & trigger; break;
 	default: break;
 	}
 	return orbiter :: inputAddress (ind);
@@ -230,8 +248,9 @@ void lunar_sampler_operator :: move (void) {
 	if ((int) time >= data -> wave_size) {signal = signal_right = 0.0; time = -2.0; busy = 0.0; return;}
 	int channels = data -> channels;
 	if (channels < 1) {signal = signal_right = 0.0; time = -1.0; busy = 0.0; return;}
-	if (channels > 0) signal = data -> get_data (0, time) * core -> Amplitude (amp);
-	signal_right = channels > 1 ? data -> get_data (1, time) * core -> Amplitude (amp) : signal;
+	double amplitude = gain * core -> Amplitude (amp);
+	if (channels > 0) signal = data -> get_data (0, time) * amplitude;
+	signal_right = channels > 1 ? data -> get_data (1, time) * amplitude : signal;
 	time += core -> SamplerTimeDelta (freq) * ratio * data -> sampling_freq;
 	// The start point and end point should be identical. The end point is NOT meant to be played.
 	while (time >= data -> loop_point && return_possible) {time -= data -> loop_size; if (trigger <= 0.0) return_possible = false;}
@@ -239,6 +258,7 @@ void lunar_sampler_operator :: move (void) {
 lunar_sampler_operator :: lunar_sampler_operator (orbiter_core * core) : orbiter (core) {
 	time = -1.0;
 	freq = amp = index = trigger = 0.0;
+	gain = 1.0;
 	ratio = 1.0; signal_right = signal;
 	busy = 0.0;
 	wave = 0;

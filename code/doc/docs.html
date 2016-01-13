@@ -448,13 +448,14 @@ Core also functions as an audio source (connected directly to the sound hardware
             <b>Note:</b> module adheres to <a href="#common_behaviour_of_predicates">Common Behaviour</a>.<br />
         </div>
         <div class="doc_predicate_body">
-            <b>Signals:</b> [["ENTER" "FREQ" "RESONANCE" "AMP"] ["LOWPASS" "HIGHPASS" "BANDPASS" "BANDREJECT"]]<br />
+            <b>Signals:</b> [["ENTER" "FREQ" "RESONANCE" "AMP" "GAIN"] ["LOWPASS" "HIGHPASS" "BANDPASS" "BANDREJECT"]]<br />
             Multi-purpose filter.<br />
             <b>INPUTS:</b><br />
             <b>Enter:</b> input signal.<br />
             <b>Freq:</b> cutoff frequency. Range between -8192.0 .. 8192.0 exponential. Zero = middle E with 128 steps per semitone.<br />
             <b>Resonance:</b> level. Range between 0.0 .. 16384.0.<br />
             <b>Amp:</b> signal's amplitude. Range between -16384.0 .. 0.0 exponential. Zero = 0 dB. Every 1536 divides the amplitude by half.<br />
+            <b>Gain:</b> signal's gain multiplier. Range between 0.0 .. 1.0 linear.
             <b>OUTPUTS:</b><br />
             <b>Lowpass:</b> output signal.<br />
             <b>Highpass:</b> output signal.<br />
@@ -662,10 +663,11 @@ Core also functions as an audio source (connected directly to the sound hardware
             <b>Note:</b> module adheres to <a href="#common_behaviour_of_predicates">Common Behaviour</a>.<br />
         </div>
         <div class="doc_predicate_body">
-            <b>Signals:</b> [["AMP"] ["SIGNAL"]]<br />
+            <b>Signals:</b> [["AMP" "GAIN"] ["SIGNAL"]]<br />
             Noise generator.<br />
             <b>INPUTS:</b><br />
             <b>Amp:</b> signal's amplitude. Range between -16384.0 .. 0.0 exponential. Zero = 0 dB. Every 1536 divides the amplitude by half.<br />
+            <b>Gain:</b> signal's gain multiplier. Range between 0.0 .. 1.0 linear.
             <b>OUTPUTS:</b><br />
             <b>Signal:</b> output signal in range between -1.0 .. 1.0.<br />
         </div>
@@ -679,11 +681,12 @@ Core also functions as an audio source (connected directly to the sound hardware
             <b>Note:</b> module adheres to <a href="#common_behaviour_of_predicates">Common Behaviour</a>.<br />
         </div>
         <div class="doc_predicate_body">
-            <b>Signals:</b> [["FREQ" "AMP" "RATIO" "TRIGGER" "SHIFT"] ["SIGNAL"]]<br />
+            <b>Signals:</b> [["FREQ" "AMP" "GAIN" "RATIO" "TRIGGER" "SHIFT"] ["SIGNAL"]]<br />
             Sine wave generator, which may be frequency modulated by shifting its phase.<br />
             <b>INPUTS:</b><br />
             <b>Freq:</b> signal's frequency. Range between -8192.0 .. 8192.0 exponential. Zero = middle E with 128 steps per semitone.<br />
             <b>Amp:</b> signal's amplitude. Range between -16384.0 .. 0.0 exponential. Zero = 0 dB. Every 1536 divides the amplitude by half.<br />
+            <b>Gain:</b> signal's gain multiplier. Range between 0.0 .. 1.0 linear.
             <b>Ratio:</b> frequency multiplier (literally).<br />
             <b>Trigger:</b> value of 16384.0 or higher keeps the internal clock at time = ZERO.<br />
             <b>Shift:</b> moves the signal's phase. Expected range between -1.0 .. 1.0 (but can be more) produces phase shifts from -2PI to 2PI.<br />
@@ -752,11 +755,12 @@ Core also functions as an audio source (connected directly to the sound hardware
             <b>Note:</b> module adheres to <a href="#common_behaviour_of_predicates">Common Behaviour</a>.<br />
         </div>
         <div class="doc_predicate_body">
-            <b>Signals:</b> [["FREQ" "AMP" "RATIO" "INDEX" "TRIGGER"] ["LEFT" "RIGHT" "BUSY"]]<br />
+            <b>Signals:</b> [["FREQ" "AMP" "GAIN" "RATIO" "INDEX" "TRIGGER"] ["LEFT" "RIGHT" "BUSY"]]<br />
             Sine wave generator, which may be frequency modulated by shifting its phase.<br />
             <b>INPUTS:</b><br />
             <b>Freq:</b> signal's frequency. Range between -8192.0 .. 8192.0 exponential. Zero = middle E with 128 steps per semitone.<br />
             <b>Amp:</b> signal's amplitude. Range between -16384.0 .. 0.0 exponential. Zero = 0 dB. Every 1536 divides the amplitude by half.<br />
+            <b>Gain:</b> signal's gain multiplier. Range between 0.0 .. 1.0 linear.
             <b>Ratio:</b> frequency multiplier (literally).<br />
             <b>Index:</b> selects the waveform to be played.<br />
             <b>Trigger:</b> Value greater than ZERO activates the playback.
@@ -780,11 +784,12 @@ Core also functions as an audio source (connected directly to the sound hardware
             <b>Note:</b> module adheres to <a href="#common_behaviour_of_predicates">Common Behaviour</a>.<br />
         </div>
         <div class="doc_predicate_body">
-            <b>Signals:</b> [["FREQ" "AMP" "RATIO" "TRIGGER"] ["SIGNAL"]]<br />
+            <b>Signals:</b> [["FREQ" "AMP" "GAIN" "RATIO" "TRIGGER"] ["SIGNAL"]]<br />
             Sawtooth wave generator.<br />
             <b>INPUTS:</b><br />
             <b>Freq:</b> signal's frequency. Range between -8192.0 .. 8192.0 exponential. Zero = middle E with 128 steps per semitone.<br />
             <b>Amp:</b> signal's amplitude. Range between -16384.0 .. 0.0 exponential. Zero = 0 dB. Every 1536 divides the amplitude by half.<br />
+            <b>Gain:</b> signal's gain multiplier. Range between 0.0 .. 1.0 linear.
             <b>Ratio:</b> frequency multiplier (literally).<br />
             <b>Trigger:</b> value of 16384.0 or higher keeps the internal clock at time = ZERO.<br />
             <b>OUTPUTS:</b><br />
@@ -818,11 +823,12 @@ Core also functions as an audio source (connected directly to the sound hardware
             <b>Note:</b> module adheres to <a href="#common_behaviour_of_predicates">Common Behaviour</a>.<br />
         </div>
         <div class="doc_predicate_body">
-            <b>Signals:</b> [["FREQ" "AMP" "RATIO" "TRIGGER"] ["SIGNAL"]]<br />
+            <b>Signals:</b> [["FREQ" "AMP" "GAIN" "RATIO" "TRIGGER"] ["SIGNAL"]]<br />
             Square wave generator.<br />
             <b>INPUTS:</b><br />
             <b>Freq:</b> signal's frequency. Range between -8192.0 .. 8192.0 exponential. Zero = middle E with 128 steps per semitone.<br />
             <b>Amp:</b> signal's amplitude. Range between -16384.0 .. 0.0 exponential. Zero = 0 dB. Every 1536 divides the amplitude by half.<br />
+            <b>Gain:</b> signal's gain multiplier. Range between 0.0 .. 1.0 linear.
             <b>Ratio:</b> frequency multiplier (literally).<br />
             <b>Trigger:</b> value of 16384.0 or higher keeps the internal clock at time = ZERO.<br />
             <b>OUTPUTS:</b><br />
@@ -1037,11 +1043,12 @@ Core also functions as an audio source (connected directly to the sound hardware
             <b>Note:</b> module adheres to <a href="#common_behaviour_of_predicates">Common Behaviour</a>.<br />
         </div>
         <div class="doc_predicate_body">
-            <b>Signals:</b> [["FREQ" "AMP" "RATIO" "TRIGGER" "WAVE"] ["SIGNAL"]]<br />
+            <b>Signals:</b> [["FREQ" "AMP" "GAIN" "RATIO" "TRIGGER" "WAVE"] ["SIGNAL"]]<br />
             Sine / Sawtooth / Square / Noise generator.<br />
             <b>INPUTS:</b><br />
             <b>Freq:</b> signal's frequency. Range between -8192.0 .. 8192.0 exponential. Zero = middle E with 128 steps per semitone.<br />
             <b>Amp:</b> signal's amplitude. Range between -16384.0 .. 0.0 exponential. Zero = 0 dB. Every 1536 divides the amplitude by half.<br />
+            <b>Gain:</b> signal's gain multiplier. Range between 0.0 .. 1.0 linear.
             <b>Ratio:</b> frequency multiplier (literally).<br />
             <b>Trigger:</b> value of 16384.0 or higher keeps the internal clock at time = ZERO.<br />
             <b>Wave:</b> selects the waveform. Sine = 0, 1 = Sawtooth, 2 = Square, 3 = Noise, otherwise = Sine.<br />

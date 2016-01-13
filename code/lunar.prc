@@ -499,7 +499,7 @@ program lunar #machine := "lunar"
 	[AddParameterBlock *parameters ratio *operator *selector 1 "ratio"]
 ]
 
-[[InsertIO *parameters *noise *selector [["AMP"] ["SIGNAL"]]]
+[[InsertIO *parameters *noise *selector [["AMP" "GAIN"] ["SIGNAL"]]]
 	[AddParameterBlock *parameters amp *noise *selector 0 "amp"]
 ]
 
@@ -548,7 +548,7 @@ program lunar #machine := "lunar"
 	[AddParameterBlock *parameters pan *lfo *selector 0 "index"]
 ]
 
-[[InsertIO *parameters *filter *selector [["ENTER" "FREQ" "RESONANCE" "AMP" : *] *]]
+[[InsertIO *parameters *filter *selector [["ENTER" "FREQ" "RESONANCE" "AMP" "GAIN" : *] *]]
 	[AddParameterBlock *parameters freq *filter *selector 5120 "freq"]
 	[AddParameterBlock *parameters resonance *filter *selector 0 "index"]
 	[AddParameterBlock *parameters amp *filter *selector 0 "amp"]

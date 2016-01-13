@@ -659,6 +659,7 @@ program lunar #machine := "lunar"
 ]
 
 [[Lander *base *moonbase : *selector] [*moonbase * *modules : *] [*modules *base : *selector]]
+[[Lander *base *moonbase : *selector] [*moonbase * * * * *blocks : *] [*blocks *base : *selector]]
 
 [[Lunar *v *moonbase : *selector] [*moonbase *type *module *blocks] / [*module *v : *selector]]
 [[Lunar *v *moonbase : *selector] [*moonbase *parameters : *] [*parameters *base : *selector] [*base 0 *v]]

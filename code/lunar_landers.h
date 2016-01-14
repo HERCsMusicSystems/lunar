@@ -344,6 +344,17 @@ public:
 	lunar_eg_linear_expo (orbiter_core * core);
 };
 
+class lunar_vca : public orbiter {
+private:
+	double enter, amp, gain;
+public:
+	virtual int numberOfInputs (void);
+	virtual char * inputName (int ind);
+	virtual double * inputAddress (int ind);
+	virtual void move (void);
+	lunar_vca (orbiter_core * core);
+};
+
 class lunar_vca_adsr : public orbiter {
 private:
 	double enter, gateway, trigger;

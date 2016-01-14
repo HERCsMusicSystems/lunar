@@ -176,6 +176,12 @@ public:
 	eg_class (orbiter_core * core, bool linear_expo = false);
 };
 
+class vca_class : public PrologNativeOrbiterCreator {
+public:
+	virtual orbiter * create_orbiter (PrologElement * parameters);
+	vca_class (orbiter_core * core);
+};
+
 class vca_adsr_class : public PrologNativeOrbiterCreator {
 public:
 	virtual orbiter * create_orbiter (PrologElement * parameters);

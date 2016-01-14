@@ -400,8 +400,13 @@ adsr_class :: adsr_class (orbiter_core * core, bool linear) : PrologNativeOrbite
 
 orbiter * eg_class :: create_orbiter (PrologElement * parameters) {if (linear_expo) return new lunar_eg_linear_expo (core); else return new lunar_eg (core);}
 eg_class :: eg_class (orbiter_core * core, bool linear_expo) : PrologNativeOrbiterCreator (core) {this -> linear_expo = linear_expo;}
+
+orbiter * vca_class :: create_orbiter (PrologElement * parameters) {return new lunar_vca (core);}
+vca_class :: vca_class (orbiter_core * core) : PrologNativeOrbiterCreator (core) {}
+
 orbiter * vca_adsr_class :: create_orbiter (PrologElement * parameters) {return new lunar_vca_adsr (core);}
 vca_adsr_class :: vca_adsr_class (orbiter_core * core) : PrologNativeOrbiterCreator (core) {}
+
 orbiter * vca_eg_class :: create_orbiter (PrologElement * parameters) {return new lunar_vca_eg (core);}
 vca_eg_class :: vca_eg_class (orbiter_core * core) : PrologNativeOrbiterCreator (core) {}
 

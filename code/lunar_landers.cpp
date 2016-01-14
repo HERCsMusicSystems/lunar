@@ -1108,6 +1108,28 @@ lunar_eg_linear_expo :: lunar_eg_linear_expo (orbiter_core * core) : orbiter (co
 	initialise (); activate ();
 }
 
+int lunar_vca :: numberOfInputs (void) {return 3;}
+char * lunar_vca :: inputName (int ind) {
+	switch (ind) {
+	case 0: return "ENTER"; break;
+	case 1: return "AMP"; break;
+	case 2: return "GAIN"; break;
+	default: break;
+	}
+	return orbiter :: inputName (ind);
+}
+double * lunar_vca :: inputAddress (int ind) {
+	switch (ind) {
+	case 0: return & enter; break;
+	case 1: return & amp; break;
+	case 2: return & gain; break;
+	default: break;
+	}
+	return orbiter :: inputAddress (ind);
+}
+void lunar_vca :: move (void) {signal = enter * gain * core -> Amplitude (amp);}
+lunar_vca :: lunar_vca (orbiter_core * core) : orbiter (core) {enter = amp = 0.0; gain = 1.0; initialise (); activate ();}
+
 int lunar_vca_adsr :: numberOfInputs (void) {return 7;}
 char * lunar_vca_adsr :: inputName (int ind) {
 	switch (ind) {

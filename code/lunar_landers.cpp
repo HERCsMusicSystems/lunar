@@ -961,8 +961,155 @@ lunar_eg :: lunar_eg (orbiter_core * core) : orbiter (core) {
 	initialise (); activate ();
 }
 
-int lunar_vca :: numberOfInputs (void) {return 7;}
-char * lunar_vca :: inputName (int ind) {
+int lunar_eg_linear_expo :: numberOfInputs (void) {return 9;}
+char * lunar_eg_linear_expo :: inputName (int ind) {
+	switch (ind) {
+	case 0: return "TRIGGER"; break;
+	case 1: return "TIME1"; break;
+	case 2: return "TIME2"; break;
+	case 3: return "TIME3"; break;
+	case 4: return "TIME4"; break;
+	case 5: return "LEVEL1"; break;
+	case 6: return "LEVEL2"; break;
+	case 7: return "LEVEL3"; break;
+	case 8: return "LEVEL4"; break;
+	default: break;
+	}
+	return orbiter :: inputName (ind);
+}
+double * lunar_eg_linear_expo :: inputAddress (int ind) {
+	switch (ind) {
+	case 0: return & trigger; break;
+	case 1: return & time1; break;
+	case 2: return & time2; break;
+	case 3: return & time3; break;
+	case 4: return & time4; break;
+	case 5: return & level1; break;
+	case 6: return & level2; break;
+	case 7: return & level3; break;
+	case 8: return & level4; break;
+	default: break;
+	}
+	return orbiter :: inputAddress (ind);
+}
+int lunar_eg_linear_expo :: numberOfOutputs (void) {return 2;}
+char * lunar_eg_linear_expo :: outputName (int ind) {if (ind == 1) return "BUSY"; return orbiter :: outputName (ind);}
+double * lunar_eg_linear_expo :: outputAddress (int ind) {if (ind == 1) return & busy; return orbiter :: outputAddress (ind);}
+void lunar_eg_linear_expo :: move (void) {
+	if (trigger >= 16384.0) {
+		busy = 1.0;
+		if (time1 == 0.0) {
+			if (time2 == 0.0) {
+				if (time3 == 0) {SIGE (level3); stage = 4; return;}
+				SIGE (level2); stage = 3; THREVE (level3); return;
+			}
+			SIGE (level1); stage = 2; THREVE (level2); return;
+		}
+		SIGE (level4); stage = 1; THREVE (level1); return;
+	}
+	if (trigger == 0.0) {
+		if (stage < 1) {return;}
+		if (time4 == 0.0) {SIGE (level4); stage = 0; return;}
+		if (stage < 5) {stage = 5; THREVE (level4);}
+		if (signal > threshold) {
+			signal *= core -> WaitingPower (time4);
+			if (signal < threshold) {SIGE (level4); stage = 0;}
+		} else {
+			signal += core -> WaitingTime (time4);
+			if (signal > threshold) {SIGE (level4); stage = 0;}
+		}
+	} else {
+		switch (stage) {
+		case 0:
+			if (time1 == 0.0) {
+				if (time2 == 0.0) {
+					if (time3 == 0.0) {SIGE (level3); stage = 4;}
+					else {SIGE (level2); stage = 3; THREVE (level3);}
+				} else {SIGE (level1); stage = 2; THREVE (level2);}
+			} else {stage = 1; THREVE (level1);}
+			break;
+		case 1:
+			if (signal < threshold) {
+				signal += core -> WaitingTime (time1);
+				if (signal >= threshold) {
+					if (time2 == 0.0) {
+						if (time3 == 0.0) {SIGE (level3); stage = 4;}
+						else {SIGE (level2); stage = 3; THREVE (level3);}
+					} else {SIGE (level1); stage = 2; THREVE (level2);}
+				}
+			} else {
+				signal *= core -> WaitingPower (time1);
+				if (signal <= threshold) {
+					if (time2 == 0.0) {
+						if (time3 == 0.0) {SIGE (level3); stage = 4;}
+						else {SIGE (level2); stage = 3; THREVE (level3);}
+					} else {SIGE (level1); stage = 2; THREVE (level2);}
+				}
+			}
+		case 2:
+			if (signal < threshold) {
+				signal += core -> WaitingTime (time2);
+				if (signal >= threshold) {
+					if (time3 == 0.0) {SIGE (level3); stage = 4;}
+					else {SIGE (level2); stage = 3; THREVE (level3);}
+				}
+			} else {
+				signal *= core -> WaitingPower (time2);
+				if (signal <= threshold) {
+					if (time3 == 0.0) {SIGE (level3); stage = 4;}
+					else {SIGE (level2); stage = 3; THREVE (level3);}
+				}
+			}
+			break;
+		case 3:
+			if (signal < threshold) {
+				signal += core -> WaitingTime (time3);
+				if (signal >= threshold) {SIGE (level3); stage = 4;}
+			} else {
+				signal *= core -> WaitingPower (time3);
+				if (signal <= threshold) {SIGE (level3); stage = 4;}
+			}
+			break;
+		case 5:
+			threshold = (0.0 - signal) * 16384.0;
+			if (stage_between (threshold, level4, level1)) {
+				if (time1 == 0.0) {
+					if (time2 == 0.0) {
+						if (time3 == 0.0) {SIGE (level3); stage = 4;}
+						else {SIGE (level2); stage = 3; THREVE (level3);}
+					} else {SIGE (level1); stage = 2; THREVE (level2);}
+				} else {stage = 1;}
+				return;
+			}
+			if (stage_between (threshold, level1, level2)) {
+				if (time2 == 0.0) {
+					if (time3 == 0.0) {SIGE (level3); stage = 4;}
+					else {SIGE (level2); stage = 3; THREVE (level3);}
+				} else {stage = 2;}
+				return;
+			}
+			if (stage_between (threshold, level2, level3)) {
+				if (time3 == 0.0) {SIGE (level3); stage = 4;}
+				else {SIGE (level2); stage = 3; THREVE (level3);}
+				return;
+			}
+			break;
+		default: break;
+		}
+	}
+}
+lunar_eg_linear_expo :: lunar_eg_linear_expo (orbiter_core * core) : orbiter (core) {
+	trigger = 0.0;
+	time1 = time2 = time3 = time4 = 0.0;
+	level1 = level2 = level3 = 0.0;
+	level4 = -16384.0;
+	busy = 0.0;
+	stage = 0;
+	initialise (); activate ();
+}
+
+int lunar_vca_adsr :: numberOfInputs (void) {return 7;}
+char * lunar_vca_adsr :: inputName (int ind) {
 	switch (ind) {
 	case 0: return "ENTER"; break;
 	case 1: return "GATEWAY"; break;
@@ -975,7 +1122,7 @@ char * lunar_vca :: inputName (int ind) {
 	}
 	return orbiter :: inputName (ind);
 }
-double * lunar_vca :: inputAddress (int ind) {
+double * lunar_vca_adsr :: inputAddress (int ind) {
 	switch (ind) {
 	case 0: return & enter; break;
 	case 1: return & gateway; break;
@@ -988,17 +1135,17 @@ double * lunar_vca :: inputAddress (int ind) {
 	}
 	return orbiter :: inputAddress (ind);
 }
-int lunar_vca :: numberOfOutputs (void) {return 3;}
-char * lunar_vca :: outputName (int ind) {
+int lunar_vca_adsr :: numberOfOutputs (void) {return 3;}
+char * lunar_vca_adsr :: outputName (int ind) {
 	switch (ind) {
 	case 0: return "SIGNAL"; break;
 	case 1: return "ENVELOPE"; break;
 	case 2: return "BUSY"; break;
 	default: break;
 	}
-	return lunar_vca :: inputName (ind);
+	return lunar_vca_adsr :: inputName (ind);
 }
-double * lunar_vca :: outputAddress (int ind) {
+double * lunar_vca_adsr :: outputAddress (int ind) {
 	switch (ind) {
 	case 0: return & signal; break;
 	case 1: return & envelope; break;
@@ -1009,7 +1156,7 @@ double * lunar_vca :: outputAddress (int ind) {
 }
 #define RETVCA signal = enter * envelope * core -> Amplitude (gateway); return;
 #define ENVE(level) envelope = (16384.0 + level) * DIV_16384;
-void lunar_vca :: move (void) {
+void lunar_vca_adsr :: move (void) {
 	if (trigger >= 16384.0) {
 		busy = 1.0;
 		if (attack == 0.0) {
@@ -1057,15 +1204,15 @@ void lunar_vca :: move (void) {
 	}
 	RETVCA;
 }
-lunar_vca :: lunar_vca (orbiter_core * core) : orbiter (core) {
+lunar_vca_adsr :: lunar_vca_adsr (orbiter_core * core) : orbiter (core) {
 	enter = gateway = trigger = attack = decay = sustain = release = 0.0;
 	envelope = busy = 0.0;
 	stage = 0;
 	initialise (); activate ();
 }
 
-int lunar_vcaeg :: numberOfInputs (void) {return 11;}
-char * lunar_vcaeg :: inputName (int ind) {
+int lunar_vca_eg :: numberOfInputs (void) {return 11;}
+char * lunar_vca_eg :: inputName (int ind) {
 	switch (ind) {
 	case 0: return "ENTER"; break;
 	case 1: return "GATEWAY"; break;
@@ -1082,7 +1229,7 @@ char * lunar_vcaeg :: inputName (int ind) {
 	}
 	return orbiter :: inputName (ind);
 }
-double * lunar_vcaeg :: inputAddress (int ind) {
+double * lunar_vca_eg :: inputAddress (int ind) {
 	switch (ind) {
 	case 0: return & enter; break;
 	case 1: return & gateway; break;
@@ -1099,8 +1246,8 @@ double * lunar_vcaeg :: inputAddress (int ind) {
 	}
 	return orbiter :: inputAddress (ind);
 }
-int lunar_vcaeg :: numberOfOutputs (void) {return 3;}
-char * lunar_vcaeg :: outputName (int ind) {
+int lunar_vca_eg :: numberOfOutputs (void) {return 3;}
+char * lunar_vca_eg :: outputName (int ind) {
 	switch (ind) {
 	case 0: return "SIGNAL"; break;
 	case 1: return "ENVELOPE"; break;
@@ -1109,7 +1256,7 @@ char * lunar_vcaeg :: outputName (int ind) {
 	}
 	return orbiter :: outputName (ind);
 }
-double * lunar_vcaeg :: outputAddress (int ind) {
+double * lunar_vca_eg :: outputAddress (int ind) {
 	switch (ind) {
 	case 0: return & signal; break;
 	case 1: return & envelope; break;
@@ -1118,7 +1265,7 @@ double * lunar_vcaeg :: outputAddress (int ind) {
 	}
 	return orbiter :: outputAddress (ind);
 }
-void lunar_vcaeg :: move (void) {
+void lunar_vca_eg :: move (void) {
 	if (trigger >= 16384.0) {
 		busy = 1.0;
 		if (time1 == 0.0) {
@@ -1222,7 +1369,7 @@ void lunar_vcaeg :: move (void) {
 	}
 	RETVCA;
 }
-lunar_vcaeg :: lunar_vcaeg (orbiter_core * core) : orbiter (core) {
+lunar_vca_eg :: lunar_vca_eg (orbiter_core * core) : orbiter (core) {
 	enter = gateway = trigger = 0.0;
 	time1 = time2 = time3 = time4 = 0.0;
 	level1 = level2 = level3 = 0.0;

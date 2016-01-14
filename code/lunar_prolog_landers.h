@@ -171,8 +171,9 @@ public:
 
 class eg_class : public PrologNativeOrbiterCreator {
 public:
+	bool linear_expo;
 	virtual orbiter * create_orbiter (PrologElement * parameters);
-	eg_class (orbiter_core * core);
+	eg_class (orbiter_core * core, bool linear_expo = false);
 };
 
 class vca_adsr_class : public PrologNativeOrbiterCreator {
@@ -181,10 +182,10 @@ public:
 	vca_adsr_class (orbiter_core * core);
 };
 
-class vcaeg_class : public PrologNativeOrbiterCreator {
+class vca_eg_class : public PrologNativeOrbiterCreator {
 public:
 	virtual orbiter * create_orbiter (PrologElement * parameters);
-	vcaeg_class (orbiter_core * core);
+	vca_eg_class (orbiter_core * core);
 };
 
 class delay_class : public PrologNativeOrbiterCreator {

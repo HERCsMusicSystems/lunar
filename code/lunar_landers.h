@@ -325,7 +325,26 @@ public:
 	lunar_eg (orbiter_core * core);
 };
 
-class lunar_vca : public orbiter {
+class lunar_eg_linear_expo : public orbiter {
+private:
+	double time1, time2, time3, time4;
+	double level1, level2, level3, level4;
+	double trigger;
+	double busy;
+	int stage;
+	double threshold;
+public:
+	virtual int numberOfInputs (void);
+	virtual char * inputName (int ind);
+	virtual double * inputAddress (int ind);
+	virtual int numberOfOutputs (void);
+	virtual char * outputName (int ind);
+	virtual double * outputAddress (int ind);
+	virtual void move (void);
+	lunar_eg_linear_expo (orbiter_core * core);
+};
+
+class lunar_vca_adsr : public orbiter {
 private:
 	double enter, gateway, trigger;
 	double attack, decay, sustain, release;
@@ -340,10 +359,10 @@ public:
 	virtual char * outputName (int ind);
 	virtual double * outputAddress (int ind);
 	virtual void move (void);
-	lunar_vca (orbiter_core * core);
+	lunar_vca_adsr (orbiter_core * core);
 };
 
-class lunar_vcaeg : public orbiter {
+class lunar_vca_eg : public orbiter {
 private:
 	double enter, gateway, trigger;
 	double time1, time2, time3, time4;
@@ -359,7 +378,7 @@ public:
 	virtual char * outputName (int ind);
 	virtual double * outputAddress (int ind);
 	virtual void move (void);
-	lunar_vcaeg (orbiter_core * core);
+	lunar_vca_eg (orbiter_core * core);
 };
 
 class lunar_delay : public orbiter {

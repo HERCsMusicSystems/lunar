@@ -310,8 +310,9 @@ PrologNativeCode * PrologLunarServiceClass :: getNativeCode (char * name) {
 	if (strcmp (name, "adsr") == 0) return new adsr_class (& core);
 	if (strcmp (name, "adsr-linear") == 0) return new adsr_class (& core, true);
 	if (strcmp (name, "eg") == 0) return new eg_class (& core);
+	if (strcmp (name, "eg-linear-expo") == 0) return new eg_class (& core, true);
 	if (strcmp (name, "vca-adsr") == 0) return new vca_adsr_class (& core);
-	if (strcmp (name, "vcaeg") == 0) return new vcaeg_class (& core);
+	if (strcmp (name, "vca-eg") == 0) return new vca_eg_class (& core);
 	if (strcmp (name, "delay") == 0) return new delay_class (& core);
 	if (strcmp (name, "freeverb") == 0) return new freeverb_class (& core);
 	if (strcmp (name, "chorus") == 0) return new chorus_class (& core);

@@ -11,7 +11,7 @@ program lunar #machine := "lunar"
 				noise orbiter X Y modulation vibrato tremolo wahwah range
 				core base moonbase arpeggiator sequencer polysequencer operator parameter_block auto auto_data key_map velocity_map impulse
 				trigger inactive_trigger delay1 delay2 mixer stereo_mixer gateway stereo_gateway amplifier stereo_amplifier volume mono_volume
-				lfo envelope adsr eg egscaling egscal vca vcaeg vco DCOffsetFilter DCOffsetFilterMono
+				lfo envelope adsr adsr-linear eg egscaling egscal vca vcaeg vco DCOffsetFilter DCOffsetFilterMono
 				index shift bias
 				square_operator fm4 fm6 dx9 dx7 saw_operator noise_operator sampler_operator sampler
 				sensitivity sens filter delay reverb freeverb chorus stereo_chorus
@@ -82,6 +82,7 @@ program lunar #machine := "lunar"
 #machine mono_volume := "mono_volume"
 #machine lfo := "lfo"
 #machine adsr := "adsr"
+#machine adsr-linear := "adsr-linear"
 #machine eg := "eg"
 #machine vca := "vca"
 #machine vcaeg := "vcaeg"

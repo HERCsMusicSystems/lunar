@@ -653,7 +653,87 @@ double * lunar_adsr :: inputAddress (int ind) {
 int lunar_adsr :: numberOfOutputs (void) {return 2;}
 char * lunar_adsr :: outputName (int ind) {if (ind == 1) return "BUSY"; return orbiter :: outputName (ind);}
 double * lunar_adsr :: outputAddress (int ind) {if (ind == 1) return & busy; return orbiter :: outputAddress (ind);}
+#define SIGE(level) signal = (16384.0 + level) * DIV_16384;
+#define THREVE(level) threshold = (16384.0 + level) * DIV_16384; if (threshold < core -> amplitude_zero) threshold = core -> amplitude_zero;
 void lunar_adsr :: move (void) {
+	if (trigger >= 16384.0) {
+		busy = 1.0;
+		if (attack == 0.0) {
+			if (decay == 0.0) {stage = 3; SIGE (sustain); return;}
+			stage = 2; signal = 1.0; THREVE (sustain); return;
+		}
+		stage = 1; signal = 0.0; return;
+	}
+	if (trigger == 0.0) {
+		if (stage == 0) {return;}
+		if (stage == 4) {
+			signal *= core -> WaitingPower (release);
+			if (signal <= core -> amplitude_zero) {stage = 0; signal = 0.0; busy = 0.0;}
+			return;
+		}
+		if (release <= 0.0) {stage = 0; signal = 0.0; busy = 0.0; return;}
+		stage = 4; return;
+	} else {
+		switch (stage) {
+		case 0:
+			busy = 1.0;
+			if (attack == 0.0) {
+				if (decay == 0.0) {stage = 3; SIGE (sustain); return;}
+				stage = 2; signal = 1.0; THREVE (sustain); return;
+			}
+			stage = 1; signal = core -> WaitingTime (attack); return;
+			break;
+		case 1:
+			signal += core -> WaitingTime (attack);
+			if (signal >= 1.0) {
+				if (decay == 0.0) {stage = 3; SIGE (sustain); return;}
+				stage = 2; signal = 1.0; THREVE (sustain); return;
+			}
+			break;
+		case 2:
+			signal *= core -> WaitingPower (decay);
+			if (signal <= threshold) stage = 3;
+			return; break;
+		case 3: return; break;
+		case 4: stage = 1; return; break;
+		default: break;
+		}
+	}
+}
+lunar_adsr :: lunar_adsr (orbiter_core * core) : orbiter (core) {
+	trigger = attack = decay = sustain = release = 0.0;
+	busy = 0.0;
+	stage = 0;
+	initialise (); activate ();
+}
+
+int lunar_adsr_linear :: numberOfInputs (void) {return 5;}
+char * lunar_adsr_linear :: inputName (int ind) {
+	switch (ind) {
+	case 0: return "TRIGGER"; break;
+	case 1: return "ATTACK"; break;
+	case 2: return "DECAY"; break;
+	case 3: return "SUSTAIN"; break;
+	case 4: return "RELEASE"; break;
+	default: break;
+	}
+	return orbiter :: inputName (ind);
+}
+double * lunar_adsr_linear :: inputAddress (int ind) {
+	switch (ind) {
+	case 0: return & trigger; break;
+	case 1: return & attack; break;
+	case 2: return & decay; break;
+	case 3: return & sustain; break;
+	case 4: return & release; break;
+	default: break;
+	}
+	return orbiter :: inputAddress (ind);
+}
+int lunar_adsr_linear :: numberOfOutputs (void) {return 2;}
+char * lunar_adsr_linear :: outputName (int ind) {if (ind == 1) return "BUSY"; return orbiter :: outputName (ind);}
+double * lunar_adsr_linear :: outputAddress (int ind) {if (ind == 1) return & busy; return orbiter :: outputAddress (ind);}
+void lunar_adsr_linear :: move (void) {
 	if (trigger >= 16384.0) {
 		busy = 1.0;
 		if (attack == 0.0) {
@@ -722,7 +802,7 @@ void lunar_adsr :: move (void) {
 		}
 	}
 }
-lunar_adsr :: lunar_adsr (orbiter_core * core) : orbiter (core) {
+lunar_adsr_linear :: lunar_adsr_linear (orbiter_core * core) : orbiter (core) {
 	attack = decay = sustain = release = trigger = busy = 0.0;
 	signal = -16384.0; time = busy = 0.0;
 	stage = 0;

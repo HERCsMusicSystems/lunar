@@ -395,8 +395,8 @@ mono_volume_class :: mono_volume_class (orbiter_core * core) : PrologNativeOrbit
 orbiter * lfo_class :: create_orbiter (PrologElement * parameters) {return new lunar_lfo (core);}
 lfo_class :: lfo_class (orbiter_core * core) : PrologNativeOrbiterCreator (core) {}
 
-orbiter * adsr_class :: create_orbiter (PrologElement * parameters) {return new lunar_adsr (core);}
-adsr_class :: adsr_class (orbiter_core * core) : PrologNativeOrbiterCreator (core) {}
+orbiter * adsr_class :: create_orbiter (PrologElement * parameters) {if (linear) return new lunar_adsr_linear (core); else return new lunar_adsr (core);}
+adsr_class :: adsr_class (orbiter_core * core, bool linear) : PrologNativeOrbiterCreator (core) {this -> linear = linear;}
 
 orbiter * eg_class :: create_orbiter (PrologElement * parameters) {return new lunar_eg (core);}
 eg_class :: eg_class (orbiter_core * core) : PrologNativeOrbiterCreator (core) {}

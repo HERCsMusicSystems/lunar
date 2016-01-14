@@ -164,8 +164,9 @@ public:
 
 class adsr_class : public PrologNativeOrbiterCreator {
 public:
+	bool linear;
 	virtual orbiter * create_orbiter (PrologElement * parameters);
-	adsr_class (orbiter_core * core);
+	adsr_class (orbiter_core * core, bool linear = false);
 };
 
 class eg_class : public PrologNativeOrbiterCreator {

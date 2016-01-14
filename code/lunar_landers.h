@@ -271,6 +271,23 @@ public:
 
 class lunar_adsr : public orbiter {
 private:
+	double attack, decay, sustain, release;
+	double trigger, busy;
+	int stage;
+	double threshold;
+public:
+	virtual int numberOfInputs (void);
+	virtual char * inputName (int ind);
+	virtual double * inputAddress (int ind);
+	virtual int numberOfOutputs (void);
+	virtual char * outputName (int ind);
+	virtual double * outputAddress (int ind);
+	virtual void move (void);
+	lunar_adsr (orbiter_core * core);
+};
+
+class lunar_adsr_linear : public orbiter {
+private:
 	double attack;
 	double decay;
 	double sustain;
@@ -287,7 +304,7 @@ public:
 	virtual char * outputName (int ind);
 	virtual double * outputAddress (int ind);
 	virtual void move (void);
-	lunar_adsr (orbiter_core * core);
+	lunar_adsr_linear (orbiter_core * core);
 };
 
 class lunar_eg : public orbiter {

@@ -1009,7 +1009,6 @@ double * lunar_vca :: outputAddress (int ind) {
 }
 #define RETVCA signal = enter * envelope * core -> Amplitude (gateway); return;
 #define ENVE(level) envelope = (16384.0 + level) * DIV_16384;
-#define THREVE(level) threshold = (16384.0 + level) * DIV_16384; if (threshold < core -> amplitude_zero) threshold = core -> amplitude_zero;
 void lunar_vca :: move (void) {
 	if (trigger >= 16384.0) {
 		busy = 1.0;

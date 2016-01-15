@@ -351,6 +351,7 @@ program lunar #machine := "lunar"
 	[MIDI_CHANNELS *index *machine]
 ]
 
+[[BuildIntegratedAlarm] [BuildIntegrated * Alarm integrated_alarm AlarmBlocks]]
 [[BuildIntegratedAlarm *base] [BuildIntegrated *base Alarm integrated_alarm AlarmBlocks]]
 
 [[Alarm volume]]

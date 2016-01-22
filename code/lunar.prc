@@ -27,7 +27,7 @@ program lunar #machine := "lunar"
 				Lunar Lander Activate Deactivate
 				Connect ConnectStereo ConnectDryWet Disconnect DisconnectStereo DisconnectDryWet
 				AddParameterBlock AddNamedParameterBlock
-				Moonbase AddModule Insert InsertPB InsertController InsertIO InsertBlock Store Restore SubRestore
+				Moonbase AddModule Insert InsertPB InsertController InsertFor InsertIO InsertBlock Store Restore SubRestore
 				Moons AllocateChannel CloseAllMoons ConnectAllMoons
 				Cbb Cb C C# Cx
 				Dbb Db D D# Dx
@@ -51,6 +51,7 @@ program lunar #machine := "lunar"
 				radar reactor commander Core Midi
 				BuildIntegrated
 				BuildIntegratedAlarm integrated_alarm Alarm AlarmBlocks
+				Phobos
 			]
 
 #machine small_keyboard := "small_keyboard"
@@ -483,6 +484,14 @@ program lunar #machine := "lunar"
 	[InsertIO *parameters *operator *selector *io]
 ]
 
+[[InsertFor *base : *selector]
+	[APPEND *path [*input] *selector]
+	[*base *parameters *modules : *]
+	[*modules *module : *path]
+	[*module : *i]
+	[AddParameterBlock *parameters *input *module *path 0 "index"]
+]
+
 [[InsertIO *parameters *operator *selector [["FREQ" "AMP" "GAIN" "RATIO" "INDEX" : *] *o]]
 	[AddParameterBlock *parameters freq *operator *selector 0 "freq"]
 	[AddParameterBlock *parameters amp *operator *selector 0 "amp"]
@@ -546,10 +555,6 @@ program lunar #machine := "lunar"
 	[AddParameterBlock *parameters pulse *lfo *selector 0 "index"]
 	[AddParameterBlock *parameters phase *lfo *selector 0 "index"]
 	[AddParameterBlock *parameters sync *lfo *selector 0 "onoff"]
-	[AddParameterBlock *parameters vibrato *lfo *selector 0 "index"]
-	[AddParameterBlock *parameters tremolo *lfo *selector 0 "index"]
-	[AddParameterBlock *parameters wahwah *lfo *selector 0 "index"]
-	[AddParameterBlock *parameters pan *lfo *selector 0 "index"]
 ]
 
 [[InsertIO *parameters *filter *selector [["ENTER" "FREQ" "RESONANCE" "AMP" "GAIN" : *] *]]
@@ -618,7 +623,7 @@ program lunar #machine := "lunar"
 	[addcl [[*parameters *pb : *selector]]]
 ]
 
-[[InsertIO *parameters *op *selector [["ALGO" "TRIGGER" "FREQ1" "AMP1" "RATIO1" "FEEDBACK1" "FREQ2" "AMP2" "RATIO2" "FEEDBACK2" "FREQ3" "AMP3" "RATIO3" "FEEDBACK3" "FREQ4" "AMP4" "RATIO4" "FEEDBACK4"] ["SIGNAL"]]]
+[[InsertIO *parameters *op *selector [["ALGO" "TRIGGER" "FREQ1" "AMP1" "GAIN1" "RATIO1" "FEEDBACK1" "FREQ2" "AMP2" "GAIN2" "RATIO2" "FEEDBACK2" "FREQ3" "AMP3" "GAIN3" "RATIO3" "FEEDBACK3" "FREQ4" "AMP4" "GAIN4" "RATIO4" "FEEDBACK4"] ["SIGNAL"]]]
 	[AddParameterBlock *parameters algo *op *selector 0 "fm4algo"]
 	[APPEND *selector [1] *selector1]
 	[AddParameterBlock *parameters freq "freq1" *op *selector1 0 "freq"]

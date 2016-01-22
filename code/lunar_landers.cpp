@@ -1969,10 +1969,11 @@ double * lunar_sensitivity :: inputAddress (int ind) {
 void lunar_sensitivity :: move (void) {
 	if (original_enter == enter && original_bp == bp && original_lc == lc && original_rc == rc) return;
 	original_enter = enter; original_bp = bp; original_lc = lc; original_rc = rc;
-	if (enter >= bp) {signal = (enter - bp) * rc / 128.0; return;}
-	signal = (bp - enter) * lc / 128.0;
+	if (enter >= bp) {signal = (enter - bp) * rc * gain; return;}
+	signal = (bp - enter) * lc * gain;
 }
-lunar_sensitivity :: lunar_sensitivity (orbiter_core * core) : orbiter (core) {
+lunar_sensitivity :: lunar_sensitivity (orbiter_core * core, double divisor) : orbiter (core) {
+	this -> gain = divisor > 0.0 ? 1.0 / divisor : divisor;
 	original_enter = enter = 0.0;
 	original_bp = bp = 0.0;
 	original_lc = lc = -128.0;

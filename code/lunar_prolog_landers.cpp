@@ -440,7 +440,15 @@ drywet_class :: drywet_class (orbiter_core * core) : PrologNativeOrbiterCreator 
 orbiter * drywet_mono_class :: create_orbiter (PrologElement * parameters) {return new lunar_drywet_mono (core);}
 drywet_mono_class :: drywet_mono_class (orbiter_core * core) : PrologNativeOrbiterCreator (core) {}
 
-orbiter * sensitivity_class :: create_orbiter (PrologElement * parameters) {return new lunar_sensitivity (core);}
+orbiter * sensitivity_class :: create_orbiter (PrologElement * parameters) {
+	PrologElement * divisor = 0;
+	while (parameters -> isPair ()) {
+		PrologElement * el = parameters -> getLeft ();
+		if (el -> isNumber ()) divisor = el;
+		parameters = parameters -> getRight ();
+	}
+	return new lunar_sensitivity (core, divisor == 0 ? 128.0 : divisor -> getNumber ());
+}
 sensitivity_class :: sensitivity_class (orbiter_core * core) : PrologNativeOrbiterCreator (core) {}
 
 static char * moonbase_action_code = "Moonbase Action";

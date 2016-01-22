@@ -859,7 +859,7 @@ Core also functions as an audio source (connected directly to the sound hardware
 <div class="doc_predicate">
     <a id="predicate_sensitivity">
         <div class="doc_predicate_header">
-            [sensitivity module] => Creates a sensitivity processing module.<br />
+            [sensitivity module divisor] => Creates a sensitivity processing module. The divisor parameter is optional (default = 128).<br />
             <b>Note:</b> module adheres to <a href="#common_behaviour_of_predicates">Common Behaviour</a>.<br />
         </div>
         <div class="doc_predicate_body">
@@ -867,8 +867,8 @@ Core also functions as an audio source (connected directly to the sound hardware
             Processes the input signal to form two slopes with a breakpoint.
             The input signal value equal to <b>breakpoint</b> produces ZERO.
             Lower values form left slope while higher values form right slope.
-            Both <b>left</b> and <b>right</b> inputs determine the slope step per 128.
-            In other words, the value of 128 at either <b>left</b> or <b>right</b> input
+            Both <b>left</b> and <b>right</b> inputs determine the slope step per <b>divisor value</b> (default = 128).
+            In other words, the value of the divisor at either <b>left</b> or <b>right</b> input
             generate 45 degrees slopes.
         </div>
     </a>

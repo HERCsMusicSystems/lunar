@@ -593,12 +593,13 @@ private:
 	double enter;
 	double bp, lc, rc;
 	double original_enter, original_bp, original_lc, original_rc;
+	double gain;
 public:
 	virtual int numberOfInputs (void);
 	virtual char * inputName (int ind);
 	virtual double * inputAddress (int ind);
 	virtual void move (void);
-	lunar_sensitivity (orbiter_core * core);
+	lunar_sensitivity (orbiter_core * core, double divisor = 128.0);
 };
 
 class lunar_filter : public orbiter {

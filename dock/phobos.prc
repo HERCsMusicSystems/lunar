@@ -2,6 +2,187 @@
 import studio
 import lunar
 
+program phobos [BuildPhobos BuildPhobosPart]
+
+[[BuildPhobos *polyphony] / [BuildPhobos *polyphony * * *]]
+[[BuildPhobos *polyphony *Phobos *PhobosCB *volume]
+	[Moonbase *Phobos *PhobosCB Phobos *volume]
+	[moonbase *CB] [key_map *key_map] [arpeggiator *PhobosCB *CB]
+	[auto_data *XData] [parameter_block *X "index"] [*XData *X]
+	[auto_data *YData] [parameter_block *Y "index"] [*YData *Y]
+	[parameter_block *AutoCtrl "index"] [*XData "control" *AutoCtrl] [*YData "control" *AutoCtrl]
+	[parameter_block *pitch "index"]
+	[lfo *lfo1] [lfo *lfo2]
+	[gateway *lfo1freq1] [gateway *lfo1freq2] [gateway *lfo1freq3] [gateway *lfo1freq4]
+	[*lfo1freq1 "enter" *lfo1 "vibrato"] [*lfo1freq2 "enter" *lfo1 "vibrato"] [*lfo1freq3 "enter" *lfo1 "vibrato"] [*lfo1freq4 "enter" *lfo1 "vibrato"]
+	;==============
+	[stereo_pan *pan] [delay *delay] [drywet *drywet] [volume *volume] [stereo_chorus *chorus]
+	[ConnectStereo *pan *chorus] [ConnectStereo *delay *pan] [ConnectDryWet *drywet *pan *delay] [ConnectStereo *volume *drywet]
+	[Insert *volume *Phobos core]
+	[Insert *pan *Phobos core]
+	[Insert *chorus *Phobos core chorus]
+	[Insert *drywet *Phobos core delay]
+	[Insert *delay *Phobos core delay]
+	[InsertPB *X *Phobos core X]
+	[InsertPB *Y *Phobos core Y]
+	[InsertPB *pitch *Phobos core pitch]
+	[InsertPB *AutoCtrl *Phobos core auto]
+	[Insert *PhobosCB *Phobos arpeggiator]
+	[Insert *lfo1 *Phobos lfo 1]
+	[InsertFor *Phobos lfo 1 vibrato]
+	[Insert *lfo2 *Phobos lfo 2]
+	[InsertFor *Phobos lfo 2 vibrato]
+	[InsertFor *Phobos lfo 2 tremolo]
+	;==================
+	[REPEAT *polyphony [BuildPhobosPart *Phobos *CB *chorus *key_map *XData *YData *lfo1 *lfo2
+						*lfo1freq1 *lfo1freq2 *lfo1freq3 *lfo1freq4]]
+	;==================
+	[Insert *lfo1freq1 *Phobos operator 1 lfo vibrato]
+	[Insert *lfo1freq2 *Phobos operator 2 lfo vibrato]
+	[Insert *lfo1freq3 *Phobos operator 3 lfo vibrato]
+	[Insert *lfo1freq4 *Phobos operator 4 lfo vibrato]
+]
+
+[[BuildPhobosPart *Phobos *cb *line *key_map *XData *YData *lfo1 *lfo2
+						*lfo1freq1 *lfo1freq2 *lfo1freq3 *lfo1freq4]
+	[trigger *trigger *key_map] [*cb *trigger]
+	[fm4 *fm] [filter *filter] [adsr *adsr]
+	[*adsr "trigger" *trigger "trigger"] [*trigger "busy" *adsr "busy"]
+	[*filter *fm] [*filter "gain" *adsr] [*line *filter]
+	[*lfo1 "trigger" *trigger "trigger"] [*lfo2 "trigger" *trigger "trigger"]
+	;=============
+	;====> KEY FREQ SENSITIVITY
+	[sensitivity *freq1] [sensitivity *freq2] [sensitivity *freq3] [sensitivity *freq4]
+	[*freq1 "signal" *trigger "key"] [*freq2 "signal" *trigger "key"] [*freq3 "signal" *trigger "key"] [*freq4 "signal" *trigger "key"]
+	[*fm "freq1" *freq1] [*fm "freq2" *freq2] [*fm "freq3" *freq3] [*fm "freq4" *freq4]
+	;====> KEY AMP SENSITIVITY
+	[sensitivity *amp1] [sensitivity *amp2] [sensitivity *amp3] [sensitivity *amp4]
+	[*amp1 "signal" *trigger "key"] [*amp2 "signal" *trigger "key"] [*amp3 "signal" *trigger "key"] [*amp4 "signal" *trigger "key"]
+	[*fm "amp1" *amp1] [*fm "amp2" *amp2] [*fm "amp3" *amp3] [*fm "amp4" *amp4]
+	;====> VELOCITY AMP SENSITIVITY
+	[sensitivity *velocity1] [sensitivity *velocity2] [sensitivity *velocity3] [sensitivity *velocity4]
+	[*velocity1 "signal" *trigger "velocity"] [*velocity2 "signal" *trigger "velocity"] [*velocity3 "signal" *trigger "velocity"] [*velocity4 "signal" *trigger "velocity"]
+	[*fm "amp1" *velocity1] [*fm "amp2" *velocity2] [*fm "amp3" *velocity3] [*fm "amp4" *velocity4]
+	;====> AMP EG
+	[eg *ampeg1] [eg *ampeg2] [eg *ampeg3] [eg *ampeg4]
+	[*ampeg1 "trigger" *trigger "trigger"] [*ampeg2 "trigger" *trigger "trigger"] [*ampeg3 "trigger" *trigger "trigger"] [*ampeg4 "trigger" *trigger "trigger"]
+	[*fm "amp1" *ampeg1] [*fm "amp2" *ampeg2] [*fm "amp3" *ampeg3] [*fm "amp4" *ampeg4]
+	;====> FREQ EG SENSITIVITY (including filter)
+	[eg *freqeg] [gateway *freqeg1] [gateway *freqeg2] [gateway *freqeg3] [gateway *freqeg4] [gateway *freqegf]
+	[*freqeg1 *freqeg] [*freqeg2 *freqeg] [*freqeg3 *freqeg] [*freqeg4 *freqeg] [*freqegf *freqeg]
+	[*freqeg "trigger" *trigger "trigger"] [*fm "freq1" *freqeg1] [*fm "freq2" *freqeg2] [*fm "freq3" *freqeg3] [*fm "freq4" *freqeg4] [*filter "freq" *freqegf]
+	;====> X/Y AMP GAIN SENSITIVITY
+	[sensitivity *xamp1 2097152] [sensitivity *xamp2 2097152] [sensitivity *xamp3 2097152] [sensitivity *xamp4 2097152]
+	[sensitivity *yamp1 2097152] [sensitivity *yamp2 2097152] [sensitivity *yamp3 2097152] [sensitivity *yamp4 2097152]
+	[auto *vx *XData] [*vx "trigger" *trigger "trigger"] [*XData "trigger" *trigger "trigger"]
+	[auto *vy *YData] [*vy "trigger" *trigger "trigger"] [*YData "trigger" *trigger "trigger"]
+	[*xamp1 *vx] [*xamp2 *vx] [*xamp3 *vx] [*xamp4 *vx] [*yamp1 *vy] [*yamp2 *vy] [*yamp3 *vy] [*yamp4 *vy]
+	[*fm "gain1" *xamp1] [*fm "gain2" *xamp2] [*fm "gain3" *xamp3] [*fm "gain4" *xamp4] [*fm "gain1" *yamp1] [*fm "gain2" *yamp2] [*fm "gain3" *yamp3] [*fm "gain4" *yamp4]
+	[parameter_block *gain1] [*gain1 1] [*fm "gain1" *gain1] [*fm "gain2" *gain1] [*fm "gain3" *gain1] [*fm "gain4" *gain1]
+	;====> LFO SENSITIVITY
+	[*fm "freq1" *lfo1freq1] [*fm "freq2" *lfo1freq2] [*fm "freq3" *lfo1freq3] [*fm "freq4" *lfo1freq4]
+	;====> FILTER KEY FREQ SENSITIVITY
+	[sensitivity *filter_key] [*filter_key "signal" *trigger "key"] [*filter "freq" *filter_key]
+	;=============
+	[Insert *fm *Phobos operator]
+	[Insert *ampeg1 *Phobos operator 1 eg amp] [Insert *ampeg2 *Phobos operator 2 eg amp] [Insert *ampeg3 *Phobos operator 3 eg amp] [Insert *ampeg4 *Phobos operator 4 eg amp]
+	[Insert *freqeg1 *Phobos operator 1 eg freq] [Insert *freqeg2 *Phobos operator 3 eg freq] [Insert *freqeg3 *Phobos operator 3 eg freq] [Insert *freqeg4 *Phobos operator 4 eg freq]
+	[Insert *freq1 *Phobos operator 1 key freq] [Insert *freq2 *Phobos operator 2 key freq] [Insert *freq3 *Phobos operator 3 key freq] [Insert *freq4 *Phobos operator 4 key freq]
+	[Insert *amp1 *Phobos operator 1 key amp] [Insert *amp2 *Phobos operator 2 key amp] [Insert *amp3 *Phobos operator 3 key amp] [Insert *amp4 *Phobos operator 4 key amp]
+	[Insert *velocity1 *Phobos operator 1 velocity] [Insert *velocity2 *Phobos operator 2 velocity] [Insert *velocity3 *Phobos operator 3 velocity] [Insert *velocity4 *Phobos operator 4 velocity]
+	[Insert *xamp1 *Phobos operator 1 X] [Insert *xamp2 *Phobos operator 2 X] [Insert *xamp3 *Phobos operator 3 X] [Insert *xamp4 *Phobos operator 4 X]
+	[Insert *yamp1 *Phobos operator 1 Y] [Insert *yamp2 *Phobos operator 2 Y] [Insert *yamp3 *Phobos operator 3 Y] [Insert *yamp4 *Phobos operator 4 Y]
+	[Insert *filter *Phobos filter]
+	[Insert *freqegf *Phobos filter eg]
+	[Insert *filter_key *Phobos filter key]
+	[Insert *adsr *Phobos adsr amp]
+	[Insert *freqeg *Phobos adsr freq]
+	[Insert *trigger *Phobos portamento]
+	[AddModule *vx *Phobos]
+	[AddModule *vy *Phobos]
+]
+end .
+
+
+	[Insert *egscal1 *Phobos operator 1 key egscal]
+	[Insert *egscal2 *Phobos operator 2 key egscal]
+	[Insert *egscal3 *Phobos operator 3 key egscal]
+	[Insert *egscal4 *Phobos operator 4 key egscal]
+	[Insert *noise *Phobos noise]
+	[Insert *noiseeg *Phobos noise]
+	[Insert *egscal *Phobos adsr 1 egscal]
+	[Insert *egscalfreq *Phobos adsr 2 egscal]
+
+
+	[trigger *trigger *mapper]
+	[fm4 *op] [noise_operator *noise]
+	[filter *filter]
+	[adsr *adsr]
+	[sensitivity *freq1] [sensitivity *freq2] [sensitivity *freq3] [sensitivity *freq4]
+	[eg *ampeg1] [eg *ampeg2] [eg *ampeg3] [eg *ampeg4] [eg *noiseeg]
+	[eg *freqeg] [gateway *freqeg1] [gateway *freqeg2] [gateway *freqeg3] [gateway *freqeg4] [gateway *filtereg]
+	[sensitivity *velocity1] [sensitivity *velocity2] [sensitivity *velocity3] [sensitivity *velocity4]
+	[sensitivity *key1] [sensitivity *key2] [sensitivity *key3] [sensitivity *key4]
+	[sensitivity *egscal] [sensitivity *egscalfreq] [sensitivity *egscal1] [sensitivity *egscal2] [sensitivity *egscal3] [sensitivity *egscal4]
+	[sensitivity *filter_key]
+
+	[*PhobosCB *trigger]
+	[*adsr "trigger" *trigger "delay1"]
+	[*freqeg "trigger" *trigger "trigger"] [*noiseeg "trigger" *trigger "delay1"]
+	[*ampeg1 "trigger" *trigger "delay1"] [*ampeg2 "trigger" *trigger "delay1"] [*ampeg3 "trigger" *trigger "delay1"] [*ampeg4 "trigger" *trigger "delay1"]
+	[*trigger "busy" *adsr "busy"]
+	[*lfo1 "trigger" *trigger "trigger"] [*lfo2 "trigger" *trigger "trigger"]
+
+	[*noise "amp" *noiseeg]
+	[*freq1 "signal" *trigger "key"] [*freq2 "signal" *trigger "key"] [*freq3 "signal" *trigger "key"] [*freq4 "signal" *trigger "key"]
+	[*filter_key "signal" *trigger "key"]
+	[*op "trigger" *trigger "delay1"]
+	[*op "freq1" *freq1] [*op "freq2" *freq2] [*op "freq3" *freq3] [*op "freq4" *freq4]
+	[*op "freq1" *lfosens1] [*op "freq2" *lfosens2] [*op "freq3" *lfosens3] [*op "freq4" *lfosens4]
+	[*op "freq1" *pitchsens1] [*op "freq2" *pitchsens2] [*op "freq3" *pitchsens3] [*op "freq4" *pitchsens4]
+	[*op "freq1" *lfo2freq1] [*op "freq2" *lfo2freq2] [*op "freq3" *lfo2freq3] [*op "freq4" *lfo2freq4]
+
+	[auto *vectorX *X] [*vectorX "trigger" *trigger "trigger"] [*X "trigger" *trigger "trigger"]
+	[auto *vectorY *Y] [*vectorY "trigger" *trigger "trigger"] [*Y "trigger" *trigger "trigger"]
+	[sensitivity *Xsa1] [sensitivity *Xsa2] [sensitivity *Xsa3] [sensitivity *Xsa4]
+	[sensitivity *Ysa1] [sensitivity *Ysa2] [sensitivity *Ysa3] [sensitivity *Ysa4]
+	[*Xsa1 *vectorX] [*Xsa2 *vectorX] [*Xsa3 *vectorX] [*Xsa4 *vectorX]
+	[*Ysa1 *vectorY] [*Ysa2 *vectorY] [*Ysa3 *vectorY] [*Ysa4 *vectorY]
+	[*op "amp1" *Xsa1] [*op "amp2" *Xsa2] [*op "amp3" *Xsa3] [*op "amp4" *Xsa4]
+	[*op "amp1" *Ysa1] [*op "amp2" *Ysa2] [*op "amp3" *Ysa3] [*op "amp4" *Ysa4]
+	[*op "amp1" *lfo2amp1] [*op "amp2" *lfo2amp2] [*op "amp3" *lfo2amp3] [*op "amp4" *lfo2amp4]
+
+	[*freqeg1 *freqeg] [*freqeg2 *freqeg] [*freqeg3 *freqeg] [*freqeg4 *freqeg] [*filtereg *freqeg]
+	[*op "freq1" *freqeg1] [*op "freq2" *freqeg2] [*op "freq3" *freqeg3] [*op "freq4" *freqeg4]
+	[*op "amp1" *ampeg1] [*op "amp2" *ampeg2] [*op "amp3" *ampeg3] [*op "amp4" *ampeg4]
+
+	[*velocity1 "signal" *trigger "velocity"] [*velocity2 "signal" *trigger "velocity"]
+	[*velocity3 "signal" *trigger "velocity"] [*velocity4 "signal" *trigger "velocity"]
+	[*op "amp1" *velocity1] [*op "amp2" *velocity2] [*op "amp3" *velocity3] [*op "amp4" *velocity4]
+	[*key1 "signal" *trigger "key"] [*key2 "signal" *trigger "key"] [*key3 "signal" *trigger "key"] [*key4 "signal" *trigger "key"]
+	[*op "amp1" *key1] [*op "amp2" *key2] [*op "amp3" *key3] [*op "amp4" *key4]
+
+	[*egscal "signal" *trigger "key"] [*egscalfreq "signal" *trigger "key"]
+	[*egscal1 "signal" *trigger "key"] [*egscal2 "signal" *trigger "key"] [*egscal3 "signal" *trigger "key"] [*egscal4 "signal" *trigger "key"]
+	[*adsr "attack" *egscal] [*adsr "decay" *egscal] [*adsr "release" *egscal]
+	[*freqeg "time1" *egscalfreq] [*freqeg "time2" *egscalfreq] [*freqeg "time3" *egscalfreq] [*freqeg "time4" *egscalfreq]
+	[*ampeg1 "time1" *egscal1] [*ampeg1 "time2" *egscal1] [*ampeg1 "time3" *egscal1] [*ampeg1 "time4" *egscal1]
+	[*ampeg2 "time1" *egscal2] [*ampeg2 "time2" *egscal2] [*ampeg1 "time3" *egscal2] [*ampeg1 "time4" *egscal2]
+	[*ampeg3 "time1" *egscal3] [*ampeg3 "time2" *egscal3] [*ampeg1 "time3" *egscal3] [*ampeg1 "time4" *egscal3]
+	[*ampeg4 "time1" *egscal4] [*ampeg4 "time2" *egscal4] [*ampeg1 "time3" *egscal4] [*ampeg1 "time4" *egscal4]
+
+	[*filter "freq" *lfosensfilter]
+	[*filter "freq" *lfo2filter]
+	[*filter "freq" *filtereg]
+	[*filter "freq" *filter_key]
+	[*filter "freq" *pitchsensfilter]
+	[*filter "amp" *lfo2amp]
+
+	[*filter *op] [*filter *noise]
+	[*filter "amp" *adsr]
+	[*mixer *filter]
+
+
 program phobos [Phobos PhobosEditor BuildPhobos BuildPhobosPart Operator-1 Operator-2 Operator-3 Operator-4 Operators Lfo-1 Lfo-2 Noise-EG Noise-Amp Filter-1]
 
 [[PhobosEditor *phobos]

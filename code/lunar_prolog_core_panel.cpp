@@ -232,6 +232,7 @@ public:
 		if (key >= 65470 && key <= 65481) key = key - 65469 + 12 * state;
 		PrologDirectory * dir = root -> searchDirectory ("lunar"); if (dir == 0) return;
 		PrologAtom * F = dir -> searchAtom ("FUNCTION_KEY"); if (F == 0) return;
+		if (F -> firstClause == 0 && F -> getMachine () == 0) return;
 		PrologElement * query = root -> pair (root -> atom (F), root -> pair (root -> integer (key), root -> earth ()));
 		query = root -> pair (root -> earth (), root -> pair (query, root -> earth ()));
 		root -> resolution (query);

@@ -221,7 +221,7 @@ bool midi_code :: code (PrologElement * parameters, PrologResolution * resolutio
 	return false;
 }
 
-void send_one (int command) {
+void midi_code :: send_one (int command) {
 	unsigned char data = (unsigned char) data;
 	pthread_mutex_lock (& locker);
 	running_command = command;

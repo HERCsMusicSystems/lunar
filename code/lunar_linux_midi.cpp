@@ -198,6 +198,8 @@ bool midi_code :: code (PrologElement * parameters, PrologResolution * resolutio
 		return true;
 	}
 	if (atom == sysex) {
+		pthread_mutex_lock (& locker);
+		running_command = 0xf0;
 		data = 0xf0; write (tc, & data, 1);
 		while (parameters -> isPair ()) {
 			if (graph . get_key (& parameters, & key)) {data = (unsigned char) key; write (tc, & data, 1);}
@@ -208,14 +210,23 @@ bool midi_code :: code (PrologElement * parameters, PrologResolution * resolutio
 			} else parameters = parameters -> getRight ();
 		}
 		data = 0xf7; write (tc, & data, 1);
+		pthread_mutex_unlock (& locker);
 		return true;
 	}
-	if (atom == timingclock) {data = 0xf8; write (tc, & data, 1); return true;}
-	if (atom == start) {data = 0xfa; write (tc, & data, 1); return true;}
-	if (atom == cont) {data = 0xfb; write (tc, & data, 1); return true;}
-	if (atom == stop) {data = 0xfc; write (tc, & data, 1); return true;}
-	if (atom == activesensing) {data = 0xfe; write (tc, & data, 1); return true;}
+	if (atom == timingclock) {send_one (0xf8); return true;}
+	if (atom == start) {send_one (0xfa); return true;}
+	if (atom == cont) {send_one (0xfb); return true;}
+	if (atom == stop) {send_one (0xfc); return true;}
+	if (atom == activesensing) {send_one (0xfe); return true;}
 	return false;
+}
+
+void send_one (int command) {
+	unsigned char data = (unsigned char) data;
+	pthread_mutex_lock (& locker);
+	running_command = command;
+	write (tc, & data, 1);
+	pthread_mutex_unlock (& locker);
 }
 
 void midi_code :: send_two (int command, int key) {

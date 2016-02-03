@@ -41,7 +41,7 @@ public:
 	PrologAtom * command;
 	knob_active_graphics ctrl_volume;
 	knob_active_graphics ctrl_attack, ctrl_decay, ctrl_sustain, ctrl_release;
-	knob_active_graphics ctrl_freq, ctrl_drywet, ctrl_pan, ctrl_porta, ctrl_speed, ctrl_vibrato;
+	knob_active_graphics ctrl_freq, ctrl_drywet, ctrl_pan, ctrl_porta, ctrl_speed, ctrl_vibrato, ctrl_resonance;
 	vector_active_graphics vector;
 	keyboard_active_graphics keyboard;
 	display_active_graphics display;
@@ -58,6 +58,7 @@ public:
 	AREA program_area;
 	void feedback (void) {
 		PrologElement * query = root -> earth ();
+		query = root -> pair (root -> var (18), query);
 		query = root -> pair (root -> var (17), query);
 		query = root -> pair (root -> var (16), query);
 		query = root -> pair (root -> var (15), query);
@@ -116,6 +117,8 @@ public:
 		if (el -> isDouble ()) ctrl_speed . setValue (el -> getDouble () * 128.0);
 		var = var -> getRight (); if (! var -> isPair ()) {delete query; return;} el = var -> getLeft ();
 		if (el -> isDouble ()) ctrl_vibrato . setValue (el -> getDouble () * 128.0);
+		var = var -> getRight (); if (! var -> isPair ()) {delete query; return;} el = var -> getLeft ();
+		if (el -> isDouble ()) ctrl_resonance . setValue (el -> getDouble () * 128.0);
 		delete query;
 	}
 	void reset_selectors (void) {
@@ -345,6 +348,7 @@ public:
 		ctrl_porta . draw (cr);
 		ctrl_speed . draw (cr);
 		ctrl_vibrato . draw (cr);
+		ctrl_resonance . draw (cr);
 		vector . draw (cr);
 		keyboard . draw (cr);
 		display . draw (cr);
@@ -395,6 +399,7 @@ public:
 		ctrl_porta . keyon (location);
 		ctrl_speed . keyon (location);
 		ctrl_vibrato . keyon (location);
+		ctrl_resonance . keyon (location);
 		vector . keyon (location);
 		encoder . keyon (location);
 		pitch . keyon (location);
@@ -463,6 +468,7 @@ public:
 		if (ctrl_porta . move (delta)) {action (ctrl_porta . id, ctrl_porta . value * 0.0078125); redraw = true;}
 		if (ctrl_speed . move (delta)) {action (ctrl_speed . id, ctrl_speed . value * 0.0078125); redraw = true;}
 		if (ctrl_vibrato . move (delta)) {action (ctrl_vibrato . id, ctrl_vibrato . value * 0.0078125); redraw = true;}
+		if (ctrl_resonance . move (delta)) {action (ctrl_resonance . id, ctrl_resonance . value * 0.0078125); redraw = true;}
 		if (vector . move (delta)) {action (vector . id, vector . position . x, vector . position . y); redraw = true;}
 		if (encoder . move (delta)) {value_change_action ((int) encoder . increment); redraw = true;}
 		if (pitch . move (delta)) {action (pitch . id, pitch . position * 128.0); redraw = true;}
@@ -482,6 +488,7 @@ public:
 	ctrl_porta (point (442.0, 90.0), 11, resources, false, active, 0.0, 16384.0),
 	ctrl_speed (point (512.0, 90.0), 95, resources, false, active, 0.0, 16384.0),
 	ctrl_vibrato (point (582.0, 90.0), 71, resources, false, active, 0.0, 16384.0),
+	ctrl_resonance (point (620.0, 90.0), 82, resources, false, true, 0.0, 16384.0),
 	vector (point (12.0, -2.0), 12, resources, 0.25, active),
 	keyboard (point (114.0, 194.0), 2, 6, resources, active),
 	display (point (542.0, -7.0), 7, resources, active),
@@ -563,6 +570,7 @@ void control_panel_action :: MouseKeyoff (point location, int button) {
 	ctrl_porta . keyoff (location);
 	ctrl_speed . keyoff (location);
 	ctrl_vibrato . keyoff (location);
+	ctrl_resonance . keyoff (location);
 	vector . keyoff (location);
 	encoder . keyoff (location);
 	modulation . keyoff (location);

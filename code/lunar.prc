@@ -783,6 +783,7 @@ program lunar #machine := "lunar"
 [[CCCB *ret 65 *v] [cb_callback : *callback] [*callback control 65 *v] [add *ret "Porta Switch = " *v]]
 [[CCCB *ret 95 *v] [cb_callback : *callback] [*callback control 95 *v] [- *v 64 *vv] [add *ret "Speed = " *vv]]
 [[CCCB *ret 71 *v] [cb_callback : *callback] [*callback control 71 *v] [add *ret "Vibrato = " *v]]
+[[CCCB *res 82 *v] [cb_callback : *callback] [*callback control 82 *v] [add *ret "Resonance = " *v]]
 [[CCCB *ret 128 *v] [cb_callback : *callback] [*callback control 128 *v] [- *v 64 *vv] [add *ret "Pitch = " *vv]]
 [[CCCB *ret 1 *v] [cb_callback : *callback] [*callback control 1 *v] [add *ret "Modulation = " *v]]
 [[CCCB "Mode = Mono" 126 *v] [cb_callback : *callback] [*callback control 126 0]]
@@ -793,7 +794,7 @@ program lunar #machine := "lunar"
 ]
 
 [[CCCB CCCB *poly *porta *pitch *modulation *x *y *volume *attack *decay *sustain *release
-			*freq *drywet *pan *porta_time *speed *vibrato : *]
+			*freq *drywet *pan *porta_time *speed *vibrato *resonance : *]
 	[is_var *poly]
 	[cb_callback : *cb] [is_atom *cb]
 	[*cb control 127 : *poly]
@@ -813,6 +814,7 @@ program lunar #machine := "lunar"
 	[*cb control 11 : *porta_time]
 	[*cb control 95 : *speed]
 	[*cb control 71 : *vibrato]
+	[*cb control 82 : *resonance]
 ]
 
 [[CCCB *ret Store *file_name]

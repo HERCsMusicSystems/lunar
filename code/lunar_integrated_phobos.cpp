@@ -20,9 +20,9 @@
 // THE SOFTWARE.                                                                 //
 ///////////////////////////////////////////////////////////////////////////////////
 
-///////////////////////////////////////////////////////////////////////////
-// This file was created on Thursday, 17th December 2015 at 12:57:48 PM. //
-///////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////
+// This file was created on Friday, 29th January 2016 at 15:47:00 PM. //
+////////////////////////////////////////////////////////////////////////
 
 #include "lunar_prolog_landers.h"
 #include "lunar_moonbase.h"
@@ -67,31 +67,48 @@ Otherwise defaults to common behaviour.
 
 */
 
-class integrated_alarm : public CommandModule {
+class integrated_phobos;
+
+class integrated_phobos_part {
 public:
 	integrated_trigger trigger;
-	integrated_adsr adsr;
-	integrated_lfo lfo;
-	integrated_vco vco;
-	double freq, amp;
-	integrated_pan pan;
-	double pan_ctrl;;
-	integrated_delay delay;
-	integrated_drywet dry_wet;
-	integrated_stereo_amplifier volume;
+	void move (integrated_phobos * phobos);
+	integrated_phobos_part (orbiter_core * core) : trigger (core, true, 0) {}
+};
+
+typedef integrated_phobos_part * integrated_phobos_part_pointer;
+
+class integrated_phobos : public CommandModule {
+private:
+	int polyphony;
+public:
+	integrated_moonbase base;
+	integrated_arpeggiator arp;
+	integrated_phobos_part_pointer * parts;
 	integrated_map key_map;
-	double lsb;
+//	integrated_trigger trigger;
+//	integrated_adsr adsr;
+//	integrated_lfo lfo;
+//	integrated_vco vco;
+//	double freq, amp;
+//	integrated_pan pan;
+//	double pan_ctrl;;
+//	integrated_delay delay;
+//	integrated_drywet dry_wet;
+//	integrated_stereo_amplifier volume;
+//	integrated_map key_map;
+//	double lsb;
 	bool insert_trigger (lunar_trigger * trigger) {return false;}
 	bool insert_controller (orbiter * controller, int location, double shift) {return false;}
-	void keyon (int key, int velocity) {trigger . keyon (key, velocity);}
-	void keyon (int key) {trigger . keyon (key);}
-	void keyoff (void) {trigger . keyoff ();}
-	void keyoff (int key, int velocity) {trigger . keyoff (key);}
-	void mono (void) {}
-	void poly (void) {}
-	bool isMonoMode (void) {return true;}
+	void keyon (int key, int velocity) {arp . keyon (key, velocity);}
+	void keyon (int key) {arp . keyon (key);}
+	void keyoff (void) {arp . keyoff ();}
+	void keyoff (int key, int velocity) {arp . keyoff (key, velocity);}
+	void mono (void) {arp . mono ();}
+	void poly (void) {arp . poly ();}
+	bool isMonoMode (void) {return arp . isMonoMode ();}
 	void control (int ctrl, double value) {
-		switch (ctrl) {
+		/*switch (ctrl) {
 		case 1: lfo . vibrato = value * 128.0 + lsb; lsb = 0.0; break;
 		case 71: lfo . tremolo = value * 128.0 + lsb; lsb = 0.0; break;
 		case 7: volume . gateway = value * 128.0 + lsb; lsb = 0.0; break;
@@ -109,10 +126,10 @@ public:
 		case 72: adsr . release = value * 128.0 + lsb; lsb = 0.0; break;
 		case 126: case 127: lsb = 0.0; break;
 		default: lsb = value; break;
-		}
+		}*/
 	}
 	double getControl (int ctrl) {
-		switch (ctrl) {
+		/*switch (ctrl) {
 		case 1: return lfo . vibrato * 0.0078125; break;
 		case 71: return lfo . tremolo * 0.0078125; break;
 		case 7: return volume . gateway * 0.0078125; break;
@@ -131,7 +148,7 @@ public:
 		case 126: return 1.0; break;
 		case 127: return 0.0; break;
 		default: break;
-		}
+		}*/
 		return 64.0;
 	}
 	void timing_clock (void) {}
@@ -145,14 +162,16 @@ public:
 		return CommandModule :: outputName (ind);
 	}
 	double * outputAddress (int ind) {
-		switch (ind) {
-		case 0: return & volume . left; break;
-		case 1: return & volume . right; break;
-		default: break;
-		}
+		//switch (ind) {
+		//case 0: return & volume . left; break;
+		//case 1: return & volume . right; break;
+		//default: break;
+		//}
 		return CommandModule :: outputAddress (ind);
 	}
 	void move (void) {
+		for (int ind = 0; ind < polyphony; ind++) parts [ind] -> move (this);
+		/*
 		trigger . move ();
 		adsr . trigger = trigger . trigger;
 		adsr . move ();
@@ -174,17 +193,33 @@ public:
 		volume . enter_left = dry_wet . left;
 		volume . enter_right = dry_wet . right;
 		volume . volume_move ();
+		*/
 	}
-	integrated_alarm (orbiter_core * core) : CommandModule (core), trigger (core, true, 0), adsr (core), lfo (core), vco (core), pan (core), delay (core), dry_wet (), volume (core, 12800.00) {
+	integrated_phobos (orbiter_core * core, int polyphony = 8) : CommandModule (core), base (core), arp (core, & base) {
+		this -> polyphony = polyphony;
+		parts = new integrated_phobos_part_pointer [polyphony];
+		for (int ind = 0; ind < polyphony; ind++) {
+			integrated_phobos_part_pointer p = new integrated_phobos_part (core);
+			base . insert_trigger (& p -> trigger);
+			parts [ind] = p;
+		}
+	}
+	~ integrated_phobos (void) {for (int ind = 0; ind < polyphony; ind++) delete parts [ind]; delete [] parts; parts = 0;}
+	/*integrated_phobos (orbiter_core * core) : CommandModule (core), trigger (core, true, 0), adsr (core), lfo (core), vco (core), pan (core), delay (core), dry_wet (), volume (core, 12800.00) {
 		lsb = 0.0;
 		freq = amp = 0.0;
 		pan_ctrl = 0.0;
 		trigger . key_map = & key_map;
 		initialise (); activate ();
 	}
+	*/
 };
 
-class native_integrated_alarm : public native_moonbase {
+void integrated_phobos_part :: move (integrated_phobos * phobos) {
+	trigger . move ();
+}
+
+class native_integrated_phobos : public native_moonbase {
 public:
 	PrologAtom * volume, * pan, *delay, * portamento, * vco, * adsr, * lfo;
 	PrologAtom * balance, * feedback, * time, * highdamp;
@@ -207,11 +242,11 @@ public:
 	}
 	bool code (PrologElement * parameters, PrologResolution * resolution) {
 		if (native_moonbase :: code (parameters, resolution)) return true;
-		if (parameters -> isPair ()) {
+/*		if (parameters -> isPair ()) {
 			PrologElement * v = parameters -> getLeft ();
 			PrologElement * o = 0;
 			if (v -> isNumber () || v -> isPair () || v -> isEarth () || v -> isVar ()) {
-				integrated_alarm * al = (integrated_alarm *) module;
+				integrated_phobos * al = (integrated_phobos *) module;
 				PrologElement * path = parameters -> getRight ();
 				if (path -> isPair () && path -> getLeft () -> isVar ()) {o = path -> getLeft (); path = path -> getRight ();}
 				PrologElement * se;
@@ -305,10 +340,11 @@ public:
 					return false;
 				}
 			}
-		}
+		}*/
 		return false;
 	}
-	native_integrated_alarm (PrologAtom * atom, orbiter_core * core, orbiter * module, PrologDirectory * directory) : native_moonbase (directory, atom, core, module) {
+	native_integrated_phobos (PrologAtom * atom, orbiter_core * core, orbiter * module, PrologDirectory * directory) : native_moonbase (directory, atom, core, module) {
+		/*
 		volume = pan = delay = portamento = vco = adsr = lfo = 0;
 		balance = feedback = time = highdamp = 0;
 		porta = legato = hold = 0;
@@ -346,9 +382,19 @@ public:
 		vibrato = directory -> searchAtom ("vibrato");
 		tremolo = directory -> searchAtom ("tremolo");
 		key_map = directory -> searchAtom ("key_map");
+		*/
 	}
 };
 
-orbiter * integrated_alarm_class :: create_orbiter (PrologElement * parameters) {return new integrated_alarm (core);}
-PrologNativeOrbiter * integrated_alarm_class :: create_native_orbiter (PrologAtom * atom, orbiter * module) {return new native_integrated_alarm (atom, core, module, directory);}
-integrated_alarm_class :: integrated_alarm_class (orbiter_core * core, PrologDirectory * directory) : PrologNativeOrbiterCreator (core) {this -> directory = directory;}
+orbiter * integrated_phobos_class :: create_orbiter (PrologElement * parameters) {
+	PrologElement * polyphony = 0;
+	while (parameters -> isPair ()) {
+		PrologElement * el = parameters -> getLeft ();
+		if (el -> isInteger ()) polyphony = el;
+		parameters = parameters -> getRight ();
+	}
+	return new integrated_phobos (core, polyphony != 0 ? polyphony -> getInteger () : 8);
+}
+PrologNativeOrbiter * integrated_phobos_class :: create_native_orbiter (PrologAtom * atom, orbiter * module) {return new native_integrated_phobos (atom, core, module, directory);}
+integrated_phobos_class :: integrated_phobos_class (orbiter_core * core, PrologDirectory * directory) : PrologNativeOrbiterCreator (core) {this -> directory = directory;}
+

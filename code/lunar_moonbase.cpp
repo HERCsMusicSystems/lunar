@@ -150,7 +150,7 @@ bool moonbase :: release (void) {
 moonbase :: moonbase (orbiter_core * core) : CommandModule (core) {
 	pthread_mutex_init (& critical, 0);
 	choice = triggers = 0; mono_mode = false; signal = 1.0; base_key = 64; previous_key = -1; key_counter = 0;
-	for (int ind = 0; ind < 129; ind++) {controllers [ind] = 0; ctrl_lsbs [ind] = 0; shifts [ind] = 0;}
+	for (int ind = 0; ind < 129; ind++) {controllers [ind] = 0; ctrl_lsbs [ind] = 0; shifts [ind] = 0.0;}
 	initialise ();
 }
 

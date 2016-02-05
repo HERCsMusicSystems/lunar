@@ -51,6 +51,7 @@ program lunar #machine := "lunar"
 				radar reactor commander Core Midi
 				BuildIntegrated
 				BuildIntegratedAlarm integrated_alarm Alarm AlarmBlocks
+				BuildIntegratedPhobos integrated_phobos Phobos PhobosBlocks
 				Phobos
 			]
 
@@ -148,6 +149,7 @@ program lunar #machine := "lunar"
 #machine unicar := "unicar"
 
 #machine integrated_alarm := "integrated_alarm"
+#machine integrated_phobos := "integrated_phobos"
 
 [[BuildParameterBlockPanel *panel *from *to *instrument : *path]
 	[*instrument *parameters : *] [*parameters *parameter : *path]
@@ -354,6 +356,8 @@ program lunar #machine := "lunar"
 
 [[BuildIntegratedAlarm] [BuildIntegrated * Alarm integrated_alarm AlarmBlocks]]
 [[BuildIntegratedAlarm *base] [BuildIntegrated *base Alarm integrated_alarm AlarmBlocks]]
+[[BuildIntegratedPhobos] [BuildIntegrated * Phobos integrated_phobos PhobosBlocks]]
+[[BuildIntegratedPhobos *base] [BuildIntegrated *base Phobos integrated_phobos PhobosBlocks]]
 
 [[Alarm volume]]
 [[Alarm pan]]

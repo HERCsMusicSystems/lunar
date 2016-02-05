@@ -85,18 +85,17 @@ public:
 };
 
 class integrated_trigger {
-private:
+public:
 	int request; // 0 = none, 1 = keyoff (key), 2 = keyoff (), 3 = keyon (key), 4 = keyon (key, vel), 5 = ground (key, vel, base, prev);
+private:
 	int request_key, request_velocity, request_base, request_previous;
 	int keystack [16];
 	int keystack_pointer;
 	double target, origin, delta;
 	bool active;
-	int key;
 	double time;
 	pthread_mutex_t critical;
 	orbiter_core * core;
-	integrated_trigger * next;
 	void add_stack (int key);
 	void drop_stack (int key);
 	void sub_keyon (int key);
@@ -105,6 +104,9 @@ private:
 	void ground_request (void);
 	void keyoff_request (void);
 	void keyoff_all_request (void);
+public:
+	int key;
+	integrated_trigger * next;
 public:
 	// ==== OUTPUT ====
 	double signal, velocity, trigger, index;
@@ -121,6 +123,115 @@ public:
 	void move (void);
 	integrated_trigger (orbiter_core * core, bool active, integrated_trigger * trigger);
 	~ integrated_trigger (void);
+};
+
+class IntegratedCommandModule {
+public:
+	virtual bool insert_trigger (integrated_trigger * trigger) = 0;
+	virtual bool insert_controller (double * controller, int location, double shift) = 0;
+	virtual void keyon (int key) = 0;
+	virtual void keyon (int key, int velocity) = 0;
+	virtual void keyoff (void) = 0;
+	virtual void keyoff (int key, int velocity = 0) = 0;
+	virtual void mono (void) = 0;
+	virtual void poly (void) = 0;
+	virtual bool isMonoMode (void) = 0;
+	virtual void control (int ctrl, double value) = 0;
+	virtual double getControl (int ctrl) = 0;
+	virtual void timing_clock (void) = 0;
+};
+
+class integrated_moonbase : public IntegratedCommandModule {
+private:
+	integrated_trigger * triggers;
+	integrated_trigger * choice;
+	integrated_trigger * select (void);
+	integrated_trigger * select (int key);
+	double * controllers [129];
+	double ctrl_lsbs [129];
+	double shifts [129];
+	bool mono_mode;
+	int previous_key;
+	int base_key;
+	int key_counter;
+	pthread_mutex_t critical;
+public:
+	bool insert_trigger (integrated_trigger * trigger);
+	bool insert_controller (double * controller, int location, double shift);
+	void keyon (int key);
+	void keyon (int key, int velocity);
+	void keyoff (void);
+	void keyoff (int key, int velocity = 0);
+	void mono (void);
+	void poly (void);
+	bool isMonoMode (void);
+	void control (int ctrl, double value);
+	double getControl (int ctrl);
+	void timing_clock (void);
+	integrated_moonbase (orbiter_core * core);
+};
+
+class integrated_arpeggiator : public IntegratedCommandModule {
+private:
+	double tick, time, active, previous_activity;
+	bool should_keyoff;
+	int active_keys [128];
+	int active_velocities [128];
+	int active_key_pointer;
+	int number_of_keys;
+	int index, octave;
+	bool up_direction;
+	double previous_algo;
+	void (* algo) (integrated_arpeggiator * arp);
+	orbiter_core * core;
+	IntegratedCommandModule * base;
+	pthread_mutex_t critical;
+	friend void up1 (integrated_arpeggiator * arp);
+	friend void up2 (integrated_arpeggiator * arp);
+	friend void up3 (integrated_arpeggiator * arp);
+	friend void up4 (integrated_arpeggiator * arp);
+	friend void down1 (integrated_arpeggiator * arp);
+	friend void down2 (integrated_arpeggiator * arp);
+	friend void down3 (integrated_arpeggiator * arp);
+	friend void down4 (integrated_arpeggiator * arp);
+	friend void updown1 (integrated_arpeggiator * arp);
+	friend void updown2 (integrated_arpeggiator * arp);
+	friend void updown3 (integrated_arpeggiator * arp);
+	friend void updown4 (integrated_arpeggiator * arp);
+	friend void updowndup1 (integrated_arpeggiator * arp);
+	friend void updowndup2 (integrated_arpeggiator * arp);
+	friend void updowndup3 (integrated_arpeggiator * arp);
+	friend void updowndup4 (integrated_arpeggiator * arp);
+	friend void randomdup1 (integrated_arpeggiator * arp);
+	friend void randomdup2 (integrated_arpeggiator * arp);
+	friend void randomdup3 (integrated_arpeggiator * arp);
+	friend void randomdup4 (integrated_arpeggiator * arp);
+	friend void random1 (integrated_arpeggiator * arp);
+	friend void random2 (integrated_arpeggiator * arp);
+	friend void random3 (integrated_arpeggiator * arp);
+	friend void random4 (integrated_arpeggiator * arp);
+private:
+	void insert_key (int key, int velocity);
+	void remove_key (int key);
+	void ground (void);
+	void private_signal (void);
+	void move (void);
+public:
+	double tempo, division, current_algo, hold;
+public:
+	bool insert_trigger (integrated_trigger * trigger);
+	bool insert_controller (double * controller, int location, double shift);
+	void keyon (int key);
+	void keyon (int key, int velocity);
+	void keyoff (void);
+	void keyoff (int key, int velocity = 0);
+	void mono (void);
+	void poly (void);
+	bool isMonoMode (void);
+	void control (int ctrl, double value);
+	double getControl (int ctrl);
+	void timing_clock (void);
+	integrated_arpeggiator (orbiter_core * core, IntegratedCommandModule * base);
 };
 
 class integrated_adsr {

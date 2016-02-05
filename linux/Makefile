@@ -137,7 +137,7 @@ lunar_integrated_alarm.o: ../code/lunar_integrated_alarm.cpp ../code/lunar_prolo
 			../code/lunar_moonbase.h ../code/lunar_landers.h ../code/lunar_integrated_components.h ../code/lunar.h $(pc)prolog.h
 	g++ -Wno-write-strings -I. -I$(pc) ../code/lunar_integrated_alarm.cpp -c -o lunar_integrated_alarm.o -fPIC
 
-lunar_integrated_phobos.o: ../code/lunar_integrated_phobos.cpp ../code/lunar_prolog_landers.h ../core/prolog_lunar.h ../code/chromatic.h\
+lunar_integrated_phobos.o: ../code/lunar_integrated_phobos.cpp ../code/lunar_prolog_landers.h ../code/prolog_lunar.h ../code/chromatic.h\
 			../code/lunar_moonbase.h ../code/lunar_landers.h ../code/lunar_integrated_components.h ../code/lunar.h $(pc)prolog.h
 	g++ -Wno-write-strings -I. -I$(pc) ../code/lunar_integrated_phobos.cpp -c -o lunar_integrated_phobos.o -fPIC
 

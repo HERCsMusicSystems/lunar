@@ -52,12 +52,18 @@ public:
 	button_active_graphics store, restore, voice_init;
 	encoder_active_graphics encoder;
 	slider_active_graphics pitch, modulation;
+	button_active_graphics arp, arp_hold, sustain, legato, auto_on, auto_loop, auto_record;
 	int programs [10];
 	int current_program;
 	int current_delta;
 	AREA program_area;
 	void feedback (void) {
 		PrologElement * query = root -> earth ();
+		query = root -> pair (root -> var (23), query);
+		query = root -> pair (root -> var (22), query);
+		query = root -> pair (root -> var (21), query);
+		query = root -> pair (root -> var (20), query);
+		query = root -> pair (root -> var (19), query);
 		query = root -> pair (root -> var (18), query);
 		query = root -> pair (root -> var (17), query);
 		query = root -> pair (root -> var (16), query);
@@ -119,6 +125,16 @@ public:
 		if (el -> isDouble ()) ctrl_vibrato . setValue (el -> getDouble () * 128.0);
 		var = var -> getRight (); if (! var -> isPair ()) {delete query; return;} el = var -> getLeft ();
 		if (el -> isDouble ()) ctrl_resonance . setValue (el -> getDouble () * 128.0);
+		var = var -> getRight (); if (! var -> isPair ()) {delete query; return;} el = var -> getLeft ();
+		if (el -> isDouble ()) arp . engaged = el -> getDouble () != 0.0;
+		var = var -> getRight (); if (! var -> isPair ()) {delete query; return;} el = var -> getLeft ();
+		if (el -> isDouble ()) arp_hold . engaged = el -> getDouble () != 0.0;
+		var = var -> getRight (); if (! var -> isPair ()) {delete query; return;} el = var -> getLeft ();
+		if (el -> isDouble ()) sustain . engaged = el -> getDouble () != 0.0;
+		var = var -> getRight (); if (! var -> isPair ()) {delete query; return;} el = var -> getLeft ();
+		if (el -> isDouble ()) legato . engaged = el -> getDouble () != 0.0;
+		var = var -> getRight (); if (! var -> isPair ()) {delete query; return;} el = var -> getLeft ();
+		if (el -> isDouble ()) {auto_on . engaged = el -> getDouble () == 1.0; auto_loop . engaged = el -> getDouble () == 2.0; auto_record . engaged = el -> getDouble () == 16.0;}
 		delete query;
 	}
 	void reset_selectors (void) {
@@ -197,8 +213,10 @@ public:
 			if (el -> isText ()) {
 				area_cat (display . area, 0, el -> getText ());
 				if (current_program == 0) {
-					cwd (program_area, sizeof (program_area)); area_cat (program_area, area_cat (program_area, "/"), el -> getText ());
-					char * cp = strstr (program_area, " : ");
+					cwd (program_area, sizeof (program_area));
+					char * cp = strstr (el -> getText (), "] ");
+					if (cp != 0 && strlen (cp) > 3) area_cat (program_area, area_cat (program_area, "/"), cp + 2);
+					cp = strstr (program_area, " = ");
 					if (cp != 0) * cp = '\0';
 				}
 			}
@@ -385,6 +403,7 @@ public:
 		store . draw (cr);
 		restore . draw (cr);
 		voice_init . draw (cr);
+		arp . draw (cr); arp_hold . draw (cr); sustain . draw (cr); legato . draw (cr); auto_on . draw (cr); auto_loop . draw (cr); auto_record . draw (cr);
 	}
 	void MouseKeyon (point location, int button) {
 		if (keyboard . keyon (location)) {key_action (keyboard . key, button == 1 ? 100 : 0); return;}
@@ -405,14 +424,28 @@ public:
 		pitch . keyon (location);
 		modulation . keyon (location);
 		bool redraw = false;
-		if (poly_mono . keyon (location)) {
-			poly_mono . engaged = ! poly_mono . engaged;
-			action (poly_mono . engaged ? 127 : 126, 0.0);
+		if (poly_mono . keyon (location)) {poly_mono . engaged = ! poly_mono . engaged; action (poly_mono . engaged ? 127 : 126, 0.0); redraw = true;}
+		if (porta_on_off . keyon (location)) {porta_on_off . engaged = ! porta_on_off . engaged; action (65, porta_on_off . engaged ? 1.0 : 0.0); redraw = true;}
+		if (arp . keyon (location)) {arp . engaged = ! arp . engaged; action (80, arp . engaged ? 1.0 : 0.0); redraw = true;}
+		if (arp_hold . keyon (location)) {arp_hold . engaged = ! arp_hold . engaged; action (66, arp_hold . engaged ? 1.0 : 0.0); redraw = true;}
+		if (sustain . keyon (location)) {sustain . engaged = ! sustain . engaged; action (64, sustain . engaged ? 1.0 : 0.0); redraw = true;}
+		if (legato . keyon (location)) {legato . engaged = ! legato . engaged; action (84, legato . engaged ? 1.0 : 0.0); redraw = true;}
+		if (auto_on . keyon (location)) {
+			auto_on . engaged = ! auto_on . engaged;
+			auto_loop . engaged = auto_record . engaged = false;
+			action (85, auto_on . engaged ? 1.0 : 0.0);
 			redraw = true;
 		}
-		if (porta_on_off . keyon (location)) {
-			porta_on_off . engaged = ! porta_on_off . engaged;
-			action (65, porta_on_off . engaged ? 1.0 : 0.0);
+		if (auto_loop . keyon (location)) {
+			auto_loop . engaged = ! auto_loop . engaged;
+			auto_on . engaged = auto_record . engaged = false;
+			action (85, auto_loop . engaged ? 2.0 : 0.0);
+			redraw = true;
+		}
+		if (auto_record . keyon (location)) {
+			auto_record . engaged = ! auto_record . engaged;
+			auto_on . engaged = auto_loop . engaged = false;
+			action (85, auto_record . engaged ? 16.0 : 0.0);
 			redraw = true;
 		}
 		if (selector0 . keyon (location)) {program_action (& selector0); redraw = true;}
@@ -479,19 +512,19 @@ public:
 	control_panel_action (GraphicResources * resources, PrologRoot * root, PrologDirectory * directory, PrologAtom * atom, PrologAtom * command, bool active) :
 	ctrl_volume (point (186.0, 5.0), 7, resources, false, active, 0.0, 16384.0),
 	ctrl_attack (point (268.0, 5.0), 73, resources, false, active, 0.0, 16384.0),
-	ctrl_decay (point (338.0, 5.0), 93, resources, false, active, 0.0, 16384.0),
-	ctrl_sustain (point (408.0, 5.0), 94, resources, false, active, 0.0, 16384.0),
+	ctrl_decay (point (338.0, 5.0), 75, resources, false, active, 0.0, 16384.0),
+	ctrl_sustain (point (408.0, 5.0), 76, resources, false, active, 0.0, 16384.0),
 	ctrl_release (point (478.0, 5.0), 72, resources, false, active, 0.0, 16384.0),
+	ctrl_pan (point (557.0, 5.0), 10, resources, false, active, 0.0, 16384.0),
 	ctrl_freq (point (218.0, 90.0), 74, resources, false, active, 0.0, 16384.0),
-	ctrl_drywet (point (288.0, 90.0), 91, resources, false, active, 0.0, 16384.0),
-	ctrl_pan (point (358.0, 90.0), 10, resources, false, active, 0.0, 16384.0),
-	ctrl_porta (point (442.0, 90.0), 11, resources, false, active, 0.0, 16384.0),
-	ctrl_speed (point (512.0, 90.0), 95, resources, false, active, 0.0, 16384.0),
-	ctrl_vibrato (point (582.0, 90.0), 71, resources, false, active, 0.0, 16384.0),
-	ctrl_resonance (point (620.0, 90.0), 82, resources, false, true, 0.0, 16384.0),
-	vector (point (12.0, -2.0), 12, resources, 0.25, active),
+	ctrl_resonance (point (288.0, 90.0), 71, resources, false, active, 0.0, 16384.0),
+	ctrl_drywet (point (358.0, 90.0), 77, resources, false, active, 0.0, 16384.0),
+	ctrl_porta (point (442.0, 90.0), 5, resources, false, active, 0.0, 16384.0),
+	ctrl_speed (point (512.0, 90.0), 78, resources, false, active, 0.0, 16384.0),
+	ctrl_vibrato (point (582.0, 90.0), 79, resources, false, active, 0.0, 16384.0),
+	vector (point (12.0, -2.0), 16, resources, 0.25, active),
 	keyboard (point (114.0, 194.0), 2, 6, resources, active),
-	display (point (542.0, -7.0), 7, resources, active),
+	display (point (623.0, -7.0), 7, resources, active),
 	selector0 (point (667.0, 112.0), 200, resources, active),
 	selector1 (point (707.0, 112.0), 201, resources, active),
 	selector2 (point (747.0, 112.0), 202, resources, active),
@@ -525,6 +558,13 @@ public:
 	store (point (947.0, 71.0), 601, resources, active),
 	restore (point (987.0, 71.0), 602, resources, active),
 	voice_init (point (1027.0, 71.0), 603, resources, active),
+	arp (point (300.0, 183.0), 701, resources, true),
+	arp_hold (point (340.0, 183.0), 702, resources, true),
+	sustain (point (420.0, 183.0), 703, resources, true),
+	legato (point (460.0, 183.0), 704, resources, true),
+	auto_on (point (540.0, 183.0), 705, resources, true),
+	auto_loop (point (580.0, 183.0), 706, resources, true),
+	auto_record (point (620.0, 183.0), 707, resources, true),
 	AudioModulePanel (root, atom, resources != 0 ? resources -> command_centre : 0) {
 		cwd (program_area, sizeof (AREA));
 		pitch . position = 0.5;

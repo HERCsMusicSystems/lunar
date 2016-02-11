@@ -373,6 +373,8 @@ program lunar #machine := "lunar"
 [[Alarm vco amp]]
 [[Alarm vco ratio]]
 [[Alarm vco wave]]
+[[Alarm vco pitch]]
+[[Alarm vco sens]]
 [[Alarm adsr attack]]
 [[Alarm adsr decay]]
 [[Alarm adsr sustain]]

@@ -55,7 +55,7 @@ program alarm [BuildAlarm AlarmEditor Lfo-1 Adsr-1 Vco-1 BuildMelodicAlarm]
 	[InsertController 76 -128 *alarm adsr sustain]
 	[InsertController 72 *alarm adsr release]
 	[InsertController 128 -64 *alarm vco pitch]
-	[Lunar 256 *alarm vco sens]
+	[Lunar 512 *alarm vco sens]
 ]
 
 [[BuildMelodicAlarm] [BuildMelodicAlarm * * *]]
@@ -101,7 +101,7 @@ program alarm [BuildAlarm AlarmEditor Lfo-1 Adsr-1 Vco-1 BuildMelodicAlarm]
 	[InsertController 76 -128 *alarm adsr sustain]
 	[InsertController 72 *alarm adsr release]
 	[InsertController 128 -64 *alarm vco pitch]
-	[Lunar 256 *alarm vco sens]
+	[Lunar 512 *alarm vco sens]
 ]
 
 end .

@@ -80,6 +80,7 @@ public:
 	integrated_drywet dry_wet;
 	integrated_stereo_amplifier volume;
 	integrated_map key_map;
+	double pitch, sens;
 	double lsb;
 	bool insert_trigger (lunar_trigger * trigger) {return false;}
 	bool insert_controller (orbiter * controller, int location, double shift) {return false;}
@@ -93,43 +94,45 @@ public:
 	void control (int ctrl, double value) {
 		switch (ctrl) {
 		case 1: lfo . vibrato = value * 128.0 + lsb; lsb = 0.0; break;
-		case 71: lfo . tremolo = value * 128.0 + lsb; lsb = 0.0; break;
+		case 79: lfo . tremolo = value * 128.0 + lsb; lsb = 0.0; break;
 		case 7: volume . gateway = value * 128.0 + lsb; lsb = 0.0; break;
 		case 10: pan . pan = value * 128.0 - 8192.0 + lsb; lsb = 0.0; break;
-		case 11: trigger . porta_time = value * 128.0 + lsb; lsb = 0.0; break;
+		case 5: trigger . porta_time = value * 128.0 + lsb; lsb = 0.0; break;
 		case 64: trigger . hold = value * 128.0 + lsb; lsb = 0.0; break;
 		case 65: trigger . porta = value * 128.0 + lsb; lsb = 0.0; break;
-		case 68: trigger . legato = value * 128.0 + lsb; lsb = 0.0; break;
+		case 84: trigger . legato = value * 128.0 + lsb; lsb = 0.0; break;
 		case 74: vco . freq = value * 128.0 - 8192.0 + lsb; lsb = 0.0; break;
-		case 91: dry_wet . balance = value * 128.0 -8192.0 + lsb; lsb = 0.0; break;
-		case 95: lfo . speed = value * 128.0 -8192.0 + lsb; lsb = 0.0; break;
+		case 77: dry_wet . balance = value * 128.0 -8192.0 + lsb; lsb = 0.0; break;
+		case 78: lfo . speed = value * 128.0 - 8192.0 + lsb; lsb = 0.0; break;
 		case 73: adsr . attack = value * 128.0 + lsb; lsb = 0.0; break;
-		case 93: adsr . decay = value * 128.0 + lsb; lsb = 0.0; break;
-		case 94: adsr . sustain = value * 128.0 - 16384.0 + lsb; lsb = 0.0; break;
+		case 75: adsr . decay = value * 128.0 + lsb; lsb = 0.0; break;
+		case 76: adsr . sustain = value * 128.0 - 16384.0 + lsb; lsb = 0.0; break;
 		case 72: adsr . release = value * 128.0 + lsb; lsb = 0.0; break;
 		case 126: case 127: lsb = 0.0; break;
+		case 128: pitch = value * 128 - 8192.0 + lsb; lsb = 0.0; break;
 		default: lsb = value; break;
 		}
 	}
 	double getControl (int ctrl) {
 		switch (ctrl) {
 		case 1: return lfo . vibrato * 0.0078125; break;
-		case 71: return lfo . tremolo * 0.0078125; break;
+		case 79: return lfo . tremolo * 0.0078125; break;
 		case 7: return volume . gateway * 0.0078125; break;
 		case 10: return pan . pan * 0.0078125 + 64.0; break;
-		case 11: return trigger . porta_time * 0.0078125; break;
+		case 5: return trigger . porta_time * 0.0078125; break;
 		case 64: return trigger . hold *  0.0078125; break;
 		case 65: return trigger . porta * 0.0078125; break;
-		case 68: return trigger . legato *  0.0078125; break;
+		case 84: return trigger . legato *  0.0078125; break;
 		case 74: return vco . freq * 0.0078125 + 64.0; break;
-		case 91: return dry_wet . balance * 0.0078125 + 64.0; break;
-		case 95: return lfo . speed * 0.0078125; + 64.0; break;
+		case 77: return dry_wet . balance * 0.0078125 + 64.0; break;
+		case 78: return lfo . speed * 0.0078125 + 64.0; break;
 		case 73: return adsr . attack * 0.0078125; break;
-		case 93: return adsr . decay * 0.0078125; break;
-		case 94: return adsr . sustain * 0.0078125 + 128.0; break;
+		case 75: return adsr . decay * 0.0078125; break;
+		case 76: return adsr . sustain * 0.0078125 + 128.0; break;
 		case 72: return adsr . release * 0.0078125; break;
 		case 126: return 1.0; break;
 		case 127: return 0.0; break;
+		case 128: return pitch * 0.0078125 + 64.0; break;
 		default: break;
 		}
 		return 64.0;
@@ -157,7 +160,7 @@ public:
 		adsr . trigger = trigger . trigger;
 		adsr . move ();
 		lfo . move ();
-		vco . freq = freq + trigger . signal + lfo . vibrato_signal;
+		vco . freq = freq + trigger . signal + lfo . vibrato_signal + pitch * sens * 0.00006103515625;
 		vco . amp = amp + lfo . tremolo_signal;
 		vco . move ();
 		pan . enter = vco . signal * adsr . signal;
@@ -179,6 +182,7 @@ public:
 		lsb = 0.0;
 		freq = amp = 0.0;
 		pan_ctrl = 0.0;
+		pitch = 0.0; sens = 512;
 		trigger . key_map = & key_map;
 		initialise (); activate ();
 	}
@@ -192,6 +196,7 @@ public:
 	PrologAtom * freq, * amp, * ratio, * wave;
 	PrologAtom * attack, * decay, * sustain, * release;
 	PrologAtom * speed, * pulse, * phase, * sync, * vibrato, * tremolo;
+	PrologAtom * pitch, * sens;
 	PrologAtom * key_map;
 	bool update_value (double * location, PrologElement * el, PrologElement * text, int style) {
 		if (el -> isNumber ()) * location = el -> getNumber ();
@@ -206,7 +211,6 @@ public:
 		return true;
 	}
 	bool code (PrologElement * parameters, PrologResolution * resolution) {
-		if (native_moonbase :: code (parameters, resolution)) return true;
 		if (parameters -> isPair ()) {
 			PrologElement * v = parameters -> getLeft ();
 			PrologElement * o = 0;
@@ -260,6 +264,8 @@ public:
 									if (sa == amp) return update_value (& al -> amp, v, o, 3);
 									if (sa == ratio) return update_value (& al -> vco . ratio, v, o, 7);
 									if (sa == wave) return update_value (& al -> vco . wave, v, o, 1);
+									if (sa == pitch) return update_value (& al -> pitch, v, o, 1);
+									if (sa == sens) return update_value (& al -> sens, v, o, 1);
 								}
 							}
 							return false;
@@ -306,7 +312,7 @@ public:
 				}
 			}
 		}
-		return false;
+		return native_moonbase :: code (parameters, resolution);
 	}
 	native_integrated_alarm (PrologAtom * atom, orbiter_core * core, orbiter * module, PrologDirectory * directory) : native_moonbase (directory, atom, core, module) {
 		volume = pan = delay = portamento = vco = adsr = lfo = 0;
@@ -315,6 +321,7 @@ public:
 		freq = amp = ratio = wave = 0;
 		attack = decay = sustain = release = 0;
 		speed = pulse = phase = sync = vibrato = tremolo = 0;
+		pitch = sens = 0;
 		key_map = 0;
 		if (directory == 0) return;
 		volume = directory -> searchAtom ("volume");
@@ -345,6 +352,8 @@ public:
 		sync = directory -> searchAtom ("sync");
 		vibrato = directory -> searchAtom ("vibrato");
 		tremolo = directory -> searchAtom ("tremolo");
+		pitch = directory -> searchAtom ("pitch");
+		sens = directory -> searchAtom ("sens");
 		key_map = directory -> searchAtom ("key_map");
 	}
 };

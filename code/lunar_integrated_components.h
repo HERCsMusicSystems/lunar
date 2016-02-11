@@ -55,6 +55,20 @@ public:
 	integrated_vco (orbiter_core * core);
 };
 
+class integrated_filter {
+private:
+	double running_high_pass_signal, running_band_pass_signal, running_signal;
+	orbiter_core * core;
+public:
+	// ==== OUTPUT ====
+	double signal, high_pass_signal, band_pass_signal, band_reject_signal;
+	// ==== INPUT ====
+	double enter, freq, resonance, amp, gain;
+	// ==== PROCESSING ====
+	void move (void);
+	integrated_filter (orbiter_core * core);
+};
+
 class integrated_lfo {
 private:
 	bool stage_one;

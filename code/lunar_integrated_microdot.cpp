@@ -74,6 +74,7 @@ public:
 	integrated_lfo lfo;
 	integrated_vco vco;
 	double freq, amp;
+	integrated_filter vcf;
 	integrated_pan pan;
 	double pan_ctrl;;
 	integrated_delay delay;
@@ -165,7 +166,9 @@ public:
 		vco . freq = freq + trigger . signal + lfo . vibrato_signal + pitch * sens * 0.00006103515625;
 		vco . amp = amp + lfo . tremolo_signal;
 		vco . move ();
-		pan . enter = vco . signal * adsr . signal;
+		vcf . enter = vco . signal;
+		vcf . move ();
+		pan . enter = vcf . signal * adsr . signal;
 		pan . pan = pan_ctrl + lfo . pan_signal;
 		pan . move ();
 		delay . enter = pan . left;
@@ -180,7 +183,7 @@ public:
 		volume . enter_right = dry_wet . right;
 		volume . volume_move ();
 	}
-	integrated_microdot (orbiter_core * core) : CommandModule (core), trigger (core, true, 0), adsr (core), lfo (core), vco (core), pan (core), delay (core), dry_wet (), volume (core, 12800.00) {
+	integrated_microdot (orbiter_core * core) : CommandModule (core), trigger (core, true, 0), adsr (core), lfo (core), vco (core), vcf (core), pan (core), delay (core), dry_wet (), volume (core, 12800.00) {
 		lsb = 0.0;
 		freq = amp = 0.0;
 		pan_ctrl = 0.0;

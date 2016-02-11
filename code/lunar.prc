@@ -51,6 +51,7 @@ program lunar #machine := "lunar"
 				radar reactor commander Core Midi
 				BuildIntegrated
 				BuildIntegratedAlarm integrated_alarm Alarm AlarmBlocks
+				BuildIntegratedMicrodot integrated_microdot Microdot MicrodotBlocks
 				BuildIntegratedPhobos integrated_phobos Phobos PhobosBlocks
 				Phobos
 			]
@@ -387,6 +388,8 @@ program lunar #machine := "lunar"
 [[Alarm lfo vibrato]]
 [[Alarm lfo tremolo]]
 [[Alarm lfo pan]]
+[[Alarm lfo modulation]]
+[[Alarm lfo sens]]
 [[AlarmBlocks key_map]]
 
 [[Moonbase *base *distributor *type *line]

@@ -81,6 +81,7 @@ public:
 	integrated_stereo_amplifier volume;
 	integrated_map key_map;
 	double pitch, sens;
+	double vibrato, modulation, modulation_sensitivity;
 	double lsb;
 	bool insert_trigger (lunar_trigger * trigger) {return false;}
 	bool insert_controller (orbiter * controller, int location, double shift) {return false;}
@@ -93,7 +94,7 @@ public:
 	bool isMonoMode (void) {return true;}
 	void control (int ctrl, double value) {
 		switch (ctrl) {
-		case 1: lfo . vibrato = value * 128.0 + lsb; lsb = 0.0; break;
+		case 1: modulation = value * 128.0 + lsb; lsb = 0.0; break;
 		case 79: lfo . tremolo = value * 128.0 + lsb; lsb = 0.0; break;
 		case 7: volume . gateway = value * 128.0 + lsb; lsb = 0.0; break;
 		case 10: pan . pan = value * 128.0 - 8192.0 + lsb; lsb = 0.0; break;
@@ -115,7 +116,7 @@ public:
 	}
 	double getControl (int ctrl) {
 		switch (ctrl) {
-		case 1: return lfo . vibrato * 0.0078125; break;
+		case 1: return modulation * 0.0078125; break;
 		case 79: return lfo . tremolo * 0.0078125; break;
 		case 7: return volume . gateway * 0.0078125; break;
 		case 10: return pan . pan * 0.0078125 + 64.0; break;
@@ -159,6 +160,7 @@ public:
 		trigger . move ();
 		adsr . trigger = trigger . trigger;
 		adsr . move ();
+		lfo . vibrato = vibrato + modulation * modulation_sensitivity * 0.00006103515625;
 		lfo . move ();
 		vco . freq = freq + trigger . signal + lfo . vibrato_signal + pitch * sens * 0.00006103515625;
 		vco . amp = amp + lfo . tremolo_signal;
@@ -183,6 +185,7 @@ public:
 		freq = amp = 0.0;
 		pan_ctrl = 0.0;
 		pitch = 0.0; sens = 512;
+		vibrato = modulation = 0.0; modulation_sensitivity = 512.0;
 		trigger . key_map = & key_map;
 		initialise (); activate ();
 	}
@@ -196,7 +199,7 @@ public:
 	PrologAtom * freq, * amp, * ratio, * wave;
 	PrologAtom * attack, * decay, * sustain, * release;
 	PrologAtom * speed, * pulse, * phase, * sync, * vibrato, * tremolo;
-	PrologAtom * pitch, * sens;
+	PrologAtom * pitch, * modulation, * sens;
 	PrologAtom * key_map;
 	bool update_value (double * location, PrologElement * el, PrologElement * text, int style) {
 		if (el -> isNumber ()) * location = el -> getNumber ();
@@ -295,9 +298,11 @@ public:
 									if (sa == pulse) return update_value (& al -> lfo . pulse, v, o, 1);
 									if (sa == phase) return update_value (& al -> lfo . phase, v, o, 1);
 									if (sa == sync) return update_value (& al -> lfo . sync, v, o, 5);
-									if (sa == vibrato) return update_value (& al -> lfo . vibrato, v, o, 1);
+									if (sa == vibrato) return update_value (& al -> vibrato, v, o, 1);
 									if (sa == tremolo) return update_value (& al -> lfo . tremolo, v, o, 1);
 									if (sa == pan) return update_value (& al -> lfo . pan, v, o, 1);
+									if (sa == modulation) return update_value (& al -> modulation, v, o, 1);
+									if (sa == sens) return update_value (& al -> modulation_sensitivity, v, o, 1);
 								}
 							}
 							return false;
@@ -321,7 +326,7 @@ public:
 		freq = amp = ratio = wave = 0;
 		attack = decay = sustain = release = 0;
 		speed = pulse = phase = sync = vibrato = tremolo = 0;
-		pitch = sens = 0;
+		pitch = modulation = sens = 0;
 		key_map = 0;
 		if (directory == 0) return;
 		volume = directory -> searchAtom ("volume");
@@ -353,6 +358,7 @@ public:
 		vibrato = directory -> searchAtom ("vibrato");
 		tremolo = directory -> searchAtom ("tremolo");
 		pitch = directory -> searchAtom ("pitch");
+		modulation = directory -> searchAtom ("modulation");
 		sens = directory -> searchAtom ("sens");
 		key_map = directory -> searchAtom ("key_map");
 	}

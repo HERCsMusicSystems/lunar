@@ -92,6 +92,7 @@
     <ClCompile Include="..\code\lunar.cpp" />
     <ClCompile Include="..\code\lunar_integrated_alarm.cpp" />
     <ClCompile Include="..\code\lunar_integrated_components.cpp" />
+    <ClCompile Include="..\code\lunar_integrated_microdot.cpp" />
     <ClCompile Include="..\code\lunar_integrated_phobos.cpp" />
     <ClCompile Include="..\code\lunar_landers.cpp" />
     <ClCompile Include="..\code\lunar_moonbase.cpp" />

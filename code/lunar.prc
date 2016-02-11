@@ -150,6 +150,7 @@ program lunar #machine := "lunar"
 #machine unicar := "unicar"
 
 #machine integrated_alarm := "integrated_alarm"
+#machine integrated_microdot := "integrated_microdot"
 #machine integrated_phobos := "integrated_phobos"
 
 [[BuildParameterBlockPanel *panel *from *to *instrument : *path]
@@ -357,6 +358,8 @@ program lunar #machine := "lunar"
 
 [[BuildIntegratedAlarm] [BuildIntegrated * Alarm integrated_alarm AlarmBlocks]]
 [[BuildIntegratedAlarm *base] [BuildIntegrated *base Alarm integrated_alarm AlarmBlocks]]
+[[BuildIntegratedMicrodot] [BuildIntegrated * Microdot integrated_microdot MicrodotBlocks]]
+[[BuildIntegratedMicrodot *base] [BuildIntegrated *base Microdot integrated_microdot MicrodotBlocks]]
 [[BuildIntegratedPhobos] [BuildIntegrated * Phobos integrated_phobos PhobosBlocks]]
 [[BuildIntegratedPhobos *base] [BuildIntegrated *base Phobos integrated_phobos PhobosBlocks]]
 
@@ -391,6 +394,38 @@ program lunar #machine := "lunar"
 [[Alarm lfo modulation]]
 [[Alarm lfo sens]]
 [[AlarmBlocks key_map]]
+
+[[Microdot volume]]
+[[Microdot pan]]
+[[Microdot delay balance]]
+[[Microdot delay feedback]]
+[[Microdot delay time]]
+[[Microdot delay highdamp]]
+[[Microdot portamento porta]]
+[[Microdot portamento time]]
+[[Microdot portamento legato]]
+[[Microdot portamento hold]]
+[[Microdot vco freq]]
+[[Microdot vco amp]]
+[[Microdot vco ratio]]
+[[Microdot vco wave]]
+[[Microdot vco pitch]]
+[[Microdot vco sens]]
+[[Microdot adsr attack]]
+[[Microdot adsr decay]]
+[[Microdot adsr sustain]]
+[[Microdot adsr release]]
+[[Microdot lfo speed]]
+[[Microdot lfo wave]]
+[[Microdot lfo pulse]]
+[[Microdot lfo phase]]
+[[Microdot lfo sync]]
+[[Microdot lfo vibrato]]
+[[Microdot lfo tremolo]]
+[[Microdot lfo pan]]
+[[Microdot lfo modulation]]
+[[Microdot lfo sens]]
+[[MicrodotBlocks key_map]]
 
 [[Moonbase *base *distributor *type *line]
 	[AllocateChannel 0 *index]

@@ -3,11 +3,9 @@ import lunar
 
 program alarm [BuildAlarm AlarmEditor Lfo-1 Adsr-1 Vco-1 BuildMelodicAlarm]
 
-
-
 [[AlarmEditor *alarm]
-	[BuildLfoPanel Lfo-1 *alarm [lfo] [lfo vibrato] [lfo tremolo] [] [lfo pan]] [Lfo-1 100 100]
-	[BuildAdsrPanel Adsr-1 *alarm adsr] [Adsr-1 410 100]
+	[BuildLfoPanel Lfo-1 *alarm lfo] [Lfo-1 100 100]
+	[BuildAdsrPanel Adsr-1 *alarm adsr] [Adsr-1 430 100]
 ]
 
 [[AlarmEditor] [TRY [Lfo-1]] [TRY [Adsr-1]]]
@@ -80,7 +78,7 @@ program alarm [BuildAlarm AlarmEditor Lfo-1 Adsr-1 Vco-1 BuildMelodicAlarm]
 	[*alarmcb *trigger] [*trigger *key_map] [*adsr "trigger" *trigger "trigger"] [*trigger "busy" *adsr "busy"]
 	[*vco "freq" *trigger "key"] [*vco "freq" *lfo "vibrato"] [*vco "gain" *adsr] [*vco "amp" *lfo "tremolo"]
 	[*pan *vco] [*pan "pan" *lfo "pan"]
-	[parameter_block *pitch "index" ] [gateway *pitchfreq] [*pitchfreq *pitch] [*vco "freq" *pitchfreq]
+	[parameter_block *pitch "index"] [gateway *pitchfreq] [*pitchfreq *pitch] [*vco "freq" *pitchfreq]
 	[parameter_block *modulation "index"] [gateway *vibrato] [*vibrato *modulation] [*lfo "vibrato" *vibrato]
 	[Insert *trigger *alarm portamento]
 	[Insert *vco *alarm vco]

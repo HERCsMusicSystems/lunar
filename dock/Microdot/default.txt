@@ -1,0 +1,39 @@
+Microdot
+mono
+[volume]12800.0
+[pan]0.0
+[delay balance]0.0
+[delay feedback]8192.0
+[delay time]8192.0
+[delay highdamp]0.0
+[portamento porta]0.0
+[portamento time]0.0
+[portamento legato]0.0
+[portamento hold]0.0
+[vco freq]0.0
+[vco amp]0.0
+[vco ratio]1.0
+[vco wave]0.0
+[vco pitch]0.0
+[vco sens]512.0
+[filter freq]5120.0
+[filter resonance]0.0
+[filter amp]0.0
+[filter sens]0.0
+[adsr attack]0.0
+[adsr decay]0.0
+[adsr sustain]0.0
+[adsr release]0.0
+[lfo speed]0.0
+[lfo wave]0.0
+[lfo pulse]0.0
+[lfo phase]0.0
+[lfo sync]0.0
+[lfo vibrato]0.0
+[lfo tremolo]0.0
+[lfo wahwah]0.0
+[lfo pan]0.0
+[lfo modulation]0.0
+[lfo sens]256.0
+[key_map][[]]
+

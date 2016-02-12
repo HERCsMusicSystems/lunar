@@ -193,8 +193,8 @@ public:
 		filter_freq = 5120.0;
 		filter_key_sens = 0.0;
 		pan_ctrl = 0.0;
-		pitch = 0.0; sens = 512;
-		vibrato = modulation = 0.0; modulation_sensitivity = 512.0;
+		pitch = 0.0; sens = 512.0;
+		vibrato = modulation = 0.0; modulation_sensitivity = 256.0;
 		trigger . key_map = & key_map;
 		initialise (); activate ();
 	}

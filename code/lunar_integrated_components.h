@@ -63,7 +63,7 @@ public:
 	// ==== OUTPUT ====
 	double signal, high_pass_signal, band_pass_signal, band_reject_signal;
 	// ==== INPUT ====
-	double enter, freq, resonance, amp, gain;
+	double enter, freq, resonance, amp;
 	// ==== PROCESSING ====
 	void move (void);
 	integrated_filter (orbiter_core * core);

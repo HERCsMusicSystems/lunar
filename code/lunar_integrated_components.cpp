@@ -92,7 +92,7 @@ void integrated_filter :: move (void) {
 	running_high_pass_signal = enter - running_signal - running_band_pass_signal * Q;
 	running_band_pass_signal += running_high_pass_signal * F;
 	if (running_band_pass_signal > 10.0) running_band_pass_signal = 10.0; if (running_band_pass_signal < -10.0) running_band_pass_signal = -10.0;
-	double amplitude = gain * core -> Amplitude (amp);
+	double amplitude = core -> Amplitude (amp);
 	signal = running_signal * amplitude;
 	high_pass_signal = running_high_pass_signal * amplitude;
 	band_pass_signal = running_band_pass_signal * amplitude;
@@ -103,8 +103,8 @@ integrated_filter :: integrated_filter (orbiter_core * core) {
 	this -> core = core;
 	high_pass_signal = band_pass_signal = band_reject_signal = running_signal = 0.0;
 	running_high_pass_signal = running_band_pass_signal = 0.0;
-	freq = amp = 0.0; resonance = 8192.0;
-	enter = 0.0; gain = 1.0;
+	freq = amp = 0.0; resonance = 0.0;
+	enter = 0.0;
 }
 
 void integrated_lfo :: move (void) {

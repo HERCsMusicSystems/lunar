@@ -75,6 +75,7 @@ public:
 	integrated_vco vco;
 	double freq, amp;
 	integrated_filter vcf;
+	double filter_freq, filter_key_sens;
 	integrated_pan pan;
 	double pan_ctrl;;
 	integrated_delay delay;
@@ -103,7 +104,8 @@ public:
 		case 64: trigger . hold = value * 128.0 + lsb; lsb = 0.0; break;
 		case 65: trigger . porta = value * 128.0 + lsb; lsb = 0.0; break;
 		case 84: trigger . legato = value * 128.0 + lsb; lsb = 0.0; break;
-		case 74: vco . freq = value * 128.0 - 8192.0 + lsb; lsb = 0.0; break;
+		case 74: filter_freq = value * 128.0 - 8192.0 + lsb; lsb = 0.0; break;
+		case 71: vcf . resonance = value * 128.0 + lsb; lsb = 0.0; break;
 		case 77: dry_wet . balance = value * 128.0 -8192.0 + lsb; lsb = 0.0; break;
 		case 78: lfo . speed = value * 128.0 - 8192.0 + lsb; lsb = 0.0; break;
 		case 73: adsr . attack = value * 128.0 + lsb; lsb = 0.0; break;
@@ -125,7 +127,8 @@ public:
 		case 64: return trigger . hold *  0.0078125; break;
 		case 65: return trigger . porta * 0.0078125; break;
 		case 84: return trigger . legato *  0.0078125; break;
-		case 74: return vco . freq * 0.0078125 + 64.0; break;
+		case 74: return filter_freq * 0.0078125 + 64.0; break;
+		case 71: return vcf . resonance * 0.0078125; break;
 		case 77: return dry_wet . balance * 0.0078125 + 64.0; break;
 		case 78: return lfo . speed * 0.0078125 + 64.0; break;
 		case 73: return adsr . attack * 0.0078125; break;
@@ -164,9 +167,10 @@ public:
 		lfo . vibrato = vibrato + modulation * modulation_sensitivity * 0.00006103515625;
 		lfo . move ();
 		vco . freq = freq + trigger . signal + lfo . vibrato_signal + pitch * sens * 0.00006103515625;
-		vco . amp = amp + lfo . tremolo_signal;
 		vco . move ();
 		vcf . enter = vco . signal;
+		vcf . freq = filter_freq + trigger . signal * filter_key_sens * 0.00006103515625;
+		vcf . amp = amp + lfo . tremolo_signal;
 		vcf . move ();
 		pan . enter = vcf . signal * adsr . signal;
 		pan . pan = pan_ctrl + lfo . pan_signal;
@@ -186,6 +190,8 @@ public:
 	integrated_microdot (orbiter_core * core) : CommandModule (core), trigger (core, true, 0), adsr (core), lfo (core), vco (core), vcf (core), pan (core), delay (core), dry_wet (), volume (core, 12800.00) {
 		lsb = 0.0;
 		freq = amp = 0.0;
+		filter_freq = 5120.0;
+		filter_key_sens = 0.0;
 		pan_ctrl = 0.0;
 		pitch = 0.0; sens = 512;
 		vibrato = modulation = 0.0; modulation_sensitivity = 512.0;
@@ -196,12 +202,12 @@ public:
 
 class native_integrated_microdot : public native_moonbase {
 public:
-	PrologAtom * volume, * pan, *delay, * portamento, * vco, * adsr, * lfo;
+	PrologAtom * volume, * pan, *delay, * portamento, * vco, * filter, * resonance, * adsr, * lfo;
 	PrologAtom * balance, * feedback, * time, * highdamp;
 	PrologAtom * porta, * legato, * hold;
 	PrologAtom * freq, * amp, * ratio, * wave;
 	PrologAtom * attack, * decay, * sustain, * release;
-	PrologAtom * speed, * pulse, * phase, * sync, * vibrato, * tremolo;
+	PrologAtom * speed, * pulse, * phase, * sync, * vibrato, * tremolo, * wahwah;
 	PrologAtom * pitch, * modulation, * sens;
 	PrologAtom * key_map;
 	bool update_value (double * location, PrologElement * el, PrologElement * text, int style) {
@@ -276,6 +282,20 @@ public:
 							}
 							return false;
 						}
+						if (sa == filter) {
+							path = path -> getRight ();
+							if (path -> isPair ()) {
+								se = path -> getLeft ();
+								if (se -> isAtom ()) {
+									sa = se -> getAtom ();
+									if (sa == freq) return update_value (& al -> filter_freq, v, o, 2);
+									if (sa == resonance) return update_value (& al -> vcf . resonance, v, o, 1);
+									if (sa == amp) return update_value (& al -> vcf . amp, v, o, 3);
+									if (sa == sens) return update_value (& al -> filter_key_sens, v, o, 1);
+								}
+							}
+							return false;
+						}
 						if (sa == adsr) {
 							path = path -> getRight ();
 							if (path -> isPair ()) {
@@ -303,6 +323,7 @@ public:
 									if (sa == sync) return update_value (& al -> lfo . sync, v, o, 5);
 									if (sa == vibrato) return update_value (& al -> vibrato, v, o, 1);
 									if (sa == tremolo) return update_value (& al -> lfo . tremolo, v, o, 1);
+									if (sa == wahwah) return update_value (& al -> lfo . wahwah, v, o, 1);
 									if (sa == pan) return update_value (& al -> lfo . pan, v, o, 1);
 									if (sa == modulation) return update_value (& al -> modulation, v, o, 1);
 									if (sa == sens) return update_value (& al -> modulation_sensitivity, v, o, 1);
@@ -323,12 +344,12 @@ public:
 		return native_moonbase :: code (parameters, resolution);
 	}
 	native_integrated_microdot (PrologAtom * atom, orbiter_core * core, orbiter * module, PrologDirectory * directory) : native_moonbase (directory, atom, core, module) {
-		volume = pan = delay = portamento = vco = adsr = lfo = 0;
+		volume = pan = delay = portamento = vco = filter = resonance = adsr = lfo = 0;
 		balance = feedback = time = highdamp = 0;
 		porta = legato = hold = 0;
 		freq = amp = ratio = wave = 0;
 		attack = decay = sustain = release = 0;
-		speed = pulse = phase = sync = vibrato = tremolo = 0;
+		speed = pulse = phase = sync = vibrato = tremolo = wahwah = 0;
 		pitch = modulation = sens = 0;
 		key_map = 0;
 		if (directory == 0) return;
@@ -337,6 +358,8 @@ public:
 		delay = directory -> searchAtom ("delay");
 		portamento = directory -> searchAtom ("portamento");
 		vco = directory -> searchAtom ("vco");
+		filter = directory -> searchAtom ("filter");
+		resonance = directory -> searchAtom ("resonance");
 		adsr = directory -> searchAtom ("adsr");
 		lfo = directory -> searchAtom ("lfo");
 		balance = directory -> searchAtom ("balance");
@@ -360,6 +383,7 @@ public:
 		sync = directory -> searchAtom ("sync");
 		vibrato = directory -> searchAtom ("vibrato");
 		tremolo = directory -> searchAtom ("tremolo");
+		wahwah = directory -> searchAtom ("wahwah");
 		pitch = directory -> searchAtom ("pitch");
 		modulation = directory -> searchAtom ("modulation");
 		sens = directory -> searchAtom ("sens");

@@ -59,9 +59,10 @@ void midi_code :: run (void) {
 		v1 = tmread (fd);
 		if (v1 < 0) continue;
 		if (v1 < 128) {
-			if ((command >= 0x80 && command < 0xc0) || (command >= 0xe0 && command < 0xf0)) {
-				v2 = tmread (fd); two_parameters ();
-			} else one_parameter ();
+			if (command >= 0x80) {
+				if (command >= 0xc0 && command < 0xe0) one_parameter ();
+				else {v2 = tmread (fd); two_parameters ();}
+			}
 		} else {
 			command = v1; channel = command & 0xf;
 			if ((command >= 0x80 && command < 0xc0) || (command >= 0xe0 && command < 0xf0)) {

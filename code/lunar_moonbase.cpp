@@ -128,6 +128,8 @@ double moonbase :: getControl (int ctrl) {
 	case 1: return 0.0; break;
 	case 7: return 100.0; break;
 	case 65: return 0.0; break;
+	case 66: return 0.0; break;
+	case 80: return 0.0; break;
 	case 126: return mono_mode ? 1.0 : 0.0; break;
 	case 127: return mono_mode ? 0.0 : 1.0; break;
 	case 128: return 64.0; break;

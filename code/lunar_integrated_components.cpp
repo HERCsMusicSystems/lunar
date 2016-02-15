@@ -82,6 +82,100 @@ integrated_vco :: integrated_vco (orbiter_core * core) {
 	stage = true;
 }
 
+#define FRAC 0.00006103515625
+double algo1 (integrated_fm4_block * block) {
+	block -> signal4 = block -> gain4 * block -> core -> Amplitude (block -> amp4) * block -> core -> Sine (block -> time4 + block -> feedback4 * block -> signal4 * FRAC);
+	block -> signal3 = block -> gain3 * block -> core -> Amplitude (block -> amp3) * block -> core -> Sine (block -> time3 + block -> feedback3 * block -> signal3 * FRAC);
+	block -> signal2 = block -> gain2 * block -> core -> Amplitude (block -> amp2) * block -> core -> Sine (block -> time2 + block -> feedback2 * block -> signal2 * FRAC);
+	block -> signal1 = block -> gain1 * block -> core -> Amplitude (block -> amp1) * block -> core -> Sine (block -> time1 + block -> feedback1 * block -> signal1 * FRAC);
+	return block -> signal1 + block -> signal2 + block -> signal3 + block -> signal4;
+}
+double algo2 (integrated_fm4_block * block) {
+	block -> signal4 = block -> gain4 * block -> core -> Amplitude (block -> amp4) * block -> core -> Sine (block -> time4 + block -> feedback4 * block -> signal4 * FRAC);
+	block -> signal3 = block -> gain3 * block -> core -> Amplitude (block -> amp3) * block -> core -> Sine (block -> time3 + block -> signal4);
+	block -> signal2 = block -> gain2 * block -> core -> Amplitude (block -> amp2) * block -> core -> Sine (block -> time2 + block -> feedback2 * block -> signal2 * FRAC);
+	block -> signal1 = block -> gain1 * block -> core -> Amplitude (block -> amp1) * block -> core -> Sine (block -> time1 + block -> feedback1 * block -> signal1 * FRAC);
+	return block -> signal1 + block -> signal2 + block -> signal3;
+}
+double algo3 (integrated_fm4_block * block) {
+	block -> signal4 = block -> gain4 * block -> core -> Amplitude (block -> amp4) * block -> core -> Sine (block -> time4 + block -> feedback4 * block -> signal4 * FRAC);
+	block -> signal3 = block -> gain3 * block -> core -> Amplitude (block -> amp3) * block -> core -> Sine (block -> time3 + block -> signal4);
+	block -> signal2 = block -> gain2 * block -> core -> Amplitude (block -> amp2) * block -> core -> Sine (block -> time2 + block -> signal4);
+	block -> signal1 = block -> gain1 * block -> core -> Amplitude (block -> amp1) * block -> core -> Sine (block -> time1 + block -> signal4);
+	return block -> signal1 + block -> signal2 + block -> signal3;
+}
+double algo4 (integrated_fm4_block * block) {
+	block -> signal4 = block -> gain4 * block -> core -> Amplitude (block -> amp4) * block -> core -> Sine (block -> time4 + block -> feedback4 * block -> signal4 * FRAC);
+	block -> signal3 = block -> gain3 * block -> core -> Amplitude (block -> amp3) * block -> core -> Sine (block -> time3 + block -> signal4);
+	block -> signal2 = block -> gain2 * block -> core -> Amplitude (block -> amp2) * block -> core -> Sine (block -> time2 + block -> feedback2 * block -> signal2 * FRAC);
+	block -> signal1 = block -> gain1 * block -> core -> Amplitude (block -> amp1) * block -> core -> Sine (block -> time1 + block -> signal2);
+	return block -> signal1 + block -> signal3;
+}
+double algo5 (integrated_fm4_block * block) {
+	block -> signal4 = block -> gain4 * block -> core -> Amplitude (block -> amp4) * block -> core -> Sine (block -> time4 + block -> feedback4 * block -> signal4 * FRAC);
+	block -> signal3 = block -> gain3 * block -> core -> Amplitude (block -> amp3) * block -> core -> Sine (block -> time3 + block -> feedback3 * block -> signal3 * FRAC);
+	block -> signal2 = block -> gain2 * block -> core -> Amplitude (block -> amp2) * block -> core -> Sine (block -> time2 + block -> feedback2 * block -> signal2 * FRAC);
+	return block -> signal1 = block -> gain1 * block -> core -> Amplitude (block -> amp1) *
+														block -> core -> Sine (block -> time1 + block -> signal2 + block -> signal3 + block -> signal4);
+}
+double algo6 (integrated_fm4_block * block) {
+	block -> signal4 = block -> gain4 * block -> core -> Amplitude (block -> amp4) * block -> core -> Sine (block -> time4 + block -> feedback4 * block -> signal4 * FRAC);
+	block -> signal3 = block -> gain3 * block -> core -> Amplitude (block -> amp3) * block -> core -> Sine (block -> time3 + block -> signal4);
+	block -> signal2 = block -> gain2 * block -> core -> Amplitude (block -> amp2) * block -> core -> Sine (block -> time2 + block -> feedback2 * block -> signal2 * FRAC);
+	return block -> signal1 = block -> gain1 * block -> core -> Amplitude (block -> amp1) * block -> core -> Sine (block -> time1 + block -> signal2 + block -> signal3);
+}
+double algo7 (integrated_fm4_block * block) {
+	block -> signal4 = block -> gain4 * block -> core -> Amplitude (block -> amp4) * block -> core -> Sine (block -> time4 + block -> feedback4 * block -> signal4 * FRAC);
+	block -> signal3 = block -> gain3 * block -> core -> Amplitude (block -> amp3) * block -> core -> Sine (block -> time3 + block -> feedback3 * block -> signal3 * FRAC);
+	block -> signal2 = block -> gain2 * block -> core -> Amplitude (block -> amp2) * block -> core -> Sine (block -> time2 + block -> signal3 + block -> signal4);
+	return block -> signal1 = block -> gain1 * block -> core -> Amplitude (block -> amp1) * block -> core -> Sine (block -> time1 + block -> signal2);
+}
+double algo8 (integrated_fm4_block * block) {
+	block -> signal4 = block -> gain4 * block -> core -> Amplitude (block -> amp4) * block -> core -> Sine (block -> time4 + block -> feedback4 * block -> signal4 * FRAC);
+	block -> signal3 = block -> gain3 * block -> core -> Amplitude (block -> amp3) * block -> core -> Sine (block -> time3 + block -> signal4);
+	block -> signal2 = block -> gain2 * block -> core -> Amplitude (block -> amp2) * block -> core -> Sine (block -> time2 + block -> signal3);
+	return block -> signal1 = block -> gain1 * block -> core -> Amplitude (block -> amp1) * block -> core -> Sine (block -> time1 + block -> signal2);
+}
+void integrated_fm4_block :: move (void) {
+	if (algo != previous_algo) {
+		switch ((int) current_algo) {
+		case 0: current_algo = algo1; break;
+		case 1: current_algo = algo2; break;
+		case 2: current_algo = algo3; break;
+		case 3: current_algo = algo4; break;
+		case 4: current_algo = algo5; break;
+		case 5: current_algo = algo6; break;
+		case 6: current_algo = algo7; break;
+		case 7: current_algo = algo8; break;
+		default: current_algo = algo1; break;
+		}
+		previous_algo = algo;
+	}
+	if (trigger >= 16384.0) time1 = time2 = time3 = time4 = 0.0;
+	signal = current_algo (this);
+	time1 += core -> TimeDelta (freq1) * ratio1;
+	time2 += core -> TimeDelta (freq2) * ratio2;
+	time3 += core -> TimeDelta (freq3) * ratio3;
+	time4 += core -> TimeDelta (freq4) * ratio4;
+	while (time1 >= 1.0) time1 -= 1.0;
+	while (time2 >= 1.0) time2 -= 1.0;
+	while (time3 >= 1.0) time3 -= 1.0;
+	while (time4 >= 1.0) time4 -= 1.0;
+}
+integrated_fm4_block :: integrated_fm4_block (orbiter_core * core) {
+	this -> core = core;
+	current_algo = algo1;
+	algo = previous_algo = 0.0;
+	trigger = 0.0;
+	signal1 = signal2 = signal3 = signal4 = 0.0;
+	time1 = time2 = time3 = time4 = 0.0;
+	freq1 = freq2 = freq3 = freq4 = 0.0;
+	amp1 = 0.0; amp2 = amp3 = amp4 = -16384.0;
+	gain1 = gain2 = gain3 = gain4 = 1.0;
+	ratio1 = ratio2 = ratio3 = ratio4 = 1.0;
+	feedback1 = feedback2 = feedback3 = feedback4 = 0.0;
+}
+
 void integrated_filter :: move (void) {
 	double F = core -> FilterFreq (freq);
 	double Q = 2.0 - resonance * 0.0001220703125;

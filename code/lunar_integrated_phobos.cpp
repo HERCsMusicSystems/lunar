@@ -72,8 +72,9 @@ class integrated_phobos;
 class integrated_phobos_part {
 public:
 	integrated_trigger trigger;
+	integrated_fm4_block fm;
 	void move (integrated_phobos * phobos);
-	integrated_phobos_part (orbiter_core * core) : trigger (core, true, 0) {}
+	integrated_phobos_part (orbiter_core * core) : trigger (core, true, 0), fm (core) {}
 };
 
 typedef integrated_phobos_part * integrated_phobos_part_pointer;
@@ -241,7 +242,6 @@ public:
 		return true;
 	}
 	bool code (PrologElement * parameters, PrologResolution * resolution) {
-		if (native_moonbase :: code (parameters, resolution)) return true;
 /*		if (parameters -> isPair ()) {
 			PrologElement * v = parameters -> getLeft ();
 			PrologElement * o = 0;
@@ -341,7 +341,7 @@ public:
 				}
 			}
 		}*/
-		return false;
+		return native_moonbase :: code (parameters, resolution);
 	}
 	native_integrated_phobos (PrologAtom * atom, orbiter_core * core, orbiter * module, PrologDirectory * directory) : native_moonbase (directory, atom, core, module) {
 		/*

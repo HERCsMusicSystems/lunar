@@ -55,6 +55,37 @@ public:
 	integrated_vco (orbiter_core * core);
 };
 
+class integrated_fm4_block {
+private:
+	double (* current_algo) (integrated_fm4_block * block);
+	double previous_algo;
+	double time1, time2, time3, time4;
+	double signal1, signal2, signal3, signal4;
+	orbiter_core * core;
+public:
+	// ==== OUTPUT ====
+	double signal;
+	// ==== INPUT ====
+	double trigger;
+	double algo;
+	double freq1, freq2, freq3, freq4;
+	double amp1, amp2, amp3, amp4;
+	double gain1, gain2, gain3, gain4;
+	double ratio1, ratio2, ratio3, ratio4;
+	double feedback1, feedback2, feedback3, feedback4;
+	// ==== PROCESSING ====
+	void move (void);
+	integrated_fm4_block (orbiter_core * core);
+	friend double algo1 (integrated_fm4_block * block);
+	friend double algo2 (integrated_fm4_block * block);
+	friend double algo3 (integrated_fm4_block * block);
+	friend double algo4 (integrated_fm4_block * block);
+	friend double algo5 (integrated_fm4_block * block);
+	friend double algo6 (integrated_fm4_block * block);
+	friend double algo7 (integrated_fm4_block * block);
+	friend double algo8 (integrated_fm4_block * block);
+};
+
 class integrated_filter {
 private:
 	double running_high_pass_signal, running_band_pass_signal, running_signal;

@@ -138,7 +138,7 @@ double algo8 (integrated_fm4_block * block) {
 }
 void integrated_fm4_block :: move (void) {
 	if (algo != previous_algo) {
-		switch ((int) current_algo) {
+		switch ((int) algo) {
 		case 0: current_algo = algo1; break;
 		case 1: current_algo = algo2; break;
 		case 2: current_algo = algo3; break;

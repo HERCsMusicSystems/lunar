@@ -218,7 +218,7 @@ public:
 
 class integrated_arpeggiator : public IntegratedCommandModule {
 private:
-	double tick, time, active, previous_activity;
+	double tick, time, previous_activity;
 	bool should_keyoff;
 	int active_keys [128];
 	int active_velocities [128];
@@ -262,7 +262,7 @@ private:
 	void private_signal (void);
 	void move (void);
 public:
-	double tempo, division, current_algo, hold;
+	double tempo, division, current_algo, active, hold;
 public:
 	bool insert_trigger (integrated_trigger * trigger);
 	bool insert_controller (double * controller, int location, double shift);

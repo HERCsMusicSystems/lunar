@@ -347,10 +347,10 @@ program lunar #machine := "lunar"
 ]
 [[AllocateChannel *index *location] [++ *index *next] [MIDI_CHANNELS *next : *] / [AllocateChannel *next *location]]
 
-[[BuildIntegrated *base *type *creator *blocks]
+[[BuildIntegrated *base *type *creator *blocks : *extra]
 	[AllocateChannel 0 *index]
 	[GenerateInstrumentName *type *base]
-	[*creator *machine]
+	[*creator *machine : *extra]
 	[addcl [[Moons *base *index *machine *machine]]]
 	[addcl [[*base *type *machine *blocks]]]
 	[MIDI_CHANNELS *index *machine]
@@ -360,8 +360,8 @@ program lunar #machine := "lunar"
 [[BuildIntegratedAlarm *base] [BuildIntegrated *base Alarm integrated_alarm AlarmBlocks]]
 [[BuildIntegratedMicrodot] [BuildIntegrated * Microdot integrated_microdot MicrodotBlocks]]
 [[BuildIntegratedMicrodot *base] [BuildIntegrated *base Microdot integrated_microdot MicrodotBlocks]]
-[[BuildIntegratedPhobos] [BuildIntegrated * Phobos integrated_phobos PhobosBlocks]]
-[[BuildIntegratedPhobos *base] [BuildIntegrated *base Phobos integrated_phobos PhobosBlocks]]
+[[BuildIntegratedPhobos *polyphony] [BuildIntegrated * Phobos integrated_phobos PhobosBlocks *polyphony]]
+[[BuildIntegratedPhobos *base *polyphony] [BuildIntegrated *base Phobos integrated_phobos PhobosBlocks *polyphony]]
 
 [[Alarm volume]]
 [[Alarm pan]]

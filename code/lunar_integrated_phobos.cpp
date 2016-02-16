@@ -69,6 +69,10 @@ Otherwise defaults to common behaviour.
 
 class integrated_phobos;
 
+struct operator_structure {
+	double freq, amp, ratio, feedback;
+};
+
 class integrated_phobos_part {
 public:
 	integrated_trigger trigger;
@@ -86,12 +90,18 @@ public:
 	integrated_moonbase base;
 	integrated_arpeggiator arp;
 	integrated_phobos_part_pointer * parts;
+	integrated_lfo lfo1;
+	integrated_lfo lfo2;
 	integrated_pan pan;
+	double pan_ctrl;
+	double X, Y, pitch, auto_ctrl;
 	integrated_stereo_chorus chorus;
 	integrated_delay delay;
 	integrated_drywet dry_wet;
 	integrated_stereo_amplifier volume;
 	integrated_map key_map;
+	operator_structure operators [4];
+	double operator_algo;
 //	integrated_trigger trigger;
 //	integrated_adsr adsr;
 //	integrated_lfo lfo;
@@ -206,7 +216,8 @@ public:
 		volume . volume_move ();
 		*/
 	}
-	integrated_phobos (orbiter_core * core, int polyphony = 8) : CommandModule (core), base (core), arp (core, & base), pan (core), chorus (core), delay (core), volume (core, 12800.0) {
+	integrated_phobos (orbiter_core * core, int polyphony = 8)
+			: CommandModule (core), base (core), arp (core, & base), lfo1 (core), lfo2 (core), pan (core), chorus (core), delay (core), volume (core, 12800.0) {
 		this -> polyphony = polyphony;
 		parts = new integrated_phobos_part_pointer [polyphony];
 		for (int ind = 0; ind < polyphony; ind++) {
@@ -233,7 +244,12 @@ void integrated_phobos_part :: move (integrated_phobos * phobos) {
 class native_integrated_phobos : public native_moonbase {
 public:
 	PrologAtom * core_atom;
-	PrologAtom * volume, * pan;
+	PrologAtom * volume, * pan, * X, * Y, * pitch, * auto_atom;
+	PrologAtom * chorus, * level, * time, * bias, * speed, * phase, * amp;
+	PrologAtom * delay, * balance, * feedback, * highdamp;
+	PrologAtom * arpeggiator, * subdivision, * active, * algo, * hold;
+	PrologAtom * lfo, * wave, * pulse, * sync, * vibrato, * tremolo, * wahwah;
+	PrologAtom * operator_atom, * freq, * ratio;
 	bool update_value (double * location, PrologElement * el, PrologElement * text, int style) {
 		if (el -> isNumber ()) * location = el -> getNumber ();
 		else {
@@ -267,82 +283,55 @@ public:
 								if (se -> isAtom ()) {
 									sa = se -> getAtom ();
 									if (sa == volume) return update_value (& ph -> volume . gateway, v, o, 1);
-									if (sa == pan) return update_value (& ph -> pan . pan, v, o, 1);
+									if (sa == pan) return update_value (& ph -> pan_ctrl, v, o, 1);
+									if (sa == chorus) {
+										path = path -> getRight ();
+										if (path -> isPair ()) {
+											se = path -> getLeft ();
+											if (se -> isAtom ()) {
+												sa = se -> getAtom ();
+												if (sa == level) return update_value (& ph -> chorus . level, v, o, 1);
+												if (sa == time) return update_value (& ph -> chorus . time, v, o, 1);
+												if (sa == bias) return update_value (& ph -> chorus . bias, v, o, 1);
+												if (sa == speed) return update_value (& ph -> chorus . speed, v, o, 1);
+												if (sa == phase) return update_value (& ph -> chorus . phase, v, o, 1);
+												if (sa == amp) return update_value (& ph -> chorus . amp, v, o, 1);
+											}
+										}
+										return false;
+									}
+									if (sa == delay) {
+										path = path -> getRight ();
+										if (path -> isPair ()) {
+											se = path -> getLeft ();
+											if (se -> isAtom ()) {
+												sa = se -> getAtom ();
+												if (sa == balance) return update_value (& ph -> dry_wet . balance, v, o, 1);
+												if (sa == feedback) return update_value (& ph -> delay . feedback, v, o, 1);
+												if (sa == time) return update_value (& ph -> delay . time, v, o, 1);
+												if (sa == highdamp) return update_value (& ph -> delay . high_damp, v, o, 1);
+											}
+										}
+										return false;
+									}
+									if (sa == X) return update_value (& ph -> X, v, o, 1);
+									if (sa == Y) return update_value (& ph -> Y, v, o, 1);
+									if (sa == pitch) return update_value (& ph -> pitch, v, o, 1);
+									if (sa == auto_atom) return update_value (& ph -> auto_ctrl, v, o, 5);
 								}
 							}
 						}
-					}
-					return false;
-				}
-			}
-		}
-/*		if (parameters -> isPair ()) {
-			PrologElement * v = parameters -> getLeft ();
-			PrologElement * o = 0;
-			if (v -> isNumber () || v -> isPair () || v -> isEarth () || v -> isVar ()) {
-				integrated_phobos * al = (integrated_phobos *) module;
-				PrologElement * path = parameters -> getRight ();
-				if (path -> isPair () && path -> getLeft () -> isVar ()) {o = path -> getLeft (); path = path -> getRight ();}
-				PrologElement * se;
-				PrologAtom * sa;
-				if (path -> isPair ()) {
-					se = path -> getLeft ();
-					if (se -> isAtom ()) {
-						sa = se -> getAtom ();
-						if (sa == volume) return update_value (& al -> volume . gateway, v, o, 1);
-						if (sa == pan) return update_value (& al -> pan_ctrl, v, o, 1);
-						if (sa == delay) {
+						if (sa == arpeggiator) {
 							path = path -> getRight ();
 							if (path -> isPair ()) {
 								se = path -> getLeft ();
 								if (se -> isAtom ()) {
 									sa = se -> getAtom ();
-									if (sa == balance) return update_value (& al -> dry_wet . balance, v, o, 1);
-									if (sa == feedback) return update_value (& al -> delay . feedback, v, o, 1);
-									if (sa == time) return update_value (& al -> delay . time, v, o, 4);
-									if (sa == highdamp) return update_value (& al -> delay . high_damp, v, o, 1);
-								}
-							}
-							return false;
-						}
-						if (sa == portamento) {
-							path = path -> getRight ();
-							if (path -> isPair ()) {
-								se = path -> getLeft ();
-								if (se -> isAtom ()) {
-									sa = se -> getAtom ();
-									if (sa == porta) return update_value (& al -> trigger . porta, v, o, 5);
-									if (sa == time) return update_value (& al -> trigger . porta_time, v, o, 4);
-									if (sa == legato) return update_value (& al -> trigger . legato, v, o, 5);
-									if (sa == hold) return update_value (& al -> trigger . hold, v, o, 5);
-								}
-							}
-							return false;
-						}
-						if (sa == vco) {
-							path = path -> getRight ();
-							if (path -> isPair ()) {
-								se = path -> getLeft ();
-								if (se -> isAtom ()) {
-									sa = se -> getAtom ();
-									if (sa == freq) return update_value (& al -> freq, v, o, 2);
-									if (sa == amp) return update_value (& al -> amp, v, o, 3);
-									if (sa == ratio) return update_value (& al -> vco . ratio, v, o, 7);
-									if (sa == wave) return update_value (& al -> vco . wave, v, o, 1);
-								}
-							}
-							return false;
-						}
-						if (sa == adsr) {
-							path = path -> getRight ();
-							if (path -> isPair ()) {
-								se = path -> getLeft ();
-								if (se -> isAtom ()) {
-									sa = se -> getAtom ();
-									if (sa == attack) return update_value (& al -> adsr . attack, v, o, 4);
-									if (sa == decay) return update_value (& al -> adsr . decay, v, o, 4);
-									if (sa == sustain) return update_value (& al -> adsr . sustain, v, o, 3);
-									if (sa == release) return update_value (& al -> adsr . release, v, o, 4);
+									if (sa == speed) return update_value (& ph -> arp . tempo, v, o, 1);
+									if (sa == subdivision) return update_value (& ph -> arp . division, v, o, 1);
+									if (sa == active) return update_value (& ph -> arp . active, v, o, 5);
+									if (sa == algo) return update_value (& ph -> arp . current_algo, v, o, 1);
+									if (sa == hold) return update_value (& ph -> arp . hold, v, o, 5);
 								}
 							}
 							return false;
@@ -351,39 +340,115 @@ public:
 							path = path -> getRight ();
 							if (path -> isPair ()) {
 								se = path -> getLeft ();
-								if (se -> isAtom ()) {
-									sa = se -> getAtom ();
-									if (sa == speed) return update_value (& al -> lfo . speed, v, o, 1);
-									if (sa == wave) return update_value (& al -> lfo . wave, v, o, 6);
-									if (sa == pulse) return update_value (& al -> lfo . pulse, v, o, 1);
-									if (sa == phase) return update_value (& al -> lfo . phase, v, o, 1);
-									if (sa == sync) return update_value (& al -> lfo . sync, v, o, 5);
-									if (sa == vibrato) return update_value (& al -> lfo . vibrato, v, o, 1);
-									if (sa == tremolo) return update_value (& al -> lfo . tremolo, v, o, 1);
-									if (sa == pan) return update_value (& al -> lfo . pan, v, o, 1);
+								if (! se -> isInteger ()) return false;
+								int ind = se -> getInteger ();
+								if (ind == 1) {
+									path = path -> getRight ();
+									if (path -> isPair ()) {
+										se = path -> getLeft ();
+										if (se -> isAtom ()) {
+											sa = se -> getAtom ();
+											if (sa == speed) return update_value (& ph -> lfo1 . speed, v, o, 1);
+											if (sa == wave) return update_value (& ph -> lfo1 . wave, v, o, 6);
+											if (sa == pulse) return update_value (& ph -> lfo1 . pulse, v, o, 1);
+											if (sa == phase) return update_value (& ph -> lfo1 . phase, v, o, 1);
+											if (sa == sync) return update_value (& ph -> lfo1 . sync, v, o, 5);
+											if (sa == vibrato) return update_value (& ph -> lfo1 . vibrato, v, o, 1);
+										}
+									}
+									return false;
+								}
+								if (ind == 2) {
+									path = path -> getRight ();
+									if (path -> isPair ()) {
+										se = path -> getLeft ();
+										if (se -> isAtom ()) {
+											sa = se -> getAtom ();
+											if (sa == speed) return update_value (& ph -> lfo2 . speed, v, o, 1);
+											if (sa == wave) return update_value (& ph -> lfo2 . wave, v, o, 6);
+											if (sa == pulse) return update_value (& ph -> lfo2 . pulse, v, o, 1);
+											if (sa == phase) return update_value (& ph -> lfo2 . phase, v, o, 1);
+											if (sa == sync) return update_value (& ph -> lfo2 . sync, v, o, 5);
+											if (sa == vibrato) return update_value (& ph -> lfo2 . vibrato, v, o, 1);
+											if (sa == tremolo) return update_value (& ph -> lfo2 . tremolo, v, o, 1);
+											if (sa == wahwah) return update_value (& ph -> lfo2 . wahwah, v, o, 1);
+											if (sa == pan) return update_value (& ph -> lfo2 . pan, v, o, 1);
+										}
+									}
+									return false;
 								}
 							}
 							return false;
 						}
-						if (sa == key_map) {
-							if (v -> isVar ()) return al -> key_map . return_content (v);
-							if (v -> isPair ()) return al -> key_map . read_content (v);
+						if (sa == operator_atom) {
+							path = path -> getRight ();
+							if (path -> isPair ()) {
+								se = path -> getLeft ();
+								if (se -> isAtom ()) {sa = se -> getAtom (); if (sa == algo) return update_value (& ph -> operator_algo, v, o, 1); return false;}
+								if (se -> isInteger ()) {
+									int ind = se -> getInteger () - 1;
+									if (ind < 0 || ind > 3) return false;
+									path = path -> getRight ();
+									if (path -> isPair ()) {
+										se = path -> getLeft ();
+										if (se -> isAtom ()) {
+											sa = se -> getAtom ();
+											if (sa == freq) return update_value (& ph -> operators [ind] . freq, v, o, 2);
+										}
+									}
+								}
+							}
 							return false;
 						}
 					}
 					return false;
 				}
 			}
-		}*/
+		}
 		return native_moonbase :: code (parameters, resolution);
 	}
 	native_integrated_phobos (PrologAtom * atom, orbiter_core * core, orbiter * module, PrologDirectory * directory) : native_moonbase (directory, atom, core, module) {
 		core_atom = 0;
-		volume = pan = 0;
+		volume = pan = X = Y = pitch = auto_atom = 0;
+		chorus = level = time = bias = speed = phase = amp = 0;
+		delay = balance = feedback = highdamp = 0;
+		arpeggiator = subdivision = active = algo = hold = 0;
+		lfo = wave = pulse = sync = vibrato = tremolo = wahwah = 0;
+		operator_atom = freq = ratio = 0;
 		if (directory == 0) return;
 		core_atom = directory -> searchAtom ("core");
 		volume = directory -> searchAtom ("volume");
 		pan = directory -> searchAtom ("pan");
+		X = directory -> searchAtom ("X");
+		Y = directory -> searchAtom ("Y");
+		pitch = directory -> searchAtom ("pitch");
+		auto_atom = directory -> searchAtom ("auto");
+		chorus = directory -> searchAtom ("chorus");
+		level = directory -> searchAtom ("level");
+		time = directory -> searchAtom ("time");
+		bias = directory -> searchAtom ("bias");
+		speed = directory -> searchAtom ("speed");
+		phase = directory -> searchAtom ("phase");
+		amp = directory -> searchAtom ("amp");
+		delay = directory -> searchAtom ("delay");
+		balance = directory -> searchAtom ("balance");
+		feedback = directory -> searchAtom ("feedback");
+		highdamp = directory -> searchAtom ("highdamp");
+		arpeggiator = directory -> searchAtom ("arpeggiator");
+		subdivision = directory -> searchAtom ("subdivision");
+		active = directory -> searchAtom ("active");
+		algo = directory -> searchAtom ("algo");
+		hold = directory -> searchAtom ("hold");
+		lfo = directory -> searchAtom ("lfo");
+		wave = directory -> searchAtom ("wave");
+		pulse = directory -> searchAtom ("pulse");
+		sync = directory -> searchAtom ("sync");
+		vibrato = directory -> searchAtom ("vibrato");
+		tremolo = directory -> searchAtom ("tremolo");
+		wahwah = directory -> searchAtom ("wahwah");
+		operator_atom = directory -> searchAtom ("operator");
+		freq = directory -> searchAtom ("freq");
+		ratio = directory -> searchAtom ("ratio");
 		/*
 		volume = pan = delay = portamento = vco = adsr = lfo = 0;
 		balance = feedback = time = highdamp = 0;

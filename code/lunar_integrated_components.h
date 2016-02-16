@@ -373,6 +373,41 @@ public:
 	integrated_mono_amplifier (orbiter_core * core, double gateway);
 };
 
+class integrated_chorus {
+private:
+	double omega;
+	int index;
+	double line [65536];
+	orbiter_core * core;
+public:
+	// ==== OUTPUT ====
+	double signal;
+	// ==== INPUT ====
+	double enter;
+	double level, time, speed, amp;
+	// ==== PROCESSING ====
+	void move (void);
+	integrated_chorus (orbiter_core * core);
+};
+
+class integrated_stereo_chorus {
+private:
+	double omega;
+	int index;
+	double line [65536];
+	double line_right [65536];
+	orbiter_core * core;
+public:
+	// ==== OUTPUT ====
+	double signal, signal_right;
+	// ==== INPUT ====
+	double mono, left, right;
+	double level, time, bias, speed, phase, amp;
+	// ==== PROCESSING ====
+	void move (void);
+	integrated_stereo_chorus (orbiter_core * core);
+};
+
 class integrated_delay {
 private:
 	double previous_high_damp;

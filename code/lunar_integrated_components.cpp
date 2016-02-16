@@ -1195,6 +1195,60 @@ void integrated_mono_amplifier :: gateway_move (void) {signal = enter * gateway 
 void integrated_mono_amplifier :: volume_move (void) {signal = enter * core -> Volume (gateway);}
 integrated_mono_amplifier :: integrated_mono_amplifier (orbiter_core * core, double gateway) {this -> core = core; enter = signal = 0.0; this -> gateway = gateway;}
 
+static double interpolate (double time, double * data) {
+	int ind = (int) time;
+	time -= (double) ind;
+	int sub = ind + 1;
+	if (sub > 65535) sub = 0;
+	return data [ind] * (1.0 - time) + data [sub] * time;
+}
+void integrated_chorus :: move (void) {
+	double lfo = 1.0 + amp * DIV_16384 * core -> SineApproximated (omega);
+	omega += core -> ControlTimeDelta (speed);
+	while (omega >= 1.0) omega -= 1.0;
+	double location = (double) index - time * lfo * core -> DSP_CHORUS_time_fraction;
+	while (location < 0.0) location += 65536.0; while (location >= 65536.0) location -= 65536.0;
+	line [index++] = enter;
+	if (index > 65535) index = 0;
+	signal = enter + level * DIV_16384 * interpolate (location, line);
+}
+integrated_chorus :: integrated_chorus (orbiter_core * core) {
+	this -> core = core;
+	for (int ind = 0; ind < 65536; ind++) line [ind] = 0.0;
+	enter = time = omega = 0.0;
+	index = 0;
+	level = 0.0;
+	speed = 0.0; amp = 8192.0;
+}
+void integrated_stereo_chorus :: move (void) {
+	double amp_divided = amp * DIV_16384;
+	double lfo_left = 1.0 + amp_divided * core -> SineApproximated (omega);
+	double lfo_right = 1.0 + amp_divided * core -> SineApproximated (omega + phase * DIV_16384);
+	omega += core -> ControlTimeDelta (speed);
+	while (omega >= 1.0) omega -= 1.0;
+	double level_divided = level * DIV_16384;
+	double location = (double) index - time * lfo_left * core -> DSP_CHORUS_time_fraction;
+	while (location < 0.0) location += 65536.0; while (location >= 65536.0) location -= 65536.0;
+	double ml = mono + left;
+	signal = ml + level_divided * interpolate (location, line);
+	location = (double) index - (time + bias) * lfo_right * core -> DSP_CHORUS_time_fraction;
+	while (location < 0.0) location += 65536.0; while (location >= 65536.0) location -= 65536.0;
+	double mr = mono + right;
+	signal_right = mr + level_divided * interpolate (location, line_right);
+	line [index] = ml;
+	line_right [index++] = mr;
+	if (index > 65535) index = 0;
+}
+integrated_stereo_chorus :: integrated_stereo_chorus (orbiter_core * core) {
+	this -> core = core;
+	for (int ind = 0; ind < 65536; ind++) line [ind] = line_right [ind] = 0.0;
+	mono = left = right = signal_right = time = omega = 0.0;
+	index = 0;
+	level = 0.0;
+	speed = 0.0; amp = 8192.0;
+	bias = phase = 0.0;
+}
+
 void integrated_delay :: move (void) {
 	if (high_damp != previous_high_damp) {
 		previous_high_damp = high_damp;

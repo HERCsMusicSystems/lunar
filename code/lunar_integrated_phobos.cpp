@@ -86,6 +86,11 @@ public:
 	integrated_moonbase base;
 	integrated_arpeggiator arp;
 	integrated_phobos_part_pointer * parts;
+	integrated_pan pan;
+	integrated_stereo_chorus chorus;
+	integrated_delay delay;
+	integrated_drywet dry_wet;
+	integrated_stereo_amplifier volume;
 	integrated_map key_map;
 //	integrated_trigger trigger;
 //	integrated_adsr adsr;
@@ -130,6 +135,9 @@ public:
 		}*/
 	}
 	double getControl (int ctrl) {
+		switch (ctrl) {
+		case 7: return volume . gateway * 0.0078125; break;
+		}
 		/*switch (ctrl) {
 		case 1: return lfo . vibrato * 0.0078125; break;
 		case 71: return lfo . tremolo * 0.0078125; break;
@@ -171,6 +179,8 @@ public:
 		return CommandModule :: outputAddress (ind);
 	}
 	void move (void) {
+		chorus . move ();
+		delay . move ();
 		for (int ind = 0; ind < polyphony; ind++) parts [ind] -> move (this);
 		/*
 		trigger . move ();
@@ -196,7 +206,7 @@ public:
 		volume . volume_move ();
 		*/
 	}
-	integrated_phobos (orbiter_core * core, int polyphony = 8) : CommandModule (core), base (core), arp (core, & base) {
+	integrated_phobos (orbiter_core * core, int polyphony = 8) : CommandModule (core), base (core), arp (core, & base), pan (core), chorus (core), delay (core), volume (core, 12800.0) {
 		this -> polyphony = polyphony;
 		parts = new integrated_phobos_part_pointer [polyphony];
 		for (int ind = 0; ind < polyphony; ind++) {
@@ -222,13 +232,8 @@ void integrated_phobos_part :: move (integrated_phobos * phobos) {
 
 class native_integrated_phobos : public native_moonbase {
 public:
-	PrologAtom * volume, * pan, *delay, * portamento, * vco, * adsr, * lfo;
-	PrologAtom * balance, * feedback, * time, * highdamp;
-	PrologAtom * porta, * legato, * hold;
-	PrologAtom * freq, * amp, * ratio, * wave;
-	PrologAtom * attack, * decay, * sustain, * release;
-	PrologAtom * speed, * pulse, * phase, * sync, * vibrato, * tremolo;
-	PrologAtom * key_map;
+	PrologAtom * core_atom;
+	PrologAtom * volume, * pan;
 	bool update_value (double * location, PrologElement * el, PrologElement * text, int style) {
 		if (el -> isNumber ()) * location = el -> getNumber ();
 		else {
@@ -242,6 +247,35 @@ public:
 		return true;
 	}
 	bool code (PrologElement * parameters, PrologResolution * resolution) {
+		if (parameters -> isPair ()) {
+			PrologElement * v = parameters -> getLeft ();
+			PrologElement * o = 0;
+			if (v -> isNumber () || v -> isPair () || v -> isEarth () || v -> isVar ()) {
+				integrated_phobos * ph = (integrated_phobos *) module;
+				PrologElement * path = parameters -> getRight ();
+				if (path -> isPair () && path -> getLeft () -> isVar ()) {o = path -> getLeft (); path = path -> getRight ();}
+				PrologElement * se;
+				PrologAtom * sa;
+				if (path -> isPair ()) {
+					se = path -> getLeft ();
+					if (se -> isAtom ()) {
+						sa = se -> getAtom ();
+						if (sa == core_atom) {
+							path = path -> getRight ();
+							if (path -> isPair ()) {
+								se = path -> getLeft ();
+								if (se -> isAtom ()) {
+									sa = se -> getAtom ();
+									if (sa == volume) return update_value (& ph -> volume . gateway, v, o, 1);
+									if (sa == pan) return update_value (& ph -> pan . pan, v, o, 1);
+								}
+							}
+						}
+					}
+					return false;
+				}
+			}
+		}
 /*		if (parameters -> isPair ()) {
 			PrologElement * v = parameters -> getLeft ();
 			PrologElement * o = 0;
@@ -344,6 +378,12 @@ public:
 		return native_moonbase :: code (parameters, resolution);
 	}
 	native_integrated_phobos (PrologAtom * atom, orbiter_core * core, orbiter * module, PrologDirectory * directory) : native_moonbase (directory, atom, core, module) {
+		core_atom = 0;
+		volume = pan = 0;
+		if (directory == 0) return;
+		core_atom = directory -> searchAtom ("core");
+		volume = directory -> searchAtom ("volume");
+		pan = directory -> searchAtom ("pan");
 		/*
 		volume = pan = delay = portamento = vco = adsr = lfo = 0;
 		balance = feedback = time = highdamp = 0;

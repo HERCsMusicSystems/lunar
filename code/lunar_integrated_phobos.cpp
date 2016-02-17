@@ -69,8 +69,24 @@ Otherwise defaults to common behaviour.
 
 class integrated_phobos;
 
+struct pb_struct {double BP, left, right;};
+
 struct operator_structure {
 	double freq, amp, ratio, feedback;
+	struct {
+		double time [4], level [4];
+		pb_struct egscal;
+	} eg;
+	struct {
+		struct {
+			pb_struct key;
+			double eg, pitch, lfo [2];
+		} freq;
+		struct {
+			pb_struct key, X, Y, velocity;
+			double lfo;
+		} amp;
+	} sens;
 };
 
 class integrated_phobos_part {
@@ -102,18 +118,14 @@ public:
 	integrated_map key_map;
 	operator_structure operators [4];
 	double operator_algo;
-//	integrated_trigger trigger;
-//	integrated_adsr adsr;
-//	integrated_lfo lfo;
-//	integrated_vco vco;
-//	double freq, amp;
-//	integrated_pan pan;
-//	double pan_ctrl;;
-//	integrated_delay delay;
-//	integrated_drywet dry_wet;
-//	integrated_stereo_amplifier volume;
-//	integrated_map key_map;
-//	double lsb;
+	struct {double amp, time [4], level [4];} noise;
+	struct {double freq, resonance, amp; struct {double eg; pb_struct key;} sens;} filter;
+	struct {
+		struct {double attack, decay, sustain, release; pb_struct egscal;} amp;
+		struct {double time [4], level [4]; pb_struct egscal;} freq;
+	} adsr;
+	struct {double porta, time, legato, hold;} portamento;
+	double lsb;
 	bool insert_trigger (lunar_trigger * trigger) {return false;}
 	bool insert_controller (orbiter * controller, int location, double shift) {return false;}
 	void keyon (int key, int velocity) {arp . keyon (key, velocity);}
@@ -250,6 +262,12 @@ public:
 	PrologAtom * arpeggiator, * subdivision, * active, * algo, * hold;
 	PrologAtom * lfo, * wave, * pulse, * sync, * vibrato, * tremolo, * wahwah;
 	PrologAtom * operator_atom, * freq, * ratio;
+	PrologAtom * eg, * time1, * time2, * time3, * time4, * level1, * level2, * level3, * level4;
+	PrologAtom * egscal, * BP, * left, * right;
+	PrologAtom * sens, * key, * velocity;
+	PrologAtom * noise, * filter, * resonance, * adsr;
+	PrologAtom * attack, * decay, * sustain, * release;
+	PrologAtom * portamento, * porta, * legato;
 	bool update_value (double * location, PrologElement * el, PrologElement * text, int style) {
 		if (el -> isNumber ()) * location = el -> getNumber ();
 		else {
@@ -384,7 +402,7 @@ public:
 							path = path -> getRight ();
 							if (path -> isPair ()) {
 								se = path -> getLeft ();
-								if (se -> isAtom ()) {sa = se -> getAtom (); if (sa == algo) return update_value (& ph -> operator_algo, v, o, 1); return false;}
+								if (se -> isAtom ()) {sa = se -> getAtom (); if (sa == algo) return update_value (& ph -> operator_algo, v, o, 8); return false;}
 								if (se -> isInteger ()) {
 									int ind = se -> getInteger () - 1;
 									if (ind < 0 || ind > 3) return false;
@@ -394,6 +412,274 @@ public:
 										if (se -> isAtom ()) {
 											sa = se -> getAtom ();
 											if (sa == freq) return update_value (& ph -> operators [ind] . freq, v, o, 2);
+											if (sa == amp) return update_value (& ph -> operators [ind] . amp, v, o, 3);
+											if (sa == ratio) return update_value (& ph -> operators [ind] . ratio, v, o, 7);
+											if (sa == feedback) return update_value (& ph -> operators [ind] . feedback, v, o, 1);
+											if (sa == eg) {
+												path = path -> getRight ();
+												if (path -> isPair ()) {
+													se = path -> getLeft ();
+													if (se -> isAtom ()) {
+														sa = se -> getAtom ();
+														if (sa == time1) return update_value (& ph -> operators [ind] . eg . time [0], v, o, 4);
+														if (sa == time2) return update_value (& ph -> operators [ind] . eg . time [1], v, o, 4);
+														if (sa == time3) return update_value (& ph -> operators [ind] . eg . time [2], v, o, 4);
+														if (sa == time4) return update_value (& ph -> operators [ind] . eg . time [3], v, o, 4);
+														if (sa == level1) return update_value (& ph -> operators [ind] . eg . level [0], v, o, 3);
+														if (sa == level2) return update_value (& ph -> operators [ind] . eg . level [1], v, o, 3);
+														if (sa == level3) return update_value (& ph -> operators [ind] . eg . level [2], v, o, 3);
+														if (sa == level4) return update_value (& ph -> operators [ind] . eg . level [3], v, o, 3);
+														if (sa == egscal) {
+															path = path -> getRight ();
+															if (path -> isPair ()) {
+																se = path -> getLeft ();
+																if (se -> isAtom ()) {
+																	sa = se -> getAtom ();
+																	if (sa == BP) return update_value (& ph -> operators [ind] . eg . egscal . BP, v, o, 1);
+																	if (sa == left) return update_value (& ph -> operators [ind] . eg . egscal . left, v, o, 1);
+																	if (sa == right) return update_value (& ph -> operators [ind] . eg . egscal . right, v, o, 1);
+																}
+															}
+															return false;
+														}
+													}
+												}
+												return false;
+											}
+											if (sa == sens) {
+												path = path -> getRight ();
+												if (path -> isPair ()) {
+													se = path -> getLeft ();
+													if (se -> isAtom ()) {
+														sa = se -> getAtom ();
+														if (sa == freq) {
+															path = path -> getRight ();
+															if (path -> isPair ()) {
+																se = path -> getLeft ();
+																if (se -> isAtom ()) {
+																	sa = se -> getAtom ();
+																	if (sa == key) {
+																		path = path -> getRight ();
+																		if (path -> isPair ()) {
+																			se = path -> getLeft ();
+																			if (se -> isAtom ()) {
+																				sa = se -> getAtom ();
+																				if (sa == BP) return update_value (& ph -> operators [ind] . sens . freq . key . BP, v, o, 1);
+																				if (sa == left) return update_value (& ph -> operators [ind] . sens . freq . key . left, v, o, 1);
+																				if (sa == right) return update_value (& ph -> operators [ind] . sens . freq . key . right, v, o, 1);
+																			}
+																		}
+																		return false;
+																	}
+																	if (sa == eg)  return update_value (& ph -> operators [ind] . sens . freq . eg, v, o, 1);
+																}
+															}
+															return false;
+														}
+														if (sa == amp) {
+															path = path -> getRight ();
+															if (path -> isPair ()) {
+																se = path -> getLeft ();
+																if (se -> isAtom ()) {
+																	sa = se -> getAtom ();
+																	if (sa == key) {
+																		path = path -> getRight ();
+																		if (path -> isPair ()) {
+																			se = path -> getLeft ();
+																			if (se -> isAtom ()) {
+																				sa = se -> getAtom ();
+																				if (sa == BP) return update_value (& ph -> operators [ind] . sens . amp . key . BP, v, o, 1);
+																				if (sa == left) return update_value (& ph -> operators [ind] . sens . amp . key . left, v, o, 1);
+																				if (sa == right) return update_value (& ph -> operators [ind] . sens . amp . key . right, v, o, 1);
+																			}
+																		}
+																		return false;
+																	}
+																	if (sa == X) {
+																		path = path -> getRight ();
+																		if (path -> isPair ()) {
+																			se = path -> getLeft ();
+																			if (se -> isAtom ()) {
+																				sa = se -> getAtom ();
+																				if (sa == BP) return update_value (& ph -> operators [ind] . sens . amp . X . BP, v, o, 1);
+																				if (sa == left) return update_value (& ph -> operators [ind] . sens . amp . X . left, v, o, 1);
+																				if (sa == right) return update_value (& ph -> operators [ind] . sens . amp . X . right, v, o, 1);
+																			}
+																		}
+																		return false;
+																	}
+																	if (sa == Y) {
+																		path = path -> getRight ();
+																		if (path -> isPair ()) {
+																			se = path -> getLeft ();
+																			if (se -> isAtom ()) {
+																				sa = se -> getAtom ();
+																				if (sa == BP) return update_value (& ph -> operators [ind] . sens . amp . Y . BP, v, o, 1);
+																				if (sa == left) return update_value (& ph -> operators [ind] . sens . amp . Y . left, v, o, 1);
+																				if (sa == right) return update_value (& ph -> operators [ind] . sens . amp . Y . right, v, o, 1);
+																			}
+																		}
+																		return false;
+																	}
+																	if (sa == velocity) {
+																		path = path -> getRight ();
+																		if (path -> isPair ()) {
+																			se = path -> getLeft ();
+																			if (se -> isAtom ()) {
+																				sa = se -> getAtom ();
+																				if (sa == BP) return update_value (& ph -> operators [ind] . sens . amp . velocity . BP, v, o, 1);
+																				if (sa == left) return update_value (& ph -> operators [ind] . sens . amp . velocity . left, v, o, 1);
+																				if (sa == right) return update_value (& ph -> operators [ind] . sens . amp . velocity . right, v, o, 1);
+																			}
+																		}
+																		return false;
+																	}
+																}
+															}
+															return false;
+														}
+													}
+												}
+												return false;
+											}
+											if (sa == noise) {
+												path = path -> getRight ();
+												if (path -> isPair ()) {
+													se = path -> getLeft ();
+													if (se -> isAtom ()) {
+														sa = se -> getAtom ();
+														if (sa == amp) return update_value (& ph -> noise . amp, v, o, 3);
+														if (sa == time1) return update_value (& ph -> noise . time [0], v, o, 4);
+														if (sa == time2) return update_value (& ph -> noise . time [1], v, o, 4);
+														if (sa == time3) return update_value (& ph -> noise . time [2], v, o, 4);
+														if (sa == time4) return update_value (& ph -> noise . time [3], v, o, 4);
+														if (sa == level1) return update_value (& ph -> noise . level [0], v, o, 3);
+														if (sa == level2) return update_value (& ph -> noise . level [1], v, o, 3);
+														if (sa == level3) return update_value (& ph -> noise . level [2], v, o, 3);
+														if (sa == level4) return update_value (& ph -> noise . level [3], v, o, 3);
+													}
+												}
+												return false;
+											}
+											if (sa == filter) {
+												path = path -> getRight ();
+												if (path -> isPair ()) {
+													se = path -> getLeft ();
+													if (se -> isAtom ()) {
+														sa = se -> getAtom ();
+														if (sa == freq) return update_value (& ph -> filter . freq, v, o, 2);
+														if (sa == resonance) return update_value (& ph -> filter . resonance, v, o, 1);
+														if (sa == amp) return update_value (& ph -> filter . amp, v, 0, 3);
+														if (sa == sens) {
+															path = path -> getRight ();
+															if (path -> isPair ()) {
+																se = path -> getLeft ();
+																if (se -> isAtom ()) {
+																	sa = se -> getAtom ();
+																	if (sa == eg) return update_value (& ph -> filter . sens . eg, v, o, 1);
+																	if (sa == key) {
+																		path = path -> getRight ();
+																		if (path -> isPair ()) {
+																			se = path -> getLeft ();
+																			if (se -> isAtom ()) {
+																				sa = se -> getAtom ();
+																				if (sa == BP) return update_value (& ph -> filter . sens . key . BP, v, o, 1);
+																				if (sa == left) return update_value (& ph -> filter . sens . key . left, v, o, 1);
+																				if (sa == right) return update_value (& ph -> filter . sens . key . right, v, o, 1);
+																			}
+																		}
+																		return false;
+																	}
+																}
+															}
+															return false;
+														}
+													}
+												}
+												return false;
+											}
+											if (sa == adsr) {
+												path = path -> getRight ();
+												if (path -> isPair ()) {
+													se = path -> getLeft ();
+													if (se -> isAtom ()) {
+														sa = se -> getAtom ();
+														if (sa == amp) {
+															path = path -> getRight ();
+															if (path -> isPair ()) {
+																se = path -> getLeft ();
+																if (se -> isAtom ()) {
+																	sa = se -> getAtom ();
+																	if (sa == attack) return update_value (& ph -> adsr . amp . attack, v, o, 4);
+																	if (sa == decay) return update_value (& ph -> adsr . amp . decay, v, o, 4);
+																	if (sa == sustain) return update_value (& ph -> adsr . amp . sustain, v, o, 3);
+																	if (sa == release) return update_value (& ph -> adsr . amp . release, v, o, 4);
+																	if (sa == egscal) {
+																		path = path -> getRight ();
+																		if (path -> isPair ()) {
+																			se = path -> getLeft ();
+																			if (se -> isAtom ()) {
+																				sa = se -> getAtom ();
+																				if (sa == BP) return update_value (& ph -> adsr . amp . egscal . BP, v, o, 1);
+																				if (sa == left) return update_value (& ph -> adsr . amp . egscal . left, v, o, 1);
+																				if (sa == right) return update_value (& ph -> adsr . amp . egscal . right, v, o, 1);
+																			}
+																		}
+																		return false;
+																	}
+																}
+															}
+															return false;
+														}
+														if (sa == freq) {
+															path = path -> getRight ();
+															if (path -> isPair ()) {
+																se = path -> getLeft ();
+																if (se -> isAtom ()) {
+																	sa = se -> getAtom ();
+																	if (sa == time1) return update_value (& ph -> adsr . freq . time [0], v, o, 4);
+																	if (sa == time2) return update_value (& ph -> adsr . freq . time [1], v, o, 4);
+																	if (sa == time3) return update_value (& ph -> adsr . freq . time [2], v, o, 4);
+																	if (sa == time4) return update_value (& ph -> adsr . freq . time [3], v, o, 4);
+																	if (sa == level1) return update_value (& ph -> adsr . freq . level [0], v, o, 3);
+																	if (sa == level2) return update_value (& ph -> adsr . freq . level [1], v, o, 3);
+																	if (sa == level3) return update_value (& ph -> adsr . freq . level [2], v, o, 3);
+																	if (sa == level4) return update_value (& ph -> adsr . freq . level [3], v, o, 3);
+																	if (sa == egscal) {
+																		path = path -> getRight ();
+																		if (path -> isPair ()) {
+																			se = path -> getLeft ();
+																			if (se -> isAtom ()) {
+																				sa = se -> getAtom ();
+																				if (sa == BP) return update_value (& ph -> adsr . freq . egscal . BP, v, o, 1);
+																				if (sa == left) return update_value (& ph -> adsr . freq . egscal . left, v, o, 1);
+																				if (sa == right) return update_value (& ph -> adsr . freq . egscal . right, v, o, 1);
+																			}
+																		}
+																		return false;
+																	}
+																}
+															}
+															return false;
+														}
+													}
+												}
+												return false;
+											}
+											if (sa == portamento) {
+												path = path -> getRight ();
+												if (path -> isPair ()) {
+													se = path -> getLeft ();
+													if (se -> isAtom ()) {
+														sa = se -> getAtom ();
+														if (sa == porta) return update_value (& ph -> portamento . porta, v, o, 5);
+														if (sa == time) return update_value (& ph -> portamento . time, v, o, 4);
+														if (sa == legato) return update_value (& ph -> portamento . legato, v, o, 5);
+														if (sa == hold) return update_value (& ph -> portamento . hold, v, o, 5);
+													}
+												}
+												return false;
+											}
 										}
 									}
 								}
@@ -415,6 +701,12 @@ public:
 		arpeggiator = subdivision = active = algo = hold = 0;
 		lfo = wave = pulse = sync = vibrato = tremolo = wahwah = 0;
 		operator_atom = freq = ratio = 0;
+		eg = time1 = time2 = time3 = time4 = level1 = level2 = level3 = level4 = 0;
+		egscal = BP = left = right = 0;
+		sens = key = velocity = 0;
+		noise = filter = resonance = adsr = 0;
+		attack = decay = sustain = release = 0;
+		portamento = porta = legato = 0;
 		if (directory == 0) return;
 		core_atom = directory -> searchAtom ("core");
 		volume = directory -> searchAtom ("volume");
@@ -449,45 +741,33 @@ public:
 		operator_atom = directory -> searchAtom ("operator");
 		freq = directory -> searchAtom ("freq");
 		ratio = directory -> searchAtom ("ratio");
-		/*
-		volume = pan = delay = portamento = vco = adsr = lfo = 0;
-		balance = feedback = time = highdamp = 0;
-		porta = legato = hold = 0;
-		freq = amp = ratio = wave = 0;
-		attack = decay = sustain = release = 0;
-		speed = pulse = phase = sync = vibrato = tremolo = 0;
-		key_map = 0;
-		if (directory == 0) return;
-		volume = directory -> searchAtom ("volume");
-		pan = directory -> searchAtom ("pan");
-		delay = directory -> searchAtom ("delay");
-		portamento = directory -> searchAtom ("portamento");
-		vco = directory -> searchAtom ("vco");
+		eg = directory -> searchAtom ("eg");
+		time1 = directory -> searchAtom ("time1");
+		time2 = directory -> searchAtom ("time2");
+		time3 = directory -> searchAtom ("time3");
+		time4 = directory -> searchAtom ("time4");
+		level1 = directory -> searchAtom ("level1");
+		level2 = directory -> searchAtom ("level2");
+		level3 = directory -> searchAtom ("level3");
+		level4 = directory -> searchAtom ("level4");
+		egscal = directory -> searchAtom ("egscal");
+		BP = directory -> searchAtom ("BP");
+		left = directory -> searchAtom ("left");
+		right = directory -> searchAtom ("right");
+		sens = directory -> searchAtom ("sens");
+		key = directory -> searchAtom ("key");
+		velocity = directory -> searchAtom ("velocity");
+		noise = directory -> searchAtom ("noise");
+		filter = directory -> searchAtom ("filter");
+		resonance = directory -> searchAtom ("resonance");
 		adsr = directory -> searchAtom ("adsr");
-		lfo = directory -> searchAtom ("lfo");
-		balance = directory -> searchAtom ("balance");
-		feedback = directory -> searchAtom ("feedback");
-		time = directory -> searchAtom ("time");
-		highdamp = directory -> searchAtom ("highdamp");
-		porta = directory -> searchAtom ("porta");
-		legato = directory -> searchAtom ("legato");
-		hold = directory -> searchAtom ("hold");
-		freq = directory -> searchAtom ("freq");
-		amp = directory -> searchAtom ("amp");
-		ratio = directory -> searchAtom ("ratio");
-		wave = directory -> searchAtom ("wave");
 		attack = directory -> searchAtom ("attack");
 		decay = directory -> searchAtom ("decay");
 		sustain = directory -> searchAtom ("sustain");
 		release = directory -> searchAtom ("release");
-		speed = directory -> searchAtom ("speed");
-		pulse = directory -> searchAtom ("pulse");
-		phase = directory -> searchAtom ("phase");
-		sync = directory -> searchAtom ("sync");
-		vibrato = directory -> searchAtom ("vibrato");
-		tremolo = directory -> searchAtom ("tremolo");
-		key_map = directory -> searchAtom ("key_map");
-		*/
+		portamento = directory -> searchAtom ("portamento");
+		porta = directory -> searchAtom ("porta");
+		legato = directory -> searchAtom ("legato");
 	}
 };
 

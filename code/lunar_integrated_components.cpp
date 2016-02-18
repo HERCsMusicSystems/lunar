@@ -1215,7 +1215,8 @@ void integrated_chorus :: move (void) {
 integrated_chorus :: integrated_chorus (orbiter_core * core) {
 	this -> core = core;
 	for (int ind = 0; ind < 65536; ind++) line [ind] = 0.0;
-	enter = time = omega = 0.0;
+	enter = omega = 0.0;
+	time = 1024.0;
 	index = 0;
 	level = 0.0;
 	speed = 0.0; amp = 8192.0;
@@ -1242,7 +1243,8 @@ void integrated_stereo_chorus :: move (void) {
 integrated_stereo_chorus :: integrated_stereo_chorus (orbiter_core * core) {
 	this -> core = core;
 	for (int ind = 0; ind < 65536; ind++) line [ind] = line_right [ind] = 0.0;
-	mono = left = right = signal_right = time = omega = 0.0;
+	mono = left = right = signal_right = omega = 0.0;
+	time = 1024.0;
 	index = 0;
 	level = 0.0;
 	speed = 0.0; amp = 8192.0;
@@ -1358,3 +1360,40 @@ bool integrated_map :: read_content (PrologElement * parameters) {
 }
 void integrated_map :: reset (void) {for (int ind = 0; ind < 128; ind++) map [ind] = (double) (initial + ind) * 128;}
 integrated_map :: integrated_map (int initial) {this -> initial = initial; reset ();}
+
+integrated_auto_frame :: integrated_auto_frame (double value, double time, integrated_auto_frame * prevoius) {this -> value = value; this -> time = time; this -> previous = previous; next = 0;}
+integrated_auto_frame :: ~ integrated_auto_frame (void) {if (next != 0) delete next;}
+bool integrated_auto_data :: return_content (PrologElement * parameters) {return false;}
+bool integrated_auto_data :: read_content (PrologElement * parameters) {return false;}
+void integrated_auto_data :: move (void) {
+	if (control < 16) return; // OPTIMISATION = RETURN MOST OF THE TIME
+	pthread_mutex_lock (& critical);
+	if (trigger > 0.0) {
+		if (record == 0.0) {
+			// START RECORDING (AND MAKE SURE THAT THE NEW FRAMES POINTS TO A DIFFERENT LOCATION)
+			integrated_auto_frame * ptr = frames;
+			frames = current_frame = new integrated_auto_frame (signal);
+			if (ptr != 0) delete ptr;
+			time = core -> sample_duration;
+			record = trigger;
+		} else {
+			// KEEP RECORDING
+			if (current_frame != 0 && current_frame -> value != signal) {
+				current_frame -> time = time;
+				current_frame = current_frame -> next = new integrated_auto_frame (signal, time, current_frame);
+			}
+			time += core -> sample_duration;
+		}
+	} else {
+		// STOP RECORDING, MARK THE TIME
+		if (record != 0.0) {record = 0.0; if (current_frame != 0) current_frame -> time = time;}
+	}
+	pthread_mutex_unlock (& critical);
+}
+integrated_auto_data :: integrated_auto_data (orbiter_core * core) {
+	this -> core = core;
+	frames = current_frame = 0;
+	trigger = record = time = 0.0;
+	pthread_mutex_init (& critical, 0);
+}
+integrated_auto_data :: ~ integrated_auto_data (void) {if (frames != 0) delete frames; frames = 0; pthread_mutex_destroy (& critical);}

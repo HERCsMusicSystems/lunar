@@ -451,4 +451,39 @@ public:
 	integrated_mono_drywet (void);
 };
 
+class integrated_auto_frame {
+public:
+	double value;
+	double time;
+	integrated_auto_frame * next;
+	integrated_auto_frame * previous;
+	integrated_auto_frame (double value, double time = 0.0, integrated_auto_frame * previous = 0);
+	~ integrated_auto_frame (void);
+};
+
+class integrated_auto_data {
+private:
+	double record;
+	double time;
+	pthread_mutex_t critical;
+	integrated_auto_frame * current_frame;
+	orbiter_core * core;
+public:
+	// ==== OUTPUT ====
+	// ==== INPUT ====
+	double signal;
+	double trigger; // 0 = inactive, 1 = record
+	double control; // 0 = no playback, 1 = one way, 2 = repeat, 3 = forward and backward, 16 <= record
+	// ==== PROCESSING ====
+	integrated_auto_frame * frames;
+	void clear_frames (void);
+	integrated_auto_frame * insert_frame (double value, double time);
+	virtual void move (void);
+	bool return_content (PrologElement * parameters);
+	bool read_content (PrologElement * parameters);
+	integrated_auto_data (orbiter_core * core);
+	~ integrated_auto_data (void);
+	friend class auto_player;
+};
+
 #endif

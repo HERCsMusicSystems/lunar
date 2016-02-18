@@ -69,7 +69,11 @@ Otherwise defaults to common behaviour.
 
 class integrated_phobos;
 
-struct pb_struct {double BP, left, right;};
+struct pb_struct {
+	double BP, left, right;
+	void reset (void) {BP = left = right = 0.0;}
+	void set_key (void) {BP = 0.0; left = -128.0; right = 128.0;}
+};
 
 struct operator_structure {
 	double freq, amp, ratio, feedback;
@@ -105,6 +109,7 @@ private:
 public:
 	integrated_moonbase base;
 	integrated_arpeggiator arp;
+	integrated_auto_data X_data, Y_data;
 	integrated_phobos_part_pointer * parts;
 	integrated_lfo lfo1;
 	integrated_lfo lfo2;
@@ -229,7 +234,7 @@ public:
 		*/
 	}
 	integrated_phobos (orbiter_core * core, int polyphony = 8)
-			: CommandModule (core), base (core), arp (core, & base), lfo1 (core), lfo2 (core), pan (core), chorus (core), delay (core), volume (core, 12800.0) {
+			: CommandModule (core), base (core), arp (core, & base), X_data (core), Y_data (core), lfo1 (core), lfo2 (core), pan (core), chorus (core), delay (core), volume (core, 12800.0) {
 		this -> polyphony = polyphony;
 		parts = new integrated_phobos_part_pointer [polyphony];
 		for (int ind = 0; ind < polyphony; ind++) {
@@ -237,16 +242,42 @@ public:
 			base . insert_trigger (& p -> trigger);
 			parts [ind] = p;
 		}
+		pan_ctrl = X = Y = pitch = 0.0;
+		dry_wet . balance = -8192.0;
+		auto_ctrl = 0.0;
+		lfo1 . speed = 1792.0;
+		for (int ind = 0; ind < 4; ind++) {
+			operator_structure * op = operators + ind;
+			op -> freq = 0.0;
+			op -> amp = ind == 0 ? 0.0 : -16384.0;
+			op -> ratio = 1.0;
+			op -> feedback = 0.0;
+			for (int sub = 0; sub < 4; sub++) op -> eg . time [sub] = op -> eg . level [sub] = 0.0;
+			op -> eg . egscal . reset ();
+			op -> sens . freq . key . set_key ();
+			op -> sens . freq . eg = 0.0;
+			op -> sens . freq . lfo [0] = 128.0;
+			op -> sens . freq . lfo [1] = 0.0;
+			op -> sens . freq . pitch = 512.0;
+			op -> sens . amp . key . reset ();
+			op -> sens . amp . X . reset ();
+			op -> sens . amp . Y . reset ();
+			op -> sens . amp . lfo = 0.0;
+			op -> sens . amp . velocity . reset ();
+		}
+		noise . amp = -16384.0;
+		for (int ind = 0; ind < 4; ind++) noise . time [ind] = noise . level [ind] = 0.0;
+		filter . freq = 5120.0;
+		filter . resonance = 0.0;
+		filter . amp = 0.0;
+		filter . sens . key . reset ();
+		filter . sens . eg = 0.0;
+		filter . sens . lfo [0] = filter . sens . lfo [1] = 0.0;
+		filter . sens . pitch = 0.0;
+		adsr . amp . attack = adsr . amp . decay = adsr . amp . sustain = adsr . amp . release = 0.0; adsr . amp . egscal . reset ();
+		for (int ind = 0; ind < 4; ind++) adsr . freq . time [ind] = adsr . freq . level [ind] = 0.0; adsr . freq . egscal . reset ();
 	}
 	~ integrated_phobos (void) {for (int ind = 0; ind < polyphony; ind++) delete parts [ind]; delete [] parts; parts = 0;}
-	/*integrated_phobos (orbiter_core * core) : CommandModule (core), trigger (core, true, 0), adsr (core), lfo (core), vco (core), pan (core), delay (core), dry_wet (), volume (core, 12800.00) {
-		lsb = 0.0;
-		freq = amp = 0.0;
-		pan_ctrl = 0.0;
-		trigger . key_map = & key_map;
-		initialise (); activate ();
-	}
-	*/
 };
 
 void integrated_phobos_part :: move (integrated_phobos * phobos) {
@@ -327,7 +358,7 @@ public:
 												sa = se -> getAtom ();
 												if (sa == balance) return update_value (& ph -> dry_wet . balance, v, o, 1);
 												if (sa == feedback) return update_value (& ph -> delay . feedback, v, o, 1);
-												if (sa == time) return update_value (& ph -> delay . time, v, o, 1);
+												if (sa == time) return update_value (& ph -> delay . time, v, o, 4);
 												if (sa == highdamp) return update_value (& ph -> delay . high_damp, v, o, 1);
 											}
 										}
@@ -336,7 +367,7 @@ public:
 									if (sa == X) return update_value (& ph -> X, v, o, 1);
 									if (sa == Y) return update_value (& ph -> Y, v, o, 1);
 									if (sa == pitch) return update_value (& ph -> pitch, v, o, 1);
-									if (sa == auto_atom) return update_value (& ph -> auto_ctrl, v, o, 5);
+									if (sa == auto_atom) return update_value (& ph -> auto_ctrl, v, o, 1);
 								}
 							}
 						}
@@ -426,10 +457,10 @@ public:
 														if (sa == time2) return update_value (& ph -> operators [ind] . eg . time [1], v, o, 4);
 														if (sa == time3) return update_value (& ph -> operators [ind] . eg . time [2], v, o, 4);
 														if (sa == time4) return update_value (& ph -> operators [ind] . eg . time [3], v, o, 4);
-														if (sa == level1) return update_value (& ph -> operators [ind] . eg . level [0], v, o, 3);
-														if (sa == level2) return update_value (& ph -> operators [ind] . eg . level [1], v, o, 3);
-														if (sa == level3) return update_value (& ph -> operators [ind] . eg . level [2], v, o, 3);
-														if (sa == level4) return update_value (& ph -> operators [ind] . eg . level [3], v, o, 3);
+														if (sa == level1) return update_value (& ph -> operators [ind] . eg . level [0], v, o, 1);
+														if (sa == level2) return update_value (& ph -> operators [ind] . eg . level [1], v, o, 1);
+														if (sa == level3) return update_value (& ph -> operators [ind] . eg . level [2], v, o, 1);
+														if (sa == level4) return update_value (& ph -> operators [ind] . eg . level [3], v, o, 1);
 														if (sa == egscal) {
 															path = path -> getRight ();
 															if (path -> isPair ()) {
@@ -574,10 +605,10 @@ public:
 									if (sa == time2) return update_value (& ph -> noise . time [1], v, o, 4);
 									if (sa == time3) return update_value (& ph -> noise . time [2], v, o, 4);
 									if (sa == time4) return update_value (& ph -> noise . time [3], v, o, 4);
-									if (sa == level1) return update_value (& ph -> noise . level [0], v, o, 3);
-									if (sa == level2) return update_value (& ph -> noise . level [1], v, o, 3);
-									if (sa == level3) return update_value (& ph -> noise . level [2], v, o, 3);
-									if (sa == level4) return update_value (& ph -> noise . level [3], v, o, 3);
+									if (sa == level1) return update_value (& ph -> noise . level [0], v, o, 1);
+									if (sa == level2) return update_value (& ph -> noise . level [1], v, o, 1);
+									if (sa == level3) return update_value (& ph -> noise . level [2], v, o, 1);
+									if (sa == level4) return update_value (& ph -> noise . level [3], v, o, 1);
 								}
 							}
 							return false;
@@ -590,7 +621,7 @@ public:
 									sa = se -> getAtom ();
 									if (sa == freq) return update_value (& ph -> filter . freq, v, o, 2);
 									if (sa == resonance) return update_value (& ph -> filter . resonance, v, o, 1);
-									if (sa == amp) return update_value (& ph -> filter . amp, v, 0, 3);
+									if (sa == amp) return update_value (& ph -> filter . amp, v, o, 3);
 									if (sa == sens) {
 										path = path -> getRight ();
 										if (path -> isPair ()) {
@@ -675,10 +706,10 @@ public:
 												if (sa == time2) return update_value (& ph -> adsr . freq . time [1], v, o, 4);
 												if (sa == time3) return update_value (& ph -> adsr . freq . time [2], v, o, 4);
 												if (sa == time4) return update_value (& ph -> adsr . freq . time [3], v, o, 4);
-												if (sa == level1) return update_value (& ph -> adsr . freq . level [0], v, o, 3);
-												if (sa == level2) return update_value (& ph -> adsr . freq . level [1], v, o, 3);
-												if (sa == level3) return update_value (& ph -> adsr . freq . level [2], v, o, 3);
-												if (sa == level4) return update_value (& ph -> adsr . freq . level [3], v, o, 3);
+												if (sa == level1) return update_value (& ph -> adsr . freq . level [0], v, o, 1);
+												if (sa == level2) return update_value (& ph -> adsr . freq . level [1], v, o, 1);
+												if (sa == level3) return update_value (& ph -> adsr . freq . level [2], v, o, 1);
+												if (sa == level4) return update_value (& ph -> adsr . freq . level [3], v, o, 1);
 												if (sa == egscal) {
 													path = path -> getRight ();
 													if (path -> isPair ()) {
@@ -720,6 +751,16 @@ public:
 								se = path -> getLeft ();
 								if (se -> isAtom ()) {
 									sa = se -> getAtom ();
+									if (sa == X) {
+										if (v -> isVar ()) return ph -> X_data . return_content (v);
+										if (v -> isPair ()) return ph -> X_data . read_content (v);
+										return false;
+									}
+									if (sa == Y) {
+										if (v -> isVar ()) return ph -> Y_data . return_content (v);
+										if (v -> isPair ()) return ph -> Y_data . read_content (v);
+										return false;
+									}
 								}
 							}
 							return true;

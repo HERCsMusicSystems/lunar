@@ -55,6 +55,21 @@ public:
 	integrated_vco (orbiter_core * core);
 };
 
+class integrated_noise {
+private:
+	orbiter_core * core;
+public:
+	// ==== OUTPUT ====
+	double signal;
+	// ==== INPUT ====
+	double amp, gain;
+	// ==== PROCESSING ====
+	void move (void);
+	integrated_noise (orbiter_core * core);
+};
+
+double integrated_sensitivity (double breakpoint, double left, double right, double enter);
+
 class integrated_fm4_block {
 private:
 	double (* current_algo) (integrated_fm4_block * block);
@@ -105,7 +120,7 @@ private:
 	bool stage_one;
 	double origin, target, delta;
 	double time;
-	double trigger, previous_trigger;
+	double previous_trigger;
 	orbiter_core * core;
 public:
 	// ==== OUTPUT ====
@@ -114,6 +129,7 @@ public:
 	// ==== INPUT ====
 	double speed, wave, pulse, phase, sync;
 	double vibrato, tremolo, wahwah, pan;
+	double trigger;
 	// ==== PROCESSING ====
 	void move (void);
 	integrated_lfo (orbiter_core * core);
@@ -260,7 +276,6 @@ private:
 	void remove_key (int key);
 	void ground (void);
 	void private_signal (void);
-	void move (void);
 public:
 	double tempo, division, current_algo, active, hold;
 public:
@@ -276,6 +291,7 @@ public:
 	void control (int ctrl, double value);
 	double getControl (int ctrl);
 	void timing_clock (void);
+	void move (void);
 	integrated_arpeggiator (orbiter_core * core, IntegratedCommandModule * base);
 };
 
@@ -483,7 +499,25 @@ public:
 	bool read_content (PrologElement * parameters);
 	integrated_auto_data (orbiter_core * core);
 	~ integrated_auto_data (void);
-	friend class auto_player;
+	friend class integrated_auto_player;
+};
+
+class integrated_auto_player {
+private:
+	double time, maximum_change;
+	bool active_playback, returning;
+	integrated_auto_data * data;
+	integrated_auto_frame * frames, * current_frame;
+	orbiter_core * core;
+	void filter (double enter);
+public:
+	// ==== OUTPUT ====
+	double signal;
+	// ==== INPUT ====
+	double trigger;
+	// ==== PROCESSING ====
+	void move (void);
+	integrated_auto_player (orbiter_core * core, integrated_auto_data * data, double maximum_change);
 };
 
 #endif

@@ -82,6 +82,14 @@ integrated_vco :: integrated_vco (orbiter_core * core) {
 	stage = true;
 }
 
+void integrated_noise :: move (void) {signal = gain * core -> Amplitude (amp) * (0.00000011920928955078125 * (double) core -> noise24b - 1.0);}
+integrated_noise :: integrated_noise (orbiter_core * core) {this -> core = core; gain = 1.0; amp = 0.0;}
+
+double integrated_sensitivity (double breakpoint, double left, double right, double enter) {
+	if (enter >= breakpoint) return (enter - breakpoint) * right * 0.0078125;
+	return (breakpoint - enter) * left * 0.0078125;
+}
+
 #define FRAC 0.00006103515625
 double algo1 (integrated_fm4_block * block) {
 	block -> signal4 = block -> gain4 * block -> core -> Amplitude (block -> amp4) * block -> core -> Sine (block -> time4 + block -> feedback4 * block -> signal4 * FRAC);
@@ -174,6 +182,7 @@ integrated_fm4_block :: integrated_fm4_block (orbiter_core * core) {
 	gain1 = gain2 = gain3 = gain4 = 1.0;
 	ratio1 = ratio2 = ratio3 = ratio4 = 1.0;
 	feedback1 = feedback2 = feedback3 = feedback4 = 0.0;
+	signal = 0.0;
 }
 
 void integrated_filter :: move (void) {
@@ -198,7 +207,7 @@ integrated_filter :: integrated_filter (orbiter_core * core) {
 	high_pass_signal = band_pass_signal = band_reject_signal = running_signal = 0.0;
 	running_high_pass_signal = running_band_pass_signal = 0.0;
 	freq = amp = 0.0; resonance = 0.0;
-	enter = 0.0;
+	enter = signal = 0.0;
 }
 
 void integrated_lfo :: move (void) {
@@ -273,6 +282,7 @@ integrated_lfo :: integrated_lfo (orbiter_core * core) {
 	time = speed = wave = pulse = phase = sync = positive = negative = 0.0;
 	vibrato = tremolo = wahwah = pan = 0.0;
 	vibrato_signal = tremolo_signal = wahwah_signal = pan_signal = 0.0;
+	signal = 0.0;
 	trigger = previous_trigger = 0.0;
 }
 
@@ -1215,7 +1225,7 @@ void integrated_chorus :: move (void) {
 integrated_chorus :: integrated_chorus (orbiter_core * core) {
 	this -> core = core;
 	for (int ind = 0; ind < 65536; ind++) line [ind] = 0.0;
-	enter = omega = 0.0;
+	signal = enter = omega = 0.0;
 	time = 1024.0;
 	index = 0;
 	level = 0.0;
@@ -1243,7 +1253,7 @@ void integrated_stereo_chorus :: move (void) {
 integrated_stereo_chorus :: integrated_stereo_chorus (orbiter_core * core) {
 	this -> core = core;
 	for (int ind = 0; ind < 65536; ind++) line [ind] = line_right [ind] = 0.0;
-	mono = left = right = signal_right = omega = 0.0;
+	mono = left = right = signal = signal_right = omega = 0.0;
 	time = 1024.0;
 	index = 0;
 	level = 0.0;
@@ -1279,7 +1289,7 @@ integrated_delay :: integrated_delay (orbiter_core * core) {
 	this -> core = core;
 	for (int ind = 0; ind < 262144; ind++) line [ind] = 0.0;
 	index = 0;
-	enter = enter_right = signal_right = 0.0;
+	enter = enter_right = signal = signal_right = 0.0;
 	time = 8192.0; feedback = 8192.0;
 	high_damp = previous_high_damp = 0.0; A = 1.0; B = 0.0;
 }
@@ -1394,6 +1404,53 @@ integrated_auto_data :: integrated_auto_data (orbiter_core * core) {
 	this -> core = core;
 	frames = current_frame = 0;
 	trigger = record = time = 0.0;
+	signal = 0.0;
 	pthread_mutex_init (& critical, 0);
 }
 integrated_auto_data :: ~ integrated_auto_data (void) {if (frames != 0) delete frames; frames = 0; pthread_mutex_destroy (& critical);}
+
+void integrated_auto_player :: filter (double enter) {
+	if (maximum_change == 0.0) {signal = enter; return;}
+	if (enter == signal) return;
+	if (enter > signal) {signal += maximum_change * core -> gate_delay; if (signal > enter) signal = enter; return;}
+	signal -= maximum_change * core -> gate_delay;
+	if (signal < enter) signal = enter;
+}
+void integrated_auto_player :: move (void) {
+	if (trigger == 0.0 || data -> control < 1.0 || data -> control >= 16.0) {filter (data -> signal); active_playback = false; return;}
+	if (trigger > 0.0) {
+		if (active_playback) {
+			// KEEP PLAYING
+			pthread_mutex_lock (& data -> critical);
+			if (data -> frames != frames) {pthread_mutex_unlock (& data -> critical); filter (data -> signal); return;}
+			while (current_frame != 0 && time >= current_frame -> time) current_frame = current_frame -> next;
+			if (current_frame != 0) filter (current_frame -> value);
+			else {
+				if (data -> control == 2.0) {
+					current_frame = frames;
+					if (current_frame != 0) filter (current_frame -> value); else active_playback = false;
+					time = 0.0;
+				}
+			}
+			pthread_mutex_unlock (& data -> critical);
+			time += core -> sample_duration;
+		} else {
+			// START PLAYBACK
+			pthread_mutex_lock (& data -> critical);
+			active_playback = true;
+			frames = current_frame = data -> frames;
+			if (frames == 0) {pthread_mutex_unlock (& data -> critical); filter (data -> signal); return;}
+			filter (frames -> value);
+			pthread_mutex_unlock (& data -> critical);
+			time = core -> sample_duration;
+		}
+	}
+}
+integrated_auto_player :: integrated_auto_player (orbiter_core * core, integrated_auto_data * data, double maximum_change) {
+	this -> core = core;
+	this -> data = data;
+	this -> maximum_change = maximum_change;
+	frames = current_frame = 0;
+	trigger = time = 0.0; active_playback = returning = false;
+	signal = 0.0;
+}

@@ -96,9 +96,15 @@ struct operator_structure {
 class integrated_phobos_part {
 public:
 	integrated_trigger trigger;
+	integrated_auto_player X, Y;
 	integrated_fm4_block fm;
+	integrated_noise noise;
+	integrated_eg eg1, eg2, eg3, eg4, feg, noise_eg;
+	integrated_filter vcf;
+	integrated_adsr adsr;
+	integrated_eg freq_eg;
 	void move (integrated_phobos * phobos);
-	integrated_phobos_part (orbiter_core * core) : trigger (core, true, 0), fm (core) {}
+	integrated_phobos_part (orbiter_core * core, integrated_phobos * ip);
 };
 
 typedef integrated_phobos_part * integrated_phobos_part_pointer;
@@ -113,7 +119,7 @@ public:
 	integrated_phobos_part_pointer * parts;
 	integrated_lfo lfo1;
 	integrated_lfo lfo2;
-	integrated_pan pan;
+	integrated_stereo_pan pan;
 	double pan_ctrl;
 	double X, Y, pitch, auto_ctrl;
 	integrated_stereo_chorus chorus;
@@ -122,6 +128,7 @@ public:
 	integrated_stereo_amplifier volume;
 	integrated_map key_map;
 	operator_structure operators [4];
+	double freq_lemat [4], freq_lemat_f, amp_lemat [4];
 	double operator_algo;
 	struct {double amp, time [4], level [4];} noise;
 	struct {double freq, resonance, amp; struct {double eg; pb_struct key; double pitch, lfo [2];} sens;} filter;
@@ -198,50 +205,51 @@ public:
 		return CommandModule :: outputName (ind);
 	}
 	double * outputAddress (int ind) {
-		//switch (ind) {
-		//case 0: return & volume . left; break;
-		//case 1: return & volume . right; break;
-		//default: break;
-		//}
+		switch (ind) {
+		case 0: return & volume . left; break;
+		case 1: return & volume . right; break;
+		default: break;
+		}
 		return CommandModule :: outputAddress (ind);
 	}
 	void move (void) {
-		chorus . move ();
-		delay . move ();
+		arp . move ();
+		lfo1 . move (); lfo2 . move (); lfo1 . trigger = lfo2 . trigger = 0.0;
+		X_data . signal = X; Y_data . signal = Y;
+		X_data . move(); Y_data . move (); X_data . trigger = Y_data . trigger = 0.0;
+		chorus . mono = 0.0;
+		operator_structure * op = operators;
+		for (int ind = 0; ind < 4; ind++) {
+			freq_lemat [ind] = op -> sens . freq . pitch * pitch
+				+ op -> sens . freq . lfo [0] * lfo1 . vibrato_signal
+				+ op -> sens . freq . lfo [1] * lfo2 . vibrato_signal;
+			amp_lemat [ind] = op -> sens . amp . lfo * lfo2 . tremolo;
+			op++;
+		}
+		freq_lemat_f = filter . sens . pitch * pitch
+			+ filter . sens . lfo [0] * lfo1 . vibrato_signal
+			+ filter . sens . lfo [1] * lfo2 . wahwah_signal;
 		for (int ind = 0; ind < polyphony; ind++) parts [ind] -> move (this);
-		/*
-		trigger . move ();
-		adsr . trigger = trigger . trigger;
-		adsr . move ();
-		lfo . move ();
-		vco . freq = freq + trigger . signal + lfo . vibrato_signal;
-		vco . amp = amp + lfo . tremolo_signal;
-		vco . move ();
-		pan . enter = vco . signal * adsr . signal;
-		pan . pan = pan_ctrl + lfo . pan_signal;
+		chorus . move ();
+		pan . enter_left = chorus . signal;
+		pan . enter_right = chorus . signal_right;
+		pan . pan = pan_ctrl + lfo2 . pan_signal;
 		pan . move ();
-		delay . enter = pan . left;
-		delay . enter_right = pan . right;
+		delay . enter = dry_wet . dry_left = pan . left;
+		delay . enter_right = dry_wet . dry_right = pan . right;
 		delay . move ();
-		dry_wet . dry_left = pan . left;
-		dry_wet . dry_right = pan . right;
 		dry_wet . wet_left = delay . signal;
 		dry_wet . wet_right = delay . signal_right;
 		dry_wet . move ();
 		volume . enter_left = dry_wet . left;
 		volume . enter_right = dry_wet . right;
 		volume . volume_move ();
-		*/
 	}
 	integrated_phobos (orbiter_core * core, int polyphony = 8)
 			: CommandModule (core), base (core), arp (core, & base), X_data (core), Y_data (core), lfo1 (core), lfo2 (core), pan (core), chorus (core), delay (core), volume (core, 12800.0) {
 		this -> polyphony = polyphony;
 		parts = new integrated_phobos_part_pointer [polyphony];
-		for (int ind = 0; ind < polyphony; ind++) {
-			integrated_phobos_part_pointer p = new integrated_phobos_part (core);
-			base . insert_trigger (& p -> trigger);
-			parts [ind] = p;
-		}
+		for (int ind = 0; ind < polyphony; ind++) parts [ind] = new integrated_phobos_part (core, this);
 		pan_ctrl = X = Y = pitch = 0.0;
 		dry_wet . balance = -8192.0;
 		auto_ctrl = 0.0;
@@ -276,13 +284,117 @@ public:
 		filter . sens . pitch = 0.0;
 		adsr . amp . attack = adsr . amp . decay = adsr . amp . sustain = adsr . amp . release = 0.0; adsr . amp . egscal . reset ();
 		for (int ind = 0; ind < 4; ind++) adsr . freq . time [ind] = adsr . freq . level [ind] = 0.0; adsr . freq . egscal . reset ();
+		portamento . porta = 1.0; portamento . time = 0.0; portamento . legato = 0.0; portamento . hold = 0.0;
+		initialise (); activate ();
 	}
 	~ integrated_phobos (void) {for (int ind = 0; ind < polyphony; ind++) delete parts [ind]; delete [] parts; parts = 0;}
 };
 
+static void move_operator_part (integrated_eg * eg, operator_structure * op, integrated_trigger * trigger) {
+	eg -> trigger = trigger -> trigger;
+	pb_struct * pb = & op -> eg . egscal;
+	double egscal = integrated_sensitivity (pb -> BP, pb -> left, pb -> right, trigger -> signal);
+	eg -> level1 = op -> eg . level [0];
+	eg -> level2 = op -> eg . level [1];
+	eg -> level3 = op -> eg . level [2];
+	eg -> level4 = op -> eg . level [3];
+	eg -> time1 = op -> eg . time [0] + egscal;
+	eg -> time2 = op -> eg . time [1] + egscal;
+	eg -> time3 = op -> eg . time [2] + egscal;
+	eg -> time4 = op -> eg . time [3] + egscal;
+	eg -> move ();
+}
+
 void integrated_phobos_part :: move (integrated_phobos * phobos) {
 	trigger . move ();
+	phobos -> X_data . trigger += trigger . trigger; phobos -> Y_data . trigger += trigger . trigger;
+	phobos -> lfo1 . trigger += trigger . trigger; phobos -> lfo2 . trigger += trigger . trigger;
+	fm . algo = phobos -> operator_algo; fm . trigger = trigger . trigger;
+	operator_structure * op = phobos -> operators;
+	pb_struct * pb;
+	double egscal;
+	//=========== FREQ EG ========
+	pb = & phobos -> adsr . freq . egscal;
+	egscal = integrated_sensitivity (pb -> BP, pb -> left, pb -> right, trigger . signal);
+	freq_eg . trigger = trigger . trigger;
+	freq_eg . level1 = phobos -> adsr . freq . level [0];
+	freq_eg . level2 = phobos -> adsr . freq . level [1];
+	freq_eg . level3 = phobos -> adsr . freq . level [2];
+	freq_eg . level4 = phobos -> adsr . freq . level [3];
+	freq_eg . time1 = phobos -> adsr . freq . time [0] + egscal;
+	freq_eg . time2 = phobos -> adsr . freq . time [1] + egscal;
+	freq_eg . time3 = phobos -> adsr . freq . time [2] + egscal;
+	freq_eg . time4 = phobos -> adsr . freq . time [3] + egscal;
+	freq_eg . move ();
+	//==============
+	move_operator_part (& eg1, op, & trigger);
+	pb = & op -> sens . freq . key;
+	fm . freq1 = op -> freq + integrated_sensitivity (pb -> BP, pb -> left, pb -> right, trigger . signal) + freq_eg . signal * op -> sens . freq . eg + phobos -> freq_lemat [0];
+	pb = & op -> sens . amp . key;
+	fm . amp1 = op -> amp + eg1 . signal + integrated_sensitivity (pb -> BP, pb -> left, pb -> right, trigger . signal) + phobos -> amp_lemat [0];
+	fm . feedback1 = op -> feedback; fm . ratio1 = op -> ratio;
+	op++;
+	//==============
+	move_operator_part (& eg2, op, & trigger);
+	pb = & op -> sens . freq . key;
+	fm . freq2 = op -> freq + integrated_sensitivity (pb -> BP, pb -> left, pb -> right, trigger . signal) + freq_eg . signal * op -> sens . freq . eg + phobos -> freq_lemat [1];
+	pb = & op -> sens . amp . key;
+	fm . amp2 = op -> amp + eg2 . signal + integrated_sensitivity (pb -> BP, pb -> left, pb -> right, trigger . signal) + phobos -> amp_lemat [1];
+	fm . feedback2 = op -> feedback; fm . ratio2 = op -> ratio;
+	op++;
+	//==============
+	move_operator_part (& eg3, op, & trigger);
+	pb = & op -> sens . freq . key;
+	fm . freq3 = op -> freq + integrated_sensitivity (pb -> BP, pb -> left, pb -> right, trigger . signal) + freq_eg . signal * op -> sens . freq . eg + phobos -> freq_lemat [2];
+	pb = & op -> sens . amp . key;
+	fm . amp3 = op -> amp + eg3 . signal + integrated_sensitivity (pb -> BP, pb -> left, pb -> right, trigger . signal) + phobos -> amp_lemat [2];
+	fm . feedback3 = op -> feedback; fm . ratio3 = op -> ratio;
+	op++;
+	//==============
+	move_operator_part (& eg4, op, & trigger);
+	pb = & op -> sens . freq . key;
+	fm . freq4 = op -> freq + integrated_sensitivity (pb -> BP, pb -> left, pb -> right, trigger . signal) + freq_eg . signal * op -> sens . freq . eg + phobos -> freq_lemat [3];
+	pb = & op -> sens . amp . key;
+	fm . amp4 = op -> amp + eg4 . signal + integrated_sensitivity (pb -> BP, pb -> left, pb -> right, trigger . signal) + phobos -> amp_lemat [3];
+	fm . feedback4 = op -> feedback; fm . ratio4 = op -> ratio;
+	//==============
+	fm . move ();
+	adsr . trigger = trigger . trigger;
+	pb = & phobos -> adsr . amp . egscal;
+	egscal = integrated_sensitivity (pb -> BP, pb -> left, pb -> right, trigger . signal);
+	adsr . attack = phobos -> adsr . amp . attack + egscal;
+	adsr . decay = phobos -> adsr . amp . decay + egscal;
+	adsr . sustain = phobos -> adsr . amp . sustain;
+	adsr . release = phobos -> adsr . amp . release + egscal;
+	adsr . move (); trigger . busy = adsr . busy;
+	noise_eg . trigger = trigger . trigger;
+	noise_eg . level1 = phobos -> noise . level [0];
+	noise_eg . level2 = phobos -> noise . level [1];
+	noise_eg . level3 = phobos -> noise . level [2];
+	noise_eg . level4 = phobos -> noise . level [3];
+	noise_eg . time1 = phobos -> noise . time [0];
+	noise_eg . time2 = phobos -> noise . time [1];
+	noise_eg . time3 = phobos -> noise . time [2];
+	noise_eg . time4 = phobos -> noise . time [3];
+	noise_eg . move ();
+	noise . amp = phobos -> noise . amp + noise_eg . signal;
+	noise . move ();
+	vcf . enter = fm . signal + noise . signal;
+	pb = & phobos -> filter . sens . key;
+	vcf . freq = phobos -> filter . freq + freq_eg . signal * phobos -> filter . sens . eg
+		+ integrated_sensitivity (pb -> BP, pb -> left, pb -> right, trigger . signal) + phobos -> freq_lemat_f;
+	vcf . resonance = phobos -> filter . resonance;
+	vcf . move ();
+	phobos -> chorus . mono += vcf . signal * adsr . signal;
 }
+
+integrated_phobos_part :: integrated_phobos_part (orbiter_core * core, integrated_phobos * ip) :
+		trigger (core, true, 0), X (core, & ip -> X_data, 0.0), Y (core, & ip -> Y_data, 0.0), fm (core), noise (core), vcf (core), adsr (core), freq_eg (core),
+		eg1 (core), eg2 (core), eg3 (core), eg4 (core), feg (core), noise_eg (core) {
+	trigger . key_map = & ip -> key_map;
+	ip -> base . insert_trigger (& trigger);
+}
+
 
 class native_integrated_phobos : public native_moonbase {
 public:

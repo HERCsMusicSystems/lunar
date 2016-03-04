@@ -67,6 +67,9 @@ Otherwise defaults to common behaviour.
 
 */
 
+#define DIV_16384 0.00006103515625
+#define DIV_2097152 0.000000476837158203125
+
 class integrated_phobos;
 
 struct pb_struct {
@@ -148,50 +151,64 @@ public:
 	void poly (void) {arp . poly ();}
 	bool isMonoMode (void) {return arp . isMonoMode ();}
 	void control (int ctrl, double value) {
-		/*switch (ctrl) {
-		case 1: lfo . vibrato = value * 128.0 + lsb; lsb = 0.0; break;
-		case 71: lfo . tremolo = value * 128.0 + lsb; lsb = 0.0; break;
+		switch (ctrl) {
+		case 1: lfo1 . vibrato = value * 128.0 + lsb; lsb = 0.0; break;
 		case 7: volume . gateway = value * 128.0 + lsb; lsb = 0.0; break;
 		case 10: pan . pan = value * 128.0 - 8192.0 + lsb; lsb = 0.0; break;
-		case 11: trigger . porta_time = value * 128.0 + lsb; lsb = 0.0; break;
-		case 64: trigger . hold = value * 128.0 + lsb; lsb = 0.0; break;
-		case 65: trigger . porta = value * 128.0 + lsb; lsb = 0.0; break;
-		case 68: trigger . legato = value * 128.0 + lsb; lsb = 0.0; break;
-		case 74: vco . freq = value * 128.0 - 8192.0 + lsb; lsb = 0.0; break;
-		case 91: dry_wet . balance = value * 128.0 -8192.0 + lsb; lsb = 0.0; break;
-		case 95: lfo . speed = value * 128.0 -8192.0 + lsb; lsb = 0.0; break;
-		case 73: adsr . attack = value * 128.0 + lsb; lsb = 0.0; break;
-		case 93: adsr . decay = value * 128.0 + lsb; lsb = 0.0; break;
-		case 94: adsr . sustain = value * 128.0 - 16384.0 + lsb; lsb = 0.0; break;
-		case 72: adsr . release = value * 128.0 + lsb; lsb = 0.0; break;
-		case 126: case 127: lsb = 0.0; break;
+		case 5: portamento . time = value * 128.0 + lsb; lsb = 0.0; break;
+		case 16: X = value * 128.0 - 8192.0 + lsb; lsb = 0.0; break;
+		case 17: Y = value * 128.0 - 8192.0 + lsb; lsb = 0.0; break;
+		case 65: portamento . porta = value * 128.0 + lsb; lsb = 0.0; break;
+		case 74: filter . freq = value * 128.0 - 8192.0 + lsb; lsb = 0.0; break;
+		case 71: filter . resonance = value * 128.0 + lsb; lsb = 0.0; break;
+		case 77: dry_wet . balance = value * 128.0 - 8192.0 + lsb; lsb = 0.0; break;
+		case 78: lfo1 . speed = value * 128.0 - 8192.0 + lsb; lsb = 0.0; break;
+		case 73: adsr . amp . attack = value * 128.0 + lsb; lsb = 0.0; break;
+		case 75: adsr . amp . decay = value * 128.0 + lsb; lsb = 0.0; break;
+		case 76: adsr . amp . sustain = value * 128.0 - 16384.0 + lsb; lsb = 0.0; break;
+		case 72: adsr . amp . release = value * 128.0 + lsb; lsb = 0.0; break;
+		case 79: lfo2 . vibrato = value * 128.0 + lsb; lsb = 0.0; break;
+		case 126: arp . mono (); lsb = 0.0; break;
+		case 127: arp . poly (); lsb = 0.0; break;
+		case 128: pitch = value * 128.0 - 8192.0 + lsb; lsb = 0.0; break;
+			// INVISIBLE
+		case 64: portamento . hold = value * 128.0 + lsb; lsb = 0.0; break;
+		case 84: portamento . legato = value * 128.0 + lsb; lsb = 0.0; break;
+		case 85: auto_ctrl = value * 128.0 + lsb; lsb = 0.0; break;
+		case 80: arp . active = value * 128.0 + lsb; lsb = 0.0; break;
+		case 66: arp . hold = value * 128.0 + lsb; lsb = 0.0; break;
 		default: lsb = value; break;
-		}*/
+		}
 	}
 	double getControl (int ctrl) {
 		switch (ctrl) {
-		case 7: return volume . gateway * 0.0078125; break;
-		}
-		/*switch (ctrl) {
-		case 1: return lfo . vibrato * 0.0078125; break;
-		case 71: return lfo . tremolo * 0.0078125; break;
+		case 1: return lfo1 . vibrato * 0.0078125; break;
 		case 7: return volume . gateway * 0.0078125; break;
 		case 10: return pan . pan * 0.0078125 + 64.0; break;
-		case 11: return trigger . porta_time * 0.0078125; break;
-		case 64: return trigger . hold *  0.0078125; break;
-		case 65: return trigger . porta * 0.0078125; break;
-		case 68: return trigger . legato *  0.0078125; break;
-		case 74: return vco . freq * 0.0078125 + 64.0; break;
-		case 91: return dry_wet . balance * 0.0078125 + 64.0; break;
-		case 95: return lfo . speed * 0.0078125; + 64.0; break;
-		case 73: return adsr . attack * 0.0078125; break;
-		case 93: return adsr . decay * 0.0078125; break;
-		case 94: return adsr . sustain * 0.0078125 + 128.0; break;
-		case 72: return adsr . release * 0.0078125; break;
-		case 126: return 1.0; break;
-		case 127: return 0.0; break;
+		case 5: return portamento . time * 0.0078125; break;
+		case 16: return X * 0.0078125 + 64.0; break;
+		case 17: return Y * 0.0078125 + 64.0; break;
+		case 65: return portamento . porta * 0.0078125; break;
+		case 74: return filter . freq * 0.0078125 + 64.0; break;
+		case 71: return filter . resonance * 0.0078125; break;
+		case 77: return dry_wet . balance * 0.0078125 + 64.0; break;
+		case 78: return lfo1 . speed * 0.0078125 + 64.0; break;
+		case 73: return adsr . amp . attack * 0.0078125; break;
+		case 75: return adsr . amp . decay * 0.0078125; break;
+		case 76: return adsr . amp . sustain * 0.0078125 + 128.0; break;
+		case 72: return adsr . amp . release * 0.0078125; break;
+		case 79: return lfo2 . vibrato * 0.0078125; break;
+		case 126: return base . isMonoMode () ? 1.0 : 0.0; break;
+		case 127: return base . isMonoMode () ? 0.0 : 1.0; break;
+		case 128: return pitch * 0.0078125 + 64.0; break;
+			// INVISIBLE
+		case 64: return portamento . hold * 0.0078125; break;
+		case 84: return portamento . legato * 0.0078125; break;
+		case 85: return auto_ctrl * 0.0078125; break;
+		case 80: return arp . active * 0.0078125; break;
+		case 66: return arp . hold * 0.0078125; break;
 		default: break;
-		}*/
+		}
 		return 64.0;
 	}
 	void timing_clock (void) {}
@@ -216,19 +233,20 @@ public:
 		arp . move ();
 		lfo1 . move (); lfo2 . move (); lfo1 . trigger = lfo2 . trigger = 0.0;
 		X_data . signal = X; Y_data . signal = Y;
+		X_data . control = Y_data . control = auto_ctrl;
 		X_data . move(); Y_data . move (); X_data . trigger = Y_data . trigger = 0.0;
 		chorus . mono = 0.0;
 		operator_structure * op = operators;
 		for (int ind = 0; ind < 4; ind++) {
-			freq_lemat [ind] = op -> sens . freq . pitch * pitch
+			freq_lemat [ind] = (op -> sens . freq . pitch * pitch
 				+ op -> sens . freq . lfo [0] * lfo1 . vibrato_signal
-				+ op -> sens . freq . lfo [1] * lfo2 . vibrato_signal;
-			amp_lemat [ind] = op -> sens . amp . lfo * lfo2 . tremolo;
+				+ op -> sens . freq . lfo [1] * lfo2 . vibrato_signal) * DIV_16384;
+			amp_lemat [ind] = op -> sens . amp . lfo * lfo2 . tremolo * DIV_16384;
 			op++;
 		}
-		freq_lemat_f = filter . sens . pitch * pitch
+		freq_lemat_f = (filter . sens . pitch * pitch
 			+ filter . sens . lfo [0] * lfo1 . vibrato_signal
-			+ filter . sens . lfo [1] * lfo2 . wahwah_signal;
+			+ filter . sens . lfo [1] * lfo2 . wahwah_signal) * DIV_16384;
 		for (int ind = 0; ind < polyphony; ind++) parts [ind] -> move (this);
 		chorus . move ();
 		pan . enter_left = chorus . signal;
@@ -254,6 +272,7 @@ public:
 		dry_wet . balance = -8192.0;
 		auto_ctrl = 0.0;
 		lfo1 . speed = 1792.0;
+		operator_algo = 0.0;
 		for (int ind = 0; ind < 4; ind++) {
 			operator_structure * op = operators + ind;
 			op -> freq = 0.0;
@@ -306,13 +325,16 @@ static void move_operator_part (integrated_eg * eg, operator_structure * op, int
 }
 
 void integrated_phobos_part :: move (integrated_phobos * phobos) {
+	trigger . porta = phobos -> portamento . porta;
+	trigger . porta_time = phobos -> portamento . time;
+	trigger . legato = phobos -> portamento . legato;
+	trigger . hold = phobos -> portamento . hold;
 	trigger . move ();
 	phobos -> X_data . trigger += trigger . trigger; phobos -> Y_data . trigger += trigger . trigger;
 	phobos -> lfo1 . trigger += trigger . trigger; phobos -> lfo2 . trigger += trigger . trigger;
-	fm . algo = phobos -> operator_algo; fm . trigger = trigger . trigger;
 	operator_structure * op = phobos -> operators;
 	pb_struct * pb;
-	double egscal;
+	double egscal, ampscal;
 	//=========== FREQ EG ========
 	pb = & phobos -> adsr . freq . egscal;
 	egscal = integrated_sensitivity (pb -> BP, pb -> left, pb -> right, trigger . signal);
@@ -326,36 +348,55 @@ void integrated_phobos_part :: move (integrated_phobos * phobos) {
 	freq_eg . time3 = phobos -> adsr . freq . time [2] + egscal;
 	freq_eg . time4 = phobos -> adsr . freq . time [3] + egscal;
 	freq_eg . move ();
+	X . trigger = Y . trigger = trigger . trigger;
+	X . move (); Y . move ();
+	fm . algo = phobos -> operator_algo; fm . trigger = trigger . trigger;
 	//==============
 	move_operator_part (& eg1, op, & trigger);
 	pb = & op -> sens . freq . key;
 	fm . freq1 = op -> freq + integrated_sensitivity (pb -> BP, pb -> left, pb -> right, trigger . signal) + freq_eg . signal * op -> sens . freq . eg + phobos -> freq_lemat [0];
-	pb = & op -> sens . amp . key;
-	fm . amp1 = op -> amp + eg1 . signal + integrated_sensitivity (pb -> BP, pb -> left, pb -> right, trigger . signal) + phobos -> amp_lemat [0];
+	pb = & op -> sens . amp . key; ampscal = integrated_sensitivity (pb -> BP, pb -> left, pb -> right, trigger . signal);
+	pb = & op -> sens . amp . velocity; ampscal += integrated_sensitivity (pb -> BP, pb -> left, pb -> right, trigger . velocity);
+	fm . amp1 = op -> amp + eg1 . signal + ampscal + phobos -> amp_lemat [0];
+	pb = & op -> sens . amp . X; ampscal = integrated_sensitivity (pb -> BP, pb -> left, pb -> right, X . signal, DIV_2097152);
+	pb = & op -> sens . amp . Y; ampscal += integrated_sensitivity (pb -> BP, pb -> left, pb -> right, Y . signal, DIV_2097152);
+	fm . gain1 = 1.0 + ampscal;
 	fm . feedback1 = op -> feedback; fm . ratio1 = op -> ratio;
 	op++;
 	//==============
 	move_operator_part (& eg2, op, & trigger);
 	pb = & op -> sens . freq . key;
 	fm . freq2 = op -> freq + integrated_sensitivity (pb -> BP, pb -> left, pb -> right, trigger . signal) + freq_eg . signal * op -> sens . freq . eg + phobos -> freq_lemat [1];
-	pb = & op -> sens . amp . key;
-	fm . amp2 = op -> amp + eg2 . signal + integrated_sensitivity (pb -> BP, pb -> left, pb -> right, trigger . signal) + phobos -> amp_lemat [1];
+	pb = & op -> sens . amp . key; ampscal = integrated_sensitivity (pb -> BP, pb -> left, pb -> right, trigger . signal);
+	pb = & op -> sens . amp . velocity; ampscal += integrated_sensitivity (pb -> BP, pb -> left, pb -> right, trigger . velocity);
+	fm . amp2 = op -> amp + eg2 . signal + ampscal + phobos -> amp_lemat [1];
+	pb = & op -> sens . amp . X; ampscal = integrated_sensitivity (pb -> BP, pb -> left, pb -> right, X . signal, DIV_2097152);
+	pb = & op -> sens . amp . Y; ampscal += integrated_sensitivity (pb -> BP, pb -> left, pb -> right, Y . signal, DIV_2097152);
+	fm . gain2 = 1.0 + ampscal;
 	fm . feedback2 = op -> feedback; fm . ratio2 = op -> ratio;
 	op++;
 	//==============
 	move_operator_part (& eg3, op, & trigger);
 	pb = & op -> sens . freq . key;
 	fm . freq3 = op -> freq + integrated_sensitivity (pb -> BP, pb -> left, pb -> right, trigger . signal) + freq_eg . signal * op -> sens . freq . eg + phobos -> freq_lemat [2];
-	pb = & op -> sens . amp . key;
-	fm . amp3 = op -> amp + eg3 . signal + integrated_sensitivity (pb -> BP, pb -> left, pb -> right, trigger . signal) + phobos -> amp_lemat [2];
+	pb = & op -> sens . amp . key; ampscal = integrated_sensitivity (pb -> BP, pb -> left, pb -> right, trigger . signal);
+	pb = & op -> sens . amp . velocity; ampscal += integrated_sensitivity (pb -> BP, pb -> left, pb -> right, trigger . velocity);
+	fm . amp3 = op -> amp + eg3 . signal + ampscal + phobos -> amp_lemat [2];
+	pb = & op -> sens . amp . X; ampscal = integrated_sensitivity (pb -> BP, pb -> left, pb -> right, X . signal, DIV_2097152);
+	pb = & op -> sens . amp . Y; ampscal += integrated_sensitivity (pb -> BP, pb -> left, pb -> right, Y . signal, DIV_2097152);
+	fm . gain3 = 1.0 + ampscal;
 	fm . feedback3 = op -> feedback; fm . ratio3 = op -> ratio;
 	op++;
 	//==============
 	move_operator_part (& eg4, op, & trigger);
 	pb = & op -> sens . freq . key;
 	fm . freq4 = op -> freq + integrated_sensitivity (pb -> BP, pb -> left, pb -> right, trigger . signal) + freq_eg . signal * op -> sens . freq . eg + phobos -> freq_lemat [3];
-	pb = & op -> sens . amp . key;
-	fm . amp4 = op -> amp + eg4 . signal + integrated_sensitivity (pb -> BP, pb -> left, pb -> right, trigger . signal) + phobos -> amp_lemat [3];
+	pb = & op -> sens . amp . key; ampscal = integrated_sensitivity (pb -> BP, pb -> left, pb -> right, trigger . signal);
+	pb = & op -> sens . amp . velocity; ampscal += integrated_sensitivity (pb -> BP, pb -> left, pb -> right, trigger . velocity);
+	fm . amp4 = op -> amp + eg4 . signal + ampscal + phobos -> amp_lemat [3];
+	pb = & op -> sens . amp . X; ampscal = integrated_sensitivity (pb -> BP, pb -> left, pb -> right, X . signal, DIV_2097152);
+	pb = & op -> sens . amp . Y; ampscal += integrated_sensitivity (pb -> BP, pb -> left, pb -> right, Y . signal, DIV_2097152);
+	fm . gain4 = 1.0 + ampscal;
 	fm . feedback4 = op -> feedback; fm . ratio4 = op -> ratio;
 	//==============
 	fm . move ();

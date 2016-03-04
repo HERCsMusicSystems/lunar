@@ -85,9 +85,9 @@ integrated_vco :: integrated_vco (orbiter_core * core) {
 void integrated_noise :: move (void) {signal = gain * core -> Amplitude (amp) * (0.00000011920928955078125 * (double) core -> noise24b - 1.0);}
 integrated_noise :: integrated_noise (orbiter_core * core) {this -> core = core; gain = 1.0; amp = 0.0;}
 
-double integrated_sensitivity (double breakpoint, double left, double right, double enter) {
-	if (enter >= breakpoint) return (enter - breakpoint) * right * 0.0078125;
-	return (breakpoint - enter) * left * 0.0078125;
+double integrated_sensitivity (double breakpoint, double left, double right, double enter, double gain) {
+	if (enter >= breakpoint) return (enter - breakpoint) * right * gain;
+	return (breakpoint - enter) * left * gain;
 }
 
 #define FRAC 0.00006103515625

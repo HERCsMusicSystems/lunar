@@ -68,7 +68,7 @@ public:
 	integrated_noise (orbiter_core * core);
 };
 
-double integrated_sensitivity (double breakpoint, double left, double right, double enter);
+double integrated_sensitivity (double breakpoint, double left, double right, double enter, double gain = 0.0078125);
 
 class integrated_fm4_block {
 private:

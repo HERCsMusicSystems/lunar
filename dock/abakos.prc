@@ -1,10 +1,53 @@
 
+import lunar
+
+program abakos [BuildAbakos BuildAbakosPart]
+
+[[BuildAbakos *polyphony] / [BuildAbakos *polyphony * * *]]
+[[BuildAbakos *polyphony *Abakos *AbakosCB *volume]
+	[Moonbase *Abakos *AbakosCB Abakos *volume]
+	[moonbase *base]
+	[arpeggiator *AbakosCB *base]
+	[lfo *lfo]
+	[volume *volume] [drywet *drywet] [delay *delay] [stereo_pan *pan] [stereo_chorus *chorus]
+	[ConnectStereo *pan *chorus] [ConnectStereo *delay *pan] [ConnectDryWet *drywet *pan *delay] [ConnectStereo *volume *drywet]
+	[parameter_block *pitch "index"] [gateway *pitchfreq] [*pitchfreq *pitch]
+	[parameter_block *modulation "index"] [gateway *vibrato] [*vibrato *modulation]
+	[Insert *volume *Abakos core]
+	[Insert *pan *Abakos core]
+	[Insert *chorus *Abakos core chorus]
+	[Insert *delay *Abakos core delay]
+	[Insert *drywet *Abakos core delay]
+	[Insert *AbakosCB *Abakos arpeggiator]
+	[Insert *lfo *Abakos lfo]
+	[REPEAT *polyphony [BuildAbakosPart *Abakos *AbakosCB *chorus]]
+]
+
+[[BuildAbakosPart *Abakos *cb *mixer]
+	[trigger *trigger] [*cb *trigger]
+	[adsr *adsr] [eg *adsr2]
+	[*adsr "trigger" *trigger "trigger"] [*trigger "busy" *adsr "busy"]
+	[vco *vco1] [vco *vco2] [noise_operator *noise] [filter *filter]
+	[*mixer *filter] [*filter *vco1] [*filter *vco2] [*filter *noise]
+	[*vco1 "freq" *trigger "key"]
+	[*filter "gain" *adsr]
+	[Insert *vco1 *Abakos vco 1]
+	[Insert *vco2 *Abakos vco 2]
+	[Insert *noise *Abakos noise]
+	[Insert *filter *Abakos filter]
+	[Insert *adsr *Abakos adsr 1]
+	[Insert *adsr2 *Abakos adsr 2]
+	[Insert *trigger *Abakos portamento]
+]
+
+end .
+
 import studio
 import lunar
 
 program abakos [Abakos BuildAbakos BuildAbakosPart AddMoon]
 
-[[BuildAbakos *Abakos *AbakosCB *drywet]
+[[BuildAbakos *polyphony *Abakos *AbakosCB *drywet]
 	[moonbase *Abakoscb]
 	[arpeggiator *AbakosCB *Abakoscb]
 	[Moonbase *Abakos *AbakosCB Abakos]
@@ -16,6 +59,9 @@ program abakos [Abakos BuildAbakos BuildAbakosPart AddMoon]
 	[*drywet "dryright" *pan "right"]
 	[*drywet "wetleft" *delay "left"]
 	[*drywet "wetright" *delay "right"]
+	[parameter_block *pitch "index"] [gateway *pitchfreq] [*pitchfreq *pitch]
+	[parameter_block *modulation "index"] [gateway *vibrato] [*vibrato *modulation]
+	[REPEAT *polyphony [BuildAbakosPart *Abakos *AbakosCB *chorus]]
 	[Insert *AbakosCB *Abakos arpeggiator]
 	[Insert *pan *Abakos core]
 	[Insert *drywet *Abakos core]
@@ -28,21 +74,6 @@ program abakos [Abakos BuildAbakos BuildAbakosPart AddMoon]
 	[InsertController 17 *Abakos core time]
 	[InsertController 65 *Abakos portamento porta]
 	[AddMoon *Abakos *AbakosCB]
-]
-
-[[BuildAbakosPart *Abakos *mixer *cb]
-	[operator *op1]
-	[adsr *adsr1]
-	[trigger *trigger] [*cb *trigger]
-	[*trigger "busy" *adsr1 "busy"]
-	[*op1 "freq" *trigger "key"]
-	[*adsr1 "trigger" *trigger "trigger"]
-	[*op1 "amp" *adsr1 "signal"]
-	[*mixer *op1]
-	[Insert *op1 *Abakos operator]
-	[Insert *adsr1 *Abakos adsr]
-	[Insert *trigger *Abakos portamento]
-
 ]
 
 end .

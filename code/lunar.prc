@@ -52,6 +52,7 @@ program lunar #machine := "lunar"
 				BuildIntegrated
 				BuildIntegratedAlarm integrated_alarm Alarm AlarmBlocks
 				BuildIntegratedMicrodot integrated_microdot Microdot MicrodotBlocks
+				BuildIntegratedAbakos integrated_abakos Abakos AbakosBlocks
 				BuildIntegratedPhobos integrated_phobos Phobos PhobosBlocks
 				Phobos
 			]

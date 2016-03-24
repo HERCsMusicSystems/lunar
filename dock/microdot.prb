@@ -1,0 +1,8 @@
+
+[import "microdot"]
+
+[BuildMicrodot]
+
+[show "Microdot created."]
+
+[exit]

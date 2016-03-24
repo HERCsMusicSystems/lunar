@@ -1,0 +1,8 @@
+
+[import "abakos"]
+
+[BuildAbakos 6]
+
+[show "Abakos created."]
+
+[exit]

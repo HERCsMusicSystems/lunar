@@ -289,6 +289,7 @@ PrologNativeCode * PrologLunarServiceClass :: getNativeCode (char * name) {
 	if (strcmp (name, "DCOffsetFilter") == 0) return new DCOffsetFilter_class (& core, false);
 	if (strcmp (name, "DCOffsetFilterMono") == 0) return new DCOffsetFilter_class (& core, true);
 	if (strcmp (name, "parameter_block") == 0) return new parameter_block_class (& core);
+	if (strcmp (name, "morph") == 0) return new morph_class (& core);
 	if (strcmp (name, "auto_data") == 0) return new auto_data_class (& core);
 	if (strcmp (name, "auto") == 0) return new auto_class (& core);
 	if (strcmp (name, "key_map") == 0) return new key_map_class (& core);

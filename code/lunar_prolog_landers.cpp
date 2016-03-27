@@ -122,6 +122,22 @@ orbiter * parameter_block_class :: create_orbiter (PrologElement * parameters) {
 PrologNativeOrbiter * parameter_block_class :: create_native_orbiter (PrologAtom * atom, orbiter * module) {return new pb_native_orbiter (atom, core, module);}
 parameter_block_class :: parameter_block_class (orbiter_core * core) : PrologNativeOrbiterCreator (core) {}
 
+orbiter * morph_class :: create_orbiter (PrologElement * parameters) {
+	int dimension = 2;
+	while (parameters -> isPair ()) {
+		PrologElement * el = parameters -> getLeft ();
+		if (el -> isInteger ()) {int ind = el -> getInteger (); if (1 <= ind && ind <= 3) dimension = ind;}
+		parameters = parameters -> getRight ();
+	}
+	switch (dimension) {
+	case 1: return new lunar_morph_one (core); break;
+	case 3: return new lunar_morph_three (core); break;
+	default: break;
+	}
+	return new lunar_morph_two (core);
+}
+morph_class :: morph_class (orbiter_core * core) : PrologNativeOrbiterCreator (core) {}
+
 static char * auto_data_action_code = "Lunar Auto Data Action";
 class auto_data_native_orbiter : public PrologNativeOrbiter {
 public:

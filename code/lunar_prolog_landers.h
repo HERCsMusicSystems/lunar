@@ -41,6 +41,12 @@ public:
 	parameter_block_class (orbiter_core * core);
 };
 
+class morph_class : public PrologNativeOrbiterCreator {
+public:
+	virtual orbiter * create_orbiter (PrologElement * parameters);
+	morph_class (orbiter_core * core);
+};
+
 class auto_data_class : public PrologNativeOrbiterCreator {
 public:
 	virtual orbiter * create_orbiter (PrologElement * parameters);

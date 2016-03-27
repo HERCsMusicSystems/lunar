@@ -49,6 +49,114 @@ lunar_parameter_block :: lunar_parameter_block (orbiter_core * core, int style, 
 	if (active) activate ();
 }
 
+int lunar_morph_one :: numberOfInputs (void) {return 3;}
+char * lunar_morph_one :: inputName (int ind) {
+	switch (ind) {
+	case 0: return "X"; break;
+	case 1: return "A"; break;
+	case 2: return "B"; break;
+	default: break;
+	}
+	return orbiter :: inputName (ind);
+}
+double * lunar_morph_one :: inputAddress (int ind) {
+	switch (ind) {
+	case 0: return & x; break;
+	case 1: return & a; break;
+	case 2: return & b; break;
+	default: break;
+	}
+	return orbiter :: inputAddress (ind);
+}
+void lunar_morph_one :: move (void) {double xx = x * DIV_16384; signal = b * xx + a - a * xx;}
+lunar_morph_one :: lunar_morph_one (orbiter_core * core) : orbiter (core) {x = a = b = 0.0; initialise (); activate ();}
+
+int lunar_morph_two :: numberOfInputs (void) {return 6;}
+char * lunar_morph_two :: inputName (int ind) {
+	switch (ind) {
+	case 0: return "X"; break;
+	case 1: return "Y"; break;
+	case 2: return "A"; break;
+	case 3: return "B"; break;
+	case 4: return "C"; break;
+	case 5: return "D"; break;
+	default: break;
+	}
+	return orbiter :: inputName (ind);
+}
+double * lunar_morph_two :: inputAddress (int ind) {
+	switch (ind) {
+	case 0: return & x; break;
+	case 1: return & y; break;
+	case 2: return & a; break;
+	case 3: return & b; break;
+	case 4: return & c; break;
+	case 5: return & d; break;
+	default: break;
+	}
+	return orbiter :: inputAddress (ind);
+}
+void lunar_morph_two :: move (void) {
+	double xx = x * DIV_16384;
+	double mxx = 1.0 - xx;
+	double yy = y * DIV_16384;
+	double ab = b * xx + a * mxx;
+	double cd = d * xx + c * mxx;
+	signal = ab * yy + cd - cd * yy;
+}
+lunar_morph_two :: lunar_morph_two (orbiter_core * core) : orbiter (core) {x = y = a = b = c = d = 0.0; initialise (); activate ();}
+
+int lunar_morph_three :: numberOfInputs (void) {return 11;}
+char * lunar_morph_three :: inputName (int ind) {
+	switch (ind) {
+	case 0: return "X"; break;
+	case 1: return "Y"; break;
+	case 2: return "Z"; break;
+	case 3: return "A"; break;
+	case 4: return "B"; break;
+	case 5: return "C"; break;
+	case 6: return "D"; break;
+	case 7: return "E"; break;
+	case 8: return "F"; break;
+	case 9: return "G"; break;
+	case 10: return "H"; break;
+	default: break;
+	}
+	return orbiter :: inputName (ind);
+}
+double * lunar_morph_three :: inputAddress (int ind) {
+	switch (ind) {
+	case 0: return & x; break;
+	case 1: return & y; break;
+	case 2: return & z; break;
+	case 3: return & a; break;
+	case 4: return & b; break;
+	case 5: return & c; break;
+	case 6: return & d; break;
+	case 7: return & e; break;
+	case 8: return & f; break;
+	case 9: return & g; break;
+	case 10: return & h; break;
+	default: break;
+	}
+	return orbiter :: inputAddress (ind);
+}
+void lunar_morph_three :: move (void) {
+	double xx = x * DIV_16384;
+	double mxx = 1.0 - xx;
+	double yy = y * DIV_16384;
+	double myy = 1.0 - yy;
+	double zz = z * DIV_16384;
+	double ab = b * xx + a * mxx;
+	double cd = d * xx + c * mxx;
+	double ef = f * xx + e * mxx;
+	double gh = h * xx + g * mxx;
+	double abcd = ab * yy + cd * myy;
+	double efgh = ef * yy + gh * myy;
+	signal = efgh * zz + abcd - abcd * zz;
+}
+lunar_morph_three :: lunar_morph_three (orbiter_core * core) : orbiter (core) {x = y = z = a = b = c = d = e = f = h = h = 0.0; initialise (); activate ();}
+
 auto_frame :: auto_frame (double value, double time, auto_frame * prevoius) {this -> value = value; this -> time = time; this -> previous = previous; next = 0;}
 auto_frame :: ~ auto_frame (void) {if (next != 0) delete next;}
 

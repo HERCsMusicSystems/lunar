@@ -102,7 +102,7 @@ void lunar_morph_two :: move (void) {
 	double yy = y * DIV_16384;
 	double ab = b * xx + a * mxx;
 	double cd = d * xx + c * mxx;
-	signal = ab * yy + cd - cd * yy;
+	signal = cd * yy + ab - ab * yy;
 }
 lunar_morph_two :: lunar_morph_two (orbiter_core * core) : orbiter (core) {x = y = a = b = c = d = 0.0; initialise (); activate ();}
 
@@ -151,8 +151,8 @@ void lunar_morph_three :: move (void) {
 	double cd = d * xx + c * mxx;
 	double ef = f * xx + e * mxx;
 	double gh = h * xx + g * mxx;
-	double abcd = ab * yy + cd * myy;
-	double efgh = ef * yy + gh * myy;
+	double abcd = cd * yy + ab * myy;
+	double efgh = gh * yy + ef * myy;
 	signal = efgh * zz + abcd - abcd * zz;
 }
 lunar_morph_three :: lunar_morph_three (orbiter_core * core) : orbiter (core) {x = y = z = a = b = c = d = e = f = h = h = 0.0; initialise (); activate ();}

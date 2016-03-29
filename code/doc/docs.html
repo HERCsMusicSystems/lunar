@@ -718,7 +718,7 @@ Core also functions as an audio source (connected directly to the sound hardware
 <div class="doc_predicate">
 	<a id="predicate_morph">
 		<div class="doc_predicate_header">
-			[morph module dimensions] => Creates a morphing effect of several input values (dimensions optional, default = 2).<br/>
+			[morph module dimensions divisor] => Creates a morphing effect of several input values (optional: dimension integer [default = 2], divisor double [default = 1.0]).<br/>
 			<b>Note:</b> module adheres to <a href="#common_behaviour_of_predicates">Common Behaviour</a>.<br/>
 		</div>
 		<div class="doc_predicate_body">
@@ -732,6 +732,7 @@ Core also functions as an audio source (connected directly to the sound hardware
 			SIGNAL = A * (1 - X) * (1 - Y) + B * X * (1 - Y) + C * (1 - X) * Y + D * X * Y for morph 2.<br/>
 			SIGNAL = A * (1 - X) * (1 - Y) * (1 - Z) + B * X * (1 - Y) * (1 - Z) + C * (1 - X) * Y * (1 - Z) + D * X * Y * (1 - Z)
 			+ E * (1 - X) * (1 - Y) * Z + F * X * (1 - Y) * Z + G * (1 - X) * Y * Z + H * X * Y * Z for morph 3.<br/>
+      The output signal can be (optionally) divided by divisor (if present and different than 1.0).
 			<b>INPUTS:</b><br/>
 			<b>X, Y, Z:</b> balance.<br/>
 			<b>A, B, C, D, E, F, G, H:</b> input signals.<br/>

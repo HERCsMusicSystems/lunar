@@ -71,6 +71,9 @@ double * lunar_morph_one :: inputAddress (int ind) {
 void lunar_morph_one :: move (void) {double xx = x * DIV_16384; signal = b * xx + a - a * xx;}
 lunar_morph_one :: lunar_morph_one (orbiter_core * core) : orbiter (core) {x = a = b = 0.0; initialise (); activate ();}
 
+void lunar_morph_one_d :: move (void) {double xx = x * DIV_16384; signal = divisor * (b * xx + a - a * xx);}
+lunar_morph_one_d :: lunar_morph_one_d (orbiter_core * core, double divisor) : lunar_morph_one (core) {this -> divisor = divisor != 0.0 ? 1.0 / divisor : 1.0;}
+
 int lunar_morph_two :: numberOfInputs (void) {return 6;}
 char * lunar_morph_two :: inputName (int ind) {
 	switch (ind) {
@@ -105,6 +108,16 @@ void lunar_morph_two :: move (void) {
 	signal = cd * yy + ab - ab * yy;
 }
 lunar_morph_two :: lunar_morph_two (orbiter_core * core) : orbiter (core) {x = y = a = b = c = d = 0.0; initialise (); activate ();}
+
+void lunar_morph_two_d :: move (void) {
+	double xx = x * DIV_16384;
+	double mxx = 1.0 - xx;
+	double yy = y * DIV_16384;
+	double ab = b * xx + a * mxx;
+	double cd = d * xx + c * mxx;
+	signal = divisor * (cd * yy + ab - ab * yy);
+}
+lunar_morph_two_d :: lunar_morph_two_d (orbiter_core * core, double divisor) : lunar_morph_two (core) {this -> divisor = divisor != 0.0 ? 1.0 / divisor : 1.0;}
 
 int lunar_morph_three :: numberOfInputs (void) {return 11;}
 char * lunar_morph_three :: inputName (int ind) {
@@ -156,6 +169,22 @@ void lunar_morph_three :: move (void) {
 	signal = efgh * zz + abcd - abcd * zz;
 }
 lunar_morph_three :: lunar_morph_three (orbiter_core * core) : orbiter (core) {x = y = z = a = b = c = d = e = f = h = h = 0.0; initialise (); activate ();}
+
+void lunar_morph_three_d :: move (void) {
+	double xx = x * DIV_16384;
+	double mxx = 1.0 - xx;
+	double yy = y * DIV_16384;
+	double myy = 1.0 - yy;
+	double zz = z * DIV_16384;
+	double ab = b * xx + a * mxx;
+	double cd = d * xx + c * mxx;
+	double ef = f * xx + e * mxx;
+	double gh = h * xx + g * mxx;
+	double abcd = cd * yy + ab * myy;
+	double efgh = gh * yy + ef * myy;
+	signal = divisor * (efgh * zz + abcd - abcd * zz);
+}
+lunar_morph_three_d :: lunar_morph_three_d (orbiter_core * core, double divisor) : lunar_morph_three (core) {this -> divisor = divisor != 0.0 ? 1.0 / divisor : 1.0;}
 
 auto_frame :: auto_frame (double value, double time, auto_frame * prevoius) {this -> value = value; this -> time = time; this -> previous = previous; next = 0;}
 auto_frame :: ~ auto_frame (void) {if (next != 0) delete next;}

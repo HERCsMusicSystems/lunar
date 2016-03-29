@@ -124,10 +124,20 @@ parameter_block_class :: parameter_block_class (orbiter_core * core) : PrologNat
 
 orbiter * morph_class :: create_orbiter (PrologElement * parameters) {
 	int dimension = 2;
+	double divisor = 1.0;
 	while (parameters -> isPair ()) {
 		PrologElement * el = parameters -> getLeft ();
 		if (el -> isInteger ()) {int ind = el -> getInteger (); if (1 <= ind && ind <= 3) dimension = ind;}
+		if (el -> isDouble ()) {double ind = el -> getDouble (); if (ind != 0.0) divisor = ind;}
 		parameters = parameters -> getRight ();
+	}
+	if (divisor != 0.0) {
+		switch (dimension) {
+		case 1: return new lunar_morph_one_d (core, divisor); break;
+		case 3: return new lunar_morph_three_d (core, divisor); break;
+		default: break;
+		}
+		return new lunar_morph_two_d (core, divisor);
 	}
 	switch (dimension) {
 	case 1: return new lunar_morph_one (core); break;

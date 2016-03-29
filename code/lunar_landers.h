@@ -44,7 +44,7 @@ public:
 };
 
 class lunar_morph_one : public orbiter {
-private:
+protected:
 	double x;
 	double a, b;
 public:
@@ -55,8 +55,15 @@ public:
 	lunar_morph_one (orbiter_core * core);
 };
 
+class lunar_morph_one_d : public lunar_morph_one {
+private: double divisor;
+public:
+	void move (void);
+	lunar_morph_one_d (orbiter_core * core, double divisor);
+};
+
 class lunar_morph_two : public orbiter {
-private:
+protected:
 	double x, y;
 	double a, b, c, d;
 public:
@@ -67,8 +74,15 @@ public:
 	lunar_morph_two (orbiter_core * core);
 };
 
+class lunar_morph_two_d : public lunar_morph_two {
+private: double divisor;
+public:
+	void move (void);
+	lunar_morph_two_d (orbiter_core * core, double divisor);
+};
+
 class lunar_morph_three : public orbiter {
-private:
+protected:
 	double x, y, z;
 	double a, b, c, d, e, f, g, h;
 public:
@@ -77,6 +91,13 @@ public:
 	virtual double * inputAddress (int ind);
 	virtual void move (void);
 	lunar_morph_three (orbiter_core * core);
+};
+
+class lunar_morph_three_d : public lunar_morph_three {
+private: double divisor;
+public:
+	void move (void);
+	lunar_morph_three_d (orbiter_core * core, double divisor);
 };
 
 class auto_frame {

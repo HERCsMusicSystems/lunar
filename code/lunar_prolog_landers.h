@@ -326,6 +326,14 @@ public:
 	integrated_microdot_class (orbiter_core * core, PrologDirectory * directory);
 };
 
+class integrated_abakos_class : public PrologNativeOrbiterCreator {
+public:
+	PrologDirectory * directory;
+	virtual orbiter * create_orbiter (PrologElement * parameters);
+	virtual PrologNativeOrbiter * create_native_orbiter (PrologAtom * atom, orbiter * module);
+	integrated_abakos_class (orbiter_core * core, PrologDirectory * directory);
+};
+
 class integrated_phobos_class : public PrologNativeOrbiterCreator {
 public:
 	PrologDirectory * directory;

@@ -354,6 +354,7 @@ PrologNativeCode * PrologLunarServiceClass :: getNativeCode (char * name) {
 	if (strcmp (name, "unicar") == 0) return new unicar ();
 	if (strcmp (name, "integrated_alarm") == 0) return new integrated_alarm_class (& core, directory);
 	if (strcmp (name, "integrated_microdot") == 0) return new integrated_microdot_class (& core, directory);
+	if (strcmp (name, "integrated_abakos") == 0) return new integrated_abakos_class (& core, directory);
 	if (strcmp (name, "integrated_phobos") == 0) return new integrated_phobos_class (& core, directory);
 	return 0;
 }

@@ -84,13 +84,14 @@ struct operator_structure {
 		double time [4], level [4];
 		pb_struct egscal;
 	} eg;
+	double vector [4];
 	struct {
 		struct {
 			pb_struct key;
 			double eg, pitch, lfo [2];
 		} freq;
 		struct {
-			pb_struct key, X, Y, velocity;
+			pb_struct key, velocity;
 			double lfo;
 		} amp;
 	} sens;
@@ -281,14 +282,13 @@ public:
 			op -> feedback = 0.0;
 			for (int sub = 0; sub < 4; sub++) op -> eg . time [sub] = op -> eg . level [sub] = 0.0;
 			op -> eg . egscal . reset ();
+			op -> vector [0] = op -> vector [1] = op -> vector [2] = op -> vector [3] = 16384.0;
 			op -> sens . freq . key . set_key ();
 			op -> sens . freq . eg = 0.0;
 			op -> sens . freq . lfo [0] = 128.0;
 			op -> sens . freq . lfo [1] = 0.0;
 			op -> sens . freq . pitch = 512.0;
 			op -> sens . amp . key . reset ();
-			op -> sens . amp . X . reset ();
-			op -> sens . amp . Y . reset ();
 			op -> sens . amp . lfo = 0.0;
 			op -> sens . amp . velocity . reset ();
 		}
@@ -350,6 +350,8 @@ void integrated_phobos_part :: move (integrated_phobos * phobos) {
 	freq_eg . move ();
 	X . trigger = Y . trigger = trigger . trigger;
 	X . move (); Y . move ();
+	double xx = X . signal * DIV_16384;
+	double yy = Y . signal * DIV_16384;
 	fm . algo = phobos -> operator_algo; fm . trigger = trigger . trigger;
 	//==============
 	move_operator_part (& eg1, op, & trigger);
@@ -358,9 +360,7 @@ void integrated_phobos_part :: move (integrated_phobos * phobos) {
 	pb = & op -> sens . amp . key; ampscal = integrated_sensitivity (pb -> BP, pb -> left, pb -> right, trigger . signal);
 	pb = & op -> sens . amp . velocity; ampscal += integrated_sensitivity (pb -> BP, pb -> left, pb -> right, trigger . velocity);
 	fm . amp1 = op -> amp + eg1 . signal + ampscal + phobos -> amp_lemat [0];
-	pb = & op -> sens . amp . X; ampscal = integrated_sensitivity (pb -> BP, pb -> left, pb -> right, X . signal, DIV_2097152);
-	pb = & op -> sens . amp . Y; ampscal += integrated_sensitivity (pb -> BP, pb -> left, pb -> right, Y . signal, DIV_2097152);
-	fm . gain1 = 1.0 + ampscal;
+	fm . gain1 = integrated_morph (xx, yy, op -> vector) * DIV_16384;
 	fm . feedback1 = op -> feedback; fm . ratio1 = op -> ratio;
 	op++;
 	//==============
@@ -370,9 +370,7 @@ void integrated_phobos_part :: move (integrated_phobos * phobos) {
 	pb = & op -> sens . amp . key; ampscal = integrated_sensitivity (pb -> BP, pb -> left, pb -> right, trigger . signal);
 	pb = & op -> sens . amp . velocity; ampscal += integrated_sensitivity (pb -> BP, pb -> left, pb -> right, trigger . velocity);
 	fm . amp2 = op -> amp + eg2 . signal + ampscal + phobos -> amp_lemat [1];
-	pb = & op -> sens . amp . X; ampscal = integrated_sensitivity (pb -> BP, pb -> left, pb -> right, X . signal, DIV_2097152);
-	pb = & op -> sens . amp . Y; ampscal += integrated_sensitivity (pb -> BP, pb -> left, pb -> right, Y . signal, DIV_2097152);
-	fm . gain2 = 1.0 + ampscal;
+	fm . gain2 = integrated_morph (xx, yy, op -> vector) * DIV_16384;
 	fm . feedback2 = op -> feedback; fm . ratio2 = op -> ratio;
 	op++;
 	//==============
@@ -382,9 +380,7 @@ void integrated_phobos_part :: move (integrated_phobos * phobos) {
 	pb = & op -> sens . amp . key; ampscal = integrated_sensitivity (pb -> BP, pb -> left, pb -> right, trigger . signal);
 	pb = & op -> sens . amp . velocity; ampscal += integrated_sensitivity (pb -> BP, pb -> left, pb -> right, trigger . velocity);
 	fm . amp3 = op -> amp + eg3 . signal + ampscal + phobos -> amp_lemat [2];
-	pb = & op -> sens . amp . X; ampscal = integrated_sensitivity (pb -> BP, pb -> left, pb -> right, X . signal, DIV_2097152);
-	pb = & op -> sens . amp . Y; ampscal += integrated_sensitivity (pb -> BP, pb -> left, pb -> right, Y . signal, DIV_2097152);
-	fm . gain3 = 1.0 + ampscal;
+	fm . gain3 = integrated_morph (xx, yy, op -> vector) * DIV_16384;
 	fm . feedback3 = op -> feedback; fm . ratio3 = op -> ratio;
 	op++;
 	//==============
@@ -394,9 +390,7 @@ void integrated_phobos_part :: move (integrated_phobos * phobos) {
 	pb = & op -> sens . amp . key; ampscal = integrated_sensitivity (pb -> BP, pb -> left, pb -> right, trigger . signal);
 	pb = & op -> sens . amp . velocity; ampscal += integrated_sensitivity (pb -> BP, pb -> left, pb -> right, trigger . velocity);
 	fm . amp4 = op -> amp + eg4 . signal + ampscal + phobos -> amp_lemat [3];
-	pb = & op -> sens . amp . X; ampscal = integrated_sensitivity (pb -> BP, pb -> left, pb -> right, X . signal, DIV_2097152);
-	pb = & op -> sens . amp . Y; ampscal += integrated_sensitivity (pb -> BP, pb -> left, pb -> right, Y . signal, DIV_2097152);
-	fm . gain4 = 1.0 + ampscal;
+	fm . gain4 = integrated_morph (xx, yy, op -> vector) * DIV_16384;
 	fm . feedback4 = op -> feedback; fm . ratio4 = op -> ratio;
 	//==============
 	fm . move ();
@@ -452,7 +446,7 @@ public:
 	PrologAtom * noise, * filter, * resonance, * adsr;
 	PrologAtom * attack, * decay, * sustain, * release;
 	PrologAtom * portamento, * porta, * legato;
-	PrologAtom * vector, * key_map;
+	PrologAtom * vector, * A, * B, *C, *D, * key_map;
 	bool update_value (double * location, PrologElement * el, PrologElement * text, int style) {
 		if (el -> isNumber ()) * location = el -> getNumber ();
 		else {
@@ -631,6 +625,20 @@ public:
 												}
 												return false;
 											}
+											if (sa == vector) {
+												path = path -> getRight ();
+												if (path -> isPair ()) {
+													se = path -> getLeft ();
+													if (se -> isAtom ()) {
+														sa = se -> getAtom ();
+														if (sa == A) return update_value (& ph -> operators [ind] . vector [0], v, o, 1);
+														if (sa == B) return update_value (& ph -> operators [ind] . vector [1], v, o, 1);
+														if (sa == C) return update_value (& ph -> operators [ind] . vector [2], v, o, 1);
+														if (sa == D) return update_value (& ph -> operators [ind] . vector [3], v, o, 1);
+													}
+												}
+												return false;
+											}
 											if (sa == sens) {
 												path = path -> getRight ();
 												if (path -> isPair ()) {
@@ -689,32 +697,6 @@ public:
 																				if (sa == BP) return update_value (& ph -> operators [ind] . sens . amp . key . BP, v, o, 1);
 																				if (sa == left) return update_value (& ph -> operators [ind] . sens . amp . key . left, v, o, 1);
 																				if (sa == right) return update_value (& ph -> operators [ind] . sens . amp . key . right, v, o, 1);
-																			}
-																		}
-																		return false;
-																	}
-																	if (sa == X) {
-																		path = path -> getRight ();
-																		if (path -> isPair ()) {
-																			se = path -> getLeft ();
-																			if (se -> isAtom ()) {
-																				sa = se -> getAtom ();
-																				if (sa == BP) return update_value (& ph -> operators [ind] . sens . amp . X . BP, v, o, 1);
-																				if (sa == left) return update_value (& ph -> operators [ind] . sens . amp . X . left, v, o, 1);
-																				if (sa == right) return update_value (& ph -> operators [ind] . sens . amp . X . right, v, o, 1);
-																			}
-																		}
-																		return false;
-																	}
-																	if (sa == Y) {
-																		path = path -> getRight ();
-																		if (path -> isPair ()) {
-																			se = path -> getLeft ();
-																			if (se -> isAtom ()) {
-																				sa = se -> getAtom ();
-																				if (sa == BP) return update_value (& ph -> operators [ind] . sens . amp . Y . BP, v, o, 1);
-																				if (sa == left) return update_value (& ph -> operators [ind] . sens . amp . Y . left, v, o, 1);
-																				if (sa == right) return update_value (& ph -> operators [ind] . sens . amp . Y . right, v, o, 1);
 																			}
 																		}
 																		return false;
@@ -944,7 +926,7 @@ public:
 		noise = filter = resonance = adsr = 0;
 		attack = decay = sustain = release = 0;
 		portamento = porta = legato = 0;
-		vector = key_map = 0;
+		vector = A = B = C = D = key_map = 0;
 		if (directory == 0) return;
 		core_atom = directory -> searchAtom ("core");
 		volume = directory -> searchAtom ("volume");
@@ -1007,6 +989,10 @@ public:
 		porta = directory -> searchAtom ("porta");
 		legato = directory -> searchAtom ("legato");
 		vector = directory -> searchAtom ("vector");
+		A = directory -> searchAtom ("A");
+		B = directory -> searchAtom ("B");
+		C = directory -> searchAtom ("C");
+		D = directory -> searchAtom ("D");
 		key_map = directory -> searchAtom ("key_map");
 	}
 };

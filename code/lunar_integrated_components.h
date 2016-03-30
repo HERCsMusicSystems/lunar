@@ -70,6 +70,10 @@ public:
 
 double integrated_sensitivity (double breakpoint, double left, double right, double enter, double gain = 0.0078125);
 
+double integrated_morph (double x, double * vector);
+double integrated_morph (double x, double y, double * vector);
+double integrated_morph (double x, double y, double z, double * vector);
+
 class integrated_fm4_block {
 private:
 	double (* current_algo) (integrated_fm4_block * block);

@@ -90,6 +90,25 @@ double integrated_sensitivity (double breakpoint, double left, double right, dou
 	return (breakpoint - enter) * left * gain;
 }
 
+double integrated_morph (double x, double * vector) {return vector [1] * x + * vector - * vector * x;}
+double integrated_morph (double x, double y, double * vector) {
+	double mx = 1.0 - x;
+	double ab = vector [1] * x + * vector * mx;
+	double cd = vector [3] * x + vector [2] * mx;
+	return cd * y + ab - ab * y;
+}
+double integrated_morph (double x, double y, double z, double * vector) {
+	double mx = 1.0 - x;
+	double my = 1.0 - y;
+	double ab = vector [1] * x + * vector * mx;
+	double cd = vector [3] * x + vector [2] * mx;
+	double ef = vector [5] * x + vector [4] * mx;
+	double gh = vector [7] * x + vector [6] * mx;
+	double abcd = cd * y + ab * my;
+	double efgh = gh * y + ef * my;
+	return efgh * z + abcd - abcd * z;
+}
+
 #define FRAC 0.00006103515625
 double algo1 (integrated_fm4_block * block) {
 	block -> signal4 = block -> gain4 * block -> core -> Amplitude (block -> amp4) * block -> core -> Sine (block -> time4 + block -> feedback4 * block -> signal4 * FRAC);

@@ -517,6 +517,7 @@ public:
 									if (sa == auto_atom) return update_value (& ph -> auto_ctrl, v, o, 1);
 								}
 							}
+							return false;
 						}
 						if (sa == arpeggiator) {
 							path = path -> getRight ();

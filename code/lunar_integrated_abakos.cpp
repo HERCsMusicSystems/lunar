@@ -67,8 +67,9 @@ Otherwise defaults to common behaviour.
 
 */
 
-/*
+
 #define DIV_16384 0.00006103515625
+/*
 #define DIV_2097152 0.000000476837158203125
 
 class integrated_phobos;
@@ -99,7 +100,11 @@ struct operator_structure {
 };
 */
 
+class integrated_abakos;
+
 class integrated_abakos_part {
+public:
+	void move (integrated_abakos * ia);
 };
 
 typedef integrated_abakos_part * integrated_abakos_part_pointer;
@@ -111,32 +116,124 @@ public:
 	integrated_moonbase base;
 	integrated_arpeggiator arp;
 	integrated_abakos_part_pointer * parts;
+	integrated_stereo_pan pan;
+	integrated_stereo_chorus chorus;
+	integrated_delay delay;
+	integrated_drywet drywet;
 	integrated_stereo_amplifier volume;
-	double pitch, pan_ctrl;
+	integrated_map key_map;
+	integrated_lfo lfo;
+	double pitch, modulation, vibrato;
+	struct {double pitch, vibrato;} sens;
+	struct {
+		double freq, amp, ratio, wave;
+		struct {double key, adsr;} sens;
+	} vco [2];
+	double noise, ringmod;
+	struct {
+		double freq, resonance, amp;
+		struct {double key, adsr;} sens;
+	} filter;
+	struct {double attack, decay, sustain, release;} adsr1;
+	struct {double time [4], level [4];} adsr2;
+	struct {double porta, time, legato, hold;} portamento;
 public:
 	bool insert_trigger (lunar_trigger * trigger) {return false;}
 	bool insert_controller (orbiter * controller, int location, double shift) {return false;}
-	void keyon (int key, int velocity) {}
-	void keyon (int key) {}
-	void keyoff (void) {}
-	void keyoff (int key, int velocity) {}
-	void mono (void) {}
-	void poly (void) {}
-	bool isMonoMode (void) {return false;}
+	void keyon (int key, int velocity) {arp . keyon (key, velocity);}
+	void keyon (int key) {arp . keyon (key);}
+	void keyoff (void) {arp . keyoff ();}
+	void keyoff (int key, int velocity) {arp . keyoff (key, velocity);}
+	void mono (void) {arp . mono ();}
+	void poly (void) {arp . poly ();}
+	bool isMonoMode (void) {return arp . isMonoMode ();}
 	void control (int ctrl, double value) {}
 	double getControl (int ctrl) {return 0.0;}
 	void timing_clock (void) {}
+	int numberOfOutputs (void) {return 2;}
+	char * outputName (int ind) {
+		switch (ind) {
+		case 0: return "LEFT"; break;
+		case 1: return "RIGHT"; break;
+		default: break;
+		}
+		return CommandModule :: outputName (ind);
+	}
+	double * outputAddress (int ind) {
+		switch (ind) {
+		case 0: return & volume . left; break;
+		case 1: return & volume . right; break;
+		default: break;
+		}
+		return CommandModule :: outputAddress (ind);
+	}
+	void move (void) {
+		arp . move ();
+		lfo . vibrato = vibrato + modulation * sens . vibrato * DIV_16384;
+		lfo . move (); lfo . trigger = 0.0;
+		chorus . mono = 0.0;
+		for (int ind = 0; ind < polyphony; ind++) parts [ind] -> move (this);
+		chorus . move ();
+		pan . enter_left = chorus . signal;
+		pan . enter_right = chorus . signal_right;
+		pan . move ();
+		delay . enter = drywet . dry_left = pan . left;
+		delay . enter_right = drywet . dry_right = pan . right;
+		delay . move ();
+		drywet . wet_left = delay . signal;
+		drywet . wet_right = delay . signal_right;
+		drywet . move ();
+		volume . enter_left = drywet . left;
+		volume . enter_right = drywet . right;
+		volume . volume_move ();
+	}
+/*	void move (void) {
+		arp . move ();
+		lfo1 . move (); lfo2 . move (); lfo1 . trigger = lfo2 . trigger = 0.0;
+		X_data . signal = X; Y_data . signal = Y;
+		X_data . control = Y_data . control = auto_ctrl;
+		X_data . move(); Y_data . move (); X_data . trigger = Y_data . trigger = 0.0;
+		chorus . mono = 0.0;
+		operator_structure * op = operators;
+		for (int ind = 0; ind < 4; ind++) {
+			freq_lemat [ind] = (op -> sens . freq . pitch * pitch
+				+ op -> sens . freq . lfo [0] * lfo1 . vibrato_signal
+				+ op -> sens . freq . lfo [1] * lfo2 . vibrato_signal) * DIV_16384;
+			amp_lemat [ind] = op -> sens . amp . lfo * lfo2 . tremolo * DIV_16384;
+			op++;
+		}
+		freq_lemat_f = (filter . sens . pitch * pitch
+			+ filter . sens . lfo [0] * lfo1 . vibrato_signal
+			+ filter . sens . lfo [1] * lfo2 . wahwah_signal) * DIV_16384;
+		for (int ind = 0; ind < polyphony; ind++) parts [ind] -> move (this);
+		chorus . move ();
+	}*/
 	integrated_abakos (orbiter_core * core, int polyphony)
-			: CommandModule (core), base (core), arp (core, & base), volume (core, 12800.0) {
+			: CommandModule (core), base (core), arp (core, & base), pan (core), chorus (core), delay (core), volume (core, 12800.0), lfo (core) {
 		this -> polyphony = polyphony;
 		parts = new integrated_abakos_part_pointer [polyphony];
 		for (int ind = 0; ind < polyphony; ind++) parts [ind] = new integrated_abakos_part ();
-		pan_ctrl = 0.0;
-		pitch = 0.0;
+		pitch = modulation = vibrato = 0.0;
+		vco [0] . freq = vco [1] . freq = 0.0;
+		vco [0] . amp = 0.0; vco [1] . amp = -16384.0;
+		vco [0] . ratio = vco [1] . ratio = 1.0;
+		vco [0] . wave = vco [1] . wave = 1.0;
+		vco [0] . sens . key = vco [1] . sens . key = 16384.0;
+		vco [0] . sens . adsr = vco [1] . sens . adsr = 0.0;
+		noise = ringmod = 0.0;
+		filter . freq = 5120.0;
+		filter . resonance = filter . amp = 0.0;
+		filter . sens . key = filter . sens . adsr = 0.0;
+		adsr1 . attack = adsr1 . decay = adsr1 . sustain = adsr1 . release = 0.0;
+		for (int ind = 0; ind < 4; ind++) adsr2 . time [ind] = adsr2 . level [ind] = 0.0;
+		portamento . porta = 1.0; portamento . time = portamento . legato = portamento . hold = 0.0;
 		initialise (); activate ();
 	}
 	~ integrated_abakos (void) {for (int ind = 0; ind < polyphony; ind++) delete parts [ind]; delete [] parts; parts = 0;}
 };
+
+void integrated_abakos_part :: move (integrated_abakos * ia) {
+}
 
 /*
 class integrated_phobos_part {
@@ -184,13 +281,6 @@ public:
 	} adsr;
 	struct {double porta, time, legato, hold;} portamento;
 	double lsb;
-	void keyon (int key, int velocity) {arp . keyon (key, velocity);}
-	void keyon (int key) {arp . keyon (key);}
-	void keyoff (void) {arp . keyoff ();}
-	void keyoff (int key, int velocity) {arp . keyoff (key, velocity);}
-	void mono (void) {arp . mono ();}
-	void poly (void) {arp . poly ();}
-	bool isMonoMode (void) {return arp . isMonoMode ();}
 	void control (int ctrl, double value) {
 		switch (ctrl) {
 		case 1: lfo1 . vibrato = value * 128.0 + lsb; lsb = 0.0; break;
@@ -251,58 +341,6 @@ public:
 		default: break;
 		}
 		return 64.0;
-	}
-	void timing_clock (void) {}
-	int numberOfOutputs (void) {return 2;}
-	char * outputName (int ind) {
-		switch (ind) {
-		case 0: return "LEFT"; break;
-		case 1: return "RIGHT"; break;
-		default: break;
-		}
-		return CommandModule :: outputName (ind);
-	}
-	double * outputAddress (int ind) {
-		switch (ind) {
-		case 0: return & volume . left; break;
-		case 1: return & volume . right; break;
-		default: break;
-		}
-		return CommandModule :: outputAddress (ind);
-	}
-	void move (void) {
-		arp . move ();
-		lfo1 . move (); lfo2 . move (); lfo1 . trigger = lfo2 . trigger = 0.0;
-		X_data . signal = X; Y_data . signal = Y;
-		X_data . control = Y_data . control = auto_ctrl;
-		X_data . move(); Y_data . move (); X_data . trigger = Y_data . trigger = 0.0;
-		chorus . mono = 0.0;
-		operator_structure * op = operators;
-		for (int ind = 0; ind < 4; ind++) {
-			freq_lemat [ind] = (op -> sens . freq . pitch * pitch
-				+ op -> sens . freq . lfo [0] * lfo1 . vibrato_signal
-				+ op -> sens . freq . lfo [1] * lfo2 . vibrato_signal) * DIV_16384;
-			amp_lemat [ind] = op -> sens . amp . lfo * lfo2 . tremolo * DIV_16384;
-			op++;
-		}
-		freq_lemat_f = (filter . sens . pitch * pitch
-			+ filter . sens . lfo [0] * lfo1 . vibrato_signal
-			+ filter . sens . lfo [1] * lfo2 . wahwah_signal) * DIV_16384;
-		for (int ind = 0; ind < polyphony; ind++) parts [ind] -> move (this);
-		chorus . move ();
-		pan . enter_left = chorus . signal;
-		pan . enter_right = chorus . signal_right;
-		pan . pan = pan_ctrl + lfo2 . pan_signal;
-		pan . move ();
-		delay . enter = dry_wet . dry_left = pan . left;
-		delay . enter_right = dry_wet . dry_right = pan . right;
-		delay . move ();
-		dry_wet . wet_left = delay . signal;
-		dry_wet . wet_right = delay . signal_right;
-		dry_wet . move ();
-		volume . enter_left = dry_wet . left;
-		volume . enter_right = dry_wet . right;
-		volume . volume_move ();
 	}
 	integrated_phobos (orbiter_core * core, int polyphony = 8)
 			: CommandModule (core), base (core), arp (core, & base), X_data (core), Y_data (core), lfo1 (core), lfo2 (core), pan (core), chorus (core), delay (core), volume (core, 12800.0) {
@@ -474,7 +512,17 @@ integrated_phobos_part :: integrated_phobos_part (orbiter_core * core, integrate
 class native_integrated_abakos : public native_moonbase {
 public:
 	PrologAtom * core_atom;
-	PrologAtom * volume, * pan, * pitch, * modulation;
+	PrologAtom * volume, * pan, * pitch, * modulation, * sens, * vibrato;
+	PrologAtom * chorus, * level, * time, * bias, * speed, * phase, * amp;
+	PrologAtom * delay, * balance, * feedback, * highdamp;
+	PrologAtom * arpeggiator, * subdivision, * active, * algo, * hold;
+	PrologAtom * lfo, * wave, * pulse, * sync, * tremolo, * wahwah;
+	PrologAtom * vco, * freq, * ratio, * key, * ringmod, * noise;
+	PrologAtom * adsr, * attack, * decay, * sustain, * release;
+	PrologAtom * time1, * time2, * time3, *time4, * level1, * level2, * level3, * level4;
+	PrologAtom * filter, * resonance;
+	PrologAtom * portamento, * porta, * legato;
+	PrologAtom * key_map;
 	bool update_value (double * location, PrologElement * el, PrologElement * text, int style) {
 		if (el -> isNumber ()) * location = el -> getNumber ();
 		else {
@@ -508,54 +556,33 @@ public:
 								if (se -> isAtom ()) {
 									sa = se -> getAtom ();
 									if (sa == volume) return update_value (& ab -> volume . gateway, v, o, 1);
-									if (sa == pan) return update_value (& ab -> pan_ctrl, v, o, 1);
+									if (sa == pan) return update_value (& ab -> pan . pan, v, o, 1);
 									if (sa == pitch) return update_value (& ab -> pitch, v, o, 1);
-								}
-							}
-						}
-					}
-					return false;
-				}
-			}
-		}
-		return native_moonbase :: code (parameters, resolution);
-	}
-	native_integrated_abakos (PrologAtom * atom, orbiter_core * core, orbiter * module, PrologDirectory * directory) : native_moonbase (directory, atom, core, module) {
-		core_atom = 0;
-		volume = pan = pitch = modulation = 0;
-		if (directory == 0) return;
-		core_atom = directory -> searchAtom ("core");
-		volume = directory -> searchAtom ("volume");
-		pan = directory -> searchAtom ("pan");
-		pitch = directory -> searchAtom ("pitch");
-		modulation = directory -> searchAtom ("modulation");
-	}
-};
-/*	bool code (PrologElement * parameters, PrologResolution * resolution) {
-				if (path -> isPair ()) {
-					se = path -> getLeft ();
-					if (se -> isAtom ()) {
-						sa = se -> getAtom ();
-						if (sa == core_atom) {
-							path = path -> getRight ();
-							if (path -> isPair ()) {
-								se = path -> getLeft ();
-								if (se -> isAtom ()) {
-									sa = se -> getAtom ();
-									if (sa == volume) return update_value (& ph -> volume . gateway, v, o, 1);
-									if (sa == pan) return update_value (& ph -> pan_ctrl, v, o, 1);
+									if (sa == modulation) return update_value (& ab -> modulation, v, o, 1);
+									if (sa == sens) {
+										path = path -> getRight ();
+										if (path -> isPair ()) {
+											se = path -> getLeft ();
+											if (se -> isAtom ()) {
+												sa = se -> getAtom ();
+												if (sa == pitch) return update_value (& ab -> sens . pitch, v, o, 1);
+												if (sa == vibrato) return update_value (& ab -> sens . vibrato, v, o, 1);
+											}
+										}
+										return false;
+									}
 									if (sa == chorus) {
 										path = path -> getRight ();
 										if (path -> isPair ()) {
 											se = path -> getLeft ();
 											if (se -> isAtom ()) {
 												sa = se -> getAtom ();
-												if (sa == level) return update_value (& ph -> chorus . level, v, o, 1);
-												if (sa == time) return update_value (& ph -> chorus . time, v, o, 1);
-												if (sa == bias) return update_value (& ph -> chorus . bias, v, o, 1);
-												if (sa == speed) return update_value (& ph -> chorus . speed, v, o, 1);
-												if (sa == phase) return update_value (& ph -> chorus . phase, v, o, 1);
-												if (sa == amp) return update_value (& ph -> chorus . amp, v, o, 1);
+												if (sa == level) return update_value (& ab -> chorus . level, v, o, 1);
+												if (sa == time) return update_value (& ab -> chorus . time, v, o, 1);
+												if (sa == bias) return update_value (& ab -> chorus . bias, v, o, 1);
+												if (sa == speed) return update_value (& ab -> chorus . speed, v, o, 1);
+												if (sa == phase) return update_value (& ab -> chorus . phase, v, o, 1);
+												if (sa == amp) return update_value (& ab -> chorus . amp, v, o, 1);
 											}
 										}
 										return false;
@@ -566,20 +593,17 @@ public:
 											se = path -> getLeft ();
 											if (se -> isAtom ()) {
 												sa = se -> getAtom ();
-												if (sa == balance) return update_value (& ph -> dry_wet . balance, v, o, 1);
-												if (sa == feedback) return update_value (& ph -> delay . feedback, v, o, 1);
-												if (sa == time) return update_value (& ph -> delay . time, v, o, 4);
-												if (sa == highdamp) return update_value (& ph -> delay . high_damp, v, o, 1);
+												if (sa == balance) return update_value (& ab -> drywet . balance, v, o, 1);
+												if (sa == feedback) return update_value (& ab -> delay . feedback, v, o, 1);
+												if (sa == time) return update_value (& ab -> delay . time, v, o, 4);
+												if (sa == highdamp) return update_value (& ab -> delay . high_damp, v, o, 1);
 											}
 										}
 										return false;
 									}
-									if (sa == X) return update_value (& ph -> X, v, o, 1);
-									if (sa == Y) return update_value (& ph -> Y, v, o, 1);
-									if (sa == pitch) return update_value (& ph -> pitch, v, o, 1);
-									if (sa == auto_atom) return update_value (& ph -> auto_ctrl, v, o, 1);
 								}
 							}
+							return false;
 						}
 						if (sa == arpeggiator) {
 							path = path -> getRight ();
@@ -587,11 +611,11 @@ public:
 								se = path -> getLeft ();
 								if (se -> isAtom ()) {
 									sa = se -> getAtom ();
-									if (sa == speed) return update_value (& ph -> arp . tempo, v, o, 1);
-									if (sa == subdivision) return update_value (& ph -> arp . division, v, o, 1);
-									if (sa == active) return update_value (& ph -> arp . active, v, o, 5);
-									if (sa == algo) return update_value (& ph -> arp . current_algo, v, o, 1);
-									if (sa == hold) return update_value (& ph -> arp . hold, v, o, 5);
+									if (sa == speed) return update_value (& ab -> arp . tempo, v, o, 1);
+									if (sa == subdivision) return update_value (& ab -> arp . division, v, o, 1);
+									if (sa == active) return update_value (& ab -> arp . active, v, o, 5);
+									if (sa == algo) return update_value (& ab -> arp . current_algo, v, o, 1);
+									if (sa == hold) return update_value (& ab -> arp . hold, v, o, 5);
 								}
 							}
 							return false;
@@ -600,259 +624,77 @@ public:
 							path = path -> getRight ();
 							if (path -> isPair ()) {
 								se = path -> getLeft ();
-								if (! se -> isInteger ()) return false;
-								int ind = se -> getInteger ();
-								if (ind == 1) {
-									path = path -> getRight ();
-									if (path -> isPair ()) {
-										se = path -> getLeft ();
-										if (se -> isAtom ()) {
-											sa = se -> getAtom ();
-											if (sa == speed) return update_value (& ph -> lfo1 . speed, v, o, 1);
-											if (sa == wave) return update_value (& ph -> lfo1 . wave, v, o, 6);
-											if (sa == pulse) return update_value (& ph -> lfo1 . pulse, v, o, 1);
-											if (sa == phase) return update_value (& ph -> lfo1 . phase, v, o, 1);
-											if (sa == sync) return update_value (& ph -> lfo1 . sync, v, o, 5);
-											if (sa == vibrato) return update_value (& ph -> lfo1 . vibrato, v, o, 1);
-										}
-									}
-									return false;
-								}
-								if (ind == 2) {
-									path = path -> getRight ();
-									if (path -> isPair ()) {
-										se = path -> getLeft ();
-										if (se -> isAtom ()) {
-											sa = se -> getAtom ();
-											if (sa == speed) return update_value (& ph -> lfo2 . speed, v, o, 1);
-											if (sa == wave) return update_value (& ph -> lfo2 . wave, v, o, 6);
-											if (sa == pulse) return update_value (& ph -> lfo2 . pulse, v, o, 1);
-											if (sa == phase) return update_value (& ph -> lfo2 . phase, v, o, 1);
-											if (sa == sync) return update_value (& ph -> lfo2 . sync, v, o, 5);
-											if (sa == vibrato) return update_value (& ph -> lfo2 . vibrato, v, o, 1);
-											if (sa == tremolo) return update_value (& ph -> lfo2 . tremolo, v, o, 1);
-											if (sa == wahwah) return update_value (& ph -> lfo2 . wahwah, v, o, 1);
-											if (sa == pan) return update_value (& ph -> lfo2 . pan, v, o, 1);
-										}
-									}
-									return false;
+								if (se -> isAtom ()) {
+									sa = se -> getAtom ();
+									if (sa == speed) return update_value (& ab -> lfo . speed, v, o, 1);
+									if (sa == wave) return update_value (& ab -> lfo .wave, v, o, 6);
+									if (sa == pulse) return update_value (& ab -> lfo . pulse, v, o, 1);
+									if (sa == phase) return update_value (& ab -> lfo . phase, v, o, 1);
+									if (sa == sync) return update_value (& ab -> lfo . sync, v, o, 5);
+									if (sa == vibrato) return update_value (& ab -> vibrato, v, o, 1);
+									if (sa == tremolo) return update_value (& ab -> lfo . tremolo, v, o, 1);
+									if (sa == wahwah) return update_value (& ab -> lfo . wahwah, v, o, 1);
 								}
 							}
 							return false;
 						}
-						if (sa == operator_atom) {
+						if (sa == vco) {
 							path = path -> getRight ();
 							if (path -> isPair ()) {
 								se = path -> getLeft ();
-								if (se -> isAtom ()) {sa = se -> getAtom (); if (sa == algo) return update_value (& ph -> operator_algo, v, o, 8); return false;}
 								if (se -> isInteger ()) {
-									int ind = se -> getInteger () - 1;
-									if (ind < 0 || ind > 3) return false;
+									int ind = se -> getInteger ();
+									if (ind < 0 || ind > 1) return false;
 									path = path -> getRight ();
 									if (path -> isPair ()) {
 										se = path -> getLeft ();
 										if (se -> isAtom ()) {
 											sa = se -> getAtom ();
-											if (sa == freq) return update_value (& ph -> operators [ind] . freq, v, o, 2);
-											if (sa == amp) return update_value (& ph -> operators [ind] . amp, v, o, 3);
-											if (sa == ratio) return update_value (& ph -> operators [ind] . ratio, v, o, 7);
-											if (sa == feedback) return update_value (& ph -> operators [ind] . feedback, v, o, 1);
-											if (sa == eg) {
-												path = path -> getRight ();
-												if (path -> isPair ()) {
-													se = path -> getLeft ();
-													if (se -> isAtom ()) {
-														sa = se -> getAtom ();
-														if (sa == time1) return update_value (& ph -> operators [ind] . eg . time [0], v, o, 4);
-														if (sa == time2) return update_value (& ph -> operators [ind] . eg . time [1], v, o, 4);
-														if (sa == time3) return update_value (& ph -> operators [ind] . eg . time [2], v, o, 4);
-														if (sa == time4) return update_value (& ph -> operators [ind] . eg . time [3], v, o, 4);
-														if (sa == level1) return update_value (& ph -> operators [ind] . eg . level [0], v, o, 1);
-														if (sa == level2) return update_value (& ph -> operators [ind] . eg . level [1], v, o, 1);
-														if (sa == level3) return update_value (& ph -> operators [ind] . eg . level [2], v, o, 1);
-														if (sa == level4) return update_value (& ph -> operators [ind] . eg . level [3], v, o, 1);
-														if (sa == egscal) {
-															path = path -> getRight ();
-															if (path -> isPair ()) {
-																se = path -> getLeft ();
-																if (se -> isAtom ()) {
-																	sa = se -> getAtom ();
-																	if (sa == BP) return update_value (& ph -> operators [ind] . eg . egscal . BP, v, o, 1);
-																	if (sa == left) return update_value (& ph -> operators [ind] . eg . egscal . left, v, o, 1);
-																	if (sa == right) return update_value (& ph -> operators [ind] . eg . egscal . right, v, o, 1);
-																}
-															}
-															return false;
-														}
-													}
-												}
-												return false;
-											}
-											if (sa == vector) {
-												path = path -> getRight ();
-												if (path -> isPair ()) {
-													se = path -> getLeft ();
-													if (se -> isAtom ()) {
-														sa = se -> getAtom ();
-														if (sa == A) return update_value (& ph -> operators [ind] . vector [0], v, o, 1);
-														if (sa == B) return update_value (& ph -> operators [ind] . vector [1], v, o, 1);
-														if (sa == C) return update_value (& ph -> operators [ind] . vector [2], v, o, 1);
-														if (sa == D) return update_value (& ph -> operators [ind] . vector [3], v, o, 1);
-													}
-												}
-												return false;
-											}
+											if (sa == freq) return update_value (& ab -> vco [ind] . freq, v, o, 2);
+											if (sa == amp) return update_value (& ab -> vco [ind] . amp, v, o, 3);
+											if (sa == ratio) return update_value (& ab -> vco [ind] . ratio, v, o, 7);
+											if (sa == wave) return update_value (& ab -> vco [ind] . wave, v, o, 6);
 											if (sa == sens) {
 												path = path -> getRight ();
 												if (path -> isPair ()) {
 													se = path -> getLeft ();
 													if (se -> isAtom ()) {
 														sa = se -> getAtom ();
-														if (sa == freq) {
-															path = path -> getRight ();
-															if (path -> isPair ()) {
-																se = path -> getLeft ();
-																if (se -> isAtom ()) {
-																	sa = se -> getAtom ();
-																	if (sa == key) {
-																		path = path -> getRight ();
-																		if (path -> isPair ()) {
-																			se = path -> getLeft ();
-																			if (se -> isAtom ()) {
-																				sa = se -> getAtom ();
-																				if (sa == BP) return update_value (& ph -> operators [ind] . sens . freq . key . BP, v, o, 1);
-																				if (sa == left) return update_value (& ph -> operators [ind] . sens . freq . key . left, v, o, 1);
-																				if (sa == right) return update_value (& ph -> operators [ind] . sens . freq . key . right, v, o, 1);
-																			}
-																		}
-																		return false;
-																	}
-																	if (sa == eg)  return update_value (& ph -> operators [ind] . sens . freq . eg, v, o, 1);
-																	if (sa == pitch) return update_value (& ph -> operators [ind] . sens . freq . pitch, v, o, 1);
-																	if (sa == lfo) {
-																		path = path -> getRight ();
-																		if (path -> isPair ()) {
-																			se = path -> getLeft ();
-																			if (se -> isInteger ()) {
-																				int li = se -> getInteger () - 1;
-																				if (li < 0 || li > 1) return false;
-																				return update_value (& ph -> operators [ind] . sens . freq . lfo [li], v, o, 1);
-																			}
-																		}
-																		return false;
-																	}
-																}
-															}
-															return false;
-														}
-														if (sa == amp) {
-															path = path -> getRight ();
-															if (path -> isPair ()) {
-																se = path -> getLeft ();
-																if (se -> isAtom ()) {
-																	sa = se -> getAtom ();
-																	if (sa == key) {
-																		path = path -> getRight ();
-																		if (path -> isPair ()) {
-																			se = path -> getLeft ();
-																			if (se -> isAtom ()) {
-																				sa = se -> getAtom ();
-																				if (sa == BP) return update_value (& ph -> operators [ind] . sens . amp . key . BP, v, o, 1);
-																				if (sa == left) return update_value (& ph -> operators [ind] . sens . amp . key . left, v, o, 1);
-																				if (sa == right) return update_value (& ph -> operators [ind] . sens . amp . key . right, v, o, 1);
-																			}
-																		}
-																		return false;
-																	}
-																	if (sa == velocity) {
-																		path = path -> getRight ();
-																		if (path -> isPair ()) {
-																			se = path -> getLeft ();
-																			if (se -> isAtom ()) {
-																				sa = se -> getAtom ();
-																				if (sa == BP) return update_value (& ph -> operators [ind] . sens . amp . velocity . BP, v, o, 1);
-																				if (sa == left) return update_value (& ph -> operators [ind] . sens . amp . velocity . left, v, o, 1);
-																				if (sa == right) return update_value (& ph -> operators [ind] . sens . amp . velocity . right, v, o, 1);
-																			}
-																		}
-																		return false;
-																	}
-																	if (sa == lfo) return update_value (& ph -> operators [ind] . sens . amp . lfo, v, o, 1);
-																}
-															}
-															return false;
-														}
+														if (sa == key) return update_value (& ab -> vco [ind] . sens . key, v, o, 1);
+														if (sa == adsr) return update_value(& ab -> vco [ind] . sens . adsr, v, o, 1);
 													}
 												}
 												return false;
 											}
 										}
 									}
+									return false;
 								}
-							}
-							return false;
-						}
-						if (sa == noise) {
-							path = path -> getRight ();
-							if (path -> isPair ()) {
-								se = path -> getLeft ();
 								if (se -> isAtom ()) {
 									sa = se -> getAtom ();
-									if (sa == amp) return update_value (& ph -> noise . amp, v, o, 3);
-									if (sa == time1) return update_value (& ph -> noise . time [0], v, o, 4);
-									if (sa == time2) return update_value (& ph -> noise . time [1], v, o, 4);
-									if (sa == time3) return update_value (& ph -> noise . time [2], v, o, 4);
-									if (sa == time4) return update_value (& ph -> noise . time [3], v, o, 4);
-									if (sa == level1) return update_value (& ph -> noise . level [0], v, o, 1);
-									if (sa == level2) return update_value (& ph -> noise . level [1], v, o, 1);
-									if (sa == level3) return update_value (& ph -> noise . level [2], v, o, 1);
-									if (sa == level4) return update_value (& ph -> noise . level [3], v, o, 1);
+									if (sa == ringmod) return update_value (& ab -> ringmod, v, o, 1);
 								}
 							}
 							return false;
 						}
+						if (sa == noise) return update_value (& ab -> noise, v, o, 1);
 						if (sa == filter) {
 							path = path -> getRight ();
 							if (path -> isPair ()) {
 								se = path -> getLeft ();
 								if (se -> isAtom ()) {
 									sa = se -> getAtom ();
-									if (sa == freq) return update_value (& ph -> filter . freq, v, o, 2);
-									if (sa == resonance) return update_value (& ph -> filter . resonance, v, o, 1);
-									if (sa == amp) return update_value (& ph -> filter . amp, v, o, 3);
+									if (sa == freq) return update_value (& ab -> filter . freq, v, o, 2);
+									if (sa == resonance) return update_value (& ab -> filter . resonance, v, o, 1);
+									if (sa == amp) return update_value (& ab -> filter . amp, v, o, 3);
 									if (sa == sens) {
 										path = path -> getRight ();
 										if (path -> isPair ()) {
 											se = path -> getLeft ();
 											if (se -> isAtom ()) {
 												sa = se -> getAtom ();
-												if (sa == eg) return update_value (& ph -> filter . sens . eg, v, o, 1);
-												if (sa == key) {
-													path = path -> getRight ();
-													if (path -> isPair ()) {
-														se = path -> getLeft ();
-														if (se -> isAtom ()) {
-															sa = se -> getAtom ();
-															if (sa == BP) return update_value (& ph -> filter . sens . key . BP, v, o, 1);
-															if (sa == left) return update_value (& ph -> filter . sens . key . left, v, o, 1);
-															if (sa == right) return update_value (& ph -> filter . sens . key . right, v, o, 1);
-														}
-													}
-													return false;
-												}
-												if (sa == pitch) return update_value (& ph -> filter . sens . pitch, v, o, 1);
-												if (sa == lfo) {
-													path = path -> getRight ();
-													if (path -> isPair ()) {
-														se = path -> getLeft ();
-														if (se -> isInteger ()) {
-															int li = se -> getInteger () - 1;
-															if (li < 0 || li > 1) return false;
-															return update_value (& ph -> filter . sens . lfo [li], v, o, 1);
-														}
-													}
-													return false;
-												}
+												if (sa == key) return update_value (& ab -> filter . sens . key, v, o, 1);
+												if (sa == adsr) return update_value (& ab -> filter . sens . adsr, v, o, 1);
 											}
 										}
 										return false;
@@ -865,66 +707,41 @@ public:
 							path = path -> getRight ();
 							if (path -> isPair ()) {
 								se = path -> getLeft ();
-								if (se -> isAtom ()) {
-									sa = se -> getAtom ();
-									if (sa == amp) {
+								if (se -> isInteger ()) {
+									int ind = se -> getInteger ();
+									if (ind == 0) {
 										path = path -> getRight ();
 										if (path -> isPair ()) {
 											se = path -> getLeft ();
 											if (se -> isAtom ()) {
 												sa = se -> getAtom ();
-												if (sa == attack) return update_value (& ph -> adsr . amp . attack, v, o, 4);
-												if (sa == decay) return update_value (& ph -> adsr . amp . decay, v, o, 4);
-												if (sa == sustain) return update_value (& ph -> adsr . amp . sustain, v, o, 3);
-												if (sa == release) return update_value (& ph -> adsr . amp . release, v, o, 4);
-												if (sa == egscal) {
-													path = path -> getRight ();
-													if (path -> isPair ()) {
-														se = path -> getLeft ();
-														if (se -> isAtom ()) {
-															sa = se -> getAtom ();
-															if (sa == BP) return update_value (& ph -> adsr . amp . egscal . BP, v, o, 1);
-															if (sa == left) return update_value (& ph -> adsr . amp . egscal . left, v, o, 1);
-															if (sa == right) return update_value (& ph -> adsr . amp . egscal . right, v, o, 1);
-														}
-													}
-													return false;
-												}
+												if (sa == attack) return update_value (& ab -> adsr1 . attack, v, o, 4);
+												if (sa == decay) return update_value (& ab -> adsr1 . decay, v, o, 4);
+												if (sa == sustain) return update_value (& ab -> adsr1 . sustain, v, o, 3);
+												if (sa == release) return update_value (& ab -> adsr1 . release, v, o, 4);
 											}
 										}
 										return false;
 									}
-									if (sa == freq) {
+									if (ind == 1) {
 										path = path -> getRight ();
 										if (path -> isPair ()) {
 											se = path -> getLeft ();
 											if (se -> isAtom ()) {
 												sa = se -> getAtom ();
-												if (sa == time1) return update_value (& ph -> adsr . freq . time [0], v, o, 4);
-												if (sa == time2) return update_value (& ph -> adsr . freq . time [1], v, o, 4);
-												if (sa == time3) return update_value (& ph -> adsr . freq . time [2], v, o, 4);
-												if (sa == time4) return update_value (& ph -> adsr . freq . time [3], v, o, 4);
-												if (sa == level1) return update_value (& ph -> adsr . freq . level [0], v, o, 1);
-												if (sa == level2) return update_value (& ph -> adsr . freq . level [1], v, o, 1);
-												if (sa == level3) return update_value (& ph -> adsr . freq . level [2], v, o, 1);
-												if (sa == level4) return update_value (& ph -> adsr . freq . level [3], v, o, 1);
-												if (sa == egscal) {
-													path = path -> getRight ();
-													if (path -> isPair ()) {
-														se = path -> getLeft ();
-														if (se -> isAtom ()) {
-															sa = se -> getAtom ();
-															if (sa == BP) return update_value (& ph -> adsr . freq . egscal . BP, v, o, 1);
-															if (sa == left) return update_value (& ph -> adsr . freq . egscal . left, v, o, 1);
-															if (sa == right) return update_value (& ph -> adsr . freq . egscal . right, v, o, 1);
-														}
-													}
-													return false;
-												}
+												if (sa == time1) return update_value (& ab -> adsr2 . time [0], v, o, 4);
+												if (sa == time2) return update_value (& ab -> adsr2 . time [1], v, o, 4);
+												if (sa == time3) return update_value (& ab -> adsr2 . time [2], v, o, 4);
+												if (sa == time4) return update_value (& ab -> adsr2 . time [3], v, o, 4);
+												if (sa == level1) return update_value (& ab -> adsr2 . level [0], v, o, 1);
+												if (sa == level2) return update_value (& ab -> adsr2 . level [1], v, o, 1);
+												if (sa == level3) return update_value (& ab -> adsr2 . level [2], v, o, 1);
+												if (sa == level4) return update_value (& ab -> adsr2 . level [3], v, o, 1);
 											}
 										}
 										return false;
 									}
+									return false;
 								}
 							}
 							return false;
@@ -935,37 +752,17 @@ public:
 								se = path -> getLeft ();
 								if (se -> isAtom ()) {
 									sa = se -> getAtom ();
-									if (sa == porta) return update_value (& ph -> portamento . porta, v, o, 5);
-									if (sa == time) return update_value (& ph -> portamento . time, v, o, 4);
-									if (sa == legato) return update_value (& ph -> portamento . legato, v, o, 5);
-									if (sa == hold) return update_value (& ph -> portamento . hold, v, o, 5);
+									if (sa == porta) return update_value (& ab -> portamento . porta, v, o, 5);
+									if (sa == time) return update_value (& ab -> portamento . time, v, o, 4);
+									if (sa == legato) return update_value (& ab -> portamento . legato, v, o, 5);
+									if (sa == hold) return update_value (& ab -> portamento . hold, v, o, 5);
 								}
 							}
 							return false;
 						}
-						if (sa == vector) {
-							path = path -> getRight ();
-							if (path -> isPair ()) {
-								se = path -> getLeft ();
-								if (se -> isAtom ()) {
-									sa = se -> getAtom ();
-									if (sa == X) {
-										if (v -> isVar ()) return ph -> X_data . return_content (v);
-										if (v -> isPair ()) return ph -> X_data . read_content (v);
-										return false;
-									}
-									if (sa == Y) {
-										if (v -> isVar ()) return ph -> Y_data . return_content (v);
-										if (v -> isPair ()) return ph -> Y_data . read_content (v);
-										return false;
-									}
-								}
-							}
-							return true;
-						}
 						if (sa == key_map) {
-							if (v -> isVar ()) return ph -> key_map . return_content (v);
-							if (v -> isPair ()) return ph -> key_map . read_content (v);
+							if (v -> isVar ()) return ab -> key_map . return_content (v);
+							if (v -> isPair ()) return ab -> key_map . read_content (v);
 							return false;
 						}
 					}
@@ -975,29 +772,27 @@ public:
 		}
 		return native_moonbase :: code (parameters, resolution);
 	}
-	native_integrated_phobos (PrologAtom * atom, orbiter_core * core, orbiter * module, PrologDirectory * directory) : native_moonbase (directory, atom, core, module) {
+	native_integrated_abakos (PrologAtom * atom, orbiter_core * core, orbiter * module, PrologDirectory * directory) : native_moonbase (directory, atom, core, module) {
 		core_atom = 0;
-		volume = pan = X = Y = pitch = auto_atom = 0;
+		volume = pan = pitch = modulation = sens = vibrato = 0;
 		chorus = level = time = bias = speed = phase = amp = 0;
 		delay = balance = feedback = highdamp = 0;
 		arpeggiator = subdivision = active = algo = hold = 0;
-		lfo = wave = pulse = sync = vibrato = tremolo = wahwah = 0;
-		operator_atom = freq = ratio = 0;
-		eg = time1 = time2 = time3 = time4 = level1 = level2 = level3 = level4 = 0;
-		egscal = BP = left = right = 0;
-		sens = key = velocity = 0;
-		noise = filter = resonance = adsr = 0;
-		attack = decay = sustain = release = 0;
-		portamento = porta = legato = 0;
-		vector = A = B = C = D = key_map = 0;
+		lfo = wave = pulse = sync = tremolo = wahwah = 0;
+		vco = freq = ratio = key = ringmod = noise = 0;
+		adsr = attack = decay = sustain = release = 0;
+		time1 = time2 = time3 = time4 = level1 = level2 = level3 = level4 = 0;
+		filter = resonance = 0;
+		portamento = porta = legato;
+		key_map = 0;
 		if (directory == 0) return;
 		core_atom = directory -> searchAtom ("core");
 		volume = directory -> searchAtom ("volume");
 		pan = directory -> searchAtom ("pan");
-		X = directory -> searchAtom ("X");
-		Y = directory -> searchAtom ("Y");
 		pitch = directory -> searchAtom ("pitch");
-		auto_atom = directory -> searchAtom ("auto");
+		modulation = directory -> searchAtom ("modulation");
+		sens = directory -> searchAtom ("sens");
+		vibrato = directory -> searchAtom ("vibrato");
 		chorus = directory -> searchAtom ("chorus");
 		level = directory -> searchAtom ("level");
 		time = directory -> searchAtom ("time");
@@ -1018,13 +813,19 @@ public:
 		wave = directory -> searchAtom ("wave");
 		pulse = directory -> searchAtom ("pulse");
 		sync = directory -> searchAtom ("sync");
-		vibrato = directory -> searchAtom ("vibrato");
 		tremolo = directory -> searchAtom ("tremolo");
 		wahwah = directory -> searchAtom ("wahwah");
-		operator_atom = directory -> searchAtom ("operator");
+		vco = directory -> searchAtom ("vco");
 		freq = directory -> searchAtom ("freq");
 		ratio = directory -> searchAtom ("ratio");
-		eg = directory -> searchAtom ("eg");
+		key = directory -> searchAtom ("key");
+		ringmod = directory -> searchAtom ("ringmod");
+		noise = directory -> searchAtom ("noise");
+		adsr = directory -> searchAtom ("adsr");
+		attack = directory -> searchAtom ("attack");
+		decay = directory -> searchAtom ("decay");
+		sustain = directory -> searchAtom ("sustain");
+		release = directory -> searchAtom ("release");
 		time1 = directory -> searchAtom ("time1");
 		time2 = directory -> searchAtom ("time2");
 		time3 = directory -> searchAtom ("time3");
@@ -1033,33 +834,14 @@ public:
 		level2 = directory -> searchAtom ("level2");
 		level3 = directory -> searchAtom ("level3");
 		level4 = directory -> searchAtom ("level4");
-		egscal = directory -> searchAtom ("egscal");
-		BP = directory -> searchAtom ("BP");
-		left = directory -> searchAtom ("left");
-		right = directory -> searchAtom ("right");
-		sens = directory -> searchAtom ("sens");
-		key = directory -> searchAtom ("key");
-		velocity = directory -> searchAtom ("velocity");
-		noise = directory -> searchAtom ("noise");
 		filter = directory -> searchAtom ("filter");
 		resonance = directory -> searchAtom ("resonance");
-		adsr = directory -> searchAtom ("adsr");
-		attack = directory -> searchAtom ("attack");
-		decay = directory -> searchAtom ("decay");
-		sustain = directory -> searchAtom ("sustain");
-		release = directory -> searchAtom ("release");
 		portamento = directory -> searchAtom ("portamento");
 		porta = directory -> searchAtom ("porta");
 		legato = directory -> searchAtom ("legato");
-		vector = directory -> searchAtom ("vector");
-		A = directory -> searchAtom ("A");
-		B = directory -> searchAtom ("B");
-		C = directory -> searchAtom ("C");
-		D = directory -> searchAtom ("D");
 		key_map = directory -> searchAtom ("key_map");
 	}
 };
-*/
 
 orbiter * integrated_abakos_class :: create_orbiter (PrologElement * parameters) {
 	PrologElement * polyphony = 0;

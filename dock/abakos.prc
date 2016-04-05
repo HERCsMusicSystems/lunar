@@ -58,6 +58,7 @@ program abakos [BuildAbakos BuildAbakosPart]
 	[Lunar -8192 *Abakos core delay balance]
 	[Lunar 16384 *Abakos vco 1 sens key]
 	[Lunar 16384 *Abakos vco 2 sens key]
+	[Lunar 1792 *Abakos lfo speed]
 ]
 
 [[BuildAbakosPart *Abakos *cb *mixer *key_map *lfo *pitchfreq]

@@ -71,40 +71,21 @@ Otherwise defaults to common behaviour.
 #define DIV_16384 0.00006103515625
 /*
 #define DIV_2097152 0.000000476837158203125
-
-class integrated_phobos;
-
-struct pb_struct {
-	double BP, left, right;
-	void reset (void) {BP = left = right = 0.0;}
-	void set_key (void) {BP = 0.0; left = -128.0; right = 128.0;}
-};
-
-struct operator_structure {
-	double freq, amp, ratio, feedback;
-	struct {
-		double time [4], level [4];
-		pb_struct egscal;
-	} eg;
-	double vector [4];
-	struct {
-		struct {
-			pb_struct key;
-			double eg, pitch, lfo [2];
-		} freq;
-		struct {
-			pb_struct key, velocity;
-			double lfo;
-		} amp;
-	} sens;
-};
 */
 
 class integrated_abakos;
 
 class integrated_abakos_part {
+private:
+	integrated_trigger trigger;
+	integrated_vco vco1, vco2;
+	integrated_noise noise;
+	integrated_filter filter;
+	integrated_adsr adsr1;
+	integrated_eg adsr2;
 public:
 	void move (integrated_abakos * ia);
+	integrated_abakos_part (orbiter_core * core, integrated_abakos * ia);
 };
 
 typedef integrated_abakos_part * integrated_abakos_part_pointer;
@@ -124,6 +105,7 @@ public:
 	integrated_map key_map;
 	integrated_lfo lfo;
 	double pitch, modulation, vibrato;
+	double lsb;
 	struct {double pitch, vibrato;} sens;
 	struct {
 		double freq, amp, ratio, wave;
@@ -137,6 +119,7 @@ public:
 	struct {double attack, decay, sustain, release;} adsr1;
 	struct {double time [4], level [4];} adsr2;
 	struct {double porta, time, legato, hold;} portamento;
+	double vco_freq_lemat [2], filter_freq_lemat;
 public:
 	bool insert_trigger (lunar_trigger * trigger) {return false;}
 	bool insert_controller (orbiter * controller, int location, double shift) {return false;}
@@ -147,8 +130,67 @@ public:
 	void mono (void) {arp . mono ();}
 	void poly (void) {arp . poly ();}
 	bool isMonoMode (void) {return arp . isMonoMode ();}
-	void control (int ctrl, double value) {}
-	double getControl (int ctrl) {return 0.0;}
+	void control (int ctrl, double value) {
+		switch (ctrl) {
+		case 1: modulation = value * 128.0 + lsb; lsb = 0.0; break;
+		case 7: volume . gateway = value * 128.0 + lsb; lsb = 0.0; break;
+		case 10: pan . pan = value * 128.0 - 8192.0 + lsb; lsb = 0.0; break;
+		case 5: portamento . time = value * 128.0 + lsb; lsb = 0.0; break;
+		//case 16: X = value * 128.0 - 8192.0 + lsb; lsb = 0.0; break;
+		//case 17: Y = value * 128.0 - 8192.0 + lsb; lsb = 0.0; break;
+		case 65: portamento . porta = value * 128.0 + lsb; lsb = 0.0; break;
+		case 74: filter . freq = value * 128.0 - 8192.0 + lsb; lsb = 0.0; break;
+		case 71: filter . resonance = value * 128.0 + lsb; lsb = 0.0; break;
+		case 77: drywet . balance = value * 128.0 - 8192.0 + lsb; lsb = 0.0; break;
+		case 78: lfo . speed = value * 128.0 - 8192.0 + lsb; lsb = 0.0; break;
+		case 73: adsr1 . attack = value * 128.0 + lsb; lsb = 0.0; break;
+		case 75: adsr1 . decay = value * 128.0 + lsb; lsb = 0.0; break;
+		case 76: adsr1 . sustain = value * 128.0 - 16384.0 + lsb; lsb = 0.0; break;
+		case 72: adsr1 . release = value * 128.0 + lsb; lsb = 0.0; break;
+		case 79: lfo . wahwah = value * 128.0 + lsb; lsb = 0.0; break;
+		case 126: arp . mono (); lsb = 0.0; break;
+		case 127: arp . poly (); lsb = 0.0; break;
+		case 128: pitch = value * 128.0 - 8192.0 + lsb; lsb = 0.0; break;
+			// INVISIBLE
+		case 64: portamento . hold = value * 128.0 + lsb; lsb = 0.0; break;
+		case 84: portamento . legato = value * 128.0 + lsb; lsb = 0.0; break;
+		//case 85: auto_ctrl = value * 128.0 + lsb; lsb = 0.0; break;
+		case 80: arp . active = value * 128.0 + lsb; lsb = 0.0; break;
+		case 66: arp . hold = value * 128.0 + lsb; lsb = 0.0; break;
+		default: lsb = value; break;
+		}
+	}
+	double getControl (int ctrl) {
+		switch (ctrl) {
+		case 1: return modulation * 0.0078125; break;
+		case 7: return volume . gateway * 0.0078125; break;
+		case 10: return pan . pan * 0.0078125 + 64.0; break;
+		case 5: return portamento . time * 0.0078125; break;
+		//case 16: return X * 0.0078125 + 64.0; break;
+		//case 17: return Y * 0.0078125 + 64.0; break;
+		case 65: return portamento . porta * 0.0078125; break;
+		case 74: return filter . freq * 0.0078125 + 64.0; break;
+		case 71: return filter . resonance * 0.0078125; break;
+		case 77: return drywet . balance * 0.0078125 + 64.0; break;
+		case 78: return lfo . speed * 0.0078125 + 64.0; break;
+		case 73: return adsr1 . attack * 0.0078125; break;
+		case 75: return adsr1 . decay * 0.0078125; break;
+		case 76: return adsr1 . sustain * 0.0078125 + 128.0; break;
+		case 72: return adsr1 . release * 0.0078125; break;
+		case 79: return lfo . wahwah * 0.0078125; break;
+		case 126: return base . isMonoMode () ? 1.0 : 0.0; break;
+		case 127: return base . isMonoMode () ? 0.0 : 1.0; break;
+		case 128: return pitch * 0.0078125 + 64.0; break;
+			// INVISIBLE
+		case 64: return portamento . hold * 0.0078125; break;
+		case 84: return portamento . legato * 0.0078125; break;
+		//case 85: return auto_ctrl * 0.0078125; break;
+		case 80: return arp . active * 0.0078125; break;
+		case 66: return arp . hold * 0.0078125; break;
+		default: break;
+		}
+		return 64.0;
+	}
 	void timing_clock (void) {}
 	int numberOfOutputs (void) {return 2;}
 	char * outputName (int ind) {
@@ -172,6 +214,9 @@ public:
 		lfo . vibrato = vibrato + modulation * sens . vibrato * DIV_16384;
 		lfo . move (); lfo . trigger = 0.0;
 		chorus . mono = 0.0;
+		vco_freq_lemat [0] = vco [0] . freq + pitch * sens . pitch * DIV_16384 + lfo . vibrato_signal;
+		vco_freq_lemat [1] = vco [1] . freq + pitch * sens . pitch * DIV_16384 + lfo . vibrato_signal;
+		filter_freq_lemat = filter . freq + lfo . wahwah_signal;
 		for (int ind = 0; ind < polyphony; ind++) parts [ind] -> move (this);
 		chorus . move ();
 		pan . enter_left = chorus . signal;
@@ -187,327 +232,82 @@ public:
 		volume . enter_right = drywet . right;
 		volume . volume_move ();
 	}
-/*	void move (void) {
-		arp . move ();
-		lfo1 . move (); lfo2 . move (); lfo1 . trigger = lfo2 . trigger = 0.0;
-		X_data . signal = X; Y_data . signal = Y;
-		X_data . control = Y_data . control = auto_ctrl;
-		X_data . move(); Y_data . move (); X_data . trigger = Y_data . trigger = 0.0;
-		chorus . mono = 0.0;
-		operator_structure * op = operators;
-		for (int ind = 0; ind < 4; ind++) {
-			freq_lemat [ind] = (op -> sens . freq . pitch * pitch
-				+ op -> sens . freq . lfo [0] * lfo1 . vibrato_signal
-				+ op -> sens . freq . lfo [1] * lfo2 . vibrato_signal) * DIV_16384;
-			amp_lemat [ind] = op -> sens . amp . lfo * lfo2 . tremolo * DIV_16384;
-			op++;
-		}
-		freq_lemat_f = (filter . sens . pitch * pitch
-			+ filter . sens . lfo [0] * lfo1 . vibrato_signal
-			+ filter . sens . lfo [1] * lfo2 . wahwah_signal) * DIV_16384;
-		for (int ind = 0; ind < polyphony; ind++) parts [ind] -> move (this);
-		chorus . move ();
-	}*/
 	integrated_abakos (orbiter_core * core, int polyphony)
 			: CommandModule (core), base (core), arp (core, & base), pan (core), chorus (core), delay (core), volume (core, 12800.0), lfo (core) {
 		this -> polyphony = polyphony;
 		parts = new integrated_abakos_part_pointer [polyphony];
-		for (int ind = 0; ind < polyphony; ind++) parts [ind] = new integrated_abakos_part ();
+		for (int ind = 0; ind < polyphony; ind++) parts [ind] = new integrated_abakos_part (core, this);
+		drywet . balance = -8192.0;
 		pitch = modulation = vibrato = 0.0;
+		sens . pitch = 256.0;
+		sens . vibrato = 128.0;
 		vco [0] . freq = vco [1] . freq = 0.0;
 		vco [0] . amp = 0.0; vco [1] . amp = -16384.0;
 		vco [0] . ratio = vco [1] . ratio = 1.0;
 		vco [0] . wave = vco [1] . wave = 1.0;
 		vco [0] . sens . key = vco [1] . sens . key = 16384.0;
 		vco [0] . sens . adsr = vco [1] . sens . adsr = 0.0;
-		noise = ringmod = 0.0;
+		noise = ringmod = -16384.0;
 		filter . freq = 5120.0;
 		filter . resonance = filter . amp = 0.0;
 		filter . sens . key = filter . sens . adsr = 0.0;
 		adsr1 . attack = adsr1 . decay = adsr1 . sustain = adsr1 . release = 0.0;
 		for (int ind = 0; ind < 4; ind++) adsr2 . time [ind] = adsr2 . level [ind] = 0.0;
 		portamento . porta = 1.0; portamento . time = portamento . legato = portamento . hold = 0.0;
+		lfo . speed = 1792.0;
+		lsb = 0.0;
 		initialise (); activate ();
 	}
 	~ integrated_abakos (void) {for (int ind = 0; ind < polyphony; ind++) delete parts [ind]; delete [] parts; parts = 0;}
 };
 
 void integrated_abakos_part :: move (integrated_abakos * ia) {
-}
-
-/*
-class integrated_phobos_part {
-public:
-	integrated_trigger trigger;
-	integrated_auto_player X, Y;
-	integrated_fm4_block fm;
-	integrated_noise noise;
-	integrated_eg eg1, eg2, eg3, eg4, feg, noise_eg;
-	integrated_filter vcf;
-	integrated_adsr adsr;
-	integrated_eg freq_eg;
-	void move (integrated_phobos * phobos);
-	integrated_phobos_part (orbiter_core * core, integrated_phobos * ip);
-};
-
-typedef integrated_phobos_part * integrated_phobos_part_pointer;
-
-class integrated_phobos : public CommandModule {
-private:
-	int polyphony;
-public:
-	integrated_moonbase base;
-	integrated_arpeggiator arp;
-	integrated_auto_data X_data, Y_data;
-	integrated_phobos_part_pointer * parts;
-	integrated_lfo lfo1;
-	integrated_lfo lfo2;
-	integrated_stereo_pan pan;
-	double pan_ctrl;
-	double X, Y, pitch, auto_ctrl;
-	integrated_stereo_chorus chorus;
-	integrated_delay delay;
-	integrated_drywet dry_wet;
-	integrated_stereo_amplifier volume;
-	integrated_map key_map;
-	operator_structure operators [4];
-	double freq_lemat [4], freq_lemat_f, amp_lemat [4];
-	double operator_algo;
-	struct {double amp, time [4], level [4];} noise;
-	struct {double freq, resonance, amp; struct {double eg; pb_struct key; double pitch, lfo [2];} sens;} filter;
-	struct {
-		struct {double attack, decay, sustain, release; pb_struct egscal;} amp;
-		struct {double time [4], level [4]; pb_struct egscal;} freq;
-	} adsr;
-	struct {double porta, time, legato, hold;} portamento;
-	double lsb;
-	void control (int ctrl, double value) {
-		switch (ctrl) {
-		case 1: lfo1 . vibrato = value * 128.0 + lsb; lsb = 0.0; break;
-		case 7: volume . gateway = value * 128.0 + lsb; lsb = 0.0; break;
-		case 10: pan . pan = value * 128.0 - 8192.0 + lsb; lsb = 0.0; break;
-		case 5: portamento . time = value * 128.0 + lsb; lsb = 0.0; break;
-		case 16: X = value * 128.0 - 8192.0 + lsb; lsb = 0.0; break;
-		case 17: Y = value * 128.0 - 8192.0 + lsb; lsb = 0.0; break;
-		case 65: portamento . porta = value * 128.0 + lsb; lsb = 0.0; break;
-		case 74: filter . freq = value * 128.0 - 8192.0 + lsb; lsb = 0.0; break;
-		case 71: filter . resonance = value * 128.0 + lsb; lsb = 0.0; break;
-		case 77: dry_wet . balance = value * 128.0 - 8192.0 + lsb; lsb = 0.0; break;
-		case 78: lfo1 . speed = value * 128.0 - 8192.0 + lsb; lsb = 0.0; break;
-		case 73: adsr . amp . attack = value * 128.0 + lsb; lsb = 0.0; break;
-		case 75: adsr . amp . decay = value * 128.0 + lsb; lsb = 0.0; break;
-		case 76: adsr . amp . sustain = value * 128.0 - 16384.0 + lsb; lsb = 0.0; break;
-		case 72: adsr . amp . release = value * 128.0 + lsb; lsb = 0.0; break;
-		case 79: lfo2 . vibrato = value * 128.0 + lsb; lsb = 0.0; break;
-		case 126: arp . mono (); lsb = 0.0; break;
-		case 127: arp . poly (); lsb = 0.0; break;
-		case 128: pitch = value * 128.0 - 8192.0 + lsb; lsb = 0.0; break;
-			// INVISIBLE
-		case 64: portamento . hold = value * 128.0 + lsb; lsb = 0.0; break;
-		case 84: portamento . legato = value * 128.0 + lsb; lsb = 0.0; break;
-		case 85: auto_ctrl = value * 128.0 + lsb; lsb = 0.0; break;
-		case 80: arp . active = value * 128.0 + lsb; lsb = 0.0; break;
-		case 66: arp . hold = value * 128.0 + lsb; lsb = 0.0; break;
-		default: lsb = value; break;
-		}
-	}
-	double getControl (int ctrl) {
-		switch (ctrl) {
-		case 1: return lfo1 . vibrato * 0.0078125; break;
-		case 7: return volume . gateway * 0.0078125; break;
-		case 10: return pan . pan * 0.0078125 + 64.0; break;
-		case 5: return portamento . time * 0.0078125; break;
-		case 16: return X * 0.0078125 + 64.0; break;
-		case 17: return Y * 0.0078125 + 64.0; break;
-		case 65: return portamento . porta * 0.0078125; break;
-		case 74: return filter . freq * 0.0078125 + 64.0; break;
-		case 71: return filter . resonance * 0.0078125; break;
-		case 77: return dry_wet . balance * 0.0078125 + 64.0; break;
-		case 78: return lfo1 . speed * 0.0078125 + 64.0; break;
-		case 73: return adsr . amp . attack * 0.0078125; break;
-		case 75: return adsr . amp . decay * 0.0078125; break;
-		case 76: return adsr . amp . sustain * 0.0078125 + 128.0; break;
-		case 72: return adsr . amp . release * 0.0078125; break;
-		case 79: return lfo2 . vibrato * 0.0078125; break;
-		case 126: return base . isMonoMode () ? 1.0 : 0.0; break;
-		case 127: return base . isMonoMode () ? 0.0 : 1.0; break;
-		case 128: return pitch * 0.0078125 + 64.0; break;
-			// INVISIBLE
-		case 64: return portamento . hold * 0.0078125; break;
-		case 84: return portamento . legato * 0.0078125; break;
-		case 85: return auto_ctrl * 0.0078125; break;
-		case 80: return arp . active * 0.0078125; break;
-		case 66: return arp . hold * 0.0078125; break;
-		default: break;
-		}
-		return 64.0;
-	}
-	integrated_phobos (orbiter_core * core, int polyphony = 8)
-			: CommandModule (core), base (core), arp (core, & base), X_data (core), Y_data (core), lfo1 (core), lfo2 (core), pan (core), chorus (core), delay (core), volume (core, 12800.0) {
-		this -> polyphony = polyphony;
-		parts = new integrated_phobos_part_pointer [polyphony];
-		for (int ind = 0; ind < polyphony; ind++) parts [ind] = new integrated_phobos_part (core, this);
-		pan_ctrl = X = Y = pitch = 0.0;
-		dry_wet . balance = -8192.0;
-		auto_ctrl = 0.0;
-		lfo1 . speed = 1792.0;
-		operator_algo = 0.0;
-		for (int ind = 0; ind < 4; ind++) {
-			operator_structure * op = operators + ind;
-			op -> freq = 0.0;
-			op -> amp = ind == 0 ? 0.0 : -16384.0;
-			op -> ratio = 1.0;
-			op -> feedback = 0.0;
-			for (int sub = 0; sub < 4; sub++) op -> eg . time [sub] = op -> eg . level [sub] = 0.0;
-			op -> eg . egscal . reset ();
-			op -> vector [0] = op -> vector [1] = op -> vector [2] = op -> vector [3] = 16384.0;
-			op -> sens . freq . key . set_key ();
-			op -> sens . freq . eg = 0.0;
-			op -> sens . freq . lfo [0] = 128.0;
-			op -> sens . freq . lfo [1] = 0.0;
-			op -> sens . freq . pitch = 512.0;
-			op -> sens . amp . key . reset ();
-			op -> sens . amp . lfo = 0.0;
-			op -> sens . amp . velocity . reset ();
-		}
-		noise . amp = -16384.0;
-		for (int ind = 0; ind < 4; ind++) noise . time [ind] = noise . level [ind] = 0.0;
-		filter . freq = 5120.0;
-		filter . resonance = 0.0;
-		filter . amp = 0.0;
-		filter . sens . key . reset ();
-		filter . sens . eg = 0.0;
-		filter . sens . lfo [0] = filter . sens . lfo [1] = 0.0;
-		filter . sens . pitch = 0.0;
-		adsr . amp . attack = adsr . amp . decay = adsr . amp . sustain = adsr . amp . release = 0.0; adsr . amp . egscal . reset ();
-		for (int ind = 0; ind < 4; ind++) adsr . freq . time [ind] = adsr . freq . level [ind] = 0.0; adsr . freq . egscal . reset ();
-		portamento . porta = 1.0; portamento . time = 0.0; portamento . legato = 0.0; portamento . hold = 0.0;
-		initialise (); activate ();
-	}
-	~ integrated_phobos (void) {for (int ind = 0; ind < polyphony; ind++) delete parts [ind]; delete [] parts; parts = 0;}
-};
-
-static void move_operator_part (integrated_eg * eg, operator_structure * op, integrated_trigger * trigger) {
-	eg -> trigger = trigger -> trigger;
-	pb_struct * pb = & op -> eg . egscal;
-	double egscal = integrated_sensitivity (pb -> BP, pb -> left, pb -> right, trigger -> signal);
-	eg -> level1 = op -> eg . level [0];
-	eg -> level2 = op -> eg . level [1];
-	eg -> level3 = op -> eg . level [2];
-	eg -> level4 = op -> eg . level [3];
-	eg -> time1 = op -> eg . time [0] + egscal;
-	eg -> time2 = op -> eg . time [1] + egscal;
-	eg -> time3 = op -> eg . time [2] + egscal;
-	eg -> time4 = op -> eg . time [3] + egscal;
-	eg -> move ();
-}
-
-void integrated_phobos_part :: move (integrated_phobos * phobos) {
-	trigger . porta = phobos -> portamento . porta;
-	trigger . porta_time = phobos -> portamento . time;
-	trigger . legato = phobos -> portamento . legato;
-	trigger . hold = phobos -> portamento . hold;
+	trigger . porta = ia -> portamento . porta;
+	trigger . porta_time = ia -> portamento . time;
+	trigger . legato = ia -> portamento . legato;
+	trigger . hold = ia -> portamento . hold;
 	trigger . move ();
-	phobos -> X_data . trigger += trigger . trigger; phobos -> Y_data . trigger += trigger . trigger;
-	phobos -> lfo1 . trigger += trigger . trigger; phobos -> lfo2 . trigger += trigger . trigger;
-	operator_structure * op = phobos -> operators;
-	pb_struct * pb;
-	double egscal, ampscal;
-	//=========== FREQ EG ========
-	pb = & phobos -> adsr . freq . egscal;
-	egscal = integrated_sensitivity (pb -> BP, pb -> left, pb -> right, trigger . signal);
-	freq_eg . trigger = trigger . trigger;
-	freq_eg . level1 = phobos -> adsr . freq . level [0];
-	freq_eg . level2 = phobos -> adsr . freq . level [1];
-	freq_eg . level3 = phobos -> adsr . freq . level [2];
-	freq_eg . level4 = phobos -> adsr . freq . level [3];
-	freq_eg . time1 = phobos -> adsr . freq . time [0] + egscal;
-	freq_eg . time2 = phobos -> adsr . freq . time [1] + egscal;
-	freq_eg . time3 = phobos -> adsr . freq . time [2] + egscal;
-	freq_eg . time4 = phobos -> adsr . freq . time [3] + egscal;
-	freq_eg . move ();
-	X . trigger = Y . trigger = trigger . trigger;
-	X . move (); Y . move ();
-	double xx = X . signal * DIV_16384;
-	double yy = Y . signal * DIV_16384;
-	fm . algo = phobos -> operator_algo; fm . trigger = trigger . trigger;
-	//==============
-	move_operator_part (& eg1, op, & trigger);
-	pb = & op -> sens . freq . key;
-	fm . freq1 = op -> freq + integrated_sensitivity (pb -> BP, pb -> left, pb -> right, trigger . signal) + freq_eg . signal * op -> sens . freq . eg + phobos -> freq_lemat [0];
-	pb = & op -> sens . amp . key; ampscal = integrated_sensitivity (pb -> BP, pb -> left, pb -> right, trigger . signal);
-	pb = & op -> sens . amp . velocity; ampscal += integrated_sensitivity (pb -> BP, pb -> left, pb -> right, trigger . velocity);
-	fm . amp1 = op -> amp + eg1 . signal + ampscal + phobos -> amp_lemat [0];
-	fm . gain1 = integrated_morph (xx, yy, op -> vector) * DIV_16384;
-	fm . feedback1 = op -> feedback; fm . ratio1 = op -> ratio;
-	op++;
-	//==============
-	move_operator_part (& eg2, op, & trigger);
-	pb = & op -> sens . freq . key;
-	fm . freq2 = op -> freq + integrated_sensitivity (pb -> BP, pb -> left, pb -> right, trigger . signal) + freq_eg . signal * op -> sens . freq . eg + phobos -> freq_lemat [1];
-	pb = & op -> sens . amp . key; ampscal = integrated_sensitivity (pb -> BP, pb -> left, pb -> right, trigger . signal);
-	pb = & op -> sens . amp . velocity; ampscal += integrated_sensitivity (pb -> BP, pb -> left, pb -> right, trigger . velocity);
-	fm . amp2 = op -> amp + eg2 . signal + ampscal + phobos -> amp_lemat [1];
-	fm . gain2 = integrated_morph (xx, yy, op -> vector) * DIV_16384;
-	fm . feedback2 = op -> feedback; fm . ratio2 = op -> ratio;
-	op++;
-	//==============
-	move_operator_part (& eg3, op, & trigger);
-	pb = & op -> sens . freq . key;
-	fm . freq3 = op -> freq + integrated_sensitivity (pb -> BP, pb -> left, pb -> right, trigger . signal) + freq_eg . signal * op -> sens . freq . eg + phobos -> freq_lemat [2];
-	pb = & op -> sens . amp . key; ampscal = integrated_sensitivity (pb -> BP, pb -> left, pb -> right, trigger . signal);
-	pb = & op -> sens . amp . velocity; ampscal += integrated_sensitivity (pb -> BP, pb -> left, pb -> right, trigger . velocity);
-	fm . amp3 = op -> amp + eg3 . signal + ampscal + phobos -> amp_lemat [2];
-	fm . gain3 = integrated_morph (xx, yy, op -> vector) * DIV_16384;
-	fm . feedback3 = op -> feedback; fm . ratio3 = op -> ratio;
-	op++;
-	//==============
-	move_operator_part (& eg4, op, & trigger);
-	pb = & op -> sens . freq . key;
-	fm . freq4 = op -> freq + integrated_sensitivity (pb -> BP, pb -> left, pb -> right, trigger . signal) + freq_eg . signal * op -> sens . freq . eg + phobos -> freq_lemat [3];
-	pb = & op -> sens . amp . key; ampscal = integrated_sensitivity (pb -> BP, pb -> left, pb -> right, trigger . signal);
-	pb = & op -> sens . amp . velocity; ampscal += integrated_sensitivity (pb -> BP, pb -> left, pb -> right, trigger . velocity);
-	fm . amp4 = op -> amp + eg4 . signal + ampscal + phobos -> amp_lemat [3];
-	fm . gain4 = integrated_morph (xx, yy, op -> vector) * DIV_16384;
-	fm . feedback4 = op -> feedback; fm . ratio4 = op -> ratio;
-	//==============
-	fm . move ();
-	adsr . trigger = trigger . trigger;
-	pb = & phobos -> adsr . amp . egscal;
-	egscal = integrated_sensitivity (pb -> BP, pb -> left, pb -> right, trigger . signal);
-	adsr . attack = phobos -> adsr . amp . attack + egscal;
-	adsr . decay = phobos -> adsr . amp . decay + egscal;
-	adsr . sustain = phobos -> adsr . amp . sustain;
-	adsr . release = phobos -> adsr . amp . release + egscal;
-	adsr . move (); trigger . busy = adsr . busy;
-	noise_eg . trigger = trigger . trigger;
-	noise_eg . level1 = phobos -> noise . level [0];
-	noise_eg . level2 = phobos -> noise . level [1];
-	noise_eg . level3 = phobos -> noise . level [2];
-	noise_eg . level4 = phobos -> noise . level [3];
-	noise_eg . time1 = phobos -> noise . time [0];
-	noise_eg . time2 = phobos -> noise . time [1];
-	noise_eg . time3 = phobos -> noise . time [2];
-	noise_eg . time4 = phobos -> noise . time [3];
-	noise_eg . move ();
-	noise . amp = phobos -> noise . amp + noise_eg . signal;
+	adsr1 . trigger = trigger . trigger;
+	adsr1 . attack = ia -> adsr1 . attack;
+	adsr1 . decay = ia -> adsr1 . decay;
+	adsr1 . sustain = ia -> adsr1 . sustain;
+	adsr1 . release = ia -> adsr1 . release;
+	adsr1 . move ();
+	trigger . busy = adsr1 . busy;
+	adsr2 . trigger = trigger . trigger;
+	adsr2 . time1 = ia -> adsr2 . time [0];
+	adsr2 . time2 = ia -> adsr2 . time [1];
+	adsr2 . time3 = ia -> adsr2 . time [2];
+	adsr2 . time4 = ia -> adsr2 . time [3];
+	adsr2 . level1 = ia -> adsr2 . level [0];
+	adsr2 . level2 = ia -> adsr2 . level [1];
+	adsr2 . level3 = ia -> adsr2 . level [2];
+	adsr2 . level4 = ia -> adsr2 . level [3];
+	adsr2 . move ();
+	vco1 . freq = ia -> vco_freq_lemat [0] + DIV_16384 * (adsr2 . signal * ia -> vco [0] . sens . adsr + trigger . signal * ia -> vco [0] . sens . key);
+	vco1 . amp = ia -> vco [0] . amp;
+	vco1 . ratio = ia -> vco [0] . ratio;
+	vco1 . wave = ia -> vco [0] . wave;
+	vco2 . freq = ia -> vco_freq_lemat [1] + DIV_16384 * (adsr2 . signal * ia -> vco [1] . sens . adsr + trigger . signal * ia -> vco [1] . sens . key);
+	vco2 . amp = ia -> vco [1] . amp;
+	vco2 . ratio = ia -> vco [1] . ratio;
+	vco2 . wave = ia -> vco [1] . wave;
+	vco1 . move (); vco2 . move ();
+	noise . amp = ia -> noise;
 	noise . move ();
-	vcf . enter = fm . signal + noise . signal;
-	pb = & phobos -> filter . sens . key;
-	vcf . freq = phobos -> filter . freq + freq_eg . signal * phobos -> filter . sens . eg
-		+ integrated_sensitivity (pb -> BP, pb -> left, pb -> right, trigger . signal) + phobos -> freq_lemat_f;
-	vcf . resonance = phobos -> filter . resonance;
-	vcf . move ();
-	phobos -> chorus . mono += vcf . signal * adsr . signal;
+	double ringmod = vco1 . signal * vco2 . signal * ia -> core -> Amplitude (ia -> ringmod);
+	filter . enter = vco1 . signal + vco2 . signal + noise . signal + ringmod;
+	filter . freq = ia -> filter_freq_lemat + DIV_16384 * (adsr2 . signal * ia -> filter . sens . adsr + trigger . signal * ia -> filter . sens . key);
+	filter . resonance = ia -> filter . resonance;
+	filter . amp = ia -> filter . amp;
+	filter . move ();
+	ia -> chorus . mono += filter . signal * adsr1 . signal;
 }
-
-integrated_phobos_part :: integrated_phobos_part (orbiter_core * core, integrated_phobos * ip) :
-		trigger (core, true, 0), X (core, & ip -> X_data, 0.0), Y (core, & ip -> Y_data, 0.0), fm (core), noise (core), vcf (core), adsr (core), freq_eg (core),
-		eg1 (core), eg2 (core), eg3 (core), eg4 (core), feg (core), noise_eg (core) {
-	trigger . key_map = & ip -> key_map;
-	ip -> base . insert_trigger (& trigger);
+integrated_abakos_part :: integrated_abakos_part (orbiter_core * core, integrated_abakos * ia)
+		: trigger (core, true, 0), vco1 (core), vco2 (core), noise (core), filter (core), adsr1 (core), adsr2 (core) {
+	trigger . key_map = & ia -> key_map;
+	ia -> base . insert_trigger (& trigger);
 }
-*/
 
 class native_integrated_abakos : public native_moonbase {
 public:
@@ -643,7 +443,7 @@ public:
 							if (path -> isPair ()) {
 								se = path -> getLeft ();
 								if (se -> isInteger ()) {
-									int ind = se -> getInteger ();
+									int ind = se -> getInteger () - 1;
 									if (ind < 0 || ind > 1) return false;
 									path = path -> getRight ();
 									if (path -> isPair ()) {
@@ -708,7 +508,7 @@ public:
 							if (path -> isPair ()) {
 								se = path -> getLeft ();
 								if (se -> isInteger ()) {
-									int ind = se -> getInteger ();
+									int ind = se -> getInteger () - 1;
 									if (ind == 0) {
 										path = path -> getRight ();
 										if (path -> isPair ()) {

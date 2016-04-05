@@ -141,6 +141,10 @@ lunar_integrated_microdot.o: ../code/lunar_integrated_microdot.cpp ../code/lunar
 			../code/lunar_moonbase.h ../code/lunar_landers.h ../code/lunar_integrated_components.h ../code/lunar.h $(pc)prolog.h
 	g++ -Wno-write-strings -I. -I$(pc) ../code/lunar_integrated_microdot.cpp -c -o lunar_integrated_microdot.o -fPIC
 
+lunar_integrated_abakos.o: ../code/lunar_integrated_abakos.cpp ../code/lunar_prolog_landers.h ../code/prolog_lunar.h ../code/chromatic.h\
+			../code/lunar_moonbase.h ../code/lunar_landers.h ../code/lunar_integrated_components.h ../code/lunar.h $(pc)prolog.h
+	g++ -Wno-write-strings -I. -I$(pc) ../code/lunar_integrated_abakos.cpp -c -o lunar_integrated_abakos.o -fPIC
+
 lunar_integrated_phobos.o: ../code/lunar_integrated_phobos.cpp ../code/lunar_prolog_landers.h ../code/prolog_lunar.h ../code/chromatic.h\
 			../code/lunar_moonbase.h ../code/lunar_landers.h ../code/lunar_integrated_components.h ../code/lunar.h $(pc)prolog.h
 	g++ -Wno-write-strings -I. -I$(pc) ../code/lunar_integrated_phobos.cpp -c -o lunar_integrated_phobos.o -fPIC
@@ -393,7 +397,7 @@ lunar_objects = \
 	lunar_prolog_parameter_block_panel.o lunar_prolog_adsr_panel.o lunar_prolog_eg_panel.o\
 	lunar_prolog_fm4_panel.o lunar_prolog_core_panel.o lunar_prolog_lfo_panel.o lunar_prolog_filter_panel.o\
 	lunar_prolog_delay_panel.o lunar_prolog_chorus_panel.o lunar_prolog_schorus_panel.o lunar_prolog_freeverb_panel.o lunar_prolog_panel_base.o\
-	lunar_integrated_components.o lunar_integrated_alarm.o lunar_integrated_microdot.o lunar_integrated_phobos.o\
+	lunar_integrated_components.o lunar_integrated_alarm.o lunar_integrated_microdot.o lunar_integrated_abakos.o lunar_integrated_phobos.o\
 	lunar_linux_midi.o
 
 ~/bin/lunar: $(lunar_objects) $(objects) $(graphics) $(prc_resources)

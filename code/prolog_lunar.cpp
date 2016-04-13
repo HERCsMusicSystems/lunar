@@ -344,6 +344,7 @@ PrologNativeCode * PrologLunarServiceClass :: getNativeCode (char * name) {
 	if (strcmp (name, "CorePanel") == 0) return new core_panel_class (this);
 	if (strcmp (name, "LfoPanel") == 0) return new lfo_panel_class (this);
 	if (strcmp (name, "FilterPanel") == 0) return new filter_panel_class (this);
+	if (strcmp (name, "FormantFilterPanel") == 0) return new formant_filter_panel_class (this);
 	if (strcmp (name, "DelayPanel") == 0) return new delay_panel_class (this);
 	if (strcmp (name, "ChorusPanel") == 0) return new chorus_panel_class (this);
 	if (strcmp (name, "StereoChorusPanel") == 0) return new stereo_chorus_panel_class (this);

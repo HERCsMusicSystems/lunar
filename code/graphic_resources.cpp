@@ -88,6 +88,8 @@ extern char resource_lfo_pan_start;
 extern char resource_lfo_pan_end;
 extern char resource_filter_panel_start;
 extern char resource_filter_panel_end;
+extern char resource_formant_filter_panel_start;
+extern char resource_formant_filter_panel_end;
 extern char resource_delay_panel_start;
 extern char resource_delay_panel_end;
 extern char resource_chorus_panel_start;
@@ -146,6 +148,7 @@ GraphicResources :: GraphicResources (void) {
 	png_closure lfo_wah_wah_surface_closure (GetResource (LFO_WAH_WAH_PNG), LFO_WAH_WAH_SIZE);
 	png_closure lfo_pan_surface_closure (GetResource (LFO_PAN_PNG), LFO_PAN_SIZE);
 	png_closure filter_panel_surface_closure (GetResource (FILTER_PANEL_PNG), FILTER_PANEL_SIZE);
+	png_closure formant_filter_panel_surface_closure (GetResource (FORMANT_FILTER_PANEL_PNG), FORMANT_FILTER_PANEL_SIZE);
 	png_closure delay_panel_surface_closure (GetResource (DELAY_PANEL_PNG), DELAY_PANEL_SIZE);
 	png_closure chorus_panel_surface_closure (GetResource (CHORUS_PANEL_PNG), CHORUS_PANEL_SIZE);
 	png_closure stereo_chorus_panel_surface_closure (GetResource (STEREO_CHORUS_PANEL_PNG), STEREO_CHORUS_PANEL_SIZE);
@@ -177,6 +180,7 @@ GraphicResources :: GraphicResources (void) {
 	png_closure lfo_wah_wah_surface_closure (& resource_lfo_wah_wah_start, & resource_lfo_wah_wah_end);
 	png_closure lfo_pan_surface_closure (& resource_lfo_pan_start, & resource_lfo_pan_end);
 	png_closure filter_panel_surface_closure (& resource_filter_panel_start, & resource_filter_panel_end);
+	png_closure formant_filter_panel_surface_closure (& resource_formant_filter_panel_start, & resource_formant_filter_panel_end);
 	png_closure delay_panel_surface_closure (& resource_delay_panel_start, & resource_delay_panel_end);
 	png_closure chorus_panel_surface_closure (& resource_chorus_panel_start, & resource_chorus_panel_end);
 	png_closure stereo_chorus_panel_surface_closure (& resource_stereo_chorus_panel_start, & resource_stereo_chorus_panel_end);
@@ -208,6 +212,7 @@ GraphicResources :: GraphicResources (void) {
 	lfo_wah_wah_surface = cairo_image_surface_create_from_png_stream (png_reader, & lfo_wah_wah_surface_closure);
 	lfo_pan_surface = cairo_image_surface_create_from_png_stream (png_reader, & lfo_pan_surface_closure);
 	filter_panel_surface = cairo_image_surface_create_from_png_stream (png_reader, & filter_panel_surface_closure);
+	formant_filter_panel_surface = cairo_image_surface_create_from_png_stream (png_reader, & formant_filter_panel_surface_closure);
 	delay_panel_surface = cairo_image_surface_create_from_png_stream (png_reader, & delay_panel_surface_closure);
 	chorus_panel_surface = cairo_image_surface_create_from_png_stream (png_reader, & chorus_panel_surface_closure);
 	stereo_chorus_panel_surface = cairo_image_surface_create_from_png_stream (png_reader, & stereo_chorus_panel_surface_closure);
@@ -241,6 +246,7 @@ GraphicResources :: ~ GraphicResources (void) {
 	if (lfo_wah_wah_surface != 0) cairo_surface_destroy (lfo_wah_wah_surface);
 	if (lfo_pan_surface != 0) cairo_surface_destroy (lfo_pan_surface);
 	if (filter_panel_surface != 0) cairo_surface_destroy (filter_panel_surface);
+	if (formant_filter_panel_surface != 0) cairo_surface_destroy (formant_filter_panel_surface);
 	if (delay_panel_surface != 0) cairo_surface_destroy (delay_panel_surface);
 	if (chorus_panel_surface != 0) cairo_surface_destroy (chorus_panel_surface);
 	if (stereo_chorus_panel_surface != 0) cairo_surface_destroy (stereo_chorus_panel_surface);

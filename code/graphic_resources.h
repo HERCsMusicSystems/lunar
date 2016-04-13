@@ -57,6 +57,7 @@ public:
 	cairo_surface_t * lfo_wah_wah_surface;
 	cairo_surface_t * lfo_pan_surface;
 	cairo_surface_t * filter_panel_surface;
+	cairo_surface_t * formant_filter_panel_surface;
 	cairo_surface_t * delay_panel_surface;
 	cairo_surface_t * chorus_panel_surface;
 	cairo_surface_t * stereo_chorus_panel_surface;

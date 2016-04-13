@@ -32,10 +32,11 @@
 #define LFO_WAH_WAH_PNG                 225
 #define LFO_PAN_PNG                     226
 #define FILTER_PANEL_PNG                227
-#define DELAY_PANEL_PNG                 228
-#define CHORUS_PANEL_PNG                229
-#define STEREO_CHORUS_PANEL_PNG         230
-#define FREEVERB_PANEL_PNG              231
+#define FORMANT_FILTER_PANEL_PNG        228
+#define DELAY_PANEL_PNG                 229
+#define CHORUS_PANEL_PNG                230
+#define STEREO_CHORUS_PANEL_PNG         231
+#define FREEVERB_PANEL_PNG              232
 
 #define SMALL_KEYBOARD_SIZE             435
 #define KEYBOARD_SIZE                   579
@@ -70,7 +71,7 @@
 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        232
+#define _APS_NEXT_RESOURCE_VALUE        233
 #define _APS_NEXT_COMMAND_VALUE         40001
 #define _APS_NEXT_CONTROL_VALUE         1001
 #define _APS_NEXT_SYMED_VALUE           101

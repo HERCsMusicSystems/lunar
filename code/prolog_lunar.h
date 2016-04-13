@@ -142,6 +142,14 @@ public:
 	filter_panel_class (PrologLunarServiceClass * servo);
 };
 
+class formant_filter_panel_class : public PrologNativeCode {
+public:
+	PrologRoot * root;
+	GraphicResources * resources;
+	bool code (PrologElement * parameters, PrologResolution * resolution);
+	formant_filter_panel_class (PrologLunarServiceClass * servo);
+};
+
 class delay_panel_class : public PrologNativeCode {
 public:
 	PrologRoot * root;

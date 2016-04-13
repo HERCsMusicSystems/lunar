@@ -682,6 +682,20 @@ public:
 	lunar_filter (orbiter_core * core);
 };
 
+class lunar_formant_filter : public orbiter {
+private:
+	double enter, freq, q, resonance, amp, gain;
+	double low1, band1, high1;
+	double low2, band2, high2;
+	double low3, band3, high3;
+public:
+	virtual int numberOfInputs (void);
+	virtual char * inputName (int ind);
+	virtual double * inputAddress (int ind);
+	virtual void move (void);
+	lunar_formant_filter (orbiter_core * core);
+};
+
 class lunar_dc_offset_filter : public orbiter {
 private:
 	double enter, enter_right;

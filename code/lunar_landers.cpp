@@ -2185,6 +2185,54 @@ lunar_filter :: lunar_filter (orbiter_core * core) : orbiter (core) {
 	initialise (); activate ();
 }
 
+int lunar_formant_filter :: numberOfInputs (void) {return 6;}
+char * lunar_formant_filter :: inputName (int ind) {
+	switch (ind) {
+	case 0: return "ENTER"; break;
+	case 1: return "FREQ"; break;
+	case 2: return "RESONANCE"; break;
+	case 3: return "Q"; break;
+	case 4: return "AMP"; break;
+	case 5: return "GAIN"; break;
+	default: break;
+	}
+	return orbiter :: inputName (ind);
+}
+double * lunar_formant_filter :: inputAddress (int ind) {
+	switch (ind) {
+	case 0: return & enter; break;
+	case 1: return & freq; break;
+	case 2: return & resonance; break;
+	case 3: return & q; break;
+	case 4: return & amp; break;
+	case 5: return & gain; break;
+	default: break;
+	}
+	return orbiter :: inputAddress (ind);
+}
+void lunar_formant_filter :: move (void) {
+	double F = core -> FilterFreq (freq);
+	double Q = 2.0 - q * 0.0001220703125;
+	double GAIN = gain * resonance * DIV_4096 * Q;
+	low1 += band1 * F; high1 = enter - low1 - band1 * Q; band1 += high1 * F;
+	low1 += band1 * F; high1 = enter - low1 - band1 * Q; band1 += high1 * F;
+	double s = band1 * GAIN;
+	low2 += band2 * F; high2 = s - low2 - band2 * Q; band2 += high2 * F;
+	low2 += band2 * F; high2 = s - low2 - band2 * Q; band2 += high2 * F;
+	s = band2 * GAIN;
+	low3 += band3 * F; high3 = s - low3 - band3 * Q; band3 += high3 * F;
+	low3 += band3 * F; high3 = s - low3 - band3 * Q; band3 += high3 * F;
+	signal = band3 * GAIN * core -> Amplitude (amp);
+}
+lunar_formant_filter :: lunar_formant_filter (orbiter_core * core) : orbiter (core) {
+	freq = resonance = q = amp = 0.0; gain = 1.0;
+	enter = 0.0;
+	low1 = band1 = high1 = 0.0;
+	low2 = band2 = high2 = 0.0;
+	low3 = band3 = high3 = 0.0;
+	initialise (); activate ();
+}
+
 int lunar_dc_offset_filter :: numberOfInputs (void) {return 2;}
 char * lunar_dc_offset_filter :: inputName (int ind) {
 	switch (ind) {

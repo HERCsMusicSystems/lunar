@@ -33,6 +33,7 @@
         <a href="#predicate_eg_linear_expo">eg-linear-expo</a>
         <a href="#predicate_filter">filter</a>
         <a href="#predicate_fm4">fm4</a>
+        <a href="#predicate_formant_filter">formant_filter</a>
         <a href="#predicate_freeverb">freeverb</a>
         <a href="#predicate_gateway">gateway</a>
         <a href="#predicate_impulse">impulse</a>
@@ -560,6 +561,28 @@ Core also functions as an audio source (connected directly to the sound hardware
                 <img src="fm4_06.png" />
                 <img src="fm4_07.png" />
             </div>
+        </div>
+    </a>
+</div>
+
+<div class="doc_predicate">
+    <a id="predicate_formant_filter">
+        <div class="doc_predicate_header">
+            [formant_filter module] => Creates a formant filter module.<br />
+            <b>Note:</b> module adheres to <a href="#common_behaviour_of_predicates">Common Behaviour</a>.<br />
+        </div>
+        <div class="doc_predicate_body">
+            <b>Signals:</b> [["ENTER" "FREQ" "RESONANCE" "Q" "AMP" "GAIN"] ["SINGAL"]]<br />
+            Formant filter.<br />
+            <b>INPUTS:</b><br />
+            <b>Enter:</b> input signal.<br />
+            <b>Freq:</b> cutoff frequency. Range between -8192.0 .. 8192.0 exponential. Zero = middle E with 128 steps per semitone.<br />
+            <b>Resonance:</b> level. Range between 0.0 .. 16384.0.<br />
+            <b>Q:</b> bandwidth. Range between 0.0 .. 16384.0.<br />
+            <b>Amp:</b> signal's amplitude. Range between -16384.0 .. 0.0 exponential. Zero = 0 dB. Every 1536 divides the amplitude by half.<br />
+            <b>Gain:</b> signal's gain multiplier. Range between 0.0 .. 1.0 linear.
+            <b>OUTPUTS:</b><br />
+            <b>Signal:</b> output signal.<br />
         </div>
     </a>
 </div>

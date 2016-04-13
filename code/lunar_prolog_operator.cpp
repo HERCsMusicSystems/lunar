@@ -77,3 +77,6 @@ sampler_operator_class :: sampler_operator_class (orbiter_core * core) : PrologN
 
 orbiter * filter_class :: create_orbiter (PrologElement * parameters) {return new lunar_filter (core);}
 filter_class :: filter_class (orbiter_core * core) : PrologNativeOrbiterCreator (core) {}
+
+orbiter * formant_filter_class :: create_orbiter (PrologElement * parameters) {return new lunar_formant_filter (core);}
+formant_filter_class :: formant_filter_class (orbiter_core * core) : PrologNativeOrbiterCreator (core) {}

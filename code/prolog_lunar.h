@@ -239,6 +239,12 @@ public:
 	filter_class (orbiter_core * core);
 };
 
+class formant_filter_class : public PrologNativeOrbiterCreator {
+public:
+	virtual orbiter * create_orbiter (PrologElement * parameters);
+	formant_filter_class (orbiter_core * core);
+};
+
 class PrologLunarServiceClass : public PrologServiceClass {
 public:
 	PrologRoot * root;

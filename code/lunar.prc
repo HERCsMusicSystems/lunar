@@ -18,7 +18,7 @@ program lunar #machine := "lunar"
 				pan power_pan linear_pan stereo_pan stereo_power_pan stereo_linear_pan
 				drywet drywet_mono dry wet balance
 				level level1 level2 level3 level4 time1 time2 time3 time4 attack decay sustain release
-				freq amp gain ratio sync cutoff resonance formant hold busy portamento porta
+				freq amp gain ratio sync cutoff resonance formant formant_filter Q hold busy portamento porta
 				legato time speed wave pulse phase poly feedback highdamp diffusion
 				mono left right mic mic_left mic_right breakpoint BP algo key_ratio
 				key velocity keyon keyoff polyaftertouch control programchange aftertouch pitch
@@ -123,6 +123,7 @@ program lunar #machine := "lunar"
 #machine sampler_operator := "sampler_operator"
 #machine vco := "vco"
 #machine filter := "filter"
+#machine formant_filter := "formant_filter"
 
 #machine DCOffsetFilter := "DCOffsetFilter"
 #machine DCOffsetFilterMono := "DCOffsetFilterMono"

@@ -123,6 +123,9 @@
     <ClCompile Include="..\code\lunar_integrated_abakos.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\code\lunar_prolog_formant_filter_panel.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\code\prolog_lunar.h">

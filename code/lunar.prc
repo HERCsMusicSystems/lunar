@@ -255,7 +255,7 @@ program lunar #machine := "lunar"
 	[APPEND *path [resonance] *resonance_path] [*parameters *resonance : *resonance_path]
 	[APPEND *path [Q] *q_path] [*parameters *q : *q_path]
 	[APPEND *path [amp] *amp_path] [*parameters *amp : *amp_path]
-	[FormantFilterPanel *panel *freq *resonance *amp]
+	[FormantFilterPanel *panel *freq *resonance *q *amp]
 ]
 
 [[BuildDelayPanel *panel *instrument : *path]

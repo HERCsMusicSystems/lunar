@@ -106,6 +106,7 @@
     <ClCompile Include="..\code\lunar_prolog_eg_panel.cpp" />
     <ClCompile Include="..\code\lunar_prolog_filter_panel.cpp" />
     <ClCompile Include="..\code\lunar_prolog_fm4_panel.cpp" />
+    <ClCompile Include="..\code\lunar_prolog_formant_filter_panel.cpp" />
     <ClCompile Include="..\code\lunar_prolog_freeverb_panel.cpp" />
     <ClCompile Include="..\code\lunar_prolog_keyboard.cpp" />
     <ClCompile Include="..\code\lunar_prolog_landers.cpp" />

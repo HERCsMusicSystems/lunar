@@ -105,6 +105,7 @@
         <a href="#predicate_BuildFEGPanel">BuildFEGPanel</a>
         <a href="#predicate_BuildFilterPanel">BuildFilterPanel</a>
         <a href="#predicate_BuildFM4Panel">BuildFM4Panel</a>
+        <a href="#predicate_BuildFormantFilterPanel">BuildFormantFilterPanel</a>
         <a href="#predicate_BuildFreeverbPanel">BuildFreeverbPanel</a>
         <a href="#predicate_BuildLfoPanel">BuildLfoPanel</a>
         <a href="#predicate_BuildParameterBlockPanel">BuildParameterBlockPanel</a>
@@ -139,6 +140,7 @@
         <a href="#predicate_FEGPanel">FEGPanel</a>
         <a href="#predicate_FilterPanel">FilterPanel</a>
         <a href="#predicate_FM4Panel">FM4Panel</a>
+        <a href="#predicate_FormantFilterPanel">FormantFilterPanel</a>
         <a href="#predicate_FreeverbPanel">FreeverbPanel</a>
         <a href="#predicate_keyboard">keyboard</a>
         <a href="#predicate_LfoPanel">LfoPanel</a>
@@ -1744,6 +1746,18 @@ A typical construction of an instrument and inserting it into the superstructure
 </div>
 
 <div class="doc_predicate">
+    <a id="predicate_BuildFormntFilterPanel">
+        <div class="doc_predicate_header">
+            [BuildFormantFilterPanel module instrument : selector] => Builds a formant filter panel.<br />
+        </div>
+        <div class="doc_predicate_body">
+            This is a shortcut designed to find the appropriate parameter blocks in superstructure
+            and build a formant filter panel.
+        </div>
+    </a>
+</div>
+
+<div class="doc_predicate">
     <a id="predicate_BuildFreeverbPanel">
         <div class="doc_predicate_header">
             [BuildFreeverbPanel module instrument : selector] => Builds a freeverb panel.<br />
@@ -2210,6 +2224,23 @@ A typical construction of an instrument and inserting it into the superstructure
             The resolution is 128 steps with left mouse button and 16384 with the right one.<br />
             <b>Note:</b> do not use FM4Panel directly. Use <a href="#predicate_BuildFM4Panel">BuildFM4Panel</a> instead.<br />
             <img src="fm4_panel.png" />
+        </div>
+    </a>
+</div>
+
+<div class="doc_predicate">
+    <a id="predicate_FormantFilterPanel">
+        <div class="doc_predicate_header">
+            [FormantFilterPanel module freq resonance Q amp] => Creates a panel for a filter module.<br />
+            [module *x *y] => reposition on the screen<br />
+            [module] => closes the panel<br />
+        </div>
+        <div class="doc_predicate_body">
+            Creates a panel for 3 parameter blocks commonly associated with filter module.
+            Ranges from -8192.0 .. 8192.0 for freq, from 0.0 .. 16384.0 for resonance and Q and from -16384.0 .. 0.0 for amp..
+            The resolution is 128 steps with left mouse button and 16384 with the right one.<br />
+            <b>Note:</b> do not use FormantFilterPanel directly. Use <a href="#predicate_BuildFormantFilterPanel">BuildFormantFilterPanel</a> instead.<br />
+            <img src="formant_filter_panel.png" />
         </div>
     </a>
 </div>

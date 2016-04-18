@@ -872,6 +872,8 @@ static void audio_transmission_dx_stop (void) {
 	if (audio_lpds != NULL) audio_lpds -> Release (); audio_lpds = NULL;
 }
 static bool audio_transmission_dx_start (HWND hwnd, int device_index) {
+	if (hwnd == 0) hwnd = GetForegroundWindow ();
+	if (hwnd == 0) hwnd = GetDesktopWindow ();
 	HRESULT hr;
 	if (FAILED (hr = DirectSoundCreate8 (output_device_guid [device_index], & audio_lpds, NULL))) {printf ("Direct X: Direct sound create failed.\n"); return false;}
 	if (FAILED (hr = audio_lpds -> SetCooperativeLevel (hwnd, DSSCL_PRIORITY))) {printf ("Direct X: Cooperative level failed.\n"); return false;}
@@ -1005,8 +1007,6 @@ int MultiplatformAudio :: getSamplingFrequency (void) {return audio_sampling_fre
 void MultiplatformAudio :: setLatencyBufferSize (int size) {set_audio_block_size (size);}
 int MultiplatformAudio :: getLatencyBufferSize (void) {return number_of_samples;}
 MultiplatformAudio :: MultiplatformAudio (void * hwnd) {
-	if (hwnd == 0) hwnd = GetForegroundWindow ();
-	if (hwnd == 0) hwnd = GetDesktopWindow ();
 	audio_channels = 2;
 	record_sampling_freq = audio_sampling_freq = 48000;
 	set_audio_block_size (128);

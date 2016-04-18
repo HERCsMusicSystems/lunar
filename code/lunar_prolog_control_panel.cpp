@@ -354,6 +354,15 @@ public:
 		root -> resolution (query);
 		delete query;
 	}
+	void audio_hardware_action (void) {
+		PrologDirectory * dir = root -> searchDirectory ("lunar");
+		if (dir == 0) return;
+		PrologAtom * action = dir -> searchPrivateAtom ("CommanderHardwareAction");
+		if (action == 0) return;
+		PrologElement * query = root -> pair (root -> head (0), root -> pair (root -> pair (root -> atom (action), root -> earth ()), root -> earth ()));
+		root -> resolution (query);
+		delete query;
+	}
 	void redraw (cairo_t * cr) {
 		ctrl_volume . draw (cr);
 		ctrl_attack . draw (cr);
@@ -448,6 +457,7 @@ public:
 			action (85, auto_record . engaged ? 16.0 : 0.0);
 			redraw = true;
 		}
+		if (rect (point (1240.0, 20.0), point (20.0, 40.0)) . overlap (rect (location, point(0.0, 0.0)))) {audio_hardware_action ();}
 		if (selector0 . keyon (location)) {program_action (& selector0); redraw = true;}
 		if (selector1 . keyon (location)) {program_action (& selector1); redraw = true;}
 		if (selector2 . keyon (location)) {program_action (& selector2); redraw = true;}
@@ -678,6 +688,7 @@ void control_panel_action :: FunctionKey (int key, int state) {
 		current_delta = 128;
 		redraw = true;
 		break;
+	case 65293: audio_hardware_action (); break;
 	case 65361: value_change_action (-1); redraw = true; break;
 	case 65362: value_change_action (4); redraw = true; break;
 	case 65363: value_change_action (1); redraw = true; break;

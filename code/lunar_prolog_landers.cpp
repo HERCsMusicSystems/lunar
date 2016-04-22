@@ -963,6 +963,30 @@ orbiter * polysequencer_class :: create_orbiter (PrologElement * parameters) {
 PrologNativeOrbiter * polysequencer_class :: create_native_orbiter (PrologAtom * atom, orbiter * module) {return new native_polysequencer (dir, atom, core, module);}
 polysequencer_class :: polysequencer_class (PrologDirectory * dir, orbiter_core * core) : PrologNativeOrbiterCreator (core) {this -> dir = dir;}
 
+class native_arranger : public native_moonbase {
+public:
+	bool code (PrologElement * parameters, PrologResolution * resolution) {
+		return native_moonbase :: code (parameters, resolution);
+	}
+	native_arranger (PrologDirectory * dir, PrologAtom * atom, orbiter_core * core, orbiter * module) : native_moonbase (dir, atom, core, module) {}
+};
+
+orbiter * arranger_class :: create_orbiter (PrologElement * parameters) {
+	PrologElement * base = 0;
+	while (parameters -> isPair ()) {
+		PrologElement * el = parameters -> getLeft ();
+		if (el -> isAtom ()) base = el;
+		parameters = parameters -> getRight ();
+	}
+	if (base == 0) return 0;
+	PrologNativeCode * machine = base -> getAtom () -> getMachine ();
+	if (machine == 0) return 0;
+	if (! machine -> isTypeOf (native_moonbase :: name ())) return 0;
+	return new arranger (core, ((moonbase *) ((native_moonbase *) machine) -> module));
+}
+PrologNativeOrbiter * arranger_class :: create_native_orbiter (PrologAtom * atom, orbiter * module) {return new native_arranger (dir, atom, core, module);}
+arranger_class :: arranger_class (PrologDirectory * dir, orbiter_core * core) : PrologNativeOrbiterCreator (core) {this -> dir = dir;}
+
 class lunar_detector : public orbiter {
 private:
 	double trigger;

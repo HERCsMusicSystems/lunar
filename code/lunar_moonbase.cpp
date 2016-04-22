@@ -930,3 +930,16 @@ polysequencer :: polysequencer (orbiter_core * core, int number_of_bases) : Comm
 
 polysequencer :: ~ polysequencer (void) {pthread_mutex_destroy (& critical); if (elements != 0) delete elements;}
 
+bool arranger :: insert_trigger (lunar_trigger * trigger) {return false;}
+bool arranger :: insert_controller (orbiter * controller, int location, double shift) {return false;}
+void arranger :: control (int ctrl, double value) {if (base != 0) base -> control (ctrl, value);}
+void arranger :: keyon (int key) {if (base != 0) base -> keyon (key);}
+void arranger :: keyon (int key, int velocity) {if (base != 0) base -> keyon (key, velocity);}
+void arranger :: keyoff (void) {if (base != 0) base -> keyoff ();}
+void arranger :: keyoff (int key, int velocity) {if (base != 0) base -> keyoff (key, velocity);}
+void arranger :: mono (void) {if (base != 0) base -> mono ();}
+void arranger :: poly (void) {if (base != 0) base -> poly ();}
+bool arranger :: isMonoMode (void) {return base != 0 ? base -> isMonoMode () : false;}
+double arranger :: getControl (int ctrl) {return base != 0 ? base -> getControl (ctrl) : 0.0;}
+void arranger :: timing_clock (void) {}
+arranger :: arranger (orbiter_core * core, CommandModule * base) : CommandModule (core) {this -> base = base;}

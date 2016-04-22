@@ -260,5 +260,24 @@ public:
 	~ polysequencer (void);
 };
 
+class arranger : public CommandModule {
+private:
+	CommandModule * base;
+public:
+	bool insert_trigger (lunar_trigger * trigger);
+	bool insert_controller (orbiter * controller, int location, double shift);
+	void keyon (int key);
+	void keyon (int key, int velocity);
+	void keyoff (void);
+	void keyoff (int key, int velocity = 0);
+	void mono (void);
+	void poly (void);
+	bool isMonoMode (void);
+	void control (int ctrl, double value);
+	double getControl (int ctrl);
+	void timing_clock (void);
+	arranger (orbiter_core * core, CommandModule * base);
+};
+
 #endif
 

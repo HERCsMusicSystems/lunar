@@ -9,7 +9,7 @@ program lunar #machine := "lunar"
 			[
 				small_keyboard keyboard big_keyboard oscilloscope spectroscope big_oscilloscope big_spectroscope vector CommandCentre detector
 				noise orbiter X Y modulation vibrato tremolo wahwah range
-				core base moonbase arpeggiator sequencer polysequencer operator parameter_block morph auto auto_data key_map velocity_map impulse
+				core base moonbase arpeggiator sequencer polysequencer arranger operator parameter_block morph auto auto_data key_map velocity_map impulse
 				trigger inactive_trigger delay1 delay2 mixer stereo_mixer gateway stereo_gateway amplifier stereo_amplifier volume mono_volume
 				lfo envelope adsr adsr-linear eg eg-linear-expo egscaling egscal vca vca-adsr vca-eg vco ring ringmod DCOffsetFilter DCOffsetFilterMono
 				index shift bias
@@ -113,6 +113,7 @@ program lunar #machine := "lunar"
 #machine arpeggiator := "arpeggiator"
 #machine sequencer := "sequencer"
 #machine polysequencer := "polysequencer"
+#machine arranger := "arranger"
 #machine detector := "detector"
 
 #machine core := "core"
@@ -363,7 +364,7 @@ program lunar #machine := "lunar"
 ]
 [[AllocateChannel *index *location] [++ *index *next] [MIDI_CHANNELS *next : *] / [AllocateChannel *next *location]]
 
-[[BuildIntegrated *base *type *creator *blocks : *extra]
+[[BuildIntegrated *base *type *creator *machine *blocks : *extra]
 	[AllocateChannel 0 *index]
 	[GenerateInstrumentName *type *base]
 	[*creator *machine : *extra]
@@ -372,14 +373,15 @@ program lunar #machine := "lunar"
 	[MIDI_CHANNELS *index *machine]
 ]
 
-[[BuildIntegratedAlarm] [BuildIntegrated * Alarm integrated_alarm AlarmBlocks]]
-[[BuildIntegratedAlarm *base] [BuildIntegrated *base Alarm integrated_alarm AlarmBlocks]]
-[[BuildIntegratedMicrodot] [BuildIntegrated * Microdot integrated_microdot MicrodotBlocks]]
-[[BuildIntegratedMicrodot *base] [BuildIntegrated *base Microdot integrated_microdot MicrodotBlocks]]
-[[BuildIntegratedAbakos *polyphony] [BuildIntegrated * Abakos integrated_abakos AbakosBlocks *polyphony]]
-[[BuildIntegratedAbakos *base *polyphony] [BuildIntegrated *base Abakos integrated_abakos AbakosBlocks *polyphony]]
+[[BuildIntegratedAlarm] [BuildIntegrated * Alarm integrated_alarm * AlarmBlocks]]
+[[BuildIntegratedAlarm *base] [BuildIntegrated *base Alarm integrated_alarm * AlarmBlocks]]
+[[BuildIntegratedMicrodot] [BuildIntegrated * Microdot integrated_microdot * MicrodotBlocks]]
+[[BuildIntegratedMicrodot *base] [BuildIntegrated *base Microdot integrated_microdot * MicrodotBlocks]]
+[[BuildIntegratedAbakos *polyphony] [BuildIntegrated * Abakos integrated_abakos * AbakosBlocks *polyphony]]
+[[BuildIntegratedAbakos *base *polyphony] [BuildIntegrated *base Abakos integrated_abakos * AbakosBlocks *polyphony]]
+[[BuildIntegratedAbakos *base *cb *polyphony] [BuildIntegrated *base Abakos integrated_abakos *cb AbakosBlocks *polyphony]]
 [[BuildIntegratedPhobos *polyphony] [BuildIntegrated * Phobos integrated_phobos PhobosBlocks *polyphony]]
-[[BuildIntegratedPhobos *base *polyphony] [BuildIntegrated *base Phobos integrated_phobos PhobosBlocks *polyphony]]
+[[BuildIntegratedPhobos *base *polyphony] [BuildIntegrated *base Phobos integrated_phobos * PhobosBlocks *polyphony]]
 
 [[Alarm volume]]
 [[Alarm pan]]

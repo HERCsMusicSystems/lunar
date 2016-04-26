@@ -68,6 +68,9 @@ orbiter_core :: orbiter_core (void) {
 		power_pans [ind] = sqrt ((double) ind / 16384.0);
 		linear_pans [ind] = (double) ind / 16384.0;
 	}
+	for (int ind = 0; ind < 128; ind++) {
+		for (int sub = 0; sub < 12; sub++) arranger_array [ind] [sub] = sub;
+	}
 	amplitude_zero = pow (2.0, -16383.0 / 1536.0);
 	recalculate ();
 }
@@ -234,6 +237,11 @@ double orbiter_core :: MinBlep (int index) {
 	if (index < 0) return 0.0;
 	if (index >= 16384) return min_blep [16383];
 	return min_blep [index];
+}
+
+int orbiter_core :: arrange_note (int key, int transposition, int reference) {
+	if (key < 0) return 0;
+	if (key < 128) return key + transposition;
 }
 
 void orbiter_core :: activate (orbiter * module) {if (active_pointer >= active_limit) return; actives [active_pointer++] = module;}

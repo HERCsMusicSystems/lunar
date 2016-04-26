@@ -85,6 +85,7 @@ public:
 	orbiter * * actives;
 	int active_pointer;
 	int active_limit;
+	int arranger_array [128] [12];
 	double TimeDelta (double index);
 	double FilterFreq (double index);
 	double SamplerTimeDelta (double index);
@@ -97,6 +98,7 @@ public:
 	double WaitingTime16384 (double time);
 	double WaitingPower (double time);
 	double MinBlep (int index);
+	int arrange_note (int key, int transposition, int reference = 48);
 	void recalculate (void);
 	int size_limit (int size, int limit);
 	void move_modules (void);

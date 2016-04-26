@@ -1330,7 +1330,7 @@ auto := [
 private [AddParameterBlock SubRestore cb_callback cb_path cb_edit_path CBsub ICBsub process_mode FindLfoKnob]
 
 [[CommanderHardwareAction] [has_machine reactor] / [reactor] [show "HARDWARE DEACTIVATED"]]
-[[CommanderHardwareAction] [AUDIO_HARDWARE_SETTINGS : *x] [core reactor *x] [ConnectAllMoons reactor] [show "HARDWARE ACTIVATED"]]
+[[CommanderHardwareAction] [AUDIO_HARDWARE_SETTINGS : *x] [core reactor : *x] [ConnectAllMoons reactor] [show "HARDWARE ACTIVATED"]]
 
 end := [[auto_atoms] [CorePanel Core] [gtk_command] [TRY [Core]]] .
 

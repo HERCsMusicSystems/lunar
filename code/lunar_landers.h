@@ -253,7 +253,7 @@ class lunar_trigger : public orbiter {
 private:
 	lunar_map * key_map;
 	lunar_map * velocity_map;
-	double velocity, trigger, index, delay1, delay2;
+	double velocity, trigger, delay1, delay2;
 	double origin, delta, target, porta_switch, porta_control, porta_time, time, hold_ctrl;
 	double transpose, mode;
 	bool active;

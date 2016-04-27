@@ -492,9 +492,7 @@ void lunar_trigger :: drop_stack (int key) {
 	if (keystack_pointer > 0) sub_keyon (keystack [--keystack_pointer]);
 }
 void lunar_trigger :: sub_keyon (int key) {
-	if (key < 0) key = 0;
-	if (key > 127) key = 127;
-	target = key_map == 0 ? (double) (key - 64) * 128.0 : key_map -> map [key];
+	target = core -> arrange_note (key, transpose, mode, key_map == 0 ? 0 : key_map -> map);
 	this -> key = key;
 	if (! active || porta_switch == 0.0 || porta_time == 0.0 || (porta_control != 0.0 && trigger == 0)) this -> signal = target;
 	else {origin = this -> signal; delta = target - origin; time = 0.0;}
@@ -527,13 +525,12 @@ void lunar_trigger :: ground (int key, int velocity, int base, int previous) {
 }
 void lunar_trigger :: ground_request (void) {
 	sub_velocity (request_velocity);
-	if (request_key < 0) request_key = 0; if (request_key > 127) request_key = 127;
-	target = key_map == 0 ? (double) (request_key - 64) * 128.0 : key_map -> map [request_key];
+	target = core -> arrange_note (request_key, transpose, mode, key_map == 0 ? 0 : key_map -> map);
 	this -> key = request_key; trigger = 16384.0; time = 0.0;
 	if (! active || porta_switch == 0.0 || porta_time == 0.0) this -> signal = target;
 	else {
 		if (porta_control == 0.0) request_base = request_previous;
-		this -> signal = origin = key_map == 0 ? (double) (request_base - 64) * 128.0 : key_map -> map [request_base];
+		this -> signal = origin = core -> arrange_note (request_base, transpose, mode, key_map == 0 ? 0 : key_map -> map);
 		delta = target - origin;
 	}
 	keystack_pointer = 0; add_stack (request_key);

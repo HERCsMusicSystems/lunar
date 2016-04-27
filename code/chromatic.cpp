@@ -74,11 +74,25 @@ int chromatograph :: chromatic (PrologAtom * atom) {
 	if (atom == exx || atom == fx || atom == gb) return 6;
 	if (atom == fxx || atom == g || atom == abb) return 7;
 	if (atom == gx || atom == ab) return 8;
-	if (atom == gxx || atom == a || atom == bbb) return 9;
-	if (atom == ax || atom == bb || atom == cbb) return 10;
-	if (atom == axx || atom == b || atom == cb) return 11;
-	if (atom == bx) return 12;
-	if (atom == bxx) return 13;
+	if (atom == gxx || atom == a || atom == bbb || atom == hbb) return 9;
+	if (atom == ax || atom == bb || atom == cbb || atom == B || atom == hb) return 10;
+	if (atom == axx || atom == b || atom == cb || atom == h) return 11;
+	if (atom == bx || atom == hx) return 12;
+	if (atom == bxx || atom == hxx) return 13;
+	if (atom == cbu) return 0xbff;
+	if (atom == cu) return 0xc00;
+	if (atom == cxu || atom == dbu) return 0xc01;
+	if (atom == du) return 0xc02;
+	if (atom == dxu || atom == ebu) return 0xc03;
+	if (atom == eu || atom == fbu) return 0xc04;
+	if (atom == fu || atom == exu) return 0xc05;
+	if (atom == fxu || atom == gbu) return 0xc06;
+	if (atom == gu) return 0xc07;
+	if (atom == gxu || atom == abu) return 0xc08;
+	if (atom == au) return 0xc09;
+	if (atom == axu || atom == bbu || atom == hbu || atom == Bu) return 0xc0a;
+	if (atom == bu || atom == hu) return 0xc0b;
+	if (atom == bxu || atom == hxu) return 0xc0c;
 	return 0;
 }
 
@@ -89,7 +103,16 @@ chromatograph :: chromatograph (PrologDirectory * dir) {
 	fbb = fb = f = fx = fxx = 0;
 	gbb = gb = g = gx = gxx = 0;
 	abb = ab = a = ax = axx = 0;
-	bbb = bb = b = bx = bxx = 0;
+	bbb = bb = b = B = bx = bxx = 0;
+	hbb = hb = h = hx = hxx = 0;
+	cbu = cu = cxu = 0;
+	dbu = du = dxu = 0;
+	ebu = eu = exu = 0;
+	fbu = fu = fxu = 0;
+	gbu = gu = gxu = 0;
+	abu = au = axu = 0;
+	bbu = bu = Bu = bxu = 0;
+	hbu = hu = hxu = 0;
 	if (dir == 0) return;
 	c = dir -> searchAtom ("C"); cb = dir -> searchAtom ("Cb"); cbb = dir -> searchAtom ("Cbb"); cx = dir -> searchAtom ("C#"); cxx = dir -> searchAtom ("Cx");
 	d = dir -> searchAtom ("D"); db = dir -> searchAtom ("Db"); dbb = dir -> searchAtom ("Dbb"); dx = dir -> searchAtom ("D#"); dxx = dir -> searchAtom ("Dx");
@@ -98,5 +121,15 @@ chromatograph :: chromatograph (PrologDirectory * dir) {
 	g = dir -> searchAtom ("G"); gb = dir -> searchAtom ("Gb"); gbb = dir -> searchAtom ("Gbb"); gx = dir -> searchAtom ("G#"); gxx = dir -> searchAtom ("Gx");
 	a = dir -> searchAtom ("A"); ab = dir -> searchAtom ("Ab"); abb = dir -> searchAtom ("Abb"); ax = dir -> searchAtom ("A#"); axx = dir -> searchAtom ("Ax");
 	b = dir -> searchAtom ("B"); bb = dir -> searchAtom ("Bb"); bbb = dir -> searchAtom ("Bbb"); bx = dir -> searchAtom ("B#"); bxx = dir -> searchAtom ("Bx");
+	B = dir -> searchAtom ("b");
+	h = dir -> searchAtom ("H"); hb = dir -> searchAtom ("Hb"); hbb = dir -> searchAtom ("Hbb"); hx = dir -> searchAtom ("H#"); hxx = dir -> searchAtom ("Hx");
+	cu = dir -> searchAtom ("C^"); cbu = dir -> searchAtom ("Cb^"); cxu = dir -> searchAtom ("C#^");
+	du = dir -> searchAtom ("D^"); dbu = dir -> searchAtom ("Db^"); dxu = dir -> searchAtom ("D#^");
+	eu = dir -> searchAtom ("E^"); ebu = dir -> searchAtom ("Eb^"); exu = dir -> searchAtom ("E#^");
+	fu = dir -> searchAtom ("F^"); fbu = dir -> searchAtom ("Fb^"); fxu = dir -> searchAtom ("F#^");
+	gu = dir -> searchAtom ("G^"); gbu = dir -> searchAtom ("Gb^"); gxu = dir -> searchAtom ("G#^");
+	au = dir -> searchAtom ("A^"); abu = dir -> searchAtom ("Ab^"); axu = dir -> searchAtom ("A#^");
+	bu = dir -> searchAtom ("B^"); Bu = dir -> searchAtom ("b^"); bbu = dir -> searchAtom ("Bb^"); bxu = dir -> searchAtom ("B#^");
+	hu = dir -> searchAtom ("H^"); hbu = dir -> searchAtom ("Hb^"); hxu = dir -> searchAtom ("H#^");
 }
 

@@ -35,8 +35,16 @@ program lunar #machine := "lunar"
 				Fbb Fb F F# Fx
 				Gbb Gb G G# Gx
 				Abb Ab A A# Ax
-				Bbb Bb B B# Bx
+				Bbb Bb B b B# Bx
 				Hbb Hb H H# Hx
+				Cb^ C^ C#^
+				Db^ D^ D#^
+				Eb^ E^ E#^
+				Fb^ F^ F#^
+				Gb^ G^ G#^
+				Ab^ A^ A#^
+				Bb^ B^ b^ B#^
+				Hb^ H^ H#^
 				midi
 				ParameterBlockPanel AdsrPanel EGPanel FEGPanel FM4Panel CorePanel LfoPanel FilterPanel FormantFilterPanel
 				DelayPanel ChorusPanel StereoChorusPanel FreeverbPanel

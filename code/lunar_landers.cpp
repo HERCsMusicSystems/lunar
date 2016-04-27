@@ -414,7 +414,7 @@ lunar_map :: lunar_map (orbiter_core * core, int initial) : orbiter (core) {
 	initialise ();
 }
 
-int lunar_trigger :: numberOfInputs (void) {return 5;}
+int lunar_trigger :: numberOfInputs (void) {return 7;}
 char * lunar_trigger :: inputName (int ind) {
 	switch (ind) {
 	case 0: return "BUSY"; break;
@@ -422,6 +422,8 @@ char * lunar_trigger :: inputName (int ind) {
 	case 2: return "PORTA"; break;
 	case 3: return "TIME"; break;
 	case 4: return "LEGATO"; break;
+	case 5: return "TRANSPOSE"; break;
+	case 6: return "MODE"; break;
 	default: break;
 	}
 	return orbiter :: inputName (ind);
@@ -433,6 +435,8 @@ double * lunar_trigger :: inputAddress (int ind) {
 	case 2: return & porta_switch; break;
 	case 3: return & porta_time; break;
 	case 4: return & porta_control; break;
+	case 5: return & transpose; break;
+	case 6: return & mode; break;
 	default: break;
 	}
 	return orbiter :: inputAddress (ind);
@@ -615,6 +619,7 @@ lunar_trigger :: lunar_trigger (orbiter_core * core, bool active, lunar_trigger 
 	hold_ctrl = 0.0;
 	time = 2.0;
 	velocity = 12800.0;
+	transpose = 0.0; mode = -128.0;
 	key_map = 0;
 	velocity_map = 0;
 	for (int ind = 0; ind < 16; ind++) keystack [ind] = 0; keystack_pointer = 0;

@@ -255,6 +255,7 @@ private:
 	lunar_map * velocity_map;
 	double velocity, trigger, index, delay1, delay2;
 	double origin, delta, target, porta_switch, porta_control, porta_time, time, hold_ctrl;
+	double transpose, mode;
 	bool active;
 	int keystack [16];
 	int keystack_pointer;

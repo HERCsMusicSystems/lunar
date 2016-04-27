@@ -240,8 +240,10 @@ double orbiter_core :: MinBlep (int index) {
 }
 
 int orbiter_core :: arrange_note (int key, int transposition, int reference) {
-	if (key < 0) return 0;
-	if (key < 128) return key + transposition;
+	if (key >= 0x800) {
+		return key - 0xc00 - reference + transposition;
+	}
+	return key - reference + transposition;
 }
 
 void orbiter_core :: activate (orbiter * module) {if (active_pointer >= active_limit) return; actives [active_pointer++] = module;}

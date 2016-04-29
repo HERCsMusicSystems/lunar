@@ -254,7 +254,7 @@ double orbiter_core :: arrange_note (int key, double transposition, double mode,
 	}
 	if (map == 0) return transposition + (double) (key - 64) * 128.0;
 	int index = (int) transposition;
-	int detune = index * 0x7f;
+	int detune = index & 0x7f;
 	index >>= 7;
 	index += key;
 	if (index < 0) index = 0; if (index > 127) index = 127;

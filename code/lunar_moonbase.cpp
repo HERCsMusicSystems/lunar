@@ -817,11 +817,12 @@ polysequence_element :: polysequence_element (int type, int channel, int key, do
 
 polysequence_element :: ~ polysequence_element (void) {if (next != 0) delete next;}
 
-int polysequencer :: numberOfInputs (void) {return 2;}
+int polysequencer :: numberOfInputs (void) {return 3;}
 char * polysequencer :: inputName (int ind) {
 	switch (ind) {
 	case 0: return "SPEED"; break;
 	case 1: return "TRIGGER"; break;
+	case 2: return "CLOCK"; break;
 	default: break;
 	}
 	return orbiter :: inputName (ind);
@@ -830,6 +831,7 @@ double * polysequencer :: inputAddress (int ind) {
 	switch (ind) {
 	case 0: return & tempo; break;
 	case 1: return & trigger; break;
+	case 2: return & clock; break;
 	default: break;
 	}
 	return orbiter :: inputAddress (ind);
@@ -855,6 +857,8 @@ void polysequencer :: propagate_signals (void) {
 		return;
 	}
 	if (time < 0.0) {time = 1.0; tick = 0; current_frame = elements;}
+	if (clock > previous_clock && clock > 0.0) {pthread_mutex_lock (& critical); private_signal (); pthread_mutex_unlock (& critical);}
+	previous_clock = clock;
 	while (time >= 1.0) {time -= 1.0; pthread_mutex_lock (& critical); private_signal (); pthread_mutex_unlock (& critical);}
 	time += core -> sample_duration * tempo * 0.4;
 }
@@ -930,7 +934,7 @@ polysequencer :: polysequencer (orbiter_core * core, int number_of_bases) : Comm
 	base_pointer = 0;
 	pthread_mutex_init (& critical, 0);
 	tempo = 140.0;
-	trigger = 0.0; time = -1.0;
+	trigger = previous_clock = clock = 0.0; time = -1.0;
 	tick = 0;
 	bases = new CommandModulePointer [number_of_bases];
 	elements = current_frame = 0;

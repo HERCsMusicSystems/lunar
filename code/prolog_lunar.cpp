@@ -221,6 +221,46 @@ public:
 	move_core_class (orbiter_core * core) {this -> core = core;}
 };
 
+class arranger_array : public PrologNativeCode {
+public:
+	PrologLunarServiceClass * service;
+	bool code (PrologElement * parameters, PrologResolution * resolution) {
+		PrologElement * index = 0;
+		PrologElement * table = 0;
+		while (parameters -> isPair ()) {
+			PrologElement * el = parameters -> getLeft ();
+			if (el -> isInteger ()) index = el;
+			if (el -> isPair ()) table = el;
+			if (el -> isVar ()) {if (index == 0) index = el; else table = el;}
+			parameters = parameters -> getRight ();
+		}
+		if (index == 0) return false;
+		if (index -> isVar ()) {index -> setInteger (service -> core . arranger_reference_note); return true;}
+		if (index -> isInteger ()) {
+			if (table == 0) {service -> core . arranger_reference_note = index -> getInteger (); return true;}
+			int ind = index -> getInteger ();
+			if (ind < 0 || ind > 127) return false;
+			if (table -> isVar ()) {
+				for (int sub = 0; sub < 12; sub++) {
+					table -> setPair ();
+					table -> getLeft () -> setInteger (service -> core . arranger_array [ind] [sub]);
+					table = table -> getRight ();
+				}
+				return true;
+			}
+			int sub = 0;
+			while (sub < 12 && table -> isPair ()) {
+				PrologElement * el = table -> getLeft ();
+				if (el -> isInteger ()) service -> core . arranger_array [ind] [sub++] = el -> getInteger ();
+				table = table -> getRight ();
+			}
+			if (sub == 12 && table -> isEarth ()) return true;
+		}
+		return false;
+	}
+	arranger_array (PrologLunarServiceClass * service) {this -> service = service;}
+};
+
 class unicar_code : public PrologNativeCode {
 public:
 	PrologAtom * atom;
@@ -336,6 +376,7 @@ PrologNativeCode * PrologLunarServiceClass :: getNativeCode (char * name) {
 	if (strcmp (name, "timingclock") == 0) return new timingclock_class (& core);
 	if (strcmp (name, "detector") == 0) return new detector_class (root, & core);
 	if (strcmp (name, "orbiter") == 0) return new orbiter_statistics ();
+	if (strcmp (name, "arranger_array") == 0) return new arranger_array (this);
 	if (strcmp (name, "midi") == 0) return new midi_class (this -> root, directory);
 	if (strcmp (name, "ParameterBlockPanel") == 0) return new parameter_block_panel_class (this);
 	if (strcmp (name, "AdsrPanel") == 0) return new adsr_panel_class (this);

@@ -12,7 +12,7 @@ program lunar #machine := "lunar"
 				core base moonbase arpeggiator sequencer polysequencer operator parameter_block morph auto auto_data key_map velocity_map impulse
 				trigger inactive_trigger delay1 delay2 mixer stereo_mixer gateway stereo_gateway amplifier stereo_amplifier volume mono_volume
 				lfo envelope adsr adsr-linear eg eg-linear-expo egscaling egscal vca vca-adsr vca-eg vco ring ringmod DCOffsetFilter DCOffsetFilterMono
-				index shift bias
+				index shift bias transpose mode
 				square_operator fm4 fm6 dx9 dx7 saw_operator noise_operator sampler_operator sampler
 				sensitivity sens filter delay reverb freeverb chorus stereo_chorus
 				pan power_pan linear_pan stereo_pan stereo_power_pan stereo_linear_pan
@@ -35,8 +35,16 @@ program lunar #machine := "lunar"
 				Fbb Fb F F# Fx
 				Gbb Gb G G# Gx
 				Abb Ab A A# Ax
-				Bbb Bb B B# Bx
+				Bbb Bb B b B# Bx
 				Hbb Hb H H# Hx
+				Cb^ C^ C#^
+				Db^ D^ D#^
+				Eb^ E^ E#^
+				Fb^ F^ F#^
+				Gb^ G^ G#^
+				Ab^ A^ A#^
+				Bb^ B^ b^ B#^
+				Hb^ H^ H#^
 				midi
 				ParameterBlockPanel AdsrPanel EGPanel FEGPanel FM4Panel CorePanel LfoPanel FilterPanel FormantFilterPanel
 				DelayPanel ChorusPanel StereoChorusPanel FreeverbPanel
@@ -889,11 +897,13 @@ program lunar #machine := "lunar"
 	[AddParameterBlock *parameters level4 *adsr *selector 0 "index"]
 ]
 
-[[InsertIO *parameters *trigger *selector [["BUSY" "HOLD" "PORTA" "TIME" "LEGATO" : *] *]]
+[[InsertIO *parameters *trigger *selector [["BUSY" "HOLD" "PORTA" "TIME" "LEGATO" "TRANSPOSE" "MODE" : *] *]]
 	[AddParameterBlock *parameters porta *trigger *selector 0 "onoff"]
 	[AddParameterBlock *parameters time *trigger *selector 0 "time"]
 	[AddParameterBlock *parameters legato *trigger *selector 0 "onoff"]
 	[AddParameterBlock *parameters hold *trigger *selector 0 "onoff"]
+	[AddParameterBlock *parameters transpose *trigger *selector 0 "index"]
+	[AddParameterBlock *parameters mode *trigger *selector -128 "index"]
 ]
 
 [[InsertIO *parameters *lfo *selector [["TRIGGER" "SPEED" "WAVE" "PULSE" "PHASE" "SYNC" "VIBRATO" "TREMOLO" "WAHWAH" "PAN" : *] *]]

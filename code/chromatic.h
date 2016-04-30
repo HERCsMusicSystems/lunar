@@ -37,7 +37,16 @@ private:
 	PrologAtom * fbb, * fb, * f, * fx, * fxx;
 	PrologAtom * gbb, * gb, * g, * gx, * gxx;
 	PrologAtom * abb, * ab, * a, * ax, * axx;
-	PrologAtom * bbb, * bb, * b, * bx, * bxx;
+	PrologAtom * bbb, * bb, * b, * B, * bx, * bxx;
+	PrologAtom * hbb, * hb, * h, * hx, * hxx;
+	PrologAtom * cbu, * cu, * cxu;
+	PrologAtom * dbu, * du, * dxu;
+	PrologAtom * ebu, * eu, * exu;
+	PrologAtom * fbu, * fu, * fxu;
+	PrologAtom * gbu, * gu, * gxu;
+	PrologAtom * abu, * au, * axu;
+	PrologAtom * bbu, * bu, * Bu, * bxu;
+	PrologAtom * hbu, * hu, * hxu;
 public:
 	bool get_channel (PrologElement * * parameters, int * channel);
 	bool get_key (PrologElement * * parameters, int * key);

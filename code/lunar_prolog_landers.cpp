@@ -533,6 +533,11 @@ bool native_moonbase :: code (PrologElement * parameters, PrologResolution * res
 				if (key != 0) {
 					if (var != 0) {var -> setDouble (trigger -> getControl ((int) key -> getNumber ())); return true;}
 					if (velocity != 0) {trigger -> control ((int) key -> getNumber (), velocity -> getNumber ()); return true;}
+					if (note != 0 && octave != 0) {
+						trigger -> control ((int) key -> getNumber (),
+								(double) graph . chromatic (note -> getAtom ()) + octave -> getInteger () * 12 + 48);
+						return true;
+					}
 				}
 				if (var != 0) {var -> setAtom (trigger -> isMonoMode () ? mono : poly); return true;}
 				return false;

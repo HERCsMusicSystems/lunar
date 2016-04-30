@@ -242,6 +242,7 @@ void lunar_sampler_operator :: move (void) {
 	if (time < 0.0) {if (trigger <= 0.0) return; time = 0.0; busy = 1.0; return_possible = true;}
 	if (wave == 0) {signal = signal_right = 0.0; time = -1.0; busy = 0.0; return;}
 	int ind = (int) index;
+	ind >>= 7;
 	if (ind < 0 || ind >= wave -> capacity) {signal = signal_right = 0.0; time = -1.0; busy = 0.0; return;}
 	wave_data * data = wave -> waves [ind];
 	if (data == 0) {signal = signal_right = 0.0; time = -1.0; busy = 0.0; return;}

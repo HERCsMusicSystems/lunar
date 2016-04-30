@@ -464,7 +464,7 @@ void random4 (arpeggiator * arp) {
 	arp -> octave = key;
 }
 
-int arpeggiator :: numberOfInputs (void) {return 5;}
+int arpeggiator :: numberOfInputs (void) {return 6;}
 char * arpeggiator :: inputName (int ind) {
 	switch (ind) {
 	case 0: return "SPEED"; break;
@@ -472,6 +472,7 @@ char * arpeggiator :: inputName (int ind) {
 	case 2: return "ACTIVE"; break;
 	case 3: return "ALGO"; break;
 	case 4: return "HOLD"; break;
+	case 5: return "CLOCK"; break;
 	default: break;
 	}
 	return orbiter :: inputName (ind);
@@ -483,6 +484,7 @@ double * arpeggiator :: inputAddress (int ind) {
 	case 2: return & active; break;
 	case 3: return & current_algo; break;
 	case 4: return & hold; break;
+	case 5: return & clock; break;
 	default: break;
 	}
 	return orbiter :: inputAddress (ind);
@@ -550,6 +552,8 @@ void arpeggiator :: propagate_signals (void) {
 		}
 		previous_algo = current_algo;
 	}
+	if (clock > previous_clock && clock > 0.0) {pthread_mutex_lock (& critical); private_signal (); pthread_mutex_unlock (& critical);}
+	previous_clock = clock;
 	while (time >= 1.0) {time -= 1.0; pthread_mutex_lock (& critical); private_signal (); pthread_mutex_unlock (& critical);}
 	time += core -> sample_duration * tempo * 0.4;
 }
@@ -660,6 +664,7 @@ void arpeggiator :: ground (void) {
 
 arpeggiator :: arpeggiator (orbiter_core * core, CommandModule * base) : CommandModule (core) {
 	pthread_mutex_init (& critical, 0);
+	clock = previous_clock = 0.0;
 	active_key_pointer = number_of_keys = 0;
 	tempo = 140.0; division = 24.0;
 	algo = up1; current_algo = previous_algo = 0.0;

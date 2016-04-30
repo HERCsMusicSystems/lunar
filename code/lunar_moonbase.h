@@ -88,6 +88,7 @@ private:
 	double time;
 	double active;
 	double previous_activity;
+	double clock, previous_clock;
 	double hold;
 	bool should_keyoff;
 	int active_keys [128];

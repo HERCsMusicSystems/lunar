@@ -1013,6 +1013,9 @@ public:
 	~ lunar_detector (void) {if (query != 0) delete query;}
 };
 
+orbiter * timingclock_class :: create_orbiter (PrologElement * parameters) {return new lunar_timingclock (core);}
+timingclock_class :: timingclock_class (orbiter_core * core) : PrologNativeOrbiterCreator (core) {}
+
 orbiter * detector_class :: create_orbiter (PrologElement * parameters) {
 	PrologElement * detector = 0;
 	PrologElement * query = 0;

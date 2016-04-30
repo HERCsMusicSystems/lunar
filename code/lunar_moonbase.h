@@ -80,6 +80,19 @@ public:
 	~ moonbase (void);
 };
 
+class lunar_timingclock : public orbiter {
+private:
+	double tempo;
+	double trigger;
+	double time;
+public:
+	virtual int numberOfInputs (void);
+	virtual char * inputName (int ind);
+	virtual double * inputAddress (int ind);
+	virtual void move (void);
+	lunar_timingclock (orbiter_core * core);
+};
+
 class arpeggiator : public CommandModule {
 private:
 	double tempo;

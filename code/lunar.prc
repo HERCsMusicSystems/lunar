@@ -121,6 +121,7 @@ program lunar #machine := "lunar"
 #machine arpeggiator := "arpeggiator"
 #machine sequencer := "sequencer"
 #machine polysequencer := "polysequencer"
+#machine timingclock := "timingclock"
 #machine detector := "detector"
 
 #machine core := "core"

@@ -158,6 +158,31 @@ moonbase :: moonbase (orbiter_core * core) : CommandModule (core) {
 
 moonbase :: ~ moonbase (void) {pthread_mutex_destroy (& critical);}
 
+int lunar_timingclock :: numberOfInputs (void) {return 2;}
+char * lunar_timingclock :: inputName (int ind) {
+	switch (ind) {
+	case 0: return "SPEED"; break;
+	case 1: return "TRIGGER"; break;
+	default: break;
+	}
+	return orbiter :: inputName (ind);
+}
+double * lunar_timingclock :: inputAddress (int ind) {
+	switch (ind) {
+	case 0: return & tempo; break;
+	case 1: return & trigger; break;
+	default: break;
+	}
+	return orbiter :: inputAddress (ind);
+}
+void lunar_timingclock :: move (void) {
+	if (signal != 0.0) signal = 0.0;
+	if (trigger < 1.0) return;
+	if (time >= 1.0) {signal = 1.0; time = 0.0;}
+	time += core -> sample_duration * tempo * 0.4;
+}
+lunar_timingclock :: lunar_timingclock (orbiter_core * core) : orbiter (core) {time = trigger = 0.0; tempo = 140.0; initialise (); activate ();}
+
 void up1 (arpeggiator * arp) {
 	if (arp -> index < 0) arp -> index = 0;
 	if (arp -> index >= arp -> active_key_pointer) arp -> index = 0;

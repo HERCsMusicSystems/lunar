@@ -296,6 +296,12 @@ public:
 	polysequencer_class (PrologDirectory * dir, orbiter_core * core);
 };
 
+class timingclock_class : public PrologNativeOrbiterCreator {
+public:
+	virtual orbiter * create_orbiter (PrologElement * parameters);
+	timingclock_class (orbiter_core * core);
+};
+
 class detector_class : public PrologNativeOrbiterCreator {
 public:
 	PrologRoot * root;

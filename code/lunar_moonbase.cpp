@@ -685,11 +685,12 @@ sequence_element :: sequence_element (int type, int key, double velocity) {
 
 sequence_element :: ~ sequence_element (void) {if (next != 0) delete next;}
 
-int sequencer :: numberOfInputs (void) {return 2;}
+int sequencer :: numberOfInputs (void) {return 3;}
 char * sequencer :: inputName (int ind) {
 	switch (ind) {
 	case 0: return "SPEED"; break;
 	case 1: return "TRIGGER"; break;
+	case 2: return "CLOCK"; break;
 	default: break;
 	}
 	return orbiter :: inputName (ind);
@@ -698,6 +699,7 @@ double * sequencer :: inputAddress (int ind) {
 	switch (ind) {
 	case 0: return & tempo; break;
 	case 1: return & trigger; break;
+	case 2: return & clock; break;
 	default: break;
 	}
 	return orbiter :: inputAddress (ind);
@@ -718,7 +720,9 @@ void sequencer :: propagate_signals (void) {
 		if (base != 0) base -> keyoff ();
 		return;
 	}
-	if (time < 0.0) {time = 1.0; tick = 0; current_frame = elements;}
+	if (clock > previous_clock && clock > 0.0) {pthread_mutex_lock (& critical); private_signal (); pthread_mutex_unlock (& critical);}
+	previous_clock = clock;
+	if (time < 0.0) {time = tempo > 0.0 ? 1.0 : 0.0; tick = 0; current_frame = elements;}
 	while (time >= 1.0) {time -= 1.0; pthread_mutex_lock (& critical); private_signal (); pthread_mutex_unlock (& critical);}
 	time += core -> sample_duration * tempo * 0.4;
 }
@@ -785,7 +789,7 @@ sequencer :: sequencer (orbiter_core * core, CommandModule * base) : CommandModu
 	impulse_level = busy_level = 0.0;
 	pthread_mutex_init (& critical, 0);
 	tempo = 140.0;
-	trigger = 0.0; time = -1.0;
+	trigger = previous_clock = clock = 0.0; time = -1.0;
 	tick = 0;
 	this -> base = base; if (base != 0) base -> hold ();
 	elements = current_frame = 0;

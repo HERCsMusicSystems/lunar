@@ -169,6 +169,7 @@ class sequencer : public CommandModule {
 private:
 	double tempo;
 	double trigger;
+	double clock, previous_clock;
 	double time;
 	int tick;
 	double impulse_level, busy_level;

@@ -71,6 +71,7 @@
     </li>
     <li><a href="#superstructure">Superstructure</a><br />
         <a href="#predicate_arpeggiator">arpeggiator</a>
+        <a href="#predicate_arranger_array">arranger_array</a>
         <a href="#predicate_base">base</a>
         <a href="#predicate_CloseAllMoons">CloseAllMoons</a>
         <a href="#predicate_ConnectAllMoons">ConnectAllMoons</a>
@@ -89,6 +90,7 @@
         <a href="#predicate_Restore">Restore</a>
         <a href="#predicate_sequencer">sequencer</a>
         <a href="#predicate_Store">Store</a>
+        <a href="#predicate_timingclock">timingclock</a>
     </li>
     <li><a href="#distributor">Distributor</a><br />
         <a href="#predicate_CloseDistributor">CloseDistributor</a>
@@ -1071,7 +1073,7 @@ Core also functions as an audio source (connected directly to the sound hardware
             Otherwise defaults to common behaviour.
         </div>
         <div class="doc_predicate_body">
-            <b>Signals:</b> [["BUSY" "HOLD" "PORTA" "TIME" "LEGATO"] ["KEY" "VELOCITY" "TRIGGER" "DELAY1" "DELAY2"]]<br />
+            <b>Signals:</b> [["BUSY" "HOLD" "PORTA" "TIME" "LEGATO" "TRANSPOSE" "MODE"] ["KEY" "VELOCITY" "TRIGGER" "DELAY1" "DELAY2"]]<br />
             Generates control signals for synthesiser's modules. It can also generate portamento effect.<br />
             <b>INPUTS:</b><br />
             <b>Busy:</b> usually receives signal combined from all the relevant ADSR modules. Indicates whether the sound is still audible (1.0) or not (0.0).<br />
@@ -1079,6 +1081,8 @@ Core also functions as an audio source (connected directly to the sound hardware
             <b>Porta:</b> engages ramping of the <b>"KEY"</b> output to simulate portamento.<br />
             <b>Time:</b> controls the duration of the portamento transition.<br />
             <b>Legato:</b> controls the mode of the portamento effect.<br />
+            <b>Transpose:</b> 14-bit value. MSB is the key shift, LSB is the detune.<br />
+            <b>Mode:</b> 14-bit value. MSB is the index to the global arranger array transfer table in core.<br />
             <b>OUTPUTS:</b><br />
             <b>Key:</b> is the MIDI key number translated into the range between -8192.0 .. 8192.0.<br />
             <b>Velocity:</b> is the MIDI velocity value translated into the range between 0.0 .. 16384.0.<br />
@@ -1298,7 +1302,7 @@ A typical construction of an instrument and inserting it into the superstructure
             <b>Note:</b> module adheres to the behaviour of a <a href="#predicate_base">base</a> module.<br />
         </div>
         <div class="doc_predicate_body">
-            <b>Signals:</b> [["SPEED" "DIVISION" "ACTIVE" "ALGO" "HOLD"] []]<br />
+            <b>Signals:</b> [["SPEED" "DIVISION" "ACTIVE" "ALGO" "HOLD" "TIMINGCLOCK"] []]<br />
             Plays arpeggios on the connected (moon)base module.<br />
             <b>INPUTS:</b><br />
             <b>Speed:</b> determines beats per minute (assuming 24 ticks in a beat).<br />
@@ -1306,6 +1310,19 @@ A typical construction of an instrument and inserting it into the superstructure
             <b>Active:</b> starts or stops the arpeggiator.<br />
             <b>Algo:</b> determines the arpeggio pattern to be played.<br />
             <b>Hold:</b> keeps playing even if keys are no longer pressed.<br />
+            <b>Timingclock:</b> external trigger (works well with speed = ZERO).<br />
+        </div>
+    </a>
+</div>
+
+<div class="doc_predicate">
+    <a id="predicate_arranger_array">
+        <div class="doc_predicate_header">
+            [arranger_array *reference_note] => sets or returns the global arranger reference note.<br />
+            [arranger_array index *array] => sets or return 12-element arranger transfer table.<br />
+        </div>
+        <div class="doc_predicate_body">
+            Controls the global arranger transfer array table and reference note.
         </div>
     </a>
 </div>
@@ -1518,11 +1535,12 @@ A typical construction of an instrument and inserting it into the superstructure
             [module *x] => Returns the current sequence.<br />
         </div>
         <div class="doc_predicate_body">
-            <b>Signals:</b> [["SPEED" "TRIGGER"] ["BUSY"]]<br />
+            <b>Signals:</b> [["SPEED" "TRIGGER" "TIMINGCLOCK"] ["BUSY"]]<br />
             Plays sequences on the connected (moon)base modules.<br />
             <b>INPUTS:</b><br />
             <b>Speed:</b> determines beats per minute (assuming 24 ticks in a beat).<br />
             <b>Trigger:</b> starts playing sequence if greated than zero. If equals 2.0 then plays in a loop.<br />
+            <b>Timingclock:</b> external trigger (works well with speed = ZERO).<br />
             <b>OUTPUTS:</b><br />
             <b>Busy:</b> becomes active one sample AFTER the sequence was started.
             If looped then it becomes zero at the beginning of each repetition for the duration of one sample.<br />
@@ -1567,11 +1585,12 @@ A typical construction of an instrument and inserting it into the superstructure
             [module *x] => Returns the current sequence.<br />
         </div>
         <div class="doc_predicate_body">
-            <b>Signals:</b> [["SPEED" "TRIGGER"] ["BUSY"]]<br />
+            <b>Signals:</b> [["SPEED" "TRIGGER" "TIMINGCLOCK"] ["BUSY"]]<br />
             Plays sequences on the connected (moon)base module.<br />
             <b>INPUTS:</b><br />
             <b>Speed:</b> determines beats per minute (assuming 24 ticks in a beat).<br />
             <b>Trigger:</b> starts playing sequence if greated than zero. If equals 2.0 then plays in a loop.<br />
+            <b>Timingclock:</b> external trigger (works well with speed = ZERO).<br />
             <b>OUTPUTS:</b><br />
             <b>Busy:</b> becomes active one sample AFTER the sequence was started.
             If looped then it becomes zero at the beginning of each repetition for the duration of one sample.<br />
@@ -1598,6 +1617,24 @@ A typical construction of an instrument and inserting it into the superstructure
         </div>
         <div class="doc_predicate_body">
             Saves values of all parameter blocks of the instrument's superstructure into the specified file.
+        </div>
+    </a>
+</div>
+
+<div class="doc_predicate">
+    <a id="predicate_timingclock">
+        <div class="doc_predicate_header">
+            [timingclock module] => Creates an external timing clock.<br />
+            <b>Note:</b> module adheres to the behaviour of a <a href="#predicate_base">base</a> module.<br />
+        </div>
+        <div class="doc_predicate_body">
+            <b>Signals:</b> [["SPEED" "TRIGGER"] ["SIGNAL"]]<br />
+            Generates timing clock impulses, which can be used to synchronise arpeggiators and (poly)sequencers.<br />
+            <b>INPUTS:</b><br />
+            <b>Speed:</b> determines beats per minute (assuming 24 ticks in a beat).<br />
+            <b>Trigger:</b> activates (ONE) or deactivates (ZERO) timing clock.<br />
+            <b>OUTPUTS:</b><br />
+            <b>Signal:</b> timing clock impulses.<br />
         </div>
     </a>
 </div>

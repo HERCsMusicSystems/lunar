@@ -472,7 +472,7 @@ char * arpeggiator :: inputName (int ind) {
 	case 2: return "ACTIVE"; break;
 	case 3: return "ALGO"; break;
 	case 4: return "HOLD"; break;
-	case 5: return "CLOCK"; break;
+	case 5: return "TIMINGCLOCK"; break;
 	default: break;
 	}
 	return orbiter :: inputName (ind);
@@ -695,7 +695,7 @@ char * sequencer :: inputName (int ind) {
 	switch (ind) {
 	case 0: return "SPEED"; break;
 	case 1: return "TRIGGER"; break;
-	case 2: return "CLOCK"; break;
+	case 2: return "TIMINGCLOCK"; break;
 	default: break;
 	}
 	return orbiter :: inputName (ind);
@@ -822,7 +822,7 @@ char * polysequencer :: inputName (int ind) {
 	switch (ind) {
 	case 0: return "SPEED"; break;
 	case 1: return "TRIGGER"; break;
-	case 2: return "CLOCK"; break;
+	case 2: return "TIMINGCLOCK"; break;
 	default: break;
 	}
 	return orbiter :: inputName (ind);

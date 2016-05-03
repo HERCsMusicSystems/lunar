@@ -56,7 +56,7 @@ program lunar #machine := "lunar"
 				CreateDistributor CloseDistributor Distribute Redistribute
 				CCCB CCCBContinuation cb_callback cb_path cb_edit_path process_mode CBsub ICBsub
 				LoopWave unicar
-				MIDI_CHANNELS midi_monitor income_midi
+				MIDI_CHANNELS midi_monitor income_midi moonbase_monitor
 				GenerateInstrumentName InstrumentIndex
 				radar reactor commander Core Midi
 				BuildIntegrated
@@ -118,6 +118,7 @@ program lunar #machine := "lunar"
 #machine sensitivity := "sensitivity"
 #machine base := "moonbase"
 #machine moonbase := "moonbase"
+#machine moonbase_monitor := "moonbase_monitor"
 #machine arpeggiator := "arpeggiator"
 #machine sequencer := "sequencer"
 #machine polysequencer := "polysequencer"

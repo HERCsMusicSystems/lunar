@@ -585,6 +585,63 @@ orbiter * moonbase_class :: create_orbiter (PrologElement * parameters) {return 
 PrologNativeOrbiter * moonbase_class :: create_native_orbiter (PrologAtom * atom, orbiter * module) {return new native_moonbase (dir, atom, core, module);}
 moonbase_class :: moonbase_class (PrologDirectory * dir, orbiter_core * core) : PrologNativeOrbiterCreator (core) {this -> dir = dir;}
 
+class moonbase_monitor : public CommandModule {
+private:
+	PrologRoot * root;
+	PrologDirectory * dir;
+	PrologAtom * atom;
+	PrologAtom * keyon_atom, * keyoff_atom;
+public:
+	bool insert_trigger (lunar_trigger * trigger) {return false;}
+	bool insert_controller (orbiter * module, int ctrl, double shift) {return false;}
+	void keyon (int key, int velocity) {
+		PrologElement * query = root -> pair (root -> atom (atom),
+								root -> pair (root -> atom (keyon_atom),
+								root -> pair (root -> integer (key),
+								root -> pair (root -> integer (velocity), root -> earth ()))));
+		query = root -> pair (root -> head (0), root -> pair (query, root -> earth ()));
+		root -> resolution (query);
+		delete query;
+	}
+	void keyon (int key) {
+		PrologElement * query = root -> pair (root -> atom (atom),
+								root -> pair (root -> atom (keyon_atom),
+								root -> pair (root -> integer (key), root -> earth ())));
+		query = root -> pair (root -> head (0), root -> pair (query, root -> earth ()));
+		root -> resolution (query);
+		delete query;
+	}
+	void keyoff (int key, int velocity) {}
+	void keyoff (void) {}
+	void mono (void) {}
+	void poly (void) {}
+	bool isMonoMode (void) {return false;}
+	void control (int ctrl, double value) {}
+	double getControl (int ind) {return 0.0;}
+	void timing_clock (void) {}
+	moonbase_monitor (PrologRoot * root, PrologDirectory * dir, PrologAtom * atom, orbiter_core * core) : CommandModule (core) {
+		this -> root = root; this -> dir = dir; this -> atom = atom;
+		keyon_atom = keyoff_atom = 0;
+		if (dir == 0) return;
+		keyon_atom = dir -> searchAtom ("keyon");
+		keyoff_atom = dir -> searchAtom ("keyoff");
+	}
+};
+
+orbiter * moonbase_monitor_class :: create_orbiter (PrologElement * parameters) {
+	PrologElement * callback = 0;
+	while (parameters -> isPair ()) {
+		PrologElement * el = parameters -> getLeft ();
+		if (el -> isAtom ()) callback = el;
+		parameters = parameters -> getRight ();
+	}
+	if (callback == 0) return 0;
+	return new moonbase_monitor (root, dir, callback -> getAtom (), core);
+}
+PrologNativeOrbiter * moonbase_monitor_class :: create_native_orbiter (PrologAtom * atom, orbiter * module) {return new native_moonbase (dir, atom, core, module);}
+moonbase_monitor_class :: moonbase_monitor_class (PrologRoot * root, PrologDirectory * dir, orbiter_core * core)
+	: PrologNativeOrbiterCreator (core) {this -> root = root; this -> dir = dir;}
+
 orbiter * arpeggiator_class :: create_orbiter (PrologElement * parameters) {
 	PrologElement * base = 0;
 	while (parameters -> isPair ()) {

@@ -269,6 +269,17 @@ public:
 	virtual bool code (PrologElement * parameters, PrologResolution * resolution);
 	native_moonbase (PrologDirectory * dir, PrologAtom * atom, orbiter_core * core, orbiter * module);
 };
+
+class moonbase_monitor_class : public PrologNativeOrbiterCreator {
+private:
+	PrologRoot * root;
+	PrologDirectory * dir;
+public:
+	virtual orbiter * create_orbiter (PrologElement * parameters);
+	virtual PrologNativeOrbiter * create_native_orbiter (PrologAtom * atom, orbiter * module);
+	moonbase_monitor_class (PrologRoot * root, PrologDirectory * dir, orbiter_core * core);
+};
+
 class arpeggiator_class : public PrologNativeOrbiterCreator {
 private:
 	PrologDirectory * dir;

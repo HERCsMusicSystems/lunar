@@ -715,12 +715,13 @@ sequence_element :: sequence_element (int type, int key, double velocity) {
 
 sequence_element :: ~ sequence_element (void) {if (next != 0) delete next;}
 
-int sequencer :: numberOfInputs (void) {return 3;}
+int sequencer :: numberOfInputs (void) {return 4;}
 char * sequencer :: inputName (int ind) {
 	switch (ind) {
 	case 0: return "SPEED"; break;
 	case 1: return "TRIGGER"; break;
-	case 2: return "TIMINGCLOCK"; break;
+	case 2: return "VARIATION"; break;
+	case 3: return "TIMINGCLOCK"; break;
 	default: break;
 	}
 	return orbiter :: inputName (ind);
@@ -729,7 +730,8 @@ double * sequencer :: inputAddress (int ind) {
 	switch (ind) {
 	case 0: return & tempo; break;
 	case 1: return & trigger; break;
-	case 2: return & clock; break;
+	case 2: return & variation; break;
+	case 3: return & clock; break;
 	default: break;
 	}
 	return orbiter :: inputAddress (ind);
@@ -742,6 +744,13 @@ bool sequencer :: release (void) {
 	return ret;
 }
 
+static int get_variation (double trigger) {
+	int v = (int) trigger;
+	v >>= 7;
+	if (v < 0) v = 0; if (v > 127) v = 127;
+	return v;
+}
+
 void sequencer :: propagate_signals (void) {
 	orbiter :: propagate_signals ();
 	if (trigger < 1.0) {
@@ -752,14 +761,14 @@ void sequencer :: propagate_signals (void) {
 	}
 	if (clock > previous_clock && clock > 0.0) {pthread_mutex_lock (& critical); private_signal (); pthread_mutex_unlock (& critical);}
 	previous_clock = clock;
-	if (time < 0.0) {time = tempo > 0.0 ? 1.0 : 0.0; tick = 0; current_frame = elements;}
+	if (time < 0.0) {time = tempo > 0.0 ? 1.0 : 0.0; tick = 0; current_frame = elements [get_variation (variation)];}
 	while (time >= 1.0) {time -= 1.0; pthread_mutex_lock (& critical); private_signal (); pthread_mutex_unlock (& critical);}
 	time += core -> sample_duration * tempo * 0.4;
 }
 
 void sequencer :: private_signal (void) {
 	if (current_frame == 0 || base == 0) {impulse_level = busy_level = 0.0; return;}
-	if (current_frame == elements) {impulse_level = 0.0; busy_level = 1.0;}
+	if (current_frame == elements [get_variation (variation)]) {impulse_level = 0.0; busy_level = 1.0;}
 	while (tick < 1) {
 		switch (current_frame -> type) {
 		case 0: tick = current_frame -> key; break;
@@ -774,7 +783,7 @@ void sequencer :: private_signal (void) {
 		}
 		current_frame = current_frame -> next;
 		if (current_frame == 0) {
-			if (trigger > 1.0) current_frame = elements;
+			if (trigger > 1.0) current_frame = elements [get_variation (variation)];
 			else return;
 		}
 	}
@@ -819,14 +828,18 @@ sequencer :: sequencer (orbiter_core * core, CommandModule * base) : CommandModu
 	impulse_level = busy_level = 0.0;
 	pthread_mutex_init (& critical, 0);
 	tempo = 140.0;
-	trigger = previous_clock = clock = 0.0; time = -1.0;
+	trigger = variation = previous_clock = clock = 0.0; time = -1.0;
 	tick = 0;
 	this -> base = base; if (base != 0) base -> hold ();
-	elements = current_frame = 0;
+	current_frame = 0;
+	for (int ind = 0; ind < 128; ind++) elements [ind] = 0;
 	initialise (); activate ();
 }
 
-sequencer :: ~ sequencer (void) {pthread_mutex_destroy (& critical); if (elements != 0) delete elements;}
+sequencer :: ~ sequencer (void) {
+	pthread_mutex_destroy (& critical);
+	for (int ind = 0; ind < 128; ind++) {if (elements [ind] != 0) delete elements [ind];}
+}
 
 ///////////////////
 // POLYSEQUENCER //

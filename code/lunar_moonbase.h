@@ -47,6 +47,8 @@ public:
 	CommandModule (orbiter_core * core);
 };
 
+typedef CommandModule * CommandModulePointer;
+
 class moonbase : public CommandModule {
 private:
 	lunar_trigger * triggers;
@@ -183,6 +185,7 @@ class sequencer : public CommandModule {
 private:
 	double tempo;
 	double trigger;
+	double variation;
 	double clock, previous_clock;
 	double time;
 	int tick;
@@ -192,7 +195,7 @@ private:
 	pthread_mutex_t critical;
 	void private_signal (void);
 public:
-	sequence_element * elements;
+	sequence_element * elements [128];
 public:
 	bool insert_trigger (lunar_trigger * trigger);
 	bool insert_controller (orbiter * controller, int location, double shift);
@@ -231,7 +234,6 @@ public:
 	~ polysequence_element (void);
 };
 
-typedef CommandModule * CommandModulePointer;
 class polysequencer : public CommandModule {
 private:
 	double tempo;

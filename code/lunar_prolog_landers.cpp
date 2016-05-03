@@ -677,11 +677,18 @@ public:
 	chromatograph graph;
 	bool code (PrologElement * parameters, PrologResolution * resolution) {
 		if (parameters -> isPair ()) {
+			int variation = 0;
 			PrologElement * el = parameters -> getLeft ();
+			if (el -> isInteger ()) {
+				variation = el -> getInteger ();
+				if (variation < 0) variation = 0; if (variation > 127) variation = 127;
+				el = parameters -> getRight ();
+				if (el -> isPair ()) el = el -> getLeft ();
+			}
 			if (el -> isVar ()) {
 				sequencer * seq = (sequencer *) module;
 				if (seq == 0) return false;
-				sequence_element * sqep = seq -> elements;
+				sequence_element * sqep = seq -> elements [variation];
 				while (sqep != 0) {
 					el -> setPair ();
 					PrologElement * ell = el -> getLeft ();
@@ -739,8 +746,8 @@ public:
 			if (el -> isPair ()) {
 				sequencer * seq = (sequencer *) module;
 				if (seq == 0) return false;
-				if (seq -> elements != 0) delete seq -> elements; seq -> elements = 0;
-				sequence_element * * sqep = & seq -> elements;
+				if (seq -> elements [variation] != 0) delete seq -> elements [variation]; seq -> elements [variation] = 0;
+				sequence_element * * sqep = & seq -> elements [variation];
 				while (el -> isPair ()) {
 					PrologElement * eq = el -> getLeft ();
 					if (eq -> isInteger ()) {* sqep = new sequence_element (0, eq -> getInteger ()); sqep = & (* sqep) -> next;}

@@ -590,41 +590,54 @@ private:
 	PrologRoot * root;
 	PrologDirectory * dir;
 	PrologAtom * atom;
-	PrologAtom * keyon_atom, * keyoff_atom;
+	PrologAtom * keyon_atom, * keyoff_atom, * control_atom, * mono_atom, * poly_atom, * timing_clock_atom;
+	void activate_query (PrologElement * query) {
+		query = root -> pair (root -> head (0), root -> pair (query, root -> earth ()));
+		root -> resolution (query);
+		delete query;
+	}
 public:
 	bool insert_trigger (lunar_trigger * trigger) {return false;}
 	bool insert_controller (orbiter * module, int ctrl, double shift) {return false;}
 	void keyon (int key, int velocity) {
-		PrologElement * query = root -> pair (root -> atom (atom),
-								root -> pair (root -> atom (keyon_atom),
-								root -> pair (root -> integer (key),
-								root -> pair (root -> integer (velocity), root -> earth ()))));
-		query = root -> pair (root -> head (0), root -> pair (query, root -> earth ()));
-		root -> resolution (query);
-		delete query;
+		activate_query (root -> pair (root -> atom (atom),
+						root -> pair (root -> atom (keyon_atom),
+						root -> pair (root -> integer (key),
+						root -> pair (root -> integer (velocity), root -> earth ())))));
 	}
 	void keyon (int key) {
-		PrologElement * query = root -> pair (root -> atom (atom),
-								root -> pair (root -> atom (keyon_atom),
-								root -> pair (root -> integer (key), root -> earth ())));
-		query = root -> pair (root -> head (0), root -> pair (query, root -> earth ()));
-		root -> resolution (query);
-		delete query;
+		activate_query (root -> pair (root -> atom (atom),
+						root -> pair (root -> atom (keyon_atom),
+						root -> pair (root -> integer (key), root -> earth ()))));
 	}
-	void keyoff (int key, int velocity) {}
-	void keyoff (void) {}
-	void mono (void) {}
-	void poly (void) {}
+	void keyoff (int key, int velocity) {
+		activate_query (root -> pair (root -> atom (atom),
+						root -> pair (root -> atom (keyoff_atom),
+						root -> pair (root -> integer (key),
+						root -> pair (root -> integer (velocity), root -> earth ())))));
+	}
+	void keyoff (void) {activate_query (root -> pair (root -> atom (atom), root -> pair (root -> atom (keyoff_atom), root -> earth ())));}
+	void mono (void) {activate_query (root -> pair (root -> atom (atom), root -> pair (root -> atom (mono_atom), root -> earth ())));}
+	void poly (void) {activate_query (root -> pair (root -> atom (atom), root -> pair (root -> atom (poly_atom), root -> earth ())));}
 	bool isMonoMode (void) {return false;}
-	void control (int ctrl, double value) {}
+	void control (int ctrl, double value) {
+		activate_query (root -> pair (root -> atom (atom),
+						root -> pair (root -> atom (control_atom),
+						root -> pair (root -> integer (ctrl),
+						root -> pair (root -> Double (value), root -> earth ())))));
+	}
 	double getControl (int ind) {return 0.0;}
-	void timing_clock (void) {}
+	void timing_clock (void) {activate_query (root -> pair (root -> atom (atom), root -> pair (root -> atom (timing_clock_atom), root -> earth ())));}
 	moonbase_monitor (PrologRoot * root, PrologDirectory * dir, PrologAtom * atom, orbiter_core * core) : CommandModule (core) {
 		this -> root = root; this -> dir = dir; this -> atom = atom;
-		keyon_atom = keyoff_atom = 0;
+		keyon_atom = keyoff_atom = control_atom = mono_atom = poly_atom = timing_clock_atom = 0;
 		if (dir == 0) return;
 		keyon_atom = dir -> searchAtom ("keyon");
 		keyoff_atom = dir -> searchAtom ("keyoff");
+		control_atom = dir -> searchAtom ("control");
+		mono_atom = dir -> searchAtom ("mono");
+		poly_atom = dir -> searchAtom ("poly");
+		timing_clock_atom = dir -> searchAtom ("timingclock");
 	}
 };
 

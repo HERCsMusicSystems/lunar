@@ -783,7 +783,7 @@ void sequencer :: private_signal (void) {
 		}
 		current_frame = current_frame -> next;
 		if (current_frame == 0) {
-			if (trigger > 1.0) current_frame = elements [get_variation (variation)];
+			if (trigger >= 256.0) current_frame = elements [get_variation (variation)];
 			else return;
 		}
 	}
@@ -792,15 +792,8 @@ void sequencer :: private_signal (void) {
 
 void sequencer :: move (void) {signal = impulse_level; impulse_level = busy_level;}
 
-bool sequencer :: insert_trigger (lunar_trigger * trigger) {
-	if (base != 0) return base -> insert_trigger (trigger);
-	return false;
-}
-
-bool sequencer :: insert_controller (orbiter * controller, int location, double shift) {
-	if (base != 0) return base -> insert_controller (controller, location, shift);
-	return false;
-}
+bool sequencer :: insert_trigger (lunar_trigger * trigger) {return false;}
+bool sequencer :: insert_controller (orbiter * controller, int location, double shift) {return false;}
 
 void sequencer :: keyon (int key) {}
 void sequencer :: keyon (int key, int velocity) {}

@@ -12,7 +12,7 @@ program lunar #machine := "lunar"
 				core base moonbase arpeggiator sequencer polysequencer operator parameter_block morph auto auto_data key_map velocity_map impulse
 				trigger inactive_trigger delay1 delay2 mixer stereo_mixer gateway stereo_gateway amplifier stereo_amplifier volume mono_volume
 				lfo envelope adsr adsr-linear eg eg-linear-expo egscaling egscal vca vca-adsr vca-eg vco ring ringmod DCOffsetFilter DCOffsetFilterMono
-				index shift bias transpose mode arranger_array
+				index shift bias variation transpose mode arranger_array
 				square_operator fm4 fm6 dx9 dx7 saw_operator noise_operator sampler_operator sampler
 				sensitivity sens filter delay reverb freeverb chorus stereo_chorus
 				pan power_pan linear_pan stereo_pan stereo_power_pan stereo_linear_pan
@@ -56,7 +56,7 @@ program lunar #machine := "lunar"
 				CreateDistributor CloseDistributor Distribute Redistribute
 				CCCB CCCBContinuation cb_callback cb_path cb_edit_path process_mode CBsub ICBsub
 				LoopWave unicar
-				MIDI_CHANNELS midi_monitor income_midi
+				MIDI_CHANNELS midi_monitor income_midi moonbase_monitor
 				GenerateInstrumentName InstrumentIndex
 				radar reactor commander Core Midi
 				BuildIntegrated
@@ -118,6 +118,7 @@ program lunar #machine := "lunar"
 #machine sensitivity := "sensitivity"
 #machine base := "moonbase"
 #machine moonbase := "moonbase"
+#machine moonbase_monitor := "moonbase_monitor"
 #machine arpeggiator := "arpeggiator"
 #machine sequencer := "sequencer"
 #machine polysequencer := "polysequencer"

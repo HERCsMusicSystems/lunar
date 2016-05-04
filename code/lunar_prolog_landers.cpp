@@ -585,6 +585,76 @@ orbiter * moonbase_class :: create_orbiter (PrologElement * parameters) {return 
 PrologNativeOrbiter * moonbase_class :: create_native_orbiter (PrologAtom * atom, orbiter * module) {return new native_moonbase (dir, atom, core, module);}
 moonbase_class :: moonbase_class (PrologDirectory * dir, orbiter_core * core) : PrologNativeOrbiterCreator (core) {this -> dir = dir;}
 
+class moonbase_monitor : public CommandModule {
+private:
+	PrologRoot * root;
+	PrologDirectory * dir;
+	PrologAtom * atom;
+	PrologAtom * keyon_atom, * keyoff_atom, * control_atom, * mono_atom, * poly_atom, * timing_clock_atom;
+	void activate_query (PrologElement * query) {
+		query = root -> pair (root -> head (0), root -> pair (query, root -> earth ()));
+		root -> resolution (query);
+		delete query;
+	}
+public:
+	bool insert_trigger (lunar_trigger * trigger) {return false;}
+	bool insert_controller (orbiter * module, int ctrl, double shift) {return false;}
+	void keyon (int key, int velocity) {
+		activate_query (root -> pair (root -> atom (atom),
+						root -> pair (root -> atom (keyon_atom),
+						root -> pair (root -> integer (key),
+						root -> pair (root -> integer (velocity), root -> earth ())))));
+	}
+	void keyon (int key) {
+		activate_query (root -> pair (root -> atom (atom),
+						root -> pair (root -> atom (keyon_atom),
+						root -> pair (root -> integer (key), root -> earth ()))));
+	}
+	void keyoff (int key, int velocity) {
+		activate_query (root -> pair (root -> atom (atom),
+						root -> pair (root -> atom (keyoff_atom),
+						root -> pair (root -> integer (key),
+						root -> pair (root -> integer (velocity), root -> earth ())))));
+	}
+	void keyoff (void) {activate_query (root -> pair (root -> atom (atom), root -> pair (root -> atom (keyoff_atom), root -> earth ())));}
+	void mono (void) {activate_query (root -> pair (root -> atom (atom), root -> pair (root -> atom (mono_atom), root -> earth ())));}
+	void poly (void) {activate_query (root -> pair (root -> atom (atom), root -> pair (root -> atom (poly_atom), root -> earth ())));}
+	bool isMonoMode (void) {return false;}
+	void control (int ctrl, double value) {
+		activate_query (root -> pair (root -> atom (atom),
+						root -> pair (root -> atom (control_atom),
+						root -> pair (root -> integer (ctrl),
+						root -> pair (root -> Double (value), root -> earth ())))));
+	}
+	double getControl (int ind) {return 0.0;}
+	void timing_clock (void) {activate_query (root -> pair (root -> atom (atom), root -> pair (root -> atom (timing_clock_atom), root -> earth ())));}
+	moonbase_monitor (PrologRoot * root, PrologDirectory * dir, PrologAtom * atom, orbiter_core * core) : CommandModule (core) {
+		this -> root = root; this -> dir = dir; this -> atom = atom;
+		keyon_atom = keyoff_atom = control_atom = mono_atom = poly_atom = timing_clock_atom = 0;
+		if (dir == 0) return;
+		keyon_atom = dir -> searchAtom ("keyon");
+		keyoff_atom = dir -> searchAtom ("keyoff");
+		control_atom = dir -> searchAtom ("control");
+		mono_atom = dir -> searchAtom ("mono");
+		poly_atom = dir -> searchAtom ("poly");
+		timing_clock_atom = dir -> searchAtom ("timingclock");
+	}
+};
+
+orbiter * moonbase_monitor_class :: create_orbiter (PrologElement * parameters) {
+	PrologElement * callback = 0;
+	while (parameters -> isPair ()) {
+		PrologElement * el = parameters -> getLeft ();
+		if (el -> isAtom ()) callback = el;
+		parameters = parameters -> getRight ();
+	}
+	if (callback == 0) return 0;
+	return new moonbase_monitor (root, dir, callback -> getAtom (), core);
+}
+PrologNativeOrbiter * moonbase_monitor_class :: create_native_orbiter (PrologAtom * atom, orbiter * module) {return new native_moonbase (dir, atom, core, module);}
+moonbase_monitor_class :: moonbase_monitor_class (PrologRoot * root, PrologDirectory * dir, orbiter_core * core)
+	: PrologNativeOrbiterCreator (core) {this -> root = root; this -> dir = dir;}
+
 orbiter * arpeggiator_class :: create_orbiter (PrologElement * parameters) {
 	PrologElement * base = 0;
 	while (parameters -> isPair ()) {
@@ -607,11 +677,18 @@ public:
 	chromatograph graph;
 	bool code (PrologElement * parameters, PrologResolution * resolution) {
 		if (parameters -> isPair ()) {
+			int variation = 0;
 			PrologElement * el = parameters -> getLeft ();
+			if (el -> isInteger ()) {
+				variation = el -> getInteger ();
+				if (variation < 0) variation = 0; if (variation > 127) variation = 127;
+				el = parameters -> getRight ();
+				if (el -> isPair ()) el = el -> getLeft ();
+			}
 			if (el -> isVar ()) {
 				sequencer * seq = (sequencer *) module;
 				if (seq == 0) return false;
-				sequence_element * sqep = seq -> elements;
+				sequence_element * sqep = seq -> elements [variation];
 				while (sqep != 0) {
 					el -> setPair ();
 					PrologElement * ell = el -> getLeft ();
@@ -669,8 +746,8 @@ public:
 			if (el -> isPair ()) {
 				sequencer * seq = (sequencer *) module;
 				if (seq == 0) return false;
-				if (seq -> elements != 0) delete seq -> elements; seq -> elements = 0;
-				sequence_element * * sqep = & seq -> elements;
+				if (seq -> elements [variation] != 0) delete seq -> elements [variation]; seq -> elements [variation] = 0;
+				sequence_element * * sqep = & seq -> elements [variation];
 				while (el -> isPair ()) {
 					PrologElement * eq = el -> getLeft ();
 					if (eq -> isInteger ()) {* sqep = new sequence_element (0, eq -> getInteger ()); sqep = & (* sqep) -> next;}

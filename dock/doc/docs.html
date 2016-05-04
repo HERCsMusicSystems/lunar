@@ -1580,16 +1580,22 @@ A typical construction of an instrument and inserting it into the superstructure
             [sequencer module base] => Creates a sequencer module connected to a base module.<br />
             <b>Note:</b> module adheres to the behaviour of a <a href="#predicate_base">base</a> module.<br />
             <b>Additional usage:</b><br />
-            [module [[]]] => Deletes the sequence.<br />
-            [module [command-1 command-2 .... command-n]] => Enters a new sequence.<br />
-            [module *x] => Returns the current sequence.<br />
+            [module [[]]] => Deletes the sequence (at variation 0).<br />
+            [module variation [[]]] => Deletes the sequence at specified variation.<br />
+            [module [command-1 command-2 .... command-n]] => Enters a new sequence (at variation 0).<br />
+            [module variation [command-1 command-2 .... command-n]] => Enters a new sequence at specified variation..<br />
+            [module *x] => Returns the current sequence (at variation 0).<br />
+            [module variation *x] => Returns the current sequence at specified variation.<br />
         </div>
         <div class="doc_predicate_body">
-            <b>Signals:</b> [["SPEED" "TRIGGER" "TIMINGCLOCK"] ["BUSY"]]<br />
+            <b>Signals:</b> [["SPEED" "TRIGGER" "VARIATION" "TIMINGCLOCK"] ["BUSY"]]<br />
             Plays sequences on the connected (moon)base module.<br />
+            The variation input selects the current variation.
+            Variation can change at the beginning of sequence.
             <b>INPUTS:</b><br />
             <b>Speed:</b> determines beats per minute (assuming 24 ticks in a beat).<br />
-            <b>Trigger:</b> starts playing sequence if greated than zero. If equals 2.0 then plays in a loop.<br />
+            <b>Trigger:</b> starts playing sequence if greated than zero. If equals or greater than 256.0 then plays in a loop.<br />
+            <b>Variation:</b> selects variation to be played. This input is 14-bit and only the MSB is used.<br />
             <b>Timingclock:</b> external trigger (works well with speed = ZERO).<br />
             <b>OUTPUTS:</b><br />
             <b>Busy:</b> becomes active one sample AFTER the sequence was started.

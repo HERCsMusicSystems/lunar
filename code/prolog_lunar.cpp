@@ -370,6 +370,7 @@ PrologNativeCode * PrologLunarServiceClass :: getNativeCode (char * name) {
 	if (strcmp (name, "drywet_mono") == 0) return new drywet_mono_class (& core);
 	if (strcmp (name, "sensitivity") == 0) return new sensitivity_class (& core);
 	if (strcmp (name, "moonbase") == 0) return new moonbase_class (directory, & core);
+	if (strcmp (name, "moonbase_monitor") == 0) return new moonbase_monitor_class (root, directory, & core);
 	if (strcmp (name, "arpeggiator") == 0) return new arpeggiator_class (directory, & core);
 	if (strcmp (name, "sequencer") == 0) return new sequencer_class (directory, & core);
 	if (strcmp (name, "polysequencer") == 0) return new polysequencer_class (directory, & core);

@@ -123,13 +123,13 @@ chromatograph :: chromatograph (PrologDirectory * dir) {
 	b = dir -> searchAtom ("B"); bb = dir -> searchAtom ("Bb"); bbb = dir -> searchAtom ("Bbb"); bx = dir -> searchAtom ("B#"); bxx = dir -> searchAtom ("Bx");
 	B = dir -> searchAtom ("b");
 	h = dir -> searchAtom ("H"); hb = dir -> searchAtom ("Hb"); hbb = dir -> searchAtom ("Hbb"); hx = dir -> searchAtom ("H#"); hxx = dir -> searchAtom ("Hx");
-	cu = dir -> searchAtom ("C^"); cbu = dir -> searchAtom ("Cb^"); cxu = dir -> searchAtom ("C#^");
-	du = dir -> searchAtom ("D^"); dbu = dir -> searchAtom ("Db^"); dxu = dir -> searchAtom ("D#^");
-	eu = dir -> searchAtom ("E^"); ebu = dir -> searchAtom ("Eb^"); exu = dir -> searchAtom ("E#^");
-	fu = dir -> searchAtom ("F^"); fbu = dir -> searchAtom ("Fb^"); fxu = dir -> searchAtom ("F#^");
-	gu = dir -> searchAtom ("G^"); gbu = dir -> searchAtom ("Gb^"); gxu = dir -> searchAtom ("G#^");
-	au = dir -> searchAtom ("A^"); abu = dir -> searchAtom ("Ab^"); axu = dir -> searchAtom ("A#^");
-	bu = dir -> searchAtom ("B^"); Bu = dir -> searchAtom ("b^"); bbu = dir -> searchAtom ("Bb^"); bxu = dir -> searchAtom ("B#^");
-	hu = dir -> searchAtom ("H^"); hbu = dir -> searchAtom ("Hb^"); hxu = dir -> searchAtom ("H#^");
+	cu = dir -> searchAtom ("C/"); cbu = dir -> searchAtom ("Cb/"); cxu = dir -> searchAtom ("C#/");
+	du = dir -> searchAtom ("D/"); dbu = dir -> searchAtom ("Db/"); dxu = dir -> searchAtom ("D#/");
+	eu = dir -> searchAtom ("E/"); ebu = dir -> searchAtom ("Eb/"); exu = dir -> searchAtom ("E#/");
+	fu = dir -> searchAtom ("F/"); fbu = dir -> searchAtom ("Fb/"); fxu = dir -> searchAtom ("F#/");
+	gu = dir -> searchAtom ("G/"); gbu = dir -> searchAtom ("Gb/"); gxu = dir -> searchAtom ("G#/");
+	au = dir -> searchAtom ("A/"); abu = dir -> searchAtom ("Ab/"); axu = dir -> searchAtom ("A#/");
+	bu = dir -> searchAtom ("B/"); Bu = dir -> searchAtom ("b/"); bbu = dir -> searchAtom ("Bb/"); bxu = dir -> searchAtom ("B#/");
+	hu = dir -> searchAtom ("H/"); hbu = dir -> searchAtom ("Hb/"); hxu = dir -> searchAtom ("H#/");
 }
 

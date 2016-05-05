@@ -86,6 +86,7 @@
         <a href="#predicate_MIDI_BACK">MIDI_BACK</a>
         <a href="#predicate_Moonbase">Moonbase</a>
         <a href="#predicate_base">moonbase</a>
+        <a href="#predicate_moonbase_monitor">moonbase_monitor</a>
         <a href="#predicate_polysequencer">polysequencer</a>
         <a href="#predicate_Restore">Restore</a>
         <a href="#predicate_sequencer">sequencer</a>
@@ -1370,6 +1371,22 @@ A typical construction of an instrument and inserting it into the superstructure
             2. If there is no audio module at index 126, then it is considered as mono switch.<br />
             3. If there is no audio module at index 127, then it is considered as poly switch.<br />
             4. Index 128 is also used by pitch MIDI command.<br />
+        </div>
+    </a>
+</div>
+
+<div class="doc_predicate">
+    <a id="predicate_base">
+        <div class="doc_predicate_header">
+            [moonbase_monitor module callback].<br />
+            <b>Note:</b> module adheres to <a href="#common_behaviour_of_predicates">Common Behaviour</a>.<br />
+            <b>Additional usage:</b> <a href="#predicate_base">base</a>.<br />
+        </div>
+        <div class="doc_predicate_body">
+            <b>Signals:</b> [[] []]<br />
+            The purpose of the moonbase monitor is to translate incoming MIDI messaged
+            into callbacks to the prolog system.
+            Can be used for monitoring the transmissions from arpeggiators and sequencers.
         </div>
     </a>
 </div>

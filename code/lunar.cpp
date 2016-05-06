@@ -68,10 +68,7 @@ orbiter_core :: orbiter_core (void) {
 		power_pans [ind] = sqrt ((double) ind / 16384.0);
 		linear_pans [ind] = (double) ind / 16384.0;
 	}
-	arranger_reference_note = 48;
-	for (int ind = 0; ind < 128; ind++) {
-		for (int sub = 0; sub < 12; sub++) arranger_array [ind] [sub] = sub;
-	}
+	arranger_tonal_reset ();
 	amplitude_zero = pow (2.0, -16383.0 / 1536.0);
 	recalculate ();
 }
@@ -240,6 +237,22 @@ double orbiter_core :: MinBlep (int index) {
 	return min_blep [index];
 }
 
+void orbiter_core :: arranger_reset (void) {
+	arranger_reference_note = 48;
+	for (int ind = 0; ind < 128; ind++) {
+		for (int sub = 0; sub < 12; sub++) arranger_array [ind] [sub] = sub;
+	}
+}
+
+void orbiter_core :: arranger_tonal_reset (void) {
+	arranger_reset ();
+	arranger_array [0] [3] = 4;                             arranger_array [0] [10] = 12; // major
+	                                                        arranger_array [0] [10] = 12; // minor
+	arranger_array [0] [7] = 6;                             arranger_array [0] [10] = 12; // diminished
+	arranger_array [0] [3] = 4; arranger_array [0] [7] = 8; arranger_array [0] [10] = 12; // augumented
+	arranger_array [0] [3] = 5;                             arranger_array [0] [10] = 12; // sus4
+}
+
 double orbiter_core :: arrange_note (int key, double transposition, double mode, double * map) {
 	if (key >= 0x800) {
 		key -= 0xc00;
@@ -249,7 +262,7 @@ double orbiter_core :: arrange_note (int key, double transposition, double mode,
 			key -= arranger_reference_note;
 			int octave = key / 12;
 			octave *= 12;
-			key = octave + arranger_array [index] [key - octave];
+			key = arranger_reference_note + octave + arranger_array [index] [key - octave];
 		}
 	}
 	if (map == 0) return transposition + (double) (key - 64) * 128.0;

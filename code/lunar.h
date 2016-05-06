@@ -87,6 +87,8 @@ public:
 	int active_limit;
 	int arranger_array [128] [12];
 	int arranger_reference_note;
+	void arranger_reset (void);
+	void arranger_tonal_reset (void);
 	double TimeDelta (double index);
 	double FilterFreq (double index);
 	double SamplerTimeDelta (double index);

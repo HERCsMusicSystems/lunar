@@ -227,14 +227,17 @@ public:
 	bool code (PrologElement * parameters, PrologResolution * resolution) {
 		PrologElement * index = 0;
 		PrologElement * table = 0;
+		PrologElement * reset = 0;
 		while (parameters -> isPair ()) {
 			PrologElement * el = parameters -> getLeft ();
+			if (el -> isEarth ()) reset = el;
 			if (el -> isInteger ()) index = el;
 			if (el -> isPair ()) table = el;
 			if (el -> isVar ()) {if (index == 0) index = el; else table = el;}
 			parameters = parameters -> getRight ();
 		}
-		if (index == 0) return false;
+		if (reset != 0) {service -> core . arranger_reset (); return true;}
+		if (index == 0) {if (table != 0) return false; service -> core . arranger_tonal_reset (); return true;}
 		if (index -> isVar ()) {index -> setInteger (service -> core . arranger_reference_note); return true;}
 		if (index -> isInteger ()) {
 			if (table == 0) {service -> core . arranger_reference_note = index -> getInteger (); return true;}

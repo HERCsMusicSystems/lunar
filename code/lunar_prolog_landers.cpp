@@ -655,6 +655,76 @@ PrologNativeOrbiter * moonbase_monitor_class :: create_native_orbiter (PrologAto
 moonbase_monitor_class :: moonbase_monitor_class (PrologRoot * root, PrologDirectory * dir, orbiter_core * core)
 	: PrologNativeOrbiterCreator (core) {this -> root = root; this -> dir = dir;}
 
+class moonbase_chord_detector : public CommandModule {
+private:
+	PrologRoot * root;
+	PrologDirectory * dir;
+	PrologAtom * atom;
+	int keys [16];
+	int count;
+	void insert (int key) {
+		int ind = 0;
+		while (ind < count && ind < 15 && keys [ind] <= key) ind++;
+		int sub = keys [ind];
+		keys [ind++] = key;
+		while (ind <= count) {int k = keys [ind]; keys [ind++] = sub; sub = k;}
+		count++;
+		PrologElement * query = root -> pair (root -> atom (atom), root -> earth ());
+		PrologElement * el = query -> getRight ();
+		int reference = 0;
+		for (int sub = 0; sub < count; sub++) {
+			el -> setPair ();
+			el -> getLeft () -> setInteger (keys [sub] - reference);
+			reference = keys [sub];
+			el = el -> getRight ();
+		}
+		query = root -> pair (root -> head (0), root -> pair (query, root -> earth ()));
+		root -> resolution (query);
+		delete query;
+	}
+	void remove (int key) {
+		for (int ind = 0; ind < count; ind++) {
+			if (keys [ind] == key) {
+				for (int sub = ind; sub < count - 1 && sub < 15; sub++) keys [sub] = keys [sub + 1];
+				count--;
+				return;
+			}
+		}
+	}
+public:
+	bool insert_trigger (lunar_trigger * trigger) {return false;}
+	bool insert_controller (orbiter * controller, int location, double shift) {return false;}
+	void keyon (int key) {insert (key);}
+	void keyon (int key, int velocity) {insert (key);}
+	void keyoff (void) {count = 0;}
+	void keyoff (int key, int velocity) {remove (key);}
+	void mono (void) {}
+	void poly (void) {}
+	bool isMonoMode (void) {return false;}
+	void control (int ctrl, double value) {}
+	double getControl (int ctrl) {return 0.0;}
+	void timing_clock (void) {}
+	moonbase_chord_detector (PrologRoot * root, PrologDirectory * dir, PrologAtom * atom, orbiter_core * core) : CommandModule (core) {
+		this -> root = root;
+		this -> dir = dir;
+		this -> atom = atom;
+		count = 0;
+	}
+};
+orbiter * chord_detector_class :: create_orbiter (PrologElement * parameters) {
+	PrologElement * callback = 0;
+	while (parameters -> isPair ()) {
+		PrologElement * el = parameters -> getLeft ();
+		if (el -> isAtom ()) callback = el;
+		parameters = parameters -> getRight ();
+	}
+	if (callback == 0) return 0;
+	return new moonbase_chord_detector (root, dir, callback -> getAtom (), core);
+}
+PrologNativeOrbiter * chord_detector_class :: create_native_orbiter (PrologAtom * atom, orbiter * module) {return new native_moonbase (dir, atom, core, module);}
+chord_detector_class :: chord_detector_class (PrologRoot * root, PrologDirectory * dir, orbiter_core * core)
+	: PrologNativeOrbiterCreator (core) {this -> root = root; this -> dir = dir;}
+
 orbiter * arpeggiator_class :: create_orbiter (PrologElement * parameters) {
 	PrologElement * base = 0;
 	while (parameters -> isPair ()) {

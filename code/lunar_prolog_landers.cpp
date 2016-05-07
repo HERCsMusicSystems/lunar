@@ -695,7 +695,7 @@ public:
 	bool insert_trigger (lunar_trigger * trigger) {return false;}
 	bool insert_controller (orbiter * controller, int location, double shift) {return false;}
 	void keyon (int key) {insert (key);}
-	void keyon (int key, int velocity) {insert (key);}
+	void keyon (int key, int velocity) {if (velocity < 1) remove (key); else insert (key);}
 	void keyoff (void) {count = 0;}
 	void keyoff (int key, int velocity) {remove (key);}
 	void mono (void) {}
@@ -712,14 +712,15 @@ public:
 	}
 };
 orbiter * chord_detector_class :: create_orbiter (PrologElement * parameters) {
-	PrologElement * callback = 0;
+	PrologAtom * callback = 0;
 	while (parameters -> isPair ()) {
 		PrologElement * el = parameters -> getLeft ();
-		if (el -> isAtom ()) callback = el;
+		if (el -> isAtom ()) callback = el -> getAtom ();
 		parameters = parameters -> getRight ();
 	}
+	if (callback == 0) callback = dir -> searchAtom ("tonal_detector");
 	if (callback == 0) return 0;
-	return new moonbase_chord_detector (root, dir, callback -> getAtom (), core);
+	return new moonbase_chord_detector (root, dir, callback, core);
 }
 PrologNativeOrbiter * chord_detector_class :: create_native_orbiter (PrologAtom * atom, orbiter * module) {return new native_moonbase (dir, atom, core, module);}
 chord_detector_class :: chord_detector_class (PrologRoot * root, PrologDirectory * dir, orbiter_core * core)

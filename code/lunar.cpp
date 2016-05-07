@@ -247,10 +247,10 @@ void orbiter_core :: arranger_reset (void) {
 void orbiter_core :: arranger_tonal_reset (void) {
 	arranger_reset ();
 	arranger_array [0] [3] = 4;                             arranger_array [0] [10] = 12; // major
-	                                                        arranger_array [0] [10] = 12; // minor
-	arranger_array [0] [7] = 6;                             arranger_array [0] [10] = 12; // diminished
-	arranger_array [0] [3] = 4; arranger_array [0] [7] = 8; arranger_array [0] [10] = 12; // augumented
-	arranger_array [0] [3] = 5;                             arranger_array [0] [10] = 12; // sus4
+	                                                        arranger_array [1] [10] = 12; // minor
+	arranger_array [2] [7] = 6;                             arranger_array [2] [10] = 12; // diminished
+	arranger_array [3] [3] = 4; arranger_array [3] [7] = 8; arranger_array [3] [10] = 12; // augumented
+	arranger_array [4] [3] = 5;                             arranger_array [4] [10] = 12; // sus4
 }
 
 double orbiter_core :: arrange_note (int key, double transposition, double mode, double * map) {

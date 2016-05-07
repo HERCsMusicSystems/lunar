@@ -56,7 +56,7 @@ program lunar #machine := "lunar"
 				CreateDistributor CloseDistributor Distribute Redistribute
 				CCCB CCCBContinuation cb_callback cb_path cb_edit_path process_mode CBsub ICBsub
 				LoopWave unicar
-				MIDI_CHANNELS midi_monitor income_midi moonbase_monitor chord_detector
+				MIDI_CHANNELS midi_monitor income_midi moonbase_monitor chord_detector tonal_detector td_process td_call
 				GenerateInstrumentName InstrumentIndex
 				radar reactor commander Core Midi
 				BuildIntegrated
@@ -1334,6 +1334,15 @@ program lunar #machine := "lunar"
 
 [[LunarDrop *x *y]]
 [[LunarDrop *x *y *file : *files] [batch *file] / [LunarDrop *x *y : *files]]
+
+[[tonal_detector *root : *intervals] [td_process *mode : *intervals] [td_call *root *mode]]
+[[td_process 0 4 3]]
+[[td_process 1 3 4]]
+[[td_process 2 3 3]]
+[[td_process 3 4 4]]
+[[td_process 4 5 2]]
+[[td_call *root *mode] [Moons * * *cb : *] [add *mode 1 *m1] [*cb control 80 *root] [*cb control 81 *m1] fail]
+[[td_call : *]]
 
 auto := [
 			[var cb_callback cb_path cb_edit_path [InstrumentIndex 0] [AUDIO_HARDWARE_SETTINGS [330 48000 128 0 0]]]

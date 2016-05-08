@@ -246,11 +246,26 @@ void orbiter_core :: arranger_reset (void) {
 
 void orbiter_core :: arranger_tonal_reset (void) {
 	arranger_reset ();
-	arranger_array [0] [3] = 4;                             arranger_array [0] [10] = 12; // major
-	                                                        arranger_array [1] [10] = 12; // minor
-	arranger_array [2] [7] = 6;                             arranger_array [2] [10] = 12; // diminished
-	arranger_array [3] [3] = 4; arranger_array [3] [7] = 8; arranger_array [3] [10] = 12; // augumented
-	arranger_array [4] [3] = 5;                             arranger_array [4] [10] = 12; // sus4
+	arranger_array [0] [3] = 4;                               arranger_array [0] [10] = 12;  // major
+	                                                          arranger_array [1] [10] = 12;  // minor
+	                             arranger_array [2] [7] = 6;  arranger_array [2] [10] = 12;  // diminished
+	arranger_array [3] [3] = 4;  arranger_array [3] [7] = 8;  arranger_array [3] [10] = 12;  // augumented
+	arranger_array [4] [3] = 5;                               arranger_array [4] [10] = 12;  // sus4
+	arranger_array [5] [3] = 4;                                                              // major 7
+	                                                                                         // minor 7
+	                             arranger_array [7] [7] = 6;                                 // diminished 7
+	arranger_array [8] [3] = 5;                                                              // sus 4 7
+	                             arranger_array [9] [7] = 6;  arranger_array [9] [10] = 9;   // diminished 7 dim
+	arranger_array [10] [3] = 4;                              arranger_array [10] [10] = 11; // major 7 maj
+	                                                          arranger_array [11] [10] = 11; // minor 7 maj
+	arranger_array [12] [3] = 4; arranger_array [12] [7] = 6;                                // 7 - 5
+	arranger_array [13] [3] = 4;                              arranger_array [13] [10] = 9;  // major 6
+	                                                          arranger_array [14] [10] = 9;  // minor 6
+	arranger_array [15] [3] = 5;                              arranger_array [15] [10] = 9;  // sus 4 6
+	arranger_array [16] [3] = 4;                              arranger_array [16] [10] = 8;  // major 6 min
+	                                                          arranger_array [17] [10] = 8;  // minor 6 min
+	                             arranger_array [18] [7] = 6; arranger_array [18] [10] = 8;  // diminished 6 min
+	arranger_array [19] [3] = 5;                              arranger_array [19] [10] = 8;  // sus 4 6 min
 }
 
 double orbiter_core :: arrange_note (int key, double transposition, double mode, double * map) {

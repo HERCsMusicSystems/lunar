@@ -1336,11 +1336,26 @@ program lunar #machine := "lunar"
 [[LunarDrop *x *y *file : *files] [batch *file] / [LunarDrop *x *y : *files]]
 
 [[tonal_detector *root : *intervals] [td_process *mode : *intervals] [td_call *root *mode]]
-[[td_process 0 4 3]]
-[[td_process 1 3 4]]
-[[td_process 2 3 3]]
-[[td_process 3 4 4]]
-[[td_process 4 5 2]]
+[[td_process 0 4 3]]		; major					CASIO
+[[td_process 1 3 4]]		; minor					CASIO
+[[td_process 2 3 3]]		; diminished			CASIO
+[[td_process 3 4 4]]		; augumented			CASIO
+[[td_process 4 5 2]]		; sus4					CASIO
+[[td_process 5 4 3 3]]		; major 7				CASIO
+[[td_process 6 3 4 3]]		; minor 7				CASIO
+[[td_process 7 3 3 4]]		; diminished 7			CASIO
+[[td_process 8 5 2 3]]		; sus4 7				CASIO
+[[td_process 9 3 3 3]]		; diminished 7 dim		CASIO
+[[td_process 10 4 3 4]]		; major 7 maj			CASIO
+[[td_process 11 3 4 4]]		; minor 7 maj			CASIO
+[[td_process 12 4 2 4]]		; 7-5					CASIO
+[[td_process 13 4 3 2]]		; major 6					minor 7
+[[td_process 14 3 4 2]]		; minor 6					diminished 7
+[[td_process 15 5 2 2]]		; sus 4 6				CASIO
+[[td_process 16 4 3 1]]		; major 6 min				augumented 7 maj
+[[td_process 17 3 4 1]]		; minor 6 min				major 7 maj
+[[td_process 18 3 3 2]]		; diminished 6 min			major 7
+[[td_process 19 5 2 1]]		; sus 4 6 min			CASIO
 [[td_call *root *mode] [Moons * * *cb : *] [add *mode 1 *m1] [*cb control 80 *root] [*cb control 81 *m1] fail]
 [[td_call : *]]
 

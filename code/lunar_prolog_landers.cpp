@@ -597,6 +597,7 @@ private:
 		delete query;
 	}
 public:
+	int numberOfOutputs (void) {return 0;}
 	bool insert_trigger (lunar_trigger * trigger) {return false;}
 	bool insert_controller (orbiter * module, int ctrl, double shift) {return false;}
 	void keyon (int key, int velocity) {
@@ -692,6 +693,7 @@ private:
 		}
 	}
 public:
+	int numberOfOutputs (void) {return 0;}
 	bool insert_trigger (lunar_trigger * trigger) {return false;}
 	bool insert_controller (orbiter * controller, int location, double shift) {return false;}
 	void keyon (int key) {insert (key);}

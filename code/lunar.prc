@@ -64,6 +64,7 @@ program lunar #machine := "lunar"
 				BuildIntegratedMicrodot integrated_microdot Microdot MicrodotBlocks
 				BuildIntegratedAbakos integrated_abakos Abakos AbakosBlocks
 				BuildIntegratedPhobos integrated_phobos Phobos PhobosBlocks
+				BuildIntegratedForman integrated_forman Forman FormanBlocks
 				CommanderHardwareAction AUDIO_HARDWARE_SETTINGS
 			]
 

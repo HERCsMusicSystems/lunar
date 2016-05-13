@@ -2,6 +2,48 @@
 import studio
 import lunar
 
+program forman [BuildForman BuildFormanPart]
+
+[[BuildForman *polyphony] / [BuildForman *polyphony * * *]]
+[[BuildForman *polyphony *Forman *formancb *volume]
+	[Moonbase *Forman *formancb Forman *volume]
+	[moonbase *formancb]
+	[lfo *lfo1] [lfo *lfo2]
+	[volume *volume] [drywet *drywet] [delay *delay] [stereo_pan *pan] [stereo_chorus *chorus]
+	[ConnectStereo *pan *chorus] [ConnectStereo *delay *pan] [ConnectDryWet *drywet *pan *delay] [ConnectStereo *volume *drywet]
+	[Insert *volume *Forman core]
+	[Insert *pan *Forman core]
+	[Insert *chorus *Forman core chorus]
+	[Insert *drywet *Forman core delay]
+	[Insert *delay *Forman core delay]
+	[Insert *lfo1 *Forman lfo 1]
+	[Insert *lfo2 *Forman lfo 2]
+	[REPEAT *polyphony [BuildFormanPart *Forman *formancb *chorus]]
+	[InsertController 7 *Forman core volume]
+	[InsertController 10 -64 *Forman core pan]
+	[InsertController 77 -64 *Forman core delay balance]
+	[Lunar -16384 *Forman noise amp]
+]
+
+[[BuildFormanPart *Forman *cb *line]
+	[trigger *trigger] [*cb *trigger]
+	[adsr *adsr]
+	[*adsr "trigger" *trigger "trigger"] [*trigger "busy" *adsr "busy"]
+	[vco *vco] [noise_operator *noise]
+	[*vco "freq" *trigger "key"]
+	[filter *filter] [*filter *noise]
+	[*filter *vco]
+	[*filter "gain" *adsr]
+	[*line *filter]
+	[Insert *vco *Forman vco]
+	[Insert *noise *Forman noise]
+	[Insert *filter *Forman filter]
+	[Insert *adsr *Forman adsr]
+	[Insert *trigger *Forman portamento]
+]
+
+end .
+
 program forman [Forman BuildForman BuildFormanPart]
 
 [[BuildForman *polyphony] [BuildForman *polyphony * * *]]

@@ -376,7 +376,7 @@ void integrated_trigger :: ground_request (void) {
 	if (request_key < 0) request_key = 0; if (request_key > 127) request_key = 127;
 	index = (double) (request_key - 64);
 	target = key_map == 0 ? (double) (request_key - 64) * 128.0 : key_map -> map [request_key];
-	this -> signal = request_key; trigger = 16384.0; time = 0.0;
+	trigger = 16384.0; time = 0.0;
 	if (! active || porta == 0.0 || porta_time == 0.0) this -> signal = target;
 	else {
 		if (legato == 0.0) request_base = request_previous;
@@ -388,7 +388,7 @@ void integrated_trigger :: ground_request (void) {
 
 void integrated_trigger :: keyon (int key) {
 	pthread_mutex_lock (& critical);
-	request_key = key; request = 3;
+	this -> key = request_key = key; request = 3;
 	if (! active) sub_keyon (key);
 	pthread_mutex_unlock (& critical);
 }
@@ -396,7 +396,7 @@ void integrated_trigger :: keyon (int key) {
 void integrated_trigger :: keyon (int key, int velocity) {
 	if (velocity < 1) {keyoff (key); return;}
 	pthread_mutex_lock (& critical);
-	request_key = key; request_velocity = velocity; request = 4;
+	this -> key = request_key = key; request_velocity = velocity; request = 4;
 	if (! active) keyon_velocity_request ();
 	pthread_mutex_unlock (& critical);
 }
@@ -404,7 +404,7 @@ void integrated_trigger :: keyon (int key, int velocity) {
 void integrated_trigger :: ground (int key, int velocity, int base, int previous) {
 	if (velocity < 1) {keyoff (key); return;}
 	pthread_mutex_lock (& critical);
-	request_key = key; request_velocity = velocity; request_base = base; request_previous = previous; request = 5;
+	this -> key = request_key = key; request_velocity = velocity; request_base = base; request_previous = previous; request = 5;
 	if (! active) ground_request ();
 	pthread_mutex_unlock (& critical);
 }

@@ -505,28 +505,28 @@ void lunar_trigger :: sub_velocity (int velocity) {
 }
 void lunar_trigger :: keyon (int key) {
 	pthread_mutex_lock (& critical);
-	request_key = key; request = 3;
+	this -> key = request_key = key; request = 3;
 	if (! active) sub_keyon (key);
 	pthread_mutex_unlock (& critical);
 }
 void lunar_trigger :: keyon (int key, int velocity) {
 	if (velocity < 1) {keyoff (key); return;}
 	pthread_mutex_lock (& critical);
-	request_key = key; request_velocity = velocity; request = 4;
+	this -> key = request_key = key; request_velocity = velocity; request = 4;
 	if (! active) keyon_velocity_request ();
 	pthread_mutex_unlock (& critical);
 }
 void lunar_trigger :: ground (int key, int velocity, int base, int previous) {
 	if (velocity < 1) {keyoff (key); return;}
 	pthread_mutex_lock (& critical);
-	request_key = key; request_velocity = velocity; request_base = base; request_previous = previous; request = 5;
+	this -> key = request_key = key; request_velocity = velocity; request_base = base; request_previous = previous; request = 5;
 	if (! active) ground_request ();
 	pthread_mutex_unlock (& critical);
 }
 void lunar_trigger :: ground_request (void) {
 	sub_velocity (request_velocity);
 	target = core -> arrange_note (request_key, transpose, mode, key_map == 0 ? 0 : key_map -> map);
-	this -> key = request_key; trigger = 16384.0; time = 0.0;
+	trigger = 16384.0; time = 0.0;
 	if (! active || porta_switch == 0.0 || porta_time == 0.0) this -> signal = target;
 	else {
 		if (porta_control == 0.0) request_base = request_previous;

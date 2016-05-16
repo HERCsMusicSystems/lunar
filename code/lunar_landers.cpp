@@ -2214,12 +2214,15 @@ void lunar_formant_filter :: move (void) {
 	double GAIN = gain * resonance * DIV_4096 * Q;
 	low1 += band1 * F; high1 = enter - low1 - band1 * Q; band1 += high1 * F;
 	low1 += band1 * F; high1 = enter - low1 - band1 * Q; band1 += high1 * F;
+	if (band1 > 10.0) band1 = 10.0; if (band1 < -10.0) band1 = -10.0;
 	double s = band1 * GAIN;
 	low2 += band2 * F; high2 = s - low2 - band2 * Q; band2 += high2 * F;
 	low2 += band2 * F; high2 = s - low2 - band2 * Q; band2 += high2 * F;
+	if (band2 > 10.0) band2 = 10.0; if (band2 < -10.0) band2 = -10.0;
 	s = band2 * GAIN;
 	low3 += band3 * F; high3 = s - low3 - band3 * Q; band3 += high3 * F;
 	low3 += band3 * F; high3 = s - low3 - band3 * Q; band3 += high3 * F;
+	if (band3 > 10.0) band3 = 10.0; if (band3 < -10.0) band3 = -10.0;
 	signal = band3 * GAIN * core -> Amplitude (amp);
 }
 lunar_formant_filter :: lunar_formant_filter (orbiter_core * core) : orbiter (core) {

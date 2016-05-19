@@ -34,7 +34,7 @@ class midi_code : public PrologNativeCode {
 public:
 	unsigned char command;
 	unsigned char channel;
-	unsigned char v1, v2;
+	int v1, v2;
 #ifdef WIN32
 	HMIDIOUT out_port_handle;
 	HMIDIIN in_port_handle;

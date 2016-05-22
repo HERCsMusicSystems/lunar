@@ -759,6 +759,8 @@ private:
 	double speed, trigger, variation, clock;
 	double time, previous_clock;
 public:
+	prolog_sequence_element * elements [128];
+public:
 	bool insert_trigger (lunar_trigger * trigger) {return false;}
 	bool insert_controller (orbiter * controller, int location, double shift) {return false;}
 	void keyon (int key) {}
@@ -806,13 +808,25 @@ public:
 		speed = 140.0;
 		trigger = variation = clock = previous_clock = 0.0;
 		time = -1.0;
+		for (int ind = 0; ind < 128; ind++) elements [ind] = 0;
 		initialise (); activate ();
 	}
+	~ prolog_sequencer (void) {for (int ind = 0; ind < 128; ind++ ) {if (elements [ind] != 0) delete elements [ind];}}
 };
 
 class native_prolog_sequencer : public native_moonbase {
 public:
 	bool code (PrologElement * parameters, PrologResolution * resolution) {
+		if (parameters -> isPair ()) {
+			int variation = 0;
+			PrologElement * el = parameters -> getLeft ();
+			if (el -> isInteger ()) {
+				variation = el -> getInteger ();
+				if (variation < 0) variation = 0; if (variation > 127) variation = 127;
+				el = parameters -> getRight ();
+				if (el -> isPair ()) el = el -> getLeft ();
+			}
+		}
 		return native_moonbase :: code (parameters, resolution);
 	}
 	native_prolog_sequencer (PrologDirectory * dir, PrologAtom * atom, orbiter_core * core, orbiter * module) : native_moonbase (dir, atom, core, module) {}

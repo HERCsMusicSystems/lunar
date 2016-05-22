@@ -744,6 +744,15 @@ orbiter * arpeggiator_class :: create_orbiter (PrologElement * parameters) {
 PrologNativeOrbiter * arpeggiator_class :: create_native_orbiter (PrologAtom * atom, orbiter * module) {return new native_moonbase (dir, atom, core, module);}
 arpeggiator_class :: arpeggiator_class (PrologDirectory * dir, orbiter_core * core) : PrologNativeOrbiterCreator (core) {this -> dir = dir;}
 
+class prolog_sequence_element {
+public:
+	int ticks;
+	PrologElement * query;
+	prolog_sequence_element * next;
+	prolog_sequence_element (int ticks, PrologElement * query) {this -> ticks = ticks; this -> query = query; next = 0;}
+	~ prolog_sequence_element (void) {if (query != 0) delete query; if (next != 0) delete next;}
+};
+
 class prolog_sequencer : public CommandModule {
 private:
 	PrologRoot * root;

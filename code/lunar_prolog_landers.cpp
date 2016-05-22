@@ -744,6 +744,11 @@ orbiter * arpeggiator_class :: create_orbiter (PrologElement * parameters) {
 PrologNativeOrbiter * arpeggiator_class :: create_native_orbiter (PrologAtom * atom, orbiter * module) {return new native_moonbase (dir, atom, core, module);}
 arpeggiator_class :: arpeggiator_class (PrologDirectory * dir, orbiter_core * core) : PrologNativeOrbiterCreator (core) {this -> dir = dir;}
 
+class native_prolog_sequencer : public PrologNativeOrbiter {
+public:
+	native_prolog_sequencer (PrologRoot * root, PrologAtom * atom, orbiter_core * core, orbiter * module) : PrologNativeOrbiter (atom, core, module) {}
+};
+
 class native_sequencer : public native_moonbase {
 public:
 	PrologAtom * keyon, * keyoff, * control, * busy, * impulse;
@@ -1084,14 +1089,21 @@ orbiter * sequencer_class :: create_orbiter (PrologElement * parameters) {
 		if (el -> isAtom ()) base = el;
 		parameters = parameters -> getRight ();
 	}
-	if (base == 0) return 0;
+	if (base == 0) {prolog_or_midi = true; return new sequencer (core, 0);}
 	PrologNativeCode * machine = base -> getAtom () -> getMachine ();
 	if (machine == 0) return 0;
 	if (! machine -> isTypeOf (native_moonbase :: name ())) return 0;
 	return new sequencer (core, ((moonbase *) ((native_moonbase *) machine) -> module));
 }
-PrologNativeOrbiter * sequencer_class :: create_native_orbiter (PrologAtom * atom, orbiter * module) {return new native_sequencer (dir, atom, core, module);}
-sequencer_class :: sequencer_class (PrologDirectory * dir, orbiter_core * core) : PrologNativeOrbiterCreator (core) {this -> dir = dir;}
+PrologNativeOrbiter * sequencer_class :: create_native_orbiter (PrologAtom * atom, orbiter * module) {
+	if (prolog_or_midi) return new native_prolog_sequencer (root, atom, core, module);
+	return new native_sequencer (dir, atom, core, module);
+}
+sequencer_class :: sequencer_class (PrologRoot * root, PrologDirectory * dir, orbiter_core * core) : PrologNativeOrbiterCreator (core) {
+	this -> root = root;
+	this -> dir = dir;
+	prolog_or_midi = false;
+}
 
 orbiter * polysequencer_class :: create_orbiter (PrologElement * parameters) {
 	PrologElement * pb = parameters;

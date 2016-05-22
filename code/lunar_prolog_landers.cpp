@@ -744,10 +744,46 @@ orbiter * arpeggiator_class :: create_orbiter (PrologElement * parameters) {
 PrologNativeOrbiter * arpeggiator_class :: create_native_orbiter (PrologAtom * atom, orbiter * module) {return new native_moonbase (dir, atom, core, module);}
 arpeggiator_class :: arpeggiator_class (PrologDirectory * dir, orbiter_core * core) : PrologNativeOrbiterCreator (core) {this -> dir = dir;}
 
-class prolog_sequencer : public orbiter {
+class prolog_sequencer : public CommandModule {
 private:
 	PrologRoot * root;
+	double speed, trigger, variation, clock;
+	double time, previous_clock;
 public:
+	bool insert_trigger (lunar_trigger * trigger) {return false;}
+	bool insert_controller (orbiter * controller, int location, double shift) {return false;}
+	void keyon (int key) {}
+	void keyon (int key, int velocity) {}
+	void keyoff (void) {}
+	void keyoff (int key, int velocity) {}
+	void mono (void) {}
+	void poly (void) {}
+	bool isMonoMode (void) {return false;}
+	void control (int ind, double value) {}
+	double getControl (int ind) {return 0.0;}
+	void timing_clock (void) {}
+	int numberOfInputs (void) {return 4;}
+	char * inputName (int ind) {
+		switch (ind) {
+		case 0: return "SPEED"; break;
+		case 1: return "TRIGGER"; break;
+		case 2: return "VARIATION"; break;
+		case 3: return "TIMINGCLOCK"; break;
+		default: break;
+		}
+		return orbiter :: inputName (ind);
+	}
+	double * inputAddress (int ind) {
+		switch (ind) {
+		case 0: return & speed; break;
+		case 1: return & trigger; break;
+		case 2: return & variation; break;
+		case 3: return & clock; break;
+		default: break;
+		}
+		return orbiter :: inputAddress (ind);
+	}
+	int numberOfOutputs (void) {return 0;}
 	void move (void) {
 		PrologElement * query = root -> pair (root -> atom ("show"),
 								root -> pair (root -> text ("Joker was here!"),
@@ -756,15 +792,21 @@ public:
 		root -> resolution (query);
 		delete query;
 	}
-	prolog_sequencer (PrologRoot * root, orbiter_core * core) : orbiter (core) {
+	prolog_sequencer (PrologRoot * root, orbiter_core * core) : CommandModule (core) {
 		this -> root = root;
+		speed = 140.0;
+		trigger = variation = clock = previous_clock = 0.0;
+		time = -1.0;
 		initialise (); activate ();
 	}
 };
 
-class native_prolog_sequencer : public PrologNativeOrbiter {
+class native_prolog_sequencer : public native_moonbase {
 public:
-	native_prolog_sequencer (PrologAtom * atom, orbiter_core * core, orbiter * module) : PrologNativeOrbiter (atom, core, module) {}
+	bool code (PrologElement * parameters, PrologResolution * resolution) {
+		return native_moonbase :: code (parameters, resolution);
+	}
+	native_prolog_sequencer (PrologDirectory * dir, PrologAtom * atom, orbiter_core * core, orbiter * module) : native_moonbase (dir, atom, core, module) {}
 };
 
 class native_sequencer : public native_moonbase {
@@ -1114,7 +1156,7 @@ orbiter * sequencer_class :: create_orbiter (PrologElement * parameters) {
 	return new sequencer (core, ((moonbase *) ((native_moonbase *) machine) -> module));
 }
 PrologNativeOrbiter * sequencer_class :: create_native_orbiter (PrologAtom * atom, orbiter * module) {
-	if (prolog_or_midi) return new native_prolog_sequencer (atom, core, module);
+	if (prolog_or_midi) return new native_prolog_sequencer (dir, atom, core, module);
 	return new native_sequencer (dir, atom, core, module);
 }
 sequencer_class :: sequencer_class (PrologRoot * root, PrologDirectory * dir, orbiter_core * core) : PrologNativeOrbiterCreator (core) {

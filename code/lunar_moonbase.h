@@ -190,11 +190,11 @@ private:
 	double time;
 	int tick;
 	double impulse_level, busy_level;
-	sequence_element * current_frame;
 	CommandModule * base;
-	pthread_mutex_t critical;
 	void private_signal (void);
 public:
+	pthread_mutex_t critical;
+	sequence_element * current_frame;
 	sequence_element * elements [128];
 public:
 	bool insert_trigger (lunar_trigger * trigger);

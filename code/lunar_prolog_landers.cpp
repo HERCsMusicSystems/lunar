@@ -761,9 +761,9 @@ private:
 	double speed, trigger, variation, clock;
 	double time, previous_clock;
 	int tick;
+public:
 	pthread_mutex_t critical;
 	prolog_sequence_element * current_frame;
-public:
 	prolog_sequence_element * elements [128];
 private:
 	void private_signal (void) {
@@ -870,6 +870,8 @@ public:
 			if (el -> isPair ()) {
 				prolog_sequencer * seq = (prolog_sequencer *) module;
 				if (seq == 0) return false;
+				pthread_mutex_lock (& seq -> critical);
+				seq -> current_frame = 0;
 				if (seq -> elements [variation] != 0) delete seq -> elements [variation]; seq -> elements [variation] = 0;
 				prolog_sequence_element * * sqep = & seq -> elements [variation];
 				while (el -> isPair ()) {
@@ -878,6 +880,7 @@ public:
 					if (eq -> isPair ()) {* sqep = new prolog_sequence_element (0, eq -> duplicate ()); sqep = & (* sqep) -> next;}
 					el = el -> getRight ();
 				}
+				pthread_mutex_unlock (& seq -> critical);
 				return true;
 			}
 		}
@@ -961,6 +964,8 @@ public:
 			if (el -> isPair ()) {
 				sequencer * seq = (sequencer *) module;
 				if (seq == 0) return false;
+				pthread_mutex_lock (& seq -> critical);
+				seq -> current_frame = 0;
 				if (seq -> elements [variation] != 0) delete seq -> elements [variation]; seq -> elements [variation] = 0;
 				sequence_element * * sqep = & seq -> elements [variation];
 				while (el -> isPair ()) {
@@ -1034,6 +1039,7 @@ public:
 					}
 					el = el -> getRight ();
 				}
+				pthread_mutex_unlock (& seq -> critical);
 				return true;
 			}
 		}

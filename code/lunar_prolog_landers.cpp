@@ -838,7 +838,7 @@ public:
 					el = el -> getRight ();
 					sqep = sqep -> next;
 				}
-				if (! el -> isEarth ()) el -> setEarth ();
+				if (! el -> isEarth ()) el -> setPair ();
 				return true;
 			}
 			if (el -> isPair ()) {
@@ -1208,6 +1208,15 @@ orbiter * sequencer_class :: create_orbiter (PrologElement * parameters) {
 }
 PrologNativeOrbiter * sequencer_class :: create_native_orbiter (PrologAtom * atom, orbiter * module) {return new native_sequencer (dir, atom, core, module);}
 sequencer_class :: sequencer_class (PrologDirectory * dir, orbiter_core * core) : PrologNativeOrbiterCreator (core) {this -> dir = dir;}
+
+orbiter * prolog_sequencer_class :: create_orbiter (PrologElement * parameters) {return new prolog_sequencer (root, core);}
+PrologNativeOrbiter * prolog_sequencer_class :: create_native_orbiter (PrologAtom * atom, orbiter * module) {
+	return new native_prolog_sequencer (dir, atom, core, module);
+}
+prolog_sequencer_class :: prolog_sequencer_class (PrologRoot * root, PrologDirectory * dir, orbiter_core * core) : PrologNativeOrbiterCreator (core) {
+	this -> root = root;
+	this -> dir = dir;
+}
 
 orbiter * polysequencer_class :: create_orbiter (PrologElement * parameters) {
 	PrologElement * pb = parameters;

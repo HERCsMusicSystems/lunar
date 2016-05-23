@@ -744,7 +744,7 @@ bool sequencer :: release (void) {
 	return ret;
 }
 
-static int get_variation (double trigger) {
+int get_variation (double trigger) {
 	int v = (int) trigger;
 	v >>= 7;
 	if (v < 0) v = 0; if (v > 127) v = 127;

@@ -753,13 +753,36 @@ public:
 	~ prolog_sequence_element (void) {if (query != 0) delete query; if (next != 0) delete next;}
 };
 
+int get_variation (double trigger);
+
 class prolog_sequencer : public CommandModule {
 private:
 	PrologRoot * root;
 	double speed, trigger, variation, clock;
 	double time, previous_clock;
+	int tick;
+	pthread_mutex_t critical;
+	prolog_sequence_element * current_frame;
 public:
 	prolog_sequence_element * elements [128];
+private:
+	void private_signal (void) {
+		if (current_frame == 0) return;
+		while (tick < 1) {
+			if (current_frame -> query == 0) tick = current_frame -> ticks;
+			else {
+				PrologElement * query = root -> pair (root -> head (0), root -> pair (current_frame -> query -> duplicate (), root -> earth ()));
+				root -> resolution (query);
+				delete query;
+			}
+			current_frame = current_frame -> next;
+			if (current_frame == 0) {
+				if (trigger >= 256.0) current_frame = elements [get_variation (variation)];
+				else return;
+			}
+		}
+		tick--;
+	}
 public:
 	bool insert_trigger (lunar_trigger * trigger) {return false;}
 	bool insert_controller (orbiter * controller, int location, double shift) {return false;}
@@ -772,7 +795,7 @@ public:
 	bool isMonoMode (void) {return false;}
 	void control (int ind, double value) {}
 	double getControl (int ind) {return 0.0;}
-	void timing_clock (void) {}
+	void timing_clock (void) {pthread_mutex_lock (& critical); private_signal (); pthread_mutex_unlock (& critical);}
 	int numberOfInputs (void) {return 4;}
 	char * inputName (int ind) {
 		switch (ind) {
@@ -795,23 +818,26 @@ public:
 		return orbiter :: inputAddress (ind);
 	}
 	int numberOfOutputs (void) {return 0;}
-	void move (void) {
-		PrologElement * query = root -> pair (root -> atom ("show"),
-								root -> pair (root -> text ("Joker was here!"),
-								root -> earth ()));
-		query = root -> pair (root -> head (0), root -> pair (query, root -> earth ()));
-		root -> resolution (query);
-		delete query;
+	void propagate_signals (void) {
+		orbiter :: propagate_signals ();
+		if (trigger < 1.0) {if (time < 0.0) return; time = -1.0; return;}
+		if (clock > previous_clock && clock > 0.0) {pthread_mutex_lock (& critical); private_signal (); pthread_mutex_unlock (& critical);}
+		previous_clock = clock;
+		if (time < 0.0) {time = speed > 0.0 ? 1.0 : 0.0; tick = 0; current_frame = elements [get_variation (variation)];}
+		while (time >= 1.0) {time -= 1.0; pthread_mutex_lock (& critical); private_signal (); pthread_mutex_unlock (& critical);}
+		time += core -> sample_duration * speed * 0.4;
 	}
 	prolog_sequencer (PrologRoot * root, orbiter_core * core) : CommandModule (core) {
+		pthread_mutex_init (& critical, 0);
 		this -> root = root;
 		speed = 140.0;
 		trigger = variation = clock = previous_clock = 0.0;
-		time = -1.0;
+		time = -1.0; tick = 0;
+		current_frame = 0;
 		for (int ind = 0; ind < 128; ind++) elements [ind] = 0;
 		initialise (); activate ();
 	}
-	~ prolog_sequencer (void) {for (int ind = 0; ind < 128; ind++ ) {if (elements [ind] != 0) delete elements [ind];}}
+	~ prolog_sequencer (void) {for (int ind = 0; ind < 128; ind++ ) {pthread_mutex_destroy (& critical); if (elements [ind] != 0) delete elements [ind];}}
 };
 
 class native_prolog_sequencer : public native_moonbase {

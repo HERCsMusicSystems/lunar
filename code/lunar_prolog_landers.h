@@ -301,13 +301,21 @@ public:
 
 class sequencer_class : public PrologNativeOrbiterCreator {
 private:
-	PrologRoot * root;
 	PrologDirectory * dir;
-	bool prolog_or_midi; // true if prolog
 public:
 	virtual orbiter * create_orbiter (PrologElement * parameters);
 	virtual PrologNativeOrbiter * create_native_orbiter (PrologAtom * atom, orbiter * module);
-	sequencer_class (PrologRoot * root, PrologDirectory * dir, orbiter_core * core);
+	sequencer_class (PrologDirectory * dir, orbiter_core * core);
+};
+
+class prolog_sequencer_class : public PrologNativeOrbiterCreator {
+private:
+	PrologRoot * root;
+	PrologDirectory * dir;
+public:
+	virtual orbiter * create_orbiter (PrologElement * parameters);
+	virtual PrologNativeOrbiter * create_native_orbiter (PrologAtom * atom, orbiter * module);
+	prolog_sequencer_class (PrologRoot * root, PrologDirectory * dir, orbiter_core * core);
 };
 
 class polysequencer_class : public PrologNativeOrbiterCreator {

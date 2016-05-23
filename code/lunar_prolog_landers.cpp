@@ -826,6 +826,34 @@ public:
 				el = parameters -> getRight ();
 				if (el -> isPair ()) el = el -> getLeft ();
 			}
+			if (el -> isVar ()) {
+				prolog_sequencer * seq = (prolog_sequencer *) module;
+				if (seq == 0) return false;
+				prolog_sequence_element * sqep = seq -> elements [variation];
+				while (sqep != 0) {
+					el -> setPair ();
+					PrologElement * ell = el -> getLeft ();
+					if (sqep -> query == 0) ell -> setInteger (sqep -> ticks);
+					else ell -> duplicate (sqep -> query);
+					el = el -> getRight ();
+					sqep = sqep -> next;
+				}
+				if (! el -> isEarth ()) el -> setEarth ();
+				return true;
+			}
+			if (el -> isPair ()) {
+				prolog_sequencer * seq = (prolog_sequencer *) module;
+				if (seq == 0) return false;
+				if (seq -> elements [variation] != 0) delete seq -> elements [variation]; seq -> elements [variation] = 0;
+				prolog_sequence_element * * sqep = & seq -> elements [variation];
+				while (el -> isPair ()) {
+					PrologElement * eq = el -> getLeft ();
+					if (eq -> isInteger ()) {* sqep = new prolog_sequence_element (eq -> getInteger (), 0); sqep = & (* sqep) -> next;}
+					if (eq -> isPair ()) {* sqep = new prolog_sequence_element (0, eq -> duplicate ()); sqep = & (* sqep) -> next;}
+					el = el -> getRight ();
+				}
+				return true;
+			}
 		}
 		return native_moonbase :: code (parameters, resolution);
 	}
@@ -1172,21 +1200,14 @@ orbiter * sequencer_class :: create_orbiter (PrologElement * parameters) {
 		if (el -> isAtom ()) base = el;
 		parameters = parameters -> getRight ();
 	}
-	if (base == 0) {prolog_or_midi = true; return new prolog_sequencer (root, core);}
+	if (base == 0) return 0;
 	PrologNativeCode * machine = base -> getAtom () -> getMachine ();
 	if (machine == 0) return 0;
 	if (! machine -> isTypeOf (native_moonbase :: name ())) return 0;
 	return new sequencer (core, ((moonbase *) ((native_moonbase *) machine) -> module));
 }
-PrologNativeOrbiter * sequencer_class :: create_native_orbiter (PrologAtom * atom, orbiter * module) {
-	if (prolog_or_midi) return new native_prolog_sequencer (dir, atom, core, module);
-	return new native_sequencer (dir, atom, core, module);
-}
-sequencer_class :: sequencer_class (PrologRoot * root, PrologDirectory * dir, orbiter_core * core) : PrologNativeOrbiterCreator (core) {
-	this -> root = root;
-	this -> dir = dir;
-	prolog_or_midi = false;
-}
+PrologNativeOrbiter * sequencer_class :: create_native_orbiter (PrologAtom * atom, orbiter * module) {return new native_sequencer (dir, atom, core, module);}
+sequencer_class :: sequencer_class (PrologDirectory * dir, orbiter_core * core) : PrologNativeOrbiterCreator (core) {this -> dir = dir;}
 
 orbiter * polysequencer_class :: create_orbiter (PrologElement * parameters) {
 	PrologElement * pb = parameters;

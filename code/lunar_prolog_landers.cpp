@@ -837,7 +837,7 @@ public:
 		for (int ind = 0; ind < 128; ind++) elements [ind] = 0;
 		initialise (); activate ();
 	}
-	~ prolog_sequencer (void) {for (int ind = 0; ind < 128; ind++ ) {pthread_mutex_destroy (& critical); if (elements [ind] != 0) delete elements [ind];}}
+	~ prolog_sequencer (void) {pthread_mutex_destroy (& critical); for (int ind = 0; ind < 128; ind++ ) {if (elements [ind] != 0) delete elements [ind];}}
 };
 
 class native_prolog_sequencer : public native_moonbase {

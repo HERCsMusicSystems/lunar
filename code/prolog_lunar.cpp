@@ -414,7 +414,7 @@ extern void destroy_graphic_resources (GraphicResources * resources);
 PrologLunarServiceClass :: PrologLunarServiceClass (void) {resources = create_graphic_resources ();}
 PrologLunarServiceClass :: ~ PrologLunarServiceClass (void) {
 	destroy_graphic_resources (resources);
-	printf ("orbiter counter [%i]\n", orbiter_count);
+	if (orbiter_count != 0) printf ("orbiter counter [%i]\n", orbiter_count);
 }
 
 #ifdef WINDOWS_OPERATING_SYSTEM

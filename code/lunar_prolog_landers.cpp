@@ -744,6 +744,151 @@ orbiter * arpeggiator_class :: create_orbiter (PrologElement * parameters) {
 PrologNativeOrbiter * arpeggiator_class :: create_native_orbiter (PrologAtom * atom, orbiter * module) {return new native_moonbase (dir, atom, core, module);}
 arpeggiator_class :: arpeggiator_class (PrologDirectory * dir, orbiter_core * core) : PrologNativeOrbiterCreator (core) {this -> dir = dir;}
 
+class prolog_sequence_element {
+public:
+	int ticks;
+	PrologElement * query;
+	prolog_sequence_element * next;
+	prolog_sequence_element (int ticks, PrologElement * query) {this -> ticks = ticks; this -> query = query; next = 0;}
+	~ prolog_sequence_element (void) {if (query != 0) delete query; if (next != 0) delete next;}
+};
+
+int get_variation (double trigger);
+
+class prolog_sequencer : public CommandModule {
+private:
+	PrologRoot * root;
+	double speed, trigger, variation, clock;
+	double time, previous_clock;
+	int tick;
+public:
+	pthread_mutex_t critical;
+	prolog_sequence_element * current_frame;
+	prolog_sequence_element * elements [128];
+private:
+	void private_signal (void) {
+		if (current_frame == 0) return;
+		while (tick < 1) {
+			if (current_frame -> query == 0) tick = current_frame -> ticks;
+			else {
+				PrologElement * query = root -> pair (root -> head (0), root -> pair (current_frame -> query -> duplicate (), root -> earth ()));
+				root -> resolution (query);
+				delete query;
+			}
+			current_frame = current_frame -> next;
+			if (current_frame == 0) {
+				if (trigger >= 256.0) current_frame = elements [get_variation (variation)];
+				else return;
+			}
+		}
+		tick--;
+	}
+public:
+	bool insert_trigger (lunar_trigger * trigger) {return false;}
+	bool insert_controller (orbiter * controller, int location, double shift) {return false;}
+	void keyon (int key) {}
+	void keyon (int key, int velocity) {}
+	void keyoff (void) {}
+	void keyoff (int key, int velocity) {}
+	void mono (void) {}
+	void poly (void) {}
+	bool isMonoMode (void) {return false;}
+	void control (int ind, double value) {}
+	double getControl (int ind) {return 0.0;}
+	void timing_clock (void) {pthread_mutex_lock (& critical); private_signal (); pthread_mutex_unlock (& critical);}
+	int numberOfInputs (void) {return 4;}
+	char * inputName (int ind) {
+		switch (ind) {
+		case 0: return "SPEED"; break;
+		case 1: return "TRIGGER"; break;
+		case 2: return "VARIATION"; break;
+		case 3: return "TIMINGCLOCK"; break;
+		default: break;
+		}
+		return orbiter :: inputName (ind);
+	}
+	double * inputAddress (int ind) {
+		switch (ind) {
+		case 0: return & speed; break;
+		case 1: return & trigger; break;
+		case 2: return & variation; break;
+		case 3: return & clock; break;
+		default: break;
+		}
+		return orbiter :: inputAddress (ind);
+	}
+	int numberOfOutputs (void) {return 0;}
+	void propagate_signals (void) {
+		orbiter :: propagate_signals ();
+		if (trigger < 1.0) {if (time < 0.0) return; time = -1.0; return;}
+		if (clock > previous_clock && clock > 0.0) {pthread_mutex_lock (& critical); private_signal (); pthread_mutex_unlock (& critical);}
+		previous_clock = clock;
+		if (time < 0.0) {time = speed > 0.0 ? 1.0 : 0.0; tick = 0; current_frame = elements [get_variation (variation)];}
+		while (time >= 1.0) {time -= 1.0; pthread_mutex_lock (& critical); private_signal (); pthread_mutex_unlock (& critical);}
+		time += core -> sample_duration * speed * 0.4;
+	}
+	prolog_sequencer (PrologRoot * root, orbiter_core * core) : CommandModule (core) {
+		pthread_mutex_init (& critical, 0);
+		this -> root = root;
+		speed = 140.0;
+		trigger = variation = clock = previous_clock = 0.0;
+		time = -1.0; tick = 0;
+		current_frame = 0;
+		for (int ind = 0; ind < 128; ind++) elements [ind] = 0;
+		initialise (); activate ();
+	}
+	~ prolog_sequencer (void) {pthread_mutex_destroy (& critical); for (int ind = 0; ind < 128; ind++ ) {if (elements [ind] != 0) delete elements [ind];}}
+};
+
+class native_prolog_sequencer : public native_moonbase {
+public:
+	bool code (PrologElement * parameters, PrologResolution * resolution) {
+		if (parameters -> isPair ()) {
+			int variation = 0;
+			PrologElement * el = parameters -> getLeft ();
+			if (el -> isInteger ()) {
+				variation = el -> getInteger ();
+				if (variation < 0) variation = 0; if (variation > 127) variation = 127;
+				el = parameters -> getRight ();
+				if (el -> isPair ()) el = el -> getLeft ();
+			}
+			if (el -> isVar ()) {
+				prolog_sequencer * seq = (prolog_sequencer *) module;
+				if (seq == 0) return false;
+				prolog_sequence_element * sqep = seq -> elements [variation];
+				while (sqep != 0) {
+					el -> setPair ();
+					PrologElement * ell = el -> getLeft ();
+					if (sqep -> query == 0) ell -> setInteger (sqep -> ticks);
+					else ell -> duplicate (sqep -> query);
+					el = el -> getRight ();
+					sqep = sqep -> next;
+				}
+				if (! el -> isEarth ()) el -> setPair ();
+				return true;
+			}
+			if (el -> isPair ()) {
+				prolog_sequencer * seq = (prolog_sequencer *) module;
+				if (seq == 0) return false;
+				pthread_mutex_lock (& seq -> critical);
+				seq -> current_frame = 0;
+				if (seq -> elements [variation] != 0) delete seq -> elements [variation]; seq -> elements [variation] = 0;
+				prolog_sequence_element * * sqep = & seq -> elements [variation];
+				while (el -> isPair ()) {
+					PrologElement * eq = el -> getLeft ();
+					if (eq -> isInteger ()) {* sqep = new prolog_sequence_element (eq -> getInteger (), 0); sqep = & (* sqep) -> next;}
+					if (eq -> isPair ()) {* sqep = new prolog_sequence_element (0, eq -> duplicate ()); sqep = & (* sqep) -> next;}
+					el = el -> getRight ();
+				}
+				pthread_mutex_unlock (& seq -> critical);
+				return true;
+			}
+		}
+		return native_moonbase :: code (parameters, resolution);
+	}
+	native_prolog_sequencer (PrologDirectory * dir, PrologAtom * atom, orbiter_core * core, orbiter * module) : native_moonbase (dir, atom, core, module) {}
+};
+
 class native_sequencer : public native_moonbase {
 public:
 	PrologAtom * keyon, * keyoff, * control, * busy, * impulse;
@@ -819,6 +964,8 @@ public:
 			if (el -> isPair ()) {
 				sequencer * seq = (sequencer *) module;
 				if (seq == 0) return false;
+				pthread_mutex_lock (& seq -> critical);
+				seq -> current_frame = 0;
 				if (seq -> elements [variation] != 0) delete seq -> elements [variation]; seq -> elements [variation] = 0;
 				sequence_element * * sqep = & seq -> elements [variation];
 				while (el -> isPair ()) {
@@ -892,6 +1039,7 @@ public:
 					}
 					el = el -> getRight ();
 				}
+				pthread_mutex_unlock (& seq -> critical);
 				return true;
 			}
 		}
@@ -1092,6 +1240,15 @@ orbiter * sequencer_class :: create_orbiter (PrologElement * parameters) {
 }
 PrologNativeOrbiter * sequencer_class :: create_native_orbiter (PrologAtom * atom, orbiter * module) {return new native_sequencer (dir, atom, core, module);}
 sequencer_class :: sequencer_class (PrologDirectory * dir, orbiter_core * core) : PrologNativeOrbiterCreator (core) {this -> dir = dir;}
+
+orbiter * prolog_sequencer_class :: create_orbiter (PrologElement * parameters) {return new prolog_sequencer (root, core);}
+PrologNativeOrbiter * prolog_sequencer_class :: create_native_orbiter (PrologAtom * atom, orbiter * module) {
+	return new native_prolog_sequencer (dir, atom, core, module);
+}
+prolog_sequencer_class :: prolog_sequencer_class (PrologRoot * root, PrologDirectory * dir, orbiter_core * core) : PrologNativeOrbiterCreator (core) {
+	this -> root = root;
+	this -> dir = dir;
+}
 
 orbiter * polysequencer_class :: create_orbiter (PrologElement * parameters) {
 	PrologElement * pb = parameters;

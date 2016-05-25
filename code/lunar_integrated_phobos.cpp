@@ -401,7 +401,7 @@ void integrated_phobos_part :: move (integrated_phobos * phobos) {
 	adsr . decay = phobos -> adsr . amp . decay + egscal;
 	adsr . sustain = phobos -> adsr . amp . sustain;
 	adsr . release = phobos -> adsr . amp . release + egscal;
-	adsr . move (); trigger . busy = adsr . busy;
+	adsr . move (); trigger . busy = adsr . busy; phobos -> lfo1 . trigger += adsr . busy; phobos -> lfo2 . trigger += adsr . busy;
 	noise_eg . trigger = trigger . trigger;
 	noise_eg . level1 = phobos -> noise . level [0];
 	noise_eg . level2 = phobos -> noise . level [1];

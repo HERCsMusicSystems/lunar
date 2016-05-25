@@ -166,7 +166,7 @@ program phobos [BuildPhobos BuildPhobosPart PhobosEditor Operator-1 Operator-2 O
 						*lfo1filter *lfo2filter]
 	[trigger *trigger *key_map] [*cb *trigger]
 	[fm4 *fm] [noise_operator *noise] [eg *noise_eg] [filter *filter] [adsr *adsr]
-	[*adsr "trigger" *trigger "trigger"] [*trigger "busy" *adsr "busy"]
+	[*adsr "trigger" *trigger "trigger"] [*trigger "busy" *adsr "busy"] [*lfo1 "trigger" *adsr "busy"] [*lfo2 "trigger" *adsr "busy"]
 	[*filter *fm] [*filter *noise] [*filter "gain" *adsr] [*line *filter]
 	[*lfo1 "trigger" *trigger "trigger"] [*lfo2 "trigger" *trigger "trigger"]
 	[*noise_eg "trigger" *trigger "trigger"] [*noise "amp" *noise_eg]

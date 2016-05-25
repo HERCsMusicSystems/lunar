@@ -25,7 +25,7 @@ program microdot [BuildMicrodot MicrodotEditor Lfo-1 Adsr-1 Vco-1 Filter-1]
 	[Insert *delay *microdot delay]
 	;;;;;;;;;;;;;;;;;
 	[key_map *key_map] [trigger *trigger] [adsr *adsr] [vco *vco] [filter *vcf] [lfo *lfo]
-	[*microdotcb *trigger] [*trigger *key_map] [*adsr "trigger" *trigger "trigger"] [*trigger "busy" *adsr "busy"]
+	[*microdotcb *trigger] [*trigger *key_map] [*adsr "trigger" *trigger "trigger"] [*trigger "busy" *adsr "busy"] [*lfo "trigger" *adsr "busy"]
 	[*vco "freq" *trigger "key"] [*vco "freq" *lfo "vibrato"]
 	[*vcf "gain" *adsr] [*vcf "amp" *lfo "tremolo"] [*vcf "freq" *lfo "wahwah"]
 	[*vcf *vco] [*pan *vcf] [*pan "pan" *lfo "pan"]

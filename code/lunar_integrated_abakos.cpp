@@ -273,7 +273,7 @@ void integrated_abakos_part :: move (integrated_abakos * ia) {
 	adsr1 . sustain = ia -> adsr1 . sustain;
 	adsr1 . release = ia -> adsr1 . release;
 	adsr1 . move ();
-	trigger . busy = adsr1 . busy;
+	trigger . busy = adsr1 . busy; ia -> lfo . trigger += adsr1 . busy;
 	adsr2 . trigger = trigger . trigger;
 	adsr2 . time1 = ia -> adsr2 . time [0];
 	adsr2 . time2 = ia -> adsr2 . time [1];

@@ -160,6 +160,7 @@ public:
 		trigger . move ();
 		adsr . trigger = trigger . trigger;
 		adsr . move ();
+		trigger . busy = adsr . busy; lfo . trigger = adsr . busy;
 		lfo . vibrato = vibrato + modulation * modulation_sensitivity * 0.00006103515625;
 		lfo . move ();
 		vco . freq = freq + trigger . signal + lfo . vibrato_signal + pitch * sens * 0.00006103515625;

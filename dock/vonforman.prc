@@ -1,7 +1,7 @@
 import studio
 import lunar
 
-program vonforman [BuildVonForman BuildVonFormanPart LGV LGT LGP STK STV AEG FEGS]
+program vonforman [BuildVonForman BuildVonFormanPart VF LGV LGT LGP STK STV AEG FEGS MORPH]
 
 [[LGV *gate *lfo] [gateway *gate] [*gate "enter" *lfo "vibrato"]]
 [[LGT *gate *lfo] [gateway *gate] [*gate "enter" *lfo "tremolo"]]
@@ -13,11 +13,17 @@ program vonforman [BuildVonForman BuildVonFormanPart LGV LGT LGP STK STV AEG FEG
 	[sensitivity *egscal] [*egscal *trigger] [*eg "time1" *egscal] [*eg "time2" *egscal] [*eg "time3" *egscal] [*eg "time4" *egscal]
 ]
 [[FEGS *sens *eg *fm *input] [gateway *sens] [*sens *eg] [*fm *input *sens]]
+[[MORPH *morph *ff *name *x *y *lfo1x *lfo1y *lfo2x *lfo2y]
+	[morph *morph]
+	[*morph "x" *x] [*morph "y" *y]
+	[*morph "x" *lfo1x] [*morph "y" *lfo1y] [*morph "x" *lfo2x] [*morph "y" *lfo2y]
+	[*ff *name *morph]
+]
 
 [[BuildVonForman *polyphony] / [BuildVonForman *polyphony * * *]]
 
 [[BuildVonForman *polyphony *VonForman *VonFormanCB *volume]
-	[Moonbase *VonForman *VonFormanCB VonForman *volume]
+	[Moonbase *VonForman *VonFormanCB VF *volume]
 	[moonbase *CB] [key_map *key_map] [arpeggiator *VonFormanCB *CB]
 	[auto_data *XData] [parameter_block *X "index"] [*XData *X]
 	[auto_data *YData] [parameter_block *Y "index"] [*YData *Y]
@@ -28,6 +34,8 @@ program vonforman [BuildVonForman BuildVonFormanPart LGV LGT LGP STK STV AEG FEG
 	[lfo *lfo1] [lfo *lfo2]
 		[gateway *vibrato] [*vibrato *modulation] [*lfo1 "vibrato" *vibrato]
 		[gateway *wahwah] [*wahwah *modulation] [*lfo1 "wahwah" *wahwah]
+		[gateway *lfo1x] [gateway *lfo1y] [gateway *lfo2x] [gateway *lfo2y]
+		[*lfo1x *lfo1] [*lfo1y *lfo1] [*lfo2x *lfo2] [*lfo2y *lfo2]
 	[LGV *lfo1freq1 *lfo1] [LGV *lfo1freq2 *lfo1] [LGV *lfo1freq3 *lfo1] [LGV *lfo1freq4 *lfo1]
 	[LGV *lfo2freq1 *lfo2] [LGV *lfo2freq2 *lfo2] [LGV *lfo2freq3 *lfo2] [LGV *lfo2freq4 *lfo2]
 	[LGT *lfo1amp1 *lfo1] [LGT *lfo1amp2 *lfo1] [LGT *lfo1amp3 *lfo1] [LGT *lfo1amp4 *lfo1]
@@ -49,17 +57,22 @@ program vonforman [BuildVonForman BuildVonFormanPart LGV LGT LGP STK STV AEG FEG
 	[InsertPB *AutoCtrl *VonForman core auto]
 	[Insert *VonFormanCB *VonForman arpeggiator]
 	[Insert *lfo1 *VonForman lfo 1]
+	[Insert *lfo1x *VonForman lfo 1 vector X]
+	[Insert *lfo1y *VonForman lfo 1 vector Y]
 	[InsertFor *VonForman lfo 1 vibrato]
 	[InsertFor *VonForman lfo 1 tremolo]
 	[InsertFor *VonForman lfo 1 wahwah]
 	[InsertFor *VonForman lfo 1 pan]
 	[Insert *lfo2 *VonForman lfo 2]
+	[Insert *lfo2x *VonForman lfo 2 vector X]
+	[Insert *lfo2y *VonForman lfo 2 vector Y]
 	[InsertFor *VonForman lfo 2 vibrato]
 	[InsertFor *VonForman lfo 2 tremolo]
 	[InsertFor *VonForman lfo 2 wahwah]
 	[InsertFor *VonForman lfo 2 pan]
 	;==========================================
-	[REPEAT *polyphony [BuildVonFormanPart *VonForman *VonFormanCB *volume *key_map *lfo1 *lfo2
+	[REPEAT *polyphony [BuildVonFormanPart *VonForman *VonFormanCB *volume *key_map
+						*lfo1 *lfo2 *XData *YData *lfo1x *lfo1y *lfo2x *lfo2y
 						*pitchfreq1 *pitchfreq2 *pitchfreq3 *pitchfreq4 *pitchfreqf
 						*lfo1freq1 *lfo1freq2 *lfo1freq3 *lfo1freq4
 						*lfo2freq1 *lfo2freq2 *lfo2freq3 *lfo2freq4
@@ -106,7 +119,8 @@ program vonforman [BuildVonForman BuildVonFormanPart LGV LGT LGP STK STV AEG FEG
 	[Lunar 16384 *VonForman vco 4 sens freq lfo 1]
 ]
 
-[[BuildVonFormanPart *VF *cb *line *key_map *lfo1 *lfo2
+[[BuildVonFormanPart *VF *cb *line *key_map
+						*lfo1 *lfo2 *XData *YData *lfo1x *lfo1y *lfo2x *lfo2y
 						*pitchfreq1 *pitchfreq2 *pitchfreq3 *pitchfreq4 *pitchfreqf
 						*lfo1freq1 *lfo1freq2 *lfo1freq3 *lfo1freq4
 						*lfo2freq1 *lfo2freq2 *lfo2freq3 *lfo2freq4
@@ -143,8 +157,30 @@ program vonforman [BuildVonForman BuildVonFormanPart LGV LGT LGP STK STV AEG FEG
 	[FEGS *freqegf *freqeg *filter "freq"]
 	[*filter "freq" *pitchfreqf]
 	[*filter "freq" *lfo1 "wahwah"] [*filter "freq" *lfo2 "wahwah"]
+	;========== AUTO VECTOR ==========
+	[auto *X *XData] [*X "trigger" *trigger "trigger"] [*XData "trigger" *trigger "trigger"]
+	[auto *Y *YData] [*Y "trigger" *trigger "trigger"] [*YData "trigger" *trigger "trigger"]
+	;========== FORMANT FILTER 1 =====
+	[formant_filter *ff1]
+		[MORPH *ff1freq *ff1 "freq"      *X *Y *lfo1x *lfo1y *lfo2x *lfo2y]
+		[MORPH *ff1reso *ff1 "resonance" *X *Y *lfo1x *lfo1y *lfo2x *lfo2y]
+		[MORPH *ff1q    *ff1 "q"         *X *Y *lfo1x *lfo1y *lfo2x *lfo2y]
+		[*ff1 "gain" *adsr] [*ff1 *noise] [*ff1 *fm]
+		[*ff1 "amp" *lfo1 "tremolo"] [*ff1 "amp" *lfo2 "tremolo"]
+	[formant_filter *ff2]
+		[MORPH *ff2freq *ff2 "freq"      *X *Y *lfo1x *lfo1y *lfo2x *lfo2y]
+		[MORPH *ff2reso *ff2 "resonance" *X *Y *lfo1x *lfo1y *lfo2x *lfo2y]
+		[MORPH *ff2q    *ff2 "q"         *X *Y *lfo1x *lfo1y *lfo2x *lfo2y]
+		[*ff2 "gain" *adsr] [*ff2 *noise] [*ff2 *fm]
+		[*ff2 "amp" *lfo1 "tremolo"] [*ff2 "amp" *lfo2 "tremolo"]
+	[formant_filter *ff3]
+		[MORPH *ff3freq *ff3 "freq"      *X *Y *lfo1x *lfo1y *lfo2x *lfo2y]
+		[MORPH *ff3reso *ff3 "resonance" *X *Y *lfo1x *lfo1y *lfo2x *lfo2y]
+		[MORPH *ff3q    *ff3 "q"         *X *Y *lfo1x *lfo1y *lfo2x *lfo2y]
+		[*ff3 "gain" *adsr] [*ff3 *noise] [*ff3 *fm]
+		[*ff3 "amp" *lfo1 "tremolo"] [*ff3 "amp" *lfo2 "tremolo"]
 	;========== LINE CONNECTION ======
-	[*line *filter]
+	[*line *filter] [*line *ff1] [*line *ff2] [*line *ff3]
 	;========== SUPERSTRUCTURE =======
 	[Insert *fm *VF vco]
 	[Insert *ampeg1 *VF vco 1 eg] [Insert *ampeg2 *VF vco 2 eg] [Insert *ampeg3 *VF vco 3 eg] [Insert *ampeg4 *VF vco 4 eg]
@@ -159,13 +195,20 @@ program vonforman [BuildVonForman BuildVonFormanPart LGV LGT LGP STK STV AEG FEG
 	[Insert *filter *VF filter]
 	[Insert *filter_key *VF filter sens key]
 	[Insert *freqegf *VF filter sens eg]
+	[Insert *ff1 *VF formant 1]
+	[Insert *ff2 *VF formant 2]
+	[Insert *ff3 *VF formant 3]
+	[Insert *ff1freq *VF vector 1 freq] [Insert *ff1reso *VF vector 1 resonance] [Insert *ff1q *VF vector 1 Q]
+	[Insert *ff2freq *VF vector 2 freq] [Insert *ff2reso *VF vector 2 resonance] [Insert *ff2q *VF vector 2 Q]
+	[Insert *ff3freq *VF vector 3 freq] [Insert *ff3reso *VF vector 3 resonance] [Insert *ff3q *VF vector 3 Q]
 	[Insert *adsr *VF adsr amp]
 	[Insert *egscal *VF adsr amp egscal]
 	[Insert *freqeg *VF adsr freq]
 	[Insert *fegscal *VF adsr freq egscal]
 	[Insert *trigger *VF portamento]
+	[AddModule *X *VF] [AddModule *Y *VF]
 ]
 
-private [LGV LGT LGP STK STV AEG FEGS]
+private [LGV LGT LGP STK STV AEG FEGS MORPH]
 
 end .

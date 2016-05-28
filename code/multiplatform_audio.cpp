@@ -439,7 +439,6 @@ MultiplatformAudio :: ~ MultiplatformAudio (void) {
 	for (int ind = 0; ind < number_of_input_devices; ind++) {delete [] input_device_names [ind]; delete [] input_device_ids [ind];}
 	for (int ind = 0; ind < number_of_output_devices; ind++) {delete [] output_device_names [ind]; delete [] output_device_ids [ind];}
 	number_of_input_devices = number_of_output_devices = 0;
-	printf ("Audio deallocated.\n");
 }
 
 #endif
@@ -1021,7 +1020,6 @@ MultiplatformAudio :: ~ MultiplatformAudio (void) {
 	for (int ind = 0; ind < number_of_input_devices; ind++) delete [] input_device_names [ind];
 	for (int ind = 0; ind < number_of_output_devices; ind++) delete [] output_device_names [ind];
 	number_of_input_devices = number_of_output_devices = 0;
-	printf ("Audio deallocated.\n");
 }
 
 bool MultiplatformAudio :: selectInputDevice (int ind) {

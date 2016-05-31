@@ -71,7 +71,7 @@ program vonforman [BuildVonForman BuildVonFormanPart VF LGV LGT LGP STK STV AEG 
 	[InsertFor *VonForman lfo 2 wahwah]
 	[InsertFor *VonForman lfo 2 pan]
 	;==========================================
-	[REPEAT *polyphony [BuildVonFormanPart *VonForman *VonFormanCB *volume *key_map
+	[REPEAT *polyphony [BuildVonFormanPart *VonForman *VonFormanCB *chorus *key_map
 						*lfo1 *lfo2 *XData *YData *lfo1x *lfo1y *lfo2x *lfo2y
 						*pitchfreq1 *pitchfreq2 *pitchfreq3 *pitchfreq4 *pitchfreqf
 						*lfo1freq1 *lfo1freq2 *lfo1freq3 *lfo1freq4
@@ -117,6 +117,14 @@ program vonforman [BuildVonForman BuildVonFormanPart VF LGV LGT LGP STK STV AEG 
 	[Lunar 16384 *VonForman vco 2 sens freq lfo 1]
 	[Lunar 16384 *VonForman vco 3 sens freq lfo 1]
 	[Lunar 16384 *VonForman vco 4 sens freq lfo 1]
+	[Lunar 128 *VonForman vco 1 sens freq key right]
+	[Lunar 128 *VonForman vco 2 sens freq key right]
+	[Lunar 128 *VonForman vco 3 sens freq key right]
+	[Lunar 128 *VonForman vco 4 sens freq key right]
+	[Lunar -128 *VonForman vco 1 sens freq key left]
+	[Lunar -128 *VonForman vco 2 sens freq key left]
+	[Lunar -128 *VonForman vco 3 sens freq key left]
+	[Lunar -128 *VonForman vco 4 sens freq key left]
 ]
 
 [[BuildVonFormanPart *VF *cb *line *key_map
@@ -140,7 +148,6 @@ program vonforman [BuildVonForman BuildVonFormanPart VF LGV LGT LGP STK STV AEG 
 	[noise_operator *noise] [eg *noise_eg] [*noise_eg "trigger" *trigger "trigger"] [*noise "amp" *noise_eg]
 	;========== FM VCO ===============
 	[fm4 *fm]
-	[*fm "freq1" *trigger] [*fm "freq2" *trigger] [*fm "freq3" *trigger] [*fm "freq4" *trigger]
 	[STK *freq1 *fm "freq1" *trigger] [STK *freq2 *fm "freq2" *trigger] [STK *freq3 *fm "freq3" *trigger] [STK *freq4 *fm "freq4" *trigger]
 	[STK *amp1 *fm "amp1" *trigger] [STK *amp2 *fm "amp2" *trigger] [STK *amp3 *fm "amp3" *trigger] [STK *amp4 *fm "amp4" *trigger]
 	[STV *velocity1 *fm "amp1" *trigger] [STV *velocity2 *fm "amp2" *trigger] [STV *velocity3 *fm "amp3" *trigger] [STV *velocity4 *fm "amp4" *trigger]

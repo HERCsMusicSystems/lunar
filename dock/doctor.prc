@@ -1,5 +1,64 @@
 
+import studio
 import lunar
+
+program doctor [Doctor BuildDoctor BuildDoctorPart]
+
+[[BuildDoctor *polyphony]
+	[TRY
+		[wave *waveforms
+			"Doctor/snare_h.wav"
+			"Doctor/snare_m.wav"
+			"Doctor/snare_l.wav"
+			"Doctor/snare_roll.wav"
+			"Doctor/snare_hit_roll.wav"
+			"Doctor/snare_soft_roll.wav"
+			"Doctor/snare_loop.wav"
+		]
+	]
+	[BuildDoctor *polyphony *waveforms]
+]
+[[BuildDoctor *polyphony *waveforms] / [BuildDoctor *polyphony * * * *waveforms]]
+
+[[BuildDoctor *polyphony *Doctor *DoctorCB *volume *waveforms]
+	[Moonbase *Doctor *DoctorCB Doctor *volume] [moonbase *DoctorCB]
+	[parameter_block *pitch "index"] [gateway *pitchsens] [*pitchsens *pitch]
+	[stereo_pan *pan] [delay *delay] [drywet *drywet] [volume *volume]
+	[ConnectStereo *delay *pan] [ConnectDryWet *drywet *pan *delay] [ConnectStereo *volume *drywet]
+	[Insert *volume *Doctor core]
+	[Insert *pan *Doctor core]
+	[Insert *drywet *Doctor core delay]
+	[Insert *delay *Doctor core delay]
+	[REPEAT *polyphony [BuildDoctorPart *Doctor *DoctorCB *pan *pitchsens *waveforms]]
+]
+
+[[BuildDoctorPart *Doctor *cb *line *pitch *waveforms]
+	[trigger *trigger] [*cb *trigger]
+	[adsr *adsr]
+		[*adsr "trigger" *trigger "trigger"]
+	[sampler_operator *sam *waveforms]
+		[*sam "trigger" *trigger "trigger"]
+		[*sam "gain" *adsr]
+		[*sam "freq" *pitch]
+		[gateway *freqsens] [*freqsens *trigger] [*sam "freq" *freqsens]
+		[gateway *indexsens] [*indexsens *trigger] [*sam "index" *indexsens]
+	[sensitivity *velocity] [*velocity "signal" *trigger "velocity"] [*sam "amp" *velocity]
+	[control *busy] [*busy "enter" *adsr "busy"] [*busy "gateway" *sam "busy"] [*trigger "busy" *busy]
+	[filter *left_filter] [filter *right_filter]
+		[*left_filter "enter" *sam "left"]
+		[*right_filter "enter" *sam "right"]
+	[*line "left" *left_filter] [*line "right" *right_filter]
+	[Insert *sam *Doctor vco]
+	[Insert *freqsens *Doctor vco sens freq]
+	[Insert *indexsens *Doctor vco sens index]
+	[Insert *velocity *Doctor vco sens velocity]
+	[Insert *left_filter *Doctor filter]
+	[Insert *right_filter *Doctor filter]
+	[Insert *adsr *Doctor adsr]
+	[Insert *trigger *Doctor portamento]
+]
+
+end .
 
 program doctor [
 				Doctor BuildDoctor BuildDoctorPart DoctorWaveforms

@@ -70,6 +70,7 @@ program doctor [Doctor BuildDoctor BuildDoctorPart]
 	[Lunar 512 *Doctor sens pitch]
 	[Lunar 256 *Doctor sens modulation]
 	[Lunar 16384 *Doctor sens index]
+	[Lunar 1792 *Doctor lfo speed]
 ]
 
 [[BuildDoctorPart *Doctor *cb *line *pitch *lfo *waveforms]

@@ -146,6 +146,7 @@ program vonforman [BuildVonForman BuildVonFormanPart VF LGV LGT LGP STK STV AEG 
 	[Lunar -128 *VonForman vco 2 sens freq key left]
 	[Lunar -128 *VonForman vco 3 sens freq key left]
 	[Lunar -128 *VonForman vco 4 sens freq key left]
+	[Lunar 1792 *VonForman lfo 1 speed]
 ]
 
 [[BuildVonFormanPart *VF *cb *line *key_map

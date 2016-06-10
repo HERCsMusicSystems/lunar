@@ -81,6 +81,7 @@ program forman [BuildForman BuildFormanPart]
 	[Lunar 2048 *Forman filter resonance]
 	[Lunar 512 *Forman vco sens pitch]
 	[Lunar 256 *Forman core sens vibrato]
+	[Lunar 1792 *Forman lfo 1 speed]
 ]
 
 [[BuildFormanPart *Forman *cb *line *XData *YData *pitchvco *pitchfilter *lfo1 *lfo2 *lfo1x *lfo1y *lfo2x *lfo2y]

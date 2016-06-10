@@ -176,7 +176,8 @@ bool AudioModulePanel :: code (PrologElement * parameters, PrologResolution * re
 		parameters = parameters -> getRight ();
 	}
 	if (refresher != 0) {feedback (); update (); return true;}
-	if (x == 0 || y == 0) return true;
+	if (x == 0) return true;
+	if (y == 0) {this -> FunctionKey ((int) x -> getNumber (), 0); return true;}
 	location = point (x -> getNumber (), y -> getNumber ());
 	reposition ();
 	return true;

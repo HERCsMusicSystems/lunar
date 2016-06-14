@@ -133,7 +133,7 @@ public:
 	lunar_sampler_operator (orbiter_core * core);
 };
 
-class lunar_fm4_block : public orbiter {
+class lunar_dx9_block : public orbiter {
 private:
 	double current_algo;
 	double previous_algo;
@@ -145,21 +145,42 @@ private:
 	double gain1, gain2, gain3, gain4;
 	double ratio1, ratio2, ratio3, ratio4;
 	double feedback1, feedback2, feedback3, feedback4;
-	double (* algo) (lunar_fm4_block * block);
+	double (* algo) (lunar_dx9_block * block);
+public:
+	virtual int numberOfInputs (void);
+	virtual char * inputName (int ind);
+	virtual double * inputAddress (int ind);
+	virtual void move (void);
+	lunar_dx9_block (orbiter_core * core);
+	friend double algo1 (lunar_dx9_block * block);
+	friend double algo2 (lunar_dx9_block * block);
+	friend double algo3 (lunar_dx9_block * block);
+	friend double algo4 (lunar_dx9_block * block);
+	friend double algo5 (lunar_dx9_block * block);
+	friend double algo6 (lunar_dx9_block * block);
+	friend double algo7 (lunar_dx9_block * block);
+	friend double algo8 (lunar_dx9_block * block);
+};
+
+class lunar_fm4_block : public orbiter {
+private:
+	double trigger;
+	double signal1, signal2, signal3, signal4;
+	double time1, time2, time3, time4;
+	double freq1, freq2, freq3, freq4;
+	double amp1, amp2, amp3, amp4;
+	double gain1, gain2, gain3, gain4;
+	double ratio1, ratio2, ratio3, ratio4;
+	double feedback1, feedback2, feedback3, feedback4;
+	double feed12, feed13, feed14;
+	double feed23, feed24;
+	double feed34;
 public:
 	virtual int numberOfInputs (void);
 	virtual char * inputName (int ind);
 	virtual double * inputAddress (int ind);
 	virtual void move (void);
 	lunar_fm4_block (orbiter_core * core);
-	friend double algo1 (lunar_fm4_block * block);
-	friend double algo2 (lunar_fm4_block * block);
-	friend double algo3 (lunar_fm4_block * block);
-	friend double algo4 (lunar_fm4_block * block);
-	friend double algo5 (lunar_fm4_block * block);
-	friend double algo6 (lunar_fm4_block * block);
-	friend double algo7 (lunar_fm4_block * block);
-	friend double algo8 (lunar_fm4_block * block);
 };
 
 #endif

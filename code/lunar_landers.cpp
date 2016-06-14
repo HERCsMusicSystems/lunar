@@ -560,7 +560,7 @@ void lunar_trigger :: keyoff_request (void) {
 }
 void lunar_trigger :: keyoff_all_request (void) {
 	//this -> key = -1;
-	keystack_pointer = 0; trigger = 0.0;
+	keystack_pointer = 0; if (hold_ctrl == 0.0) trigger = 0.0;
 }
 bool lunar_trigger :: release (void) {
 	lunar_map * to_delete_key_map = key_map;

@@ -32,7 +32,7 @@ orbiter * operator_class :: create_orbiter (PrologElement * parameters) {return 
 operator_class :: operator_class (orbiter_core * core) : PrologNativeOrbiterCreator (core) {}
 
 orbiter * dx_operator_class :: create_orbiter (PrologElement * parameters) {return new lunar_dx9_block (core);}
-dx_operator_class :: dx_operator_class (orbiter_core * corem) : PrologNativeOrbiterCreator (core) {}
+dx_operator_class :: dx_operator_class (orbiter_core * core) : PrologNativeOrbiterCreator (core) {}
 
 orbiter * fm_operator_class :: create_orbiter (PrologElement * parameters) {
 	while (parameters -> isPair ()) {

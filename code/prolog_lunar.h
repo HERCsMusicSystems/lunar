@@ -205,16 +205,16 @@ public:
 	operator_class (orbiter_core * core);
 };
 
-class dx9_operator_class : public PrologNativeOrbiterCreator {
+class dx_operator_class : public PrologNativeOrbiterCreator {
 public:
 	virtual orbiter * create_orbiter (PrologElement * parameters);
-	dx9_operator_class (orbiter_core * core);
+	dx_operator_class (orbiter_core * core);
 };
 
-class fm4_operator_class : public PrologNativeOrbiterCreator {
+class fm_operator_class : public PrologNativeOrbiterCreator {
 public:
 	virtual orbiter * create_orbiter (PrologElement * parameters);
-	fm4_operator_class (orbiter_core * core);
+	fm_operator_class (orbiter_core * core);
 };
 
 class square_operator_class : public PrologNativeOrbiterCreator {

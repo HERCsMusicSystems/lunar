@@ -14,7 +14,7 @@ program lunar #machine := "lunar"
 				trigger inactive_trigger delay1 delay2 mixer stereo_mixer gateway stereo_gateway amplifier stereo_amplifier volume mono_volume
 				lfo envelope adsr adsr-linear eg eg-linear-expo egscaling egscal vca vca-adsr vca-eg vco ring ringmod DCOffsetFilter DCOffsetFilterMono
 				index shift bias variation transpose mode arranger_array
-				square_operator saw_operator noise_operator sampler_operator sampler fm4 fm6 fm8 dx9 dx7
+				square_operator saw_operator noise_operator sampler_operator sampler fm fm4 fm6 fm8 dx dx9 dx7 dx5
 				sensitivity sens filter delay reverb freeverb chorus stereo_chorus
 				pan power_pan linear_pan stereo_pan stereo_power_pan stereo_linear_pan
 				drywet drywet_mono dry wet balance
@@ -132,8 +132,8 @@ program lunar #machine := "lunar"
 
 #machine core := "core"
 #machine operator := "operator"
-#machine dx9 := "dx9"
-#machine fm4 := "fm4"
+#machine dx := "dx"
+#machine fm := "fm"
 #machine square_operator := "square_operator"
 #machine saw_operator := "saw_operator"
 #machine noise_operator := "noise_operator"
@@ -176,6 +176,13 @@ program lunar #machine := "lunar"
 #machine integrated_microdot := "integrated_microdot"
 #machine integrated_abakos := "integrated_abakos"
 #machine integrated_phobos := "integrated_phobos"
+
+[[fm4 *module] [fm *module 4]]
+[[fm6 *module] [fm *module 6]]
+[[fm8 *module] [fm *module 8]]
+[[dx9 *module] [dx *module 9]]
+[[dx7 *module] [dx *module 7]]
+[[dx5 *module] [dx *module 5]]
 
 [[BuildParameterBlockPanel *panel *from *to *instrument : *path]
 	[*instrument *parameters : *] [*parameters *parameter : *path]
@@ -1081,6 +1088,65 @@ program lunar #machine := "lunar"
 	[AddParameterBlock *parameters amp "amp4" *op *selector4 -16384.0 "amp"]
 	[AddParameterBlock *parameters ratio "ratio4" *op *selector4 1 "ratio"]
 	[AddParameterBlock *parameters feedback "feedback4" *op *selector4 0 "index"]
+]
+
+[[InsertIO *parameters *op *selector [["1 => 2" "1 => 3" "1 => 4" "1 => 5" "1 => 6" "2 => 3" "2 => 4" "2 => 5" "2 => 6" "3 => 4" "3 => 5" "3 => 6" "4 => 5" "4 => 6" "5 => 6" "TRIGGER"
+									"FREQ1" "AMP1" "GAIN1" "RATIO1" "FEEDBACK1"
+									"FREQ2" "AMP2" "GAIN2" "RATIO2" "FEEDBACK2"
+									"FREQ3" "AMP3" "GAIN3" "RATIO3" "FEEDBACK3"
+									"FREQ4" "AMP4" "GAIN4" "RATIO4" "FEEDBACK4"
+									"FREQ5" "AMP5" "GAIN5" "RATIO5" "FEEDBACK5"
+									"FREQ6" "AMP6" "GAIN6" "RATIO6" "FEEDBACK6"] ["SIGNAL"]]]
+	[APPEND *selector [algo 1] *algo_selector1]
+	[AddParameterBlock *parameters 2 "1 => 2" *op *algo_selector1 0 "index"]
+	[AddParameterBlock *parameters 3 "1 => 3" *op *algo_selector1 0 "index"]
+	[AddParameterBlock *parameters 4 "1 => 4" *op *algo_selector1 0 "index"]
+	[AddParameterBlock *parameters 5 "1 => 5" *op *algo_selector1 0 "index"]
+	[AddParameterBlock *parameters 6 "1 => 6" *op *algo_selector1 0 "index"]
+	[APPEND *selector [algo 2] *algo_selector2]
+	[AddParameterBlock *parameters 3 "2 => 3" *op *algo_selector2 0 "index"]
+	[AddParameterBlock *parameters 4 "2 => 4" *op *algo_selector2 0 "index"]
+	[AddParameterBlock *parameters 5 "2 => 5" *op *algo_selector2 0 "index"]
+	[AddParameterBlock *parameters 6 "2 => 6" *op *algo_selector2 0 "index"]
+	[APPEND *selector [algo 3] *algo_selector3]
+	[AddParameterBlock *parameters 4 "3 => 4" *op *algo_selector3 0 "index"]
+	[AddParameterBlock *parameters 5 "3 => 5" *op *algo_selector3 0 "index"]
+	[AddParameterBlock *parameters 6 "3 => 6" *op *algo_selector3 0 "index"]
+	[APPEND *selector [algo 4] *algo_selector4]
+	[AddParameterBlock *parameters 5 "4 => 5" *op *algo_selector4 0 "index"]
+	[AddParameterBlock *parameters 6 "4 => 6" *op *algo_selector4 0 "index"]
+	[APPEND *selector [algo 5] *algo_selector5]
+	[AddParameterBlock *parameters 6 "5 => 6" *op *algo_selector5 0 "index"]
+	[APPEND *selector [1] *selector1]
+	[AddParameterBlock *parameters freq "freq1" *op *selector1 0 "freq"]
+	[AddParameterBlock *parameters amp "amp1" *op *selector1 0 "amp"]
+	[AddParameterBlock *parameters ratio "ratio1" *op *selector1 1 "ratio"]
+	[AddParameterBlock *parameters feedback "feedback1" *op *selector1 0 "index"]
+	[APPEND *selector [2] *selector2]
+	[AddParameterBlock *parameters freq "freq2" *op *selector2 0 "freq"]
+	[AddParameterBlock *parameters amp "amp2" *op *selector2 -16384.0 "amp"]
+	[AddParameterBlock *parameters ratio "ratio2" *op *selector2 1 "ratio"]
+	[AddParameterBlock *parameters feedback "feedback2" *op *selector2 0 "index"]
+	[APPEND *selector [3] *selector3]
+	[AddParameterBlock *parameters freq "freq3" *op *selector3 0 "freq"]
+	[AddParameterBlock *parameters amp "amp3" *op *selector3 -16384.0 "amp"]
+	[AddParameterBlock *parameters ratio "ratio3" *op *selector3 1 "ratio"]
+	[AddParameterBlock *parameters feedback "feedback3" *op *selector3 0 "index"]
+	[APPEND *selector [4] *selector4]
+	[AddParameterBlock *parameters freq "freq4" *op *selector4 0 "freq"]
+	[AddParameterBlock *parameters amp "amp4" *op *selector4 -16384.0 "amp"]
+	[AddParameterBlock *parameters ratio "ratio4" *op *selector4 1 "ratio"]
+	[AddParameterBlock *parameters feedback "feedback4" *op *selector4 0 "index"]
+	[APPEND *selector [5] *selector5]
+	[AddParameterBlock *parameters freq "freq5" *op *selector5 0 "freq"]
+	[AddParameterBlock *parameters amp "amp5" *op *selector5 -16384.0 "amp"]
+	[AddParameterBlock *parameters ratio "ratio5" *op *selector5 1 "ratio"]
+	[AddParameterBlock *parameters feedback "feedback5" *op *selector5 0 "index"]
+	[APPEND *selector [6] *selector6]
+	[AddParameterBlock *parameters freq "freq6" *op *selector6 0 "freq"]
+	[AddParameterBlock *parameters amp "amp6" *op *selector6 -16384.0 "amp"]
+	[AddParameterBlock *parameters ratio "ratio6" *op *selector6 1 "ratio"]
+	[AddParameterBlock *parameters feedback "feedback6" *op *selector6 0 "index"]
 ]
 
 [[InsertIO *parameters *mixer *selector [["ENTER" : *] *]]]

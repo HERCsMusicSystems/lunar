@@ -326,8 +326,8 @@ PrologNativeCode * PrologLunarServiceClass :: getNativeCode (char * name) {
 	if (strcmp (name, "saw_operator") == 0) return new saw_operator_class (& core);
 	if (strcmp (name, "noise_operator") == 0) return new noise_operator_class (& core);
 	if (strcmp (name, "sampler_operator") == 0) return new sampler_operator_class (& core);
-	if (strcmp (name, "dx9") == 0) return new dx9_operator_class (& core);
-	if (strcmp (name, "fm4") == 0) return new fm4_operator_class (& core);
+	if (strcmp (name, "dx") == 0) return new dx_operator_class (& core);
+	if (strcmp (name, "fm") == 0) return new fm_operator_class (& core);
 	if (strcmp (name, "vco") == 0) return new vco_operator_class (& core);
 	if (strcmp (name, "filter") == 0) return new filter_class (& core);
 	if (strcmp (name, "formant_filter") == 0) return new formant_filter_class (& core);

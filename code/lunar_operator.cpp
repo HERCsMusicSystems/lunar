@@ -525,3 +525,151 @@ lunar_fm4_block :: lunar_fm4_block (orbiter_core * core) : orbiter (core) {
 	feed12 = feed13 = feed14 = feed23 = feed24 = feed34 = 0.0;
 	initialise (); activate ();
 }
+
+//////////
+// FM 6 //
+//////////
+
+int lunar_fm6_block :: numberOfInputs (void) {return 46;}
+char * lunar_fm6_block :: inputName (int ind) {
+	switch (ind) {
+	case 0: return "1 => 2"; break;
+	case 1: return "1 => 3"; break;
+	case 2: return "1 => 4"; break;
+	case 3: return "1 => 5"; break;
+	case 4: return "1 => 6"; break;
+	case 5: return "2 => 3"; break;
+	case 6: return "2 => 4"; break;
+	case 7: return "2 => 5"; break;
+	case 8: return "2 => 6"; break;
+	case 9: return "3 => 4"; break;
+	case 10: return "3 => 5"; break;
+	case 11: return "3 => 6"; break;
+	case 12: return "4 => 5"; break;
+	case 13: return "4 => 6"; break;
+	case 14: return "5 => 6"; break;
+	case 15: return "TRIGGER"; break;
+	case 16: return "FREQ1"; break;
+	case 17: return "AMP1"; break;
+	case 18: return "GAIN1"; break;
+	case 19: return "RATIO1"; break;
+	case 20: return "FEEDBACK1"; break;
+	case 21: return "FREQ2"; break;
+	case 22: return "AMP2"; break;
+	case 23: return "GAIN2"; break;
+	case 24: return "RATIO2"; break;
+	case 25: return "FEEDBACK2"; break;
+	case 26: return "FREQ3"; break;
+	case 27: return "AMP3"; break;
+	case 28: return "GAIN3"; break;
+	case 29: return "RATIO3"; break;
+	case 30: return "FEEDBACK3"; break;
+	case 31: return "FREQ4"; break;
+	case 32: return "AMP4"; break;
+	case 33: return "GAIN4"; break;
+	case 34: return "RATIO4"; break;
+	case 35: return "FEEDBACK4"; break;
+	case 36: return "FREQ5"; break;
+	case 37: return "AMP5"; break;
+	case 38: return "GAIN5"; break;
+	case 39: return "RATIO5"; break;
+	case 40: return "FEEDBACK5"; break;
+	case 41: return "FREQ6"; break;
+	case 42: return "AMP6"; break;
+	case 43: return "GAIN6"; break;
+	case 44: return "RATIO6"; break;
+	case 45: return "FEEDBACK6"; break;
+	default: break;
+	}
+	return orbiter :: inputName (ind);
+}
+double * lunar_fm6_block :: inputAddress (int ind) {
+	switch (ind) {
+	case 0: return & feed12; break;
+	case 1: return & feed13; break;
+	case 2: return & feed14; break;
+	case 3: return & feed15; break;
+	case 4: return & feed16; break;
+	case 5: return & feed23; break;
+	case 6: return & feed24; break;
+	case 7: return & feed25; break;
+	case 8: return & feed26; break;
+	case 9: return & feed34; break;
+	case 10: return & feed35; break;
+	case 11: return & feed36; break;
+	case 12: return & feed45; break;
+	case 13: return & feed46; break;
+	case 14: return & feed56; break;
+	case 15: return & trigger; break;
+	case 16: return & freq1; break;
+	case 17: return & amp1; break;
+	case 18: return & gain1; break;
+	case 19: return & ratio1; break;
+	case 20: return & feedback1; break;
+	case 21: return & freq2; break;
+	case 22: return & amp2; break;
+	case 23: return & gain2; break;
+	case 24: return & ratio2; break;
+	case 25: return & feedback2; break;
+	case 26: return & freq3; break;
+	case 27: return & amp3; break;
+	case 28: return & gain3; break;
+	case 29: return & ratio3; break;
+	case 30: return & feedback3; break;
+	case 31: return & freq4; break;
+	case 32: return & amp4; break;
+	case 33: return & gain4; break;
+	case 34: return & ratio4; break;
+	case 35: return & feedback4; break;
+	case 36: return & freq5; break;
+	case 37: return & amp5; break;
+	case 38: return & gain5; break;
+	case 39: return & ratio5; break;
+	case 40: return & feedback5; break;
+	case 41: return & freq6; break;
+	case 42: return & amp6; break;
+	case 43: return & gain6; break;
+	case 44: return & ratio6; break;
+	case 45: return & feedback6; break;
+	default: break;
+	}
+	return orbiter :: inputAddress (ind);
+}
+
+void lunar_fm6_block :: move (void) {
+	if (trigger >= 16384.0) time1 = time2 = time3 = time4 = time5 = time6 = 0.0;
+	signal1 = gain1 * core -> Amplitude (amp1) * core -> Sine (time1 + feedback1 * signal1 * FRAC);
+	signal2 = gain2 * core -> Amplitude (amp2) * core -> Sine (time2 + feedback2 * signal2 * FRAC + signal1 * feed12);
+	signal3 = gain3 * core -> Amplitude (amp3) * core -> Sine (time3 + feedback3 * signal3 * FRAC + signal1 * feed13 + signal2 * feed23);
+	signal4 = gain4 * core -> Amplitude (amp4) * core -> Sine (time4 + feedback4 * signal4 * FRAC + signal1 * feed14 + signal2 * feed24 + signal3 * feed34);
+	signal5 = gain5 * core -> Amplitude (amp5) * core -> Sine (time5 + feedback5 * signal5 * FRAC + signal1 * feed15 + signal2 * feed25 + signal3 * feed35 + signal4 * feed45);
+	signal6 = gain6 * core -> Amplitude (amp6) * core -> Sine (time6 + feedback6 * signal6 * FRAC + signal1 * feed16 + signal2 * feed26 + signal3 * feed36 + signal4 * feed46 + signal5 * feed56);
+	signal = signal6;
+	if (feed56 == 0.0) signal += signal5;
+	if (feed45 == 0.0 && feed46 == 0.0) signal += signal4;
+	if (feed34 == 0.0 && feed35 == 0.0 && feed36 == 0.0) signal += signal3;
+	if (feed23 == 0.0 && feed24 == 0.0 && feed25 == 0.0 && feed26 == 0.0) signal += signal2;
+	if (feed12 == 0.0 && feed13 == 0.0 && feed14 == 0.0 && feed15 == 0.0 && feed16 == 0.0) signal += signal1;
+	time1 += core -> TimeDelta (freq1) * ratio1; while (time1 >= 1.0) time1 -= 1.0;
+	time2 += core -> TimeDelta (freq2) * ratio2; while (time2 >= 1.0) time2 -= 1.0;
+	time3 += core -> TimeDelta (freq3) * ratio3; while (time3 >= 1.0) time3 -= 1.0;
+	time4 += core -> TimeDelta (freq4) * ratio4; while (time4 >= 1.0) time4 -= 1.0;
+	time5 += core -> TimeDelta (freq5) * ratio5; while (time5 >= 1.0) time5 -= 1.0;
+	time6 += core -> TimeDelta (freq6) * ratio6; while (time6 >= 1.0) time6 -= 1.0;
+}
+
+lunar_fm6_block :: lunar_fm6_block (orbiter_core * core) : orbiter (core) {
+	trigger = 0.0;
+	signal1 = signal2 = signal3 = signal4 = signal5 = signal6 = 0.0;
+	time1 = time2 = time3 = time4 = time5 = time6 = 0.0;
+	freq1 = freq2 = freq3 = freq4 = time5 = time6 = 0.0;
+	amp1 = 0.0; amp2 = amp3 = amp4 = amp5 = amp6 = -16384.0;
+	gain1 = gain2 = gain3 = gain4 = gain5 = gain6 = 1.0;
+	ratio1 = ratio2 = ratio3 = ratio4 = ratio5 = ratio6 = 1.0;
+	feedback1 = feedback2 = feedback3 = feedback4 = feedback5 = feedback6 = 0.0;
+	feed12 = feed13 = feed14 = feed15 = feed16 = 0.0;
+	feed23 = feed24 = feed25 = feed26 = 0;
+	feed34 = feed35 = feed36 = 0.0;
+	feed45 = feed46 = feed56 = 0.0;
+	initialise (); activate ();
+}

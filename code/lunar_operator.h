@@ -183,5 +183,28 @@ public:
 	lunar_fm4_block (orbiter_core * core);
 };
 
+class lunar_fm6_block : public orbiter {
+private:
+	double trigger;
+	double signal1, signal2, signal3, signal4, signal5, signal6;
+	double time1, time2, time3, time4, time5, time6;
+	double freq1, freq2, freq3, freq4, freq5, freq6;
+	double amp1, amp2, amp3, amp4, amp5, amp6;
+	double gain1, gain2, gain3, gain4, gain5, gain6;
+	double ratio1, ratio2, ratio3, ratio4, ratio5, ratio6;
+	double feedback1, feedback2, feedback3, feedback4, feedback5, feedback6;
+	double feed12, feed13, feed14, feed15, feed16;
+	double feed23, feed24, feed25, feed26;
+	double feed34, feed35, feed36;
+	double feed45, feed46;
+	double feed56;
+public:
+	virtual int numberOfInputs (void);
+	virtual char * inputName (int ind);
+	virtual double * inputAddress (int ind);
+	virtual void move (void);
+	lunar_fm6_block (orbiter_core * core);
+};
+
 #endif
 

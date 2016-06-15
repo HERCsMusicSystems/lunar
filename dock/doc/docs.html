@@ -28,11 +28,13 @@
         <a href="#predicate_delay">delay</a>
         <a href="#predicate_detector">detector</a>
         <a href="#predicate_drywet">drywet</a>
+        <a href="#predicate_dx9">dx9</a>
         <a href="#predicate_drywet_mono">drywet_mono</a>
         <a href="#predicate_eg">eg</a>
         <a href="#predicate_eg_linear_expo">eg-linear-expo</a>
         <a href="#predicate_filter">filter</a>
         <a href="#predicate_fm4">fm4</a>
+        <a href="#predicate_fm6">fm6</a>
         <a href="#predicate_formant_filter">formant_filter</a>
         <a href="#predicate_freeverb">freeverb</a>
         <a href="#predicate_gateway">gateway</a>
@@ -456,6 +458,45 @@ Core also functions as an audio source (connected directly to the sound hardware
 </div>
 
 <div class="doc_predicate">
+    <a id="predicate_dx9">
+        <div class="doc_predicate_header">
+            [dx9 module] => Creates a DX 9 block with 4 operators.<br />
+            <b>Note:</b> module adheres to <a href="#common_behaviour_of_predicates">Common Behaviour</a>.<br />
+        </div>
+        <div class="doc_predicate_body">
+            <b>Signals:</b> [["ALGO" "TRIGGER"
+            "FREQ1" "AMP1" "GAIN1" "RATIO1" "FEEDBACK1"
+            "FREQ2" "AMP2" "GAIN2" "RATIO2" "FEEDBACK2"
+            "FREQ3" "AMP3" "GAIN3" "RATIO3" "FEEDBACK3"
+            "FREQ4" "AMP4" "GAIN4" "RATIO4" "FEEDBACK4"
+            ] ["SIGNAL"]]<br />
+            FM Block containing 4 FM operators.<br />
+            <b>INPUTS:</b><br />
+            <b>Algo:</b> determines the interconnections between all operators.<br />
+            <b>Trigger:</b> value of 16384.0 or higher keeps the internal clock at time = ZERO.<br />
+            <b>Freq1..4:</b> signal's frequency. Range between -8192.0 .. 8192.0 exponential. Zero = middle E with 128 steps per semitone.<br />
+            <b>Amp1..4:</b> signal's amplitude. Range between -16384.0 .. 0.0 exponential. Zero = 0 dB. Every 1536 divides the amplitude by half.<br />
+            <b>Gain1..4</b> signal's amplification. Range between 0.0 .. 1.0 linear.<br/>
+            <b>Ratio1..4:</b> frequency multiplier (literally).<br />
+            <b>Feedback1..4:</b> level. Range between 0.0 .. 16384.0 linear (can be higher).<br />
+            <b>OUTPUTS:</b><br />
+            <b>Signal:</b> output signal in range between -1.0 .. 1.0.<br />
+            <b>ALGORITHMS:</b><br />
+            <div style="background:black; text-align:center;">
+                <img src="fm4_00.png" />
+                <img src="fm4_01.png" />
+                <img src="fm4_02.png" />
+                <img src="fm4_03.png" />
+                <img src="fm4_04.png" />
+                <img src="fm4_05.png" />
+                <img src="fm4_06.png" />
+                <img src="fm4_07.png" />
+            </div>
+        </div>
+    </a>
+</div>
+
+<div class="doc_predicate">
     <a id="predicate_eg">
         <div class="doc_predicate_header">
             [eg module] => Creates a 4-stage envelope generator module.<br />
@@ -537,11 +578,11 @@ Core also functions as an audio source (connected directly to the sound hardware
 <div class="doc_predicate">
     <a id="predicate_fm4">
         <div class="doc_predicate_header">
-            [fm4 module] => Creates an FM4 block with 4 operators.<br />
+            [fm4 module] => Creates an FM 4 block with 4 operators.<br />
             <b>Note:</b> module adheres to <a href="#common_behaviour_of_predicates">Common Behaviour</a>.<br />
         </div>
         <div class="doc_predicate_body">
-            <b>Signals:</b> [["ALGO" "TRIGGER"
+            <b>Signals:</b> [["1 => 2" "1 => 3" "1 => 4" "2 => 3" "2 => 4" "3 => 4" "TRIGGER"
             "FREQ1" "AMP1" "GAIN1" "RATIO1" "FEEDBACK1"
             "FREQ2" "AMP2" "GAIN2" "RATIO2" "FEEDBACK2"
             "FREQ3" "AMP3" "GAIN3" "RATIO3" "FEEDBACK3"
@@ -549,7 +590,7 @@ Core also functions as an audio source (connected directly to the sound hardware
             ] ["SIGNAL"]]<br />
             FM4 Block containing 4 FM operators.<br />
             <b>INPUTS:</b><br />
-            <b>Algo:</b> determines the interconnections between all operators.<br />
+            <b>1 => 2, 1 => 3....</b> numeric multipliers. Determines the interconnections between all operators.<br />
             <b>Trigger:</b> value of 16384.0 or higher keeps the internal clock at time = ZERO.<br />
             <b>Freq1..4:</b> signal's frequency. Range between -8192.0 .. 8192.0 exponential. Zero = middle E with 128 steps per semitone.<br />
             <b>Amp1..4:</b> signal's amplitude. Range between -16384.0 .. 0.0 exponential. Zero = 0 dB. Every 1536 divides the amplitude by half.<br />
@@ -558,17 +599,18 @@ Core also functions as an audio source (connected directly to the sound hardware
             <b>Feedback1..4:</b> level. Range between 0.0 .. 16384.0 linear (can be higher).<br />
             <b>OUTPUTS:</b><br />
             <b>Signal:</b> output signal in range between -1.0 .. 1.0.<br />
-            <b>ALGORITHMS:</b><br />
-            <div style="background:black; text-align:center;">
-                <img src="fm4_00.png" />
-                <img src="fm4_01.png" />
-                <img src="fm4_02.png" />
-                <img src="fm4_03.png" />
-                <img src="fm4_04.png" />
-                <img src="fm4_05.png" />
-                <img src="fm4_06.png" />
-                <img src="fm4_07.png" />
-            </div>
+        </div>
+    </a>
+</div>
+
+<div class="doc_predicate">
+    <a id="predicate_fm6">
+        <div class="doc_predicate_header">
+            [fm6 module] => Creates an FM 6 block with 6 operators.<br />
+            <b>Note:</b> module adheres to <a href="#common_behaviour_of_predicates">Common Behaviour</a>.<br />
+        </div>
+        <div class="doc_predicate_body">
+            FM 6 Block containing 6 FM operators analogous to <a href="#predicate_fm4">fm4</a>.<br />
         </div>
     </a>
 </div>

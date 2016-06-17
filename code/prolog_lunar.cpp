@@ -389,7 +389,8 @@ PrologNativeCode * PrologLunarServiceClass :: getNativeCode (char * name) {
 	if (strcmp (name, "AdsrPanel") == 0) return new adsr_panel_class (this);
 	if (strcmp (name, "EGPanel") == 0) return new eg_panel_class (this);
 	if (strcmp (name, "FEGPanel") == 0) return new eg_panel_class (this, true);
-	if (strcmp (name, "FM4Panel") == 0) return new fm4_panel_class (this);
+	if (strcmp (name, "DX9Panel") == 0) return new fm4_panel_class (this, true);
+	if (strcmp (name, "FM4Panel") == 0) return new fm4_panel_class (this, false);
 	if (strcmp (name, "CorePanel") == 0) return new core_panel_class (this);
 	if (strcmp (name, "LfoPanel") == 0) return new lfo_panel_class (this);
 	if (strcmp (name, "FilterPanel") == 0) return new filter_panel_class (this);

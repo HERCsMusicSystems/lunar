@@ -300,6 +300,13 @@ fm4_panel.o: ../graphics/fm4_panel.png
 		../graphics/fm4_panel.png fm4_panel.o
 	objdump -t fm4_panel.o
 
+fm4_algo.o: ../graphics/fm4_algo.png
+	objcopy --input binary --output elf64-x86-64 --binary-architecture i386\
+		--redefine-sym _binary____graphics_fm4_algo_png_start=resource_fm4_algo_start\
+		--redefine-sym _binary____graphics_fm4_algo_png_end=resource_fm4_algo_end\
+		../graphics/fm4_algo.png fm4_algo.o
+	objdump -t fm4_algo.o
+
 core_panel.o: ../graphics/core_panel.png
 	objcopy --input binary --output elf64-x86-64 --binary-architecture i386\
 		--redefine-sym _binary____graphics_core_panel_png_start=resource_core_panel_start\
@@ -397,7 +404,7 @@ prcgtk.o: ../code/prcgtk.cpp ../code/prolog_lunar.h ../code/lunar.h\
 
 graphics = small_keyboard.o keyboard.o big_keyboard.o vector_frame.o vector_handle.o knob.o knob_surface.o\
 	knob_handle.o display.o button_on.o button_off.o encoder_surface.o encoder_handle.o slider_surface.o slider_handle.o\
-	command_centre.o adsr_panel.o eg_panel.o fm4_panel.o core_panel.o\
+	command_centre.o adsr_panel.o eg_panel.o fm4_panel.o fm4_algo.o core_panel.o\
 	lfo_panel.o lfo_vibrato.o lfo_tremolo.o lfo_wah_wah.o lfo_pan.o filter_panel.o formant_filter_panel.o\
 	delay_panel.o chorus_panel.o stereo_chorus_panel.o freeverb_panel.o
 

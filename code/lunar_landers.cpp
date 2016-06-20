@@ -189,12 +189,13 @@ lunar_morph_three_d :: lunar_morph_three_d (orbiter_core * core, double divisor)
 auto_frame :: auto_frame (double value, double time, auto_frame * prevoius) {this -> value = value; this -> time = time; this -> previous = previous; next = 0;}
 auto_frame :: ~ auto_frame (void) {if (next != 0) delete next;}
 
-int auto_data :: numberOfInputs (void) {return 3;}
+int auto_data :: numberOfInputs (void) {return 4;}
 char * auto_data :: inputName (int ind) {
 	switch (ind) {
 	case 0: return "ENTER"; break;
 	case 1: return "TRIGGER"; break;
 	case 2: return "CONTROL"; break;
+	case 3: return "SPEED"; break;
 	default: break;
 	}
 	return orbiter :: inputName (ind);
@@ -204,6 +205,7 @@ double * auto_data :: inputAddress (int ind) {
 	case 0: return & signal; break;
 	case 1: return & trigger; break;
 	case 2: return & control; break;
+	case 3: return & speed; break;
 	default: break;
 	}
 	return orbiter :: inputAddress (ind);
@@ -218,7 +220,7 @@ void auto_data :: move (void) {
 			auto_frame * ptr = frames;
 			frames = current_frame = new auto_frame (signal);
 			if (ptr != 0) delete ptr;
-			time = core -> sample_duration;
+			time = core -> ControlTimeDelta (speed);
 			record = trigger;
 		} else {
 			// KEEP RECORDING
@@ -226,7 +228,7 @@ void auto_data :: move (void) {
 				current_frame -> time = time;
 				current_frame = current_frame -> next = new auto_frame (signal, time, current_frame);
 			}
-			time += core -> sample_duration;
+			time += core -> ControlTimeDelta (speed);
 		}
 	} else {
 		// STOP RECORDING, MARK THE TIME
@@ -250,7 +252,7 @@ auto_frame * auto_data :: insert_frame (double value, double time) {
 }
 auto_data :: auto_data (orbiter_core * core) : orbiter (core) {
 	frames = current_frame = 0;
-	trigger = record = time = 0.0;
+	trigger = record = control = speed = time = 0.0;
 	pthread_mutex_init (& critical, 0);
 	initialise (); activate ();
 }
@@ -283,7 +285,7 @@ void auto_player :: move (void) {
 				}
 			}
 			pthread_mutex_unlock (& data -> critical);
-			time += core -> sample_duration;
+			time += core -> ControlTimeDelta (data -> speed);
 		} else {
 			// START PLAYBACK
 			pthread_mutex_lock (& data -> critical);
@@ -292,7 +294,7 @@ void auto_player :: move (void) {
 			if (frames == 0) {pthread_mutex_unlock (& data -> critical); filter (data -> signal); return;}
 			filter (frames -> value);
 			pthread_mutex_unlock (& data -> critical);
-			time = core -> sample_duration;
+			time = core -> ControlTimeDelta (data -> speed);
 		}
 	}
 }

@@ -27,7 +27,6 @@ program phobos [BuildPhobos BuildPhobosPart PhobosEditor Operator-1 Operator-2 O
 	[moonbase *CB] [key_map *key_map] [arpeggiator *PhobosCB *CB]
 	[auto_data *XData] [parameter_block *X "index"] [*XData *X]
 	[auto_data *YData] [parameter_block *Y "index"] [*YData *Y]
-	[parameter_block *AutoCtrl "index"] [*XData "control" *AutoCtrl] [*YData "control" *AutoCtrl]
 	[parameter_block *pitch "index"]
 	[lfo *lfo1] [lfo *lfo2]
 	[gateway *lfo1freq1] [gateway *lfo1freq2] [gateway *lfo1freq3] [gateway *lfo1freq4]
@@ -51,8 +50,9 @@ program phobos [BuildPhobos BuildPhobosPart PhobosEditor Operator-1 Operator-2 O
 	[Insert *delay *Phobos core delay]
 	[InsertPB *X *Phobos core X]
 	[InsertPB *Y *Phobos core Y]
+	[Insert *XData *Phobos core auto]
+	[Insert *YData *Phobos core auto]
 	[InsertPB *pitch *Phobos core pitch]
-	[InsertPB *AutoCtrl *Phobos core auto]
 	[Insert *PhobosCB *Phobos arpeggiator]
 	[Insert *lfo1 *Phobos lfo 1]
 	[InsertFor *Phobos lfo 1 vibrato]
@@ -113,7 +113,7 @@ program phobos [BuildPhobos BuildPhobosPart PhobosEditor Operator-1 Operator-2 O
 	; INVISIBLE....
 	[InsertController 64 *Phobos portamento hold]
 	[InsertController 84 *Phobos portamento legato]
-	[InsertController 85 *Phobos core auto]
+	[InsertController 85 *Phobos core auto control]
 	[InsertController 80 *Phobos arpeggiator active]
 	[InsertController 66 *Phobos arpeggiator hold]
 

@@ -298,11 +298,15 @@ Core also functions as an audio source (connected directly to the sound hardware
             <b>Signals:</b> [["TRIGGER"] ["SIGNAL"]]<br />
             Plays back control sequences stored by the connected <b>data</b> module.
             The control changes can be ramped (filtered) if maximum_change was specified (ZERO is the default value = no ramping).
-            The exact behaviour depends on the value of the <b>"CONTROL"</b> and <b>"TRIGGER"</b> signals of the auto data block.<br />
+            The exact behaviour depends on the value of the <b>"TRIGGER"</b> input and <b>"CONTROL"</b> signal of the auto data block.<br />
             trigger = 0 or control = 0 => inactive (no playback)<br />
             control = 1 => play once only<br />
             control = 2 => play looped<br />
-            control >= 16 => inactive (no playback)
+            control >= 16 => inactive (no playback)<br />
+            <b>INPUTS:</b><br />
+            <b>Trigger:</b>.<br />
+            <b>OUTPUTS:</b><br />
+            <b>Signal:</b> output.<br />
         </div>
     </a>
 </div>
@@ -319,13 +323,18 @@ Core also functions as an audio source (connected directly to the sound hardware
             Otherwise defaults to common behaviour.
         </div>
         <div class="doc_predicate_body">
-            <b>Signals:</b> [["ENTER" "TRIGGER" "CONTROL"] []]<br />
+            <b>Signals:</b> [["ENTER" "TRIGGER" "CONTROL" "SPEED"] []]<br />
             Auto data block holds control sequence as pairs of value and sample number after which the next value should be played.
             The source of the control values is the <b>"ENTER"</b> input of the data block.<br />
             A new sequence can be recorded by feeding 16 (or more) to the <b>"CONTROL"</b> input and then starting the recording by feeding 1 to the <b>"TRIGGER"</b> input.
-            The recording stops when triggers disengages.
+            The recording stops when trigger disengages.
             However, recording may be paused by temporarily disengagin the control.
-            Please, note, the recording should be stopped appropriately (by disengaging trigger while control is still 16).
+            Please, note, the recording should be stopped appropriately (by disengaging trigger while control is still 16).<br />
+            <b>INPUTS:</b><br />
+            <b>Enter:</b> input signal.<br />
+            <b>Trigger:</b>.<br />
+            <b>Control:</b> 0 = inactive, 1 = playback, 2 = loop, 16 (or more) = record.<br />
+            <b>Speed:</b> of playback and/or recording. Range identical as in <a href="#predicate_lfo">lfo</a>.<br />
         </div>
     </a>
 </div>

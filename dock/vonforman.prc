@@ -147,6 +147,12 @@ program vonforman [BuildVonForman BuildVonFormanPart VF LGV LGT LGP STK STV AEG 
 	[Lunar -128 *VonForman vco 3 sens freq key left]
 	[Lunar -128 *VonForman vco 4 sens freq key left]
 	[Lunar 1792 *VonForman lfo 1 speed]
+	[Lunar 12800 *VonForman vco 1 sens amp velocity BP]
+	[Lunar 12800 *VonForman vco 2 sens amp velocity BP]
+	[Lunar 12800 *VonForman vco 3 sens amp velocity BP]
+	[Lunar 12800 *VonForman vco 4 sens amp velocity BP]
+	[Lunar 12800 *VonForman core sens velocity BP]
+	[Lunar -64 *VonForman core sens velocity left]
 ]
 
 [[BuildVonFormanPart *VF *cb *line *key_map
@@ -189,7 +195,7 @@ program vonforman [BuildVonForman BuildVonFormanPart VF LGV LGT LGP STK STV AEG 
 	;========== AUTO VECTOR ==========
 	[auto *X *XData] [*X "trigger" *trigger "trigger"] [*XData "trigger" *trigger "trigger"]
 	[auto *Y *YData] [*Y "trigger" *trigger "trigger"] [*YData "trigger" *trigger "trigger"]
-	;========== FORMANT FILTER 1 =====
+	;========== FORMANT FILTERS ======
 	[formant_filter *ff1]
 		[MORPH *ff1freq *ff1 "freq"      *X *Y *lfo1x *lfo1y *lfo2x *lfo2y]
 		[MORPH *ff1reso *ff1 "resonance" *X *Y *lfo1x *lfo1y *lfo2x *lfo2y]
@@ -208,6 +214,9 @@ program vonforman [BuildVonForman BuildVonFormanPart VF LGV LGT LGP STK STV AEG 
 		[MORPH *ff3q    *ff3 "q"         *X *Y *lfo1x *lfo1y *lfo2x *lfo2y]
 		[*ff3 "gain" *adsr] [*ff3 *noise] [*ff3 *fm]
 		[*ff3 "amp" *lfo1 "tremolo"] [*ff3 "amp" *lfo2 "tremolo"]
+	;========== VELOCITY =============
+	[sensitivity *velocity] [*velocity "signal" *trigger "velocity"]
+		[*filter "amp" *velocity] [*ff1 "amp" *velocity] [*ff2 "amp" *velocity] [*ff3 "amp" *velocity]
 	;========== LINE CONNECTION ======
 	[*line *filter] [*line *ff1] [*line *ff2] [*line *ff3]
 	;========== SUPERSTRUCTURE =======
@@ -235,6 +244,7 @@ program vonforman [BuildVonForman BuildVonFormanPart VF LGV LGT LGP STK STV AEG 
 	[Insert *freqeg *VF adsr freq]
 	[Insert *fegscal *VF adsr freq egscal]
 	[Insert *trigger *VF portamento]
+	[Insert *velocity *VF core sens velocity]
 	[AddModule *X *VF] [AddModule *Y *VF]
 ]
 

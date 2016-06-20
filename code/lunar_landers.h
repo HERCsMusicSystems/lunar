@@ -115,6 +115,7 @@ private:
 	double trigger; // 0 = inactive, 1 = record
 	double record;
 	double control; // 0 = no playback, 1 = one way, 2 = repeat, 3 = forward and backward, 16 <= record
+	double speed;
 	double time;
 	pthread_mutex_t critical;
 	auto_frame * current_frame;

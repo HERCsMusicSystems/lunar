@@ -1028,6 +1028,11 @@ program lunar #machine := "lunar"
 	[AddParameterBlock *parameters right *sensitivity *selector 0 "index"]
 ]
 
+[[InsertIO *parameters *auto *selector [["ENTER" "TRIGGER" "CONTROL" "SPEED"] []]]
+	[AddParameterBlock *parameters control *auto *selector 0 "index"]
+	[AddParameterBlock *parameters speed *auto *selector 0 "index"]
+]
+
 [[InsertIO *parameters *morph *selector [["X" "A" "B"] ["SIGNAL"]]]
 	[AddParameterBlock *parameters A "a" *morph *selector 0 "index"]
 	[AddParameterBlock *parameters B "b" *morph *selector 0 "index"]

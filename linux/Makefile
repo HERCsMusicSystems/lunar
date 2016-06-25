@@ -418,14 +418,22 @@ lunar_objects = \
 	lunar_integrated_components.o lunar_integrated_alarm.o lunar_integrated_microdot.o lunar_integrated_abakos.o lunar_integrated_phobos.o\
 	lunar_linux_midi.o
 
-~/bin/lunar: $(lunar_objects) $(objects) $(graphics) $(prc_resources)
-	g++ $(lunar_objects) $(objects) $(prc_resources) $(graphics) \
-	-o ~/bin/lunar -lpthread -ldl -lreadline -lasound `pkg-config --libs gtk+-2.0` -fopenmp
+#~/bin/lunar: $(lunar_objects) $(objects) $(graphics) $(prc_resources)
+#	g++ $(lunar_objects) $(objects) $(prc_resources) $(graphics) \
+#	-o ~/bin/lunar -lpthread -ldl -lreadline -lasound `pkg-config --libs gtk+-2.0` -fopenmp
 
-/usr/lib/lunar.so: $(lunar_objects) lunar_prc.o $(graphics)
+#/usr/lib/lunar.so: $(lunar_objects) lunar_prc.o $(graphics)
+#	g++ $(lunar_objects) lunar_prc.o $(graphics) \
+#	-o /usr/lib/lunar.so -lpthread -lreadline -lasound -ldl -shared -fPIC `pkg-config --libs gtk+-2.0` -fopenmp
+
+~/bin/lunar: $(lunar_objects) lunar_prc.o $(graphics)
 	g++ $(lunar_objects) lunar_prc.o $(graphics) \
-	-o /usr/lib/lunar.so -lpthread -lreadline -lasound -ldl -shared -fPIC `pkg-config --libs gtk+-2.0` -fopenmp
+	-o ~/bin/lunar -lpthread -lreadline -lasound -ldl -shared -fPIC `pkg-config --libs gtk+-2.0` -fopenmp
 
+/usr/lib/lunar.so: ~/bin/lunar
+	sudo cp ~/bin/lunar /usr/lib/lunar.so
+
+install: /usr/lib/lunar.so
 #lunar: ~/bin/lunar
 lunar: /usr/lib/lunar.so
 

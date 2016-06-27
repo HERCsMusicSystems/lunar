@@ -1,0 +1,27 @@
+
+[auto_atoms]
+
+[trigger t]
+[res [t : *x] [show *x]]
+
+[TestEq "Initial ZERO" [0.0 12800.0 0.0] [*key *velocity *trigger] [t "key" *key] [t "velocity" *velocity] [t "trigger" *trigger]]
+[t keyon 65 11]
+[TestEq "Immediately after trigger" [0.0 12800.0 0.0] [*key *velocity *trigger] [t "key" *key] [t "velocity" *velocity] [t "trigger" *trigger]]
+[MoveCore]
+[TestEq "After first move" [128.0 1408.0 1.0] [*key *velocity *trigger] [t "key" *key] [t "velocity" *velocity] [t "trigger" *trigger]]
+[t keyon 66 12]
+[t keyon 68 14]
+[TestEq "After two new keyons" [128.0 1408.0 1.0] [*key *velocity *trigger] [t "key" *key] [t "velocity" *velocity] [t "trigger" *trigger]]
+[MoveCore]
+[TestEq "After second move" [512.0 1408.0 1.0] [*key *velocity *trigger] [t "key" *key] [t "velocity" *velocity] [t "trigger" *trigger]]
+[t keyoff 68]
+[TestEq "After keyoff" [512.0 1408.0 1.0] [*key *velocity *trigger] [t "key" *key] [t "velocity" *velocity] [t "trigger" *trigger]]
+[MoveCore]
+[TestEq "After third move" [256.0 1408.0 1.0] [*key *velocity *trigger] [t "key" *key] [t "velocity" *velocity] [t "trigger" *trigger]]
+[t keyoff]
+[TestEq "After all keyoff" [256.0 1408.0 1.0] [*key *velocity *trigger] [t "key" *key] [t "velocity" *velocity] [t "trigger" *trigger]]
+[MoveCore]
+[TestEq "After fourth move" [256.0 1408.0 0.0] [*key *velocity *trigger] [t "key" *key] [t "velocity" *velocity] [t "trigger" *trigger]]
+
+
+[exit]

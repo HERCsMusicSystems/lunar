@@ -7,6 +7,7 @@ program eclipse []
 end := [
 		[batch "sequencer.prb"]
 		[batch "auto.prb"]
+		[batch "trigger.prb"]
 		[nl]
 		;[TestSummary]
 		;[nl]

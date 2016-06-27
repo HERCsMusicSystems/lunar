@@ -387,9 +387,9 @@ public:
 		keyoff = dir -> searchAtom ("keyoff");
 	}
 };
-orbiter * trigger_class :: create_orbiter (PrologElement * parameters) {if (active) return new lunar_trigger (core, 0); return 0;}
+orbiter * trigger_class :: create_orbiter (PrologElement * parameters) {return new lunar_trigger (core, 0); return 0;}
 PrologNativeOrbiter * trigger_class :: create_native_orbiter (PrologAtom * atom, orbiter * module) {return new trigger_native_orbiter (dir, atom, core, module);}
-trigger_class :: trigger_class (PrologDirectory * dir, bool active, orbiter_core * core) : PrologNativeOrbiterCreator (core) {this -> dir = dir; this -> active = active;}
+trigger_class :: trigger_class (PrologDirectory * dir, orbiter_core * core) : PrologNativeOrbiterCreator (core) {this -> dir = dir;}
 
 orbiter * mixer_class :: create_orbiter (PrologElement * parameters) {return new lunar_mixer (core);}
 mixer_class :: mixer_class (orbiter_core * core) : PrologNativeOrbiterCreator (core) {}

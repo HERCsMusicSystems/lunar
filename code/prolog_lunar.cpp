@@ -341,8 +341,7 @@ PrologNativeCode * PrologLunarServiceClass :: getNativeCode (char * name) {
 	if (strcmp (name, "wave") == 0) return new wave_class (& core);
 	if (strcmp (name, "velocity_map") == 0) return new key_map_class (& core, 0);
 	if (strcmp (name, "impulse") == 0) return new impulse_class (& core);
-	if (strcmp (name, "trigger") == 0) return new trigger_class (directory, true, & core);
-	if (strcmp (name, "inactive_trigger") == 0) return new trigger_class (directory, false, & core);
+	if (strcmp (name, "trigger") == 0) return new trigger_class (directory, & core);
 	if (strcmp (name, "mixer") == 0) return new mixer_class (& core);
 	if (strcmp (name, "stereo_mixer") == 0) return new stereo_mixer_class (& core);
 	if (strcmp (name, "control") == 0) return new control_class (& core);

@@ -496,74 +496,37 @@ void lunar_trigger :: drop_stack (int key) {
 void lunar_trigger :: sub_keyon (int key) {
 	target = core -> arrange_note (key, transpose, mode, key_map == 0 ? 0 : key_map -> map);
 	this -> key = key;
-	if (! active || porta_switch == 0.0 || porta_time == 0.0 || (porta_control != 0.0 && trigger == 0)) this -> signal = target;
-	else {origin = this -> signal; delta = target - origin; time = 0.0;}
-	trigger = 1.0;
+	if (porta_switch == 0.0 || porta_time == 0.0) time = 0.0;
+	else {delta = target - signal; time = 0.0;}
 	add_stack (key);
 }
 void lunar_trigger :: sub_velocity (int velocity) {
 	if (velocity < 0) velocity = 0; if (velocity > 127) velocity = 127;
-	this -> velocity = velocity_map == 0 ? (double) velocity * 128.0 : velocity_map -> map [velocity];
+	target_velocity = velocity_map == 0 ? (double) velocity * 128.0 : velocity_map -> map [velocity];
 }
-void lunar_trigger :: keyon (int key) {
-	pthread_mutex_lock (& critical);
-	this -> key = request_key = key; request = 3;
-	if (! active) sub_keyon (key);
-	pthread_mutex_unlock (& critical);
-}
+void lunar_trigger :: keyon (int key) {pthread_mutex_lock (& critical); sub_keyon (key); pthread_mutex_unlock (& critical);}
 void lunar_trigger :: keyon (int key, int velocity) {
 	if (velocity < 1) {keyoff (key); return;}
 	pthread_mutex_lock (& critical);
-	this -> key = request_key = key; request_velocity = velocity; request = 4;
-	if (! active) keyon_velocity_request ();
+	if (keystack_pointer < 1) sub_velocity (velocity);
+	sub_keyon (key);
 	pthread_mutex_unlock (& critical);
 }
 void lunar_trigger :: ground (int key, int velocity, int base, int previous) {
 	if (velocity < 1) {keyoff (key); return;}
 	pthread_mutex_lock (& critical);
-	this -> key = request_key = key; request_velocity = velocity; request_base = base; request_previous = previous; request = 5;
-	if (! active) ground_request ();
-	pthread_mutex_unlock (& critical);
-}
-void lunar_trigger :: ground_request (void) {
-	sub_velocity (request_velocity);
-	target = core -> arrange_note (request_key, transpose, mode, key_map == 0 ? 0 : key_map -> map);
-	trigger = 16384.0; time = 0.0;
-	if (! active || porta_switch == 0.0 || porta_time == 0.0) this -> signal = target;
-	else {
-		if (porta_control == 0.0) request_base = request_previous;
-		this -> signal = origin = core -> arrange_note (request_base, transpose, mode, key_map == 0 ? 0 : key_map -> map);
-		delta = target - origin;
+	polyphonic_ground_request = true;
+	keystack_pointer = 0;
+	if (porta_switch != 0.0 && porta_time > 0.0) {
+		if (porta_control == 0.0) base = previous;
+		signal = core -> arrange_note (base, transpose, mode, key_map == 0 ? 0 : key_map -> map);
 	}
-	keystack_pointer = 0; add_stack (request_key);
-}
-void lunar_trigger :: keyoff (int key) {
-	pthread_mutex_lock (& critical);
-	request_key = key; request = 1;
-	drop_stack (request_key);
-	this -> key = -1;
-	if (! active) keyoff_request ();
+	sub_keyon (key);
 	pthread_mutex_unlock (& critical);
 }
-void lunar_trigger :: keyoff (void) {
-	pthread_mutex_lock (& critical);
-	request = 2;
-	this -> key = -1;
-	if (! active) keyoff_all_request ();
-	pthread_mutex_unlock (& critical);
-}
-void lunar_trigger :: keyon_velocity_request (void) {
-	if (keystack_pointer < 1) sub_velocity (request_velocity); sub_keyon (request_key);
-}
-void lunar_trigger :: keyoff_request (void) {
-	//this -> key = -1;
-	//drop_stack (request_key);
-	if (keystack_pointer == 0 && hold_ctrl == 0.0) trigger = 0.0;
-}
-void lunar_trigger :: keyoff_all_request (void) {
-	//this -> key = -1;
-	keystack_pointer = 0; if (hold_ctrl == 0.0) trigger = 0.0;
-}
+void lunar_trigger :: keyoff (int key) {pthread_mutex_lock (& critical); drop_stack (key); pthread_mutex_unlock (& critical);}
+void lunar_trigger :: keyoff (void) {pthread_mutex_lock (& critical); keystack_pointer = 0; pthread_mutex_unlock (& critical);}
+bool lunar_trigger :: is_free (void) {return keystack_pointer == 0;}
 bool lunar_trigger :: release (void) {
 	lunar_map * to_delete_key_map = key_map;
 	lunar_map * to_delete_velocity_map = velocity_map;
@@ -578,51 +541,36 @@ bool lunar_trigger :: release (void) {
 }
 void lunar_trigger :: move (void) {
 	pthread_mutex_lock (& critical);
-	delay2 = delay1;
-	delay1 = trigger;
-	if (request != 0) {
-		switch (request) {
-		case 5: ground_request (); break;
-		case 4: keyon_velocity_request (); break;
-		case 1: keyoff_request (); break;
-		case 2: keyoff_all_request (); break;
-		case 3: sub_keyon (request_key); break;
-		default: break;
-		}
-		request = 0;
-	}
-	if (trigger != 0.0 && keystack_pointer == 0 && hold_ctrl == 0.0) trigger = 0.0;
-	if (signal == target) {
-		if (trigger >= 16384.0) {if (time > 0.0) trigger = 1.0; else time += 1.0;}
-		pthread_mutex_unlock (& critical); return;
-	}
-	if (time > 0.0) {
-		if (trigger >= 16384.0) trigger = 1.0;
-		if (time >= 1.0) {signal = target; pthread_mutex_unlock (& critical); return;}
-	}
-	signal = origin + delta * time;
-	time += core -> WaitingTime (porta_time);
+	delay2 = delay1; delay1 = trigger;
+	if (keystack_pointer > 0) {
+		if (polyphonic_ground_request) {trigger = 16384.0; polyphonic_ground_request = false;}
+		else {if (trigger != 1.0) trigger = 1.0;}
+	} else {if (trigger > 0.0 && hold_ctrl == 0.0) trigger = 0.0;}
+	if (velocity != target_velocity) velocity = target_velocity;
+	if (signal == target) {pthread_mutex_unlock (& critical); return;}
+	if (time <= 0.0) {signal = target; pthread_mutex_unlock (& critical); return;}
+	signal += delta;
+	time -= core -> WaitingTime (porta_time);
 	pthread_mutex_unlock (& critical);
 }
-lunar_trigger :: lunar_trigger (orbiter_core * core, bool active, lunar_trigger * next) : orbiter (core) {
+lunar_trigger :: lunar_trigger (orbiter_core * core, lunar_trigger * next) : orbiter (core) {
 	this -> next = next;
 	if (next != 0) next -> hold ();
 	key = -1;
 	signal = delay2 = delay1 = trigger = busy = 0.0;
-	origin = delta = target = 0.0;
+	delta = target = 0.0;
 	porta_switch = porta_time = porta_control = 0.0;
 	hold_ctrl = 0.0;
 	time = 2.0;
-	velocity = 12800.0;
+	target_velocity = velocity = 12800.0;
 	transpose = 0.0; mode = -128.0;
 	key_map = 0;
 	velocity_map = 0;
 	for (int ind = 0; ind < 16; ind++) keystack [ind] = 0; keystack_pointer = 0;
-	this -> active = active;
-	request = 0;
+	polyphonic_ground_request = false;
 	pthread_mutex_init (& critical, 0);
 	initialise ();
-	if (active) activate ();
+	activate ();
 }
 lunar_trigger :: ~ lunar_trigger (void) {pthread_mutex_destroy (& critical);}
 

@@ -497,7 +497,7 @@ void lunar_trigger :: sub_keyon (int key) {
 	target = core -> arrange_note (key, transpose, mode, key_map == 0 ? 0 : key_map -> map);
 	this -> key = key;
 	if (porta_switch == 0.0 || porta_time == 0.0) time = 0.0;
-	else {delta = target - signal; time = 0.0;}
+	else {delta = target - signal; time = 1.0;}
 	add_stack (key);
 }
 void lunar_trigger :: sub_velocity (int velocity) {
@@ -549,8 +549,10 @@ void lunar_trigger :: move (void) {
 	if (velocity != target_velocity) velocity = target_velocity;
 	if (signal == target) {pthread_mutex_unlock (& critical); return;}
 	if (time <= 0.0) {signal = target; pthread_mutex_unlock (& critical); return;}
-	signal += delta;
-	time -= core -> WaitingTime (porta_time);
+	double step = core -> WaitingTime (porta_time);
+	signal += delta * step;
+	time -= step;
+	if (time <= 0.0) signal = target;
 	pthread_mutex_unlock (& critical);
 }
 lunar_trigger :: lunar_trigger (orbiter_core * core, lunar_trigger * next) : orbiter (core) {

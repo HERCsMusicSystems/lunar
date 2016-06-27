@@ -496,7 +496,7 @@ void lunar_trigger :: drop_stack (int key) {
 void lunar_trigger :: sub_keyon (int key) {
 	target = core -> arrange_note (key, transpose, mode, key_map == 0 ? 0 : key_map -> map);
 	this -> key = key;
-	if (porta_switch == 0.0 || porta_time == 0.0) time = 0.0;
+	if (porta_switch == 0.0 || porta_time == 0.0 || (porta_control != 0.0 && keystack_pointer < 1)) time = 0.0;
 	else {delta = target - signal; time = 1.0;}
 	add_stack (key);
 }

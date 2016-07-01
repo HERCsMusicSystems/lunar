@@ -255,9 +255,10 @@ private:
 	lunar_map * key_map;
 	lunar_map * velocity_map;
 	double velocity, trigger, delay1, delay2;
-	double origin, delta, target, porta_switch, porta_control, porta_time, time, hold_ctrl;
+	double delta, target, porta_switch, porta_control, porta_time, time, hold_ctrl;
 	double transpose, mode;
-	bool active;
+	bool polyphonic_ground_request;
+	double target_velocity;
 	int keystack [16];
 	int keystack_pointer;
 	void add_stack (int key);
@@ -265,15 +266,9 @@ private:
 	void sub_keyon (int key);
 	void sub_velocity (int velocity);
 	pthread_mutex_t critical;
-	int request_key, request_velocity, request_base, request_previous;
-	void keyon_velocity_request (void);
-	void ground_request (void);
-	void keyoff_request (void);
-	void keyoff_all_request (void);
 public:
-	int request; // 0 = none, 1 = keyoff (key), 2 = keyoff (), 3 = keyon (key), 4 = keyon (key, vel), 5 = ground (key, vel, base, prev);
-	double busy;
 	int key;
+	double busy;
 	lunar_trigger * next;
 	virtual int numberOfInputs (void);
 	virtual char * inputName (int ind);
@@ -288,9 +283,10 @@ public:
 	void ground (int key, int velocity, int base, int previous);
 	void keyoff (int key);
 	void keyoff (void);
+	bool is_free (void);
 	virtual bool release (void);
 	virtual void move (void);
-	lunar_trigger (orbiter_core * core, bool active, lunar_trigger * next);
+	lunar_trigger (orbiter_core * core, lunar_trigger * next);
 	~ lunar_trigger (void);
 };
 

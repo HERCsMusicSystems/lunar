@@ -39,7 +39,6 @@
         <a href="#predicate_freeverb">freeverb</a>
         <a href="#predicate_gateway">gateway</a>
         <a href="#predicate_impulse">impulse</a>
-        <a href="#predicate_inactive_trigger">inactive_trigger</a>
         <a href="#predicate_key_map">key_map</a>
         <a href="#predicate_lfo">lfo</a>
         <a href="#predicate_linear_pan">linear_pan</a>
@@ -697,20 +696,6 @@ Core also functions as an audio source (connected directly to the sound hardware
             <b>Signals:</b> [["ENTER"] ["SIGNAL"]]<br />
             Generates a one-sample long impulse when the value of <b>"ENTER"</b> input changes from ZERO to something greater.
             The value of the impulse will be the same as the value of <b>"ENTER"</b> input.
-        </div>
-    </a>
-</div>
-
-<div class="doc_predicate">
-    <a id="predicate_inactive_trigger">
-        <div class="doc_predicate_header">
-            [inactive_trigger module] => Creates an inactive_trigger.<br />
-            <b>Note:</b> all usages of module indentical to <a href="#predicate_trigger">trigger</a>.<br />
-        </div>
-        <div class="doc_predicate_body">
-            <b>Signals:</b> [["BUSY" "HOLD" "PORTA" "TIME" "LEGATO"] ["KEY" "VELOCITY" "TRIGGER" "INDEX" "DELAY1" "DELAY2"]]<br />
-            Inactive trigger behaves similar to trigger.
-            However, as it is not active, neither portamento nor trigger delays can be used.
         </div>
     </a>
 </div>

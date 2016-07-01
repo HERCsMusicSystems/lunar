@@ -101,11 +101,10 @@ public:
 class trigger_class : public PrologNativeOrbiterCreator {
 private:
 	PrologDirectory * dir;
-	bool active;
 public:
 	virtual orbiter * create_orbiter (PrologElement * parameters);
 	virtual PrologNativeOrbiter * create_native_orbiter (PrologAtom * atom, orbiter * module);
-	trigger_class (PrologDirectory * dir, bool active, orbiter_core * core);
+	trigger_class (PrologDirectory * dir, orbiter_core * core);
 };
 
 class mixer_class : public PrologNativeOrbiterCreator {

@@ -710,8 +710,10 @@ public:
 		this -> root = root;
 		this -> dir = dir;
 		this -> atom = atom;
+		if (atom != 0) COLLECTOR_REFERENCE_INC(atom);
 		count = 0;
 	}
+	~ moonbase_chord_detector (void) {if (atom) atom -> removeAtom ();}
 };
 orbiter * chord_detector_class :: create_orbiter (PrologElement * parameters) {
 	PrologAtom * callback = 0;

@@ -21,6 +21,7 @@
         <a href="#predicate_amplifier">amplifier</a>
         <a href="#predicate_auto">auto</a>
         <a href="#predicate_auto_data">auto_data</a>
+        <a href="#predicate_chord_detector">chord_detector</a>
         <a href="#predicate_chorus">chorus</a>
         <a href="#predicate_control">control</a>
         <a href="#predicate_DCOffsetFilter">DCOffsetFilter</a>
@@ -74,6 +75,7 @@
         <a href="#predicate_arpeggiator">arpeggiator</a>
         <a href="#predicate_arranger_array">arranger_array</a>
         <a href="#predicate_base">base</a>
+        <a href="#predicate_chord_detector">chord_detector</a>
         <a href="#predicate_CloseAllMoons">CloseAllMoons</a>
         <a href="#predicate_ConnectAllMoons">ConnectAllMoons</a>
         <a href="#predicate_detector">detector</a>
@@ -1419,17 +1421,17 @@ A typical construction of an instrument and inserting it into the superstructure
 </div>
 
 <div class="doc_predicate">
-    <a id="predicate_moonbase_monitor">
+    <a id="predicate_chord_detector">
         <div class="doc_predicate_header">
-            [moonbase_monitor module callback].<br />
-            <b>Note:</b> module adheres to <a href="#common_behaviour_of_predicates">Common Behaviour</a>.<br />
-            <b>Additional usage:</b> <a href="#predicate_base">base</a>.<br />
+            [chord_detector module callback] => Creates a chord detector module module (callback optional, default = tonal_detector).<br />
         </div>
         <div class="doc_predicate_body">
-            <b>Signals:</b> [[] []]<br />
-            The purpose of the moonbase monitor is to translate incoming MIDI messaged
-            into callbacks to the prolog system.
-            Can be used for monitoring the transmissions from arpeggiators and sequencers.
+            Chord detector accepts keyon and keyoff messages in the same way as every (moon)base module.
+            After every new key the callback is called with the array of numbers.
+            The first number is the root note. All other numbers are intervals above the root note.
+            Please, note, the callback is never called upon receiving a keyoff message.<br />
+            The default <b>tonal_detector</b> callback detects common chords and
+            applies contro to all currently present instruments.
         </div>
     </a>
 </div>
@@ -1577,9 +1579,25 @@ A typical construction of an instrument and inserting it into the superstructure
         <div class="doc_predicate_body">
             Creates a new instrument in the superstructure.<br />
             <b>Instrument</b>: is a symbol identifying the new instrument. If it is a variable then a new symbol will be generated based on the type.<br />
-            <b>Callback</b>: is the receives MIDI messaged. If it is a variable then a new anonymous symbol will be generated.<br />
+            <b>Callback</b>: is the receiver of MIDI messages. If it is a variable then a new anonymous symbol will be generated.<br />
             <b>Type</b>: identifies the type of the instrument. It should be a symbol. It is used for storing and restoring presets.<br />
             <b>Line</b>: is the audio output module (mono or stereo). If it is a variable then a new anonymous symbol is generated.<br />
+        </div>
+    </a>
+</div>
+
+<div class="doc_predicate">
+    <a id="predicate_moonbase_monitor">
+        <div class="doc_predicate_header">
+            [moonbase_monitor module callback].<br />
+            <b>Note:</b> module adheres to <a href="#common_behaviour_of_predicates">Common Behaviour</a>.<br />
+            <b>Additional usage:</b> <a href="#predicate_base">base</a>.<br />
+        </div>
+        <div class="doc_predicate_body">
+            <b>Signals:</b> [[] []]<br />
+            The purpose of the moonbase monitor is to translate incoming MIDI messaged
+            into callbacks to the prolog system.
+            Can be used for monitoring the transmissions from arpeggiators and sequencers.
         </div>
     </a>
 </div>

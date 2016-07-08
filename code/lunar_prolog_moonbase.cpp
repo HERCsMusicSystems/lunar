@@ -158,6 +158,18 @@ bool core_class :: code (PrologElement * parameters, PrologResolution * resoluti
 		for (int ind = 0; ind < inputs; ind++) printf ("	device %i [%s]\n", ind, audio . getInputDeviceName (ind));
 		return true;
 	}
+	if (parameters -> isVar ()) {
+		parameters -> setPair ();
+		PrologElement * el = parameters -> getLeft ();
+		int sentinel = audio . getNumberOfOutputDevices ();
+		for (int ind = 0; ind < sentinel; ind++) {el -> setPair (); el -> getLeft () -> setText (audio . getOutputDeviceName (ind)); el = el -> getRight ();}
+		el = parameters -> getRight ();
+		el -> setPair ();
+		el = el -> getLeft ();
+		sentinel = audio . getNumberOfInputDevices ();
+		for (int ind = 0; ind < sentinel; ind++) {el -> setPair (); el -> getLeft () -> setText (audio . getInputDeviceName (ind)); el = el -> getRight ();}
+		return true;
+	}
 	PrologElement * atom = 0;
 	PrologElement * file_name = 0;
 	double centre_frequency = -1.0;

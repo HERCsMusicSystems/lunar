@@ -65,7 +65,7 @@ lunar_trigger * moonbase :: select (int key) {
 	if (choice == 0) return 0;
 	lunar_trigger * ret = choice;
 	do {
-		if (ret -> key == key) return ret;
+		if (ret -> key == key && ! ret -> is_free ()) return ret;
 		ret = ret -> next; if (ret == 0) ret = triggers;
 	} while (ret != choice);
 	return 0;

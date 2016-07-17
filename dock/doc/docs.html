@@ -41,6 +41,7 @@
         <a href="#predicate_gateway">gateway</a>
         <a href="#predicate_impulse">impulse</a>
         <a href="#predicate_key_map">key_map</a>
+        <a href="#predicate_latch">latch</a>
         <a href="#predicate_lfo">lfo</a>
         <a href="#predicate_linear_pan">linear_pan</a>
         <a href="#predicate_mixer">mixer</a>
@@ -722,10 +723,31 @@ Core also functions as an audio source (connected directly to the sound hardware
 </div>
 
 <div class="doc_predicate">
+    <a id="predicate_latch">
+        <div class="doc_predicate_header">
+        	[latch module value_of_one] => Creates a latch. The value_of_one is optional (default = ZERO).<br />
+            <b>Note:</b> module adheres to <a href="#common_behaviour_of_predicates">Common Behaviour</a>.<br />
+        </div>
+        <div class="doc_predicate_body">
+            <b>Signals:</b> [["ENTER" "CONTROL"] ["SIGNAL"]]<br />
+            Creates a latch.<br />
+            If the value of <b>control</b> != 0, then <b>signal</b> = <b>enter</b> / value_of_one.
+            (if value_of_one is ZERO, then <b>signal</b> = <b>enter</b>)<br />
+            If <b>control</b> is ZERO then <b>signal</b> maintains its previous value.<br />
+            <b>INPUTS:</b><br />
+            <b>Enter:</b> input value.<br />
+            <b>Control:</b> latch and multiplier.<br />
+            <b>OUTPUTS:</b><br />
+            <b>Signal:</b> output value.<br />
+        </div>
+    </a>
+</div>
+
+<div class="doc_predicate">
     <a id="predicate_lfo">
         <div class="doc_predicate_header">
             [lfo module] => Creates an lfo module.<br />
-            <b>Note:</b> all usages of module indentical to <a href="#predicate_trigger">trigger</a>.<br />
+            <b>Note:</b> module adheres to <a href="#common_behaviour_of_predicates">Common Behaviour</a>.<br />
         </div>
         <div class="doc_predicate_body">
             <b>Signals:</b> [["TRIGGER" "SPEED" "WAVE" "PULSE" "PHASE" "SYNC"] ["SIGNAL" "NEGATIVE" "POSITIVE"]]<br />

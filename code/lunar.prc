@@ -10,7 +10,7 @@ program lunar #machine := "lunar"
 				small_keyboard keyboard big_keyboard oscilloscope spectroscope big_oscilloscope big_spectroscope vector CommandCentre detector
 				noise orbiter X Y modulation vibrato tremolo wahwah range
 				core base moonbase arpeggiator sequencer prolog_sequencer polysequencer
-				operator parameter_block morph auto auto_data key_map velocity_map impulse
+				operator parameter_block latch morph auto auto_data key_map velocity_map impulse
 				trigger delay1 delay2 mixer stereo_mixer gateway stereo_gateway amplifier stereo_amplifier volume mono_volume
 				lfo envelope adsr adsr-linear eg eg-linear-expo egscaling egscal vca vca-adsr vca-eg vco ring ringmod DCOffsetFilter DCOffsetFilterMono
 				index shift bias variation transpose mode arranger_array
@@ -80,6 +80,7 @@ program lunar #machine := "lunar"
 #machine vector := "vector"
 #machine CommandCentre := "CommandCentre"
 #machine parameter_block := "parameter_block"
+#machine latch := "latch"
 #machine morph := "morph"
 #machine auto_data := "auto_data"
 #machine auto := "auto"

@@ -43,6 +43,18 @@ public:
 	lunar_parameter_block (orbiter_core * core, int style, bool active, double maximum_change);
 };
 
+class lunar_latch : public orbiter {
+private:
+	double enter, control;
+	double multiplier;
+public:
+	virtual int numberOfInputs (void);
+	virtual char * inputName (int ind);
+	virtual double * inputAddress (int ind);
+	virtual void move (void);
+	lunar_latch (orbiter_core * core, double one);
+};
+
 class lunar_morph_one : public orbiter {
 protected:
 	double x;

@@ -122,6 +122,17 @@ orbiter * parameter_block_class :: create_orbiter (PrologElement * parameters) {
 PrologNativeOrbiter * parameter_block_class :: create_native_orbiter (PrologAtom * atom, orbiter * module) {return new pb_native_orbiter (atom, core, module);}
 parameter_block_class :: parameter_block_class (orbiter_core * core) : PrologNativeOrbiterCreator (core) {}
 
+orbiter * latch_class :: create_orbiter (PrologElement * parameters) {
+	double one = 0.0;
+	while (parameters -> isPair ()) {
+		PrologElement * el = parameters -> getLeft ();
+		if (el -> isNumber ()) one = el -> getNumber ();
+		parameters = parameters -> getRight ();
+	}
+	return new lunar_latch (core, one);
+}
+latch_class :: latch_class (orbiter_core * core) : PrologNativeOrbiterCreator (core) {}
+
 orbiter * morph_class :: create_orbiter (PrologElement * parameters) {
 	int dimension = 2;
 	double divisor = 1.0;

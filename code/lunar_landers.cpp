@@ -49,6 +49,30 @@ lunar_parameter_block :: lunar_parameter_block (orbiter_core * core, int style, 
 	if (active) activate ();
 }
 
+int lunar_latch :: numberOfInputs (void) {return 2;}
+char * lunar_latch :: inputName (int ind) {
+	switch (ind) {
+	case 0: return "ENTER"; break;
+	case 1: return "CONTROL"; break;
+	default: break;
+	}
+	return orbiter :: inputName (ind);
+}
+double * lunar_latch :: inputAddress (int ind) {
+	switch (ind) {
+	case 0: return & enter; break;
+	case 1: return & control; break;
+	default: break;
+	}
+	return orbiter :: inputAddress (ind);
+}
+void lunar_latch :: move (void) {if (control != 0.0) signal = multiplier != 0.0 ? enter * control * multiplier : enter;}
+lunar_latch :: lunar_latch (orbiter_core * core, double one) : orbiter (core) {
+	enter = control = 0.0;
+	if (one == 0.0) multiplier = 0.0;
+	else multiplier = 1.0 / one;
+}
+
 int lunar_morph_one :: numberOfInputs (void) {return 3;}
 char * lunar_morph_one :: inputName (int ind) {
 	switch (ind) {

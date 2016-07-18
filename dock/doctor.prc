@@ -2,7 +2,7 @@
 import studio
 import lunar
 
-program doctor [Doctor BuildDoctor BuildDoctorPart]
+program doctor [Doctor BuildDoctor BuildDoctorPart cs_waveforms]
 
 ;[[BuildDoctor *polyphony]
 ;	[TRY
@@ -14,7 +14,7 @@ program doctor [Doctor BuildDoctor BuildDoctorPart]
 ;			"Doctor/snare_hit_roll.wav"
 ;			"Doctor/snare_soft_roll.wav"
 ;			"Doctor/snare_loop.wav"
-[[BuildDoctor *polyphony]
+[[cs_waveforms *waveforms]
 	[TRY
 		[wave *waveforms
 			"Doctor/surdo_mute.wav"
@@ -91,8 +91,9 @@ program doctor [Doctor BuildDoctor BuildDoctorPart]
 			"Doctor/bell_tree.wav"
 		]
 	]
-	[BuildDoctor *polyphony *waveforms]
 ]
+
+[[BuildDoctor *polyphony] / [cs_waveforms *waveforms] / [BuildDoctor *polyphony *waveforms]]
 [[BuildDoctor *polyphony *waveforms] / [BuildDoctor *polyphony * * * *waveforms]]
 
 [[BuildDoctor *polyphony *Doctor *DoctorCB *volume *waveforms]

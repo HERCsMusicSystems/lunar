@@ -29,7 +29,7 @@ program lunar #machine := "lunar"
 				Connect ConnectStereo ConnectDryWet Disconnect DisconnectStereo DisconnectDryWet
 				AddParameterBlock AddNamedParameterBlock
 				Moonbase AddModule Insert InsertPB InsertController InsertFor InsertIO InsertBlock Store Restore SubRestore
-				Moons AllocateChannel CloseAllMoons ConnectAllMoons
+				Moons AllocateChannel CloseAllMoons ConnectAllMoons ConnectMoon
 				Cbb Cb C C# Cx
 				Dbb Db D D# Dx
 				Ebb Eb E E# Ex
@@ -826,6 +826,15 @@ program lunar #machine := "lunar"
 	fail
 ]
 [[ConnectAllMoons *]]
+
+[[ConnectMoon *moon *reactor]
+	[SELECT [[Moons *moon *ind *cb *line]/] [[Moons * *moon *cb *line]/]]/
+	[SELECT [[ConnectStereo *reactor *line]/] [[*reactor *line]/]]/
+]
+[[ConnectMoon *reactor *moon]
+	[SELECT [[Moons *moon *ind *cb *line]/] [[Moons * *moon *cb *line]/]]/
+	[SELECT [[ConnectStereo *reactor *line]/] [[*reactor *line]/]]/
+]
 
 [[AddNamedParameterBlock *parameters *module *name *selector *initial *style]
 	[*parameters *pb : *selector] /

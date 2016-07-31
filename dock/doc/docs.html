@@ -79,6 +79,7 @@
         <a href="#predicate_chord_detector">chord_detector</a>
         <a href="#predicate_CloseAllMoons">CloseAllMoons</a>
         <a href="#predicate_ConnectAllMoons">ConnectAllMoons</a>
+        <a href="#predicate_ConnectMoon">ConnectMoon</a>
         <a href="#predicate_detector">detector</a>
         <a href="#predicate_income_midi">income_midi</a>
         <a href="#predicate_Insert">Insert</a>
@@ -1357,7 +1358,8 @@ A typical construction of an instrument and inserting it into the superstructure
     <li>
         The entire superstructure can be connecte to the core (i.e. [ConnectAllMoons reactor]),
         or destroyed (i.e. [CloseAllMoons]).
-        Individual instruments can be destroyed by [Moonbase instrument].
+        Individual instruments can be connected to the core (i.e. [ConnectMoon Instrument reactor]),
+        or destroyed by [Moonbase instrument].
     </li>
 </ul>
 
@@ -1479,6 +1481,20 @@ A typical construction of an instrument and inserting it into the superstructure
         </div>
         <div class="doc_predicate_body">
             Connect all instruments from the superstructure to the audio recipient.
+        </div>
+    </a>
+</div>
+
+<div class="doc_predicate">
+    <a id="predicate_ConnectMoon">
+        <div class="doc_predicate_header">
+            [ConnectMoon instrument audio_recipient]<br />
+            [ConnectMoon audio_recipient instrument]<br />
+            [ConnectMoon instrument_index audio_recipient]<br />
+            [ConnectMoon audio_recipient instrument_index => Connects one instrument to the audio recipient]<br />
+        </div>
+        <div class="doc_predicate_body">
+            Connect one instrument from the superstructure to the audio recipient.
         </div>
     </a>
 </div>

@@ -541,6 +541,7 @@ void lunar_trigger :: ground (int key, int velocity, int base, int previous) {
 	pthread_mutex_lock (& critical);
 	polyphonic_ground_request = true;
 	keystack_pointer = 0;
+	sub_velocity (velocity);
 	if (porta_switch != 0.0 && porta_time > 0.0) {
 		if (porta_control == 0.0) base = previous;
 		signal = core -> arrange_note (base, transpose, mode, key_map == 0 ? 0 : key_map -> map);

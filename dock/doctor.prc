@@ -147,6 +147,8 @@ program doctor [Doctor BuildDoctor BuildDoctorPart cs_waveforms]
 	[Lunar 256 *Doctor sens modulation]
 	[Lunar 16384 *Doctor sens index]
 	[Lunar 1792 *Doctor lfo speed]
+	[Lunar 16256 *Doctor sens velocity BP]
+	[Lunar -64 *Doctor sens velocity left]
 ]
 
 [[BuildDoctorPart *Doctor *cb *line *pitch *lfo *waveforms]

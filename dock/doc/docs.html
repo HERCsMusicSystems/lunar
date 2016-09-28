@@ -1692,7 +1692,7 @@ A typical construction of an instrument and inserting it into the superstructure
             [module variation *x] => Returns the current sequence at specified variation.<br />
         </div>
         <div class="doc_predicate_body">
-            <b>Signals:</b> [["SPEED" "TRIGGER" "VARIATION" "TIMINGCLOCK"] []]<br />
+            <b>Signals:</b> [["SPEED" "TRIGGER" "VARIATION" "TIMINGCLOCK"] ["TIMINGCLOCK"]]<br />
             Triggers sequences of prolog commands.<br />
             The variation input selects the current variation.
             Variation can change at the beginning of sequence.
@@ -1701,6 +1701,8 @@ A typical construction of an instrument and inserting it into the superstructure
             <b>Trigger:</b> starts playing sequence if greated than zero. If equals or greater than 256.0 then plays in a loop.<br />
             <b>Variation:</b> selects variation to be played. This input is 14-bit and only the MSB is used.<br />
             <b>Timingclock:</b> external trigger (works well with speed = ZERO).<br />
+            <b>OUTPUTS:</b><br />
+            <b>Timingclock:</b> active for one sample duration after each tick. Can be used to clock other sequencers.<br />
             <b>COMMANDS:</b><br/>
             <b>number</b> => wait number of ticks<br/>
             <b>[command : parameters]</b> => prolog command<br/>

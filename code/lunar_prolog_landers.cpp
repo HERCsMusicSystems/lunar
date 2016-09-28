@@ -772,7 +772,7 @@ class prolog_sequencer : public CommandModule {
 private:
 	PrologRoot * root;
 	double speed, trigger, variation, clock;
-	double time, previous_clock;
+	double time, previous_clock, feedback;
 	int tick;
 public:
 	pthread_mutex_t critical;
@@ -830,22 +830,24 @@ public:
 		}
 		return orbiter :: inputAddress (ind);
 	}
-	int numberOfOutputs (void) {return 0;}
+	char * outputName (int ind) {if (ind == 0) return "TIMINGCLOCK"; return orbiter :: outputName (ind);}
 	void propagate_signals (void) {
 		orbiter :: propagate_signals ();
 		if (trigger < 1.0) {if (time < 0.0) return; time = -1.0; return;}
-		if (clock > previous_clock && clock > 0.0) {pthread_mutex_lock (& critical); private_signal (); pthread_mutex_unlock (& critical);}
+		if (clock > previous_clock && clock > 0.0) {pthread_mutex_lock (& critical); feedback = clock; private_signal (); pthread_mutex_unlock (& critical);}
 		previous_clock = clock;
 		if (time < 0.0) {time = speed > 0.0 ? 1.0 : 0.0; tick = 0; current_frame = elements [get_variation (variation)];}
-		while (time >= 1.0) {time -= 1.0; pthread_mutex_lock (& critical); private_signal (); pthread_mutex_unlock (& critical);}
+		while (time >= 1.0) {time -= 1.0; pthread_mutex_lock (& critical); feedback = 1.0; private_signal (); pthread_mutex_unlock (& critical);}
 		time += core -> sample_duration * speed * 0.4;
 	}
+	void move (void) {signal = feedback; feedback = 0.0;}
 	prolog_sequencer (PrologRoot * root, orbiter_core * core) : CommandModule (core) {
 		pthread_mutex_init (& critical, 0);
 		this -> root = root;
 		speed = 140.0;
 		trigger = variation = clock = previous_clock = 0.0;
 		time = -1.0; tick = 0;
+		feedback = 0.0;
 		current_frame = 0;
 		for (int ind = 0; ind < 128; ind++) elements [ind] = 0;
 		initialise (); activate ();

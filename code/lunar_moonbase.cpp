@@ -756,6 +756,7 @@ void sequencer :: propagate_signals (void) {
 	if (trigger < 1.0) {
 		if (time < 0.0) return;
 		time = -1.0;
+		impulse_level = busy_level = 0.0;
 		if (base != 0) base -> keyoff ();
 		return;
 	}
@@ -767,9 +768,12 @@ void sequencer :: propagate_signals (void) {
 }
 
 void sequencer :: private_signal (void) {
-	if (current_frame == 0 || base == 0) {impulse_level = busy_level = 0.0; return;}
-	if (current_frame == elements [get_variation (variation)]) {impulse_level = 0.0; busy_level = 1.0;}
+	if (base == 0) {impulse_level = busy_level = 0.0; return;}
 	while (tick < 1) {
+		if (current_frame == 0) {
+			if (trigger >= 256.0) {current_frame = elements [get_variation (variation)]; impulse_level = 0.0; busy_level = 1.0;}
+			else {impulse_level = busy_level = 0.0; return;}
+		}
 		switch (current_frame -> type) {
 		case 0: tick = current_frame -> key; break;
 		case 1: base -> keyon (current_frame -> key); break;
@@ -782,10 +786,6 @@ void sequencer :: private_signal (void) {
 		default: break;
 		}
 		current_frame = current_frame -> next;
-		if (current_frame == 0) {
-			if (trigger >= 256.0) current_frame = elements [get_variation (variation)];
-			else return;
-		}
 	}
 	tick--;
 }

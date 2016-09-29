@@ -780,8 +780,11 @@ public:
 	prolog_sequence_element * elements [128];
 private:
 	void private_signal (void) {
-		if (current_frame == 0) return;
 		while (tick < 1) {
+			if (current_frame == 0) {
+				if (trigger >= 256.0) current_frame = elements [get_variation (variation)];
+				else return;
+			}
 			if (current_frame -> query == 0) tick = current_frame -> ticks;
 			else {
 				PrologElement * query = root -> pair (root -> head (0), root -> pair (current_frame -> query -> duplicate (), root -> earth ()));
@@ -789,10 +792,6 @@ private:
 				delete query;
 			}
 			current_frame = current_frame -> next;
-			if (current_frame == 0) {
-				if (trigger >= 256.0) current_frame = elements [get_variation (variation)];
-				else return;
-			}
 		}
 		tick--;
 	}

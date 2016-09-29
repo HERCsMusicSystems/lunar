@@ -762,7 +762,7 @@ void sequencer :: propagate_signals (void) {
 	}
 	if (clock > previous_clock && clock > 0.0) {pthread_mutex_lock (& critical); private_signal (); pthread_mutex_unlock (& critical);}
 	previous_clock = clock;
-	if (time < 0.0) {time = tempo > 0.0 ? 1.0 : 0.0; tick = 0; current_frame = elements [get_variation (variation)];}
+	if (time < 0.0) {time = tempo > 0.0 ? 1.0 : 0.0; tick = 0; current_frame = elements [get_variation (variation)]; busy_level = 1.0;}
 	while (time >= 1.0) {time -= 1.0; pthread_mutex_lock (& critical); private_signal (); pthread_mutex_unlock (& critical);}
 	time += core -> sample_duration * tempo * 0.4;
 }
@@ -773,6 +773,7 @@ void sequencer :: private_signal (void) {
 		if (current_frame == 0) {
 			if (trigger >= 256.0) {current_frame = elements [get_variation (variation)]; impulse_level = 0.0; busy_level = 1.0;}
 			else {impulse_level = busy_level = 0.0; return;}
+			if (current_frame == 0) {impulse_level = busy_level = 0.0; return;}
 		}
 		switch (current_frame -> type) {
 		case 0: tick = current_frame -> key; break;

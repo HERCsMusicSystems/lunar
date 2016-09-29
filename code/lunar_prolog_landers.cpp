@@ -784,6 +784,7 @@ private:
 			if (current_frame == 0) {
 				if (trigger >= 256.0) current_frame = elements [get_variation (variation)];
 				else return;
+				if (current_frame == 0) return;
 			}
 			if (current_frame -> query == 0) tick = current_frame -> ticks;
 			else {

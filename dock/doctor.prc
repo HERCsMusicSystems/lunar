@@ -140,6 +140,8 @@ program doctor [Doctor BuildDoctor BuildDoctorPart cs_waveforms]
 	;; INVISIBLE....
 	[InsertController 64 *Doctor portamento hold]
 	[InsertController 84 *Doctor portamento legato]
+	[InsertController 81 -48 *Doctor portamento transpose]
+	[InsertController 82 -1 *Doctor portamento mode]
 	;[InsertController 85 *Doctor core auto]
 	;[InsertController 80 *Doctor arpeggiator active]
 	;[InsertController 66 *Doctor arpeggiator hold]

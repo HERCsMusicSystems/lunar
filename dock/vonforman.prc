@@ -126,6 +126,8 @@ program vonforman [BuildVonForman BuildVonFormanPart VF LGV LGT LGP STK STV AEG 
 	; INVISIBLE....
 	[InsertController 64 *VonForman portamento hold]
 	[InsertController 84 *VonForman portamento legato]
+	[InsertController 81 -48 *VonForman portamento transpose]
+	[InsertController 82 -1 *VonForman portamento mode]
 	[InsertController 85 *VonForman core auto control]
 	[InsertController 80 *VonForman arpeggiator active]
 	[InsertController 66 *VonForman arpeggiator hold]

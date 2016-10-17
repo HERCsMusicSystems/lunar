@@ -51,6 +51,8 @@ program abakos [BuildAbakos BuildAbakosPart]
 	[InsertController 84 *Abakos portamento legato]
 	;[InsertController 85 *Phobos core auto]
 	[InsertController 80 *Abakos arpeggiator active]
+	[InsertController 81 -48 *Abakos portamento transpose]
+	[InsertController 82 -1 *Abakos portamento mode]
 	[InsertController 66 *Abakos arpeggiator hold]
 
 	[Lunar -16384 *Abakos noise amp]

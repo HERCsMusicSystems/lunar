@@ -71,6 +71,8 @@ program forman [BuildForman BuildFormanPart]
 	; INVISIBLE....
 	[InsertController 64 *Forman portamento hold]
 	[InsertController 84 *Forman portamento legato]
+	[InsertController 81 -48 *Forman portamento transpose]
+	[InsertController 82 -1 *Forman portamento mode]
 	[InsertController 85 *Forman core auto control]
 	;[InsertController 80 *Forman arpeggiator active]
 	;[InsertController 66 *Forman arpeggiator hold]

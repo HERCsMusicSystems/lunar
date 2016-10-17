@@ -113,6 +113,8 @@ program phobos [BuildPhobos BuildPhobosPart PhobosEditor Operator-1 Operator-2 O
 	; INVISIBLE....
 	[InsertController 64 *Phobos portamento hold]
 	[InsertController 84 *Phobos portamento legato]
+	[InsertController 81 -48 *Phobos portamento transpose]
+	[InsertController 82 -1 *Phobos portamento mode]
 	[InsertController 85 *Phobos core auto control]
 	[InsertController 80 *Phobos arpeggiator active]
 	[InsertController 66 *Phobos arpeggiator hold]

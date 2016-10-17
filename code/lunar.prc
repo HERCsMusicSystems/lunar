@@ -1514,7 +1514,7 @@ program lunar #machine := "lunar"
 [[td_process 17 3 4 1]]		; minor 6 min				major 7 maj
 [[td_process 18 3 3 2]]		; diminished 6 min			major 7
 [[td_process 19 5 2 1]]		; sus 4 6 min			CASIO
-[[td_call *root *mode] [add *mode 1 *m1] [Moons * * *cb : *] [*cb control 80 *root] [*cb control 81 *m1] fail]
+[[td_call *root *mode] [add *mode 1 *m1] [Moons * * *cb : *] [*cb control 81 *root] [*cb control 82 *m1] fail]
 [[td_call : *]]
 
 auto := [

@@ -275,7 +275,7 @@ double orbiter_core :: arrange_note (int key, double transposition, double mode,
 		index >>= 7;
 		if (index >= 0 && index < 128) {
 			key -= arranger_reference_note;
-			int octave = key / 12;
+			int octave = key >= 0 ? key / 12 : (key - 11) / 12;
 			octave *= 12;
 			key = arranger_reference_note + octave + arranger_array [index] [key - octave];
 		}

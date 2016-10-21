@@ -17,7 +17,7 @@ program lunar #machine := "lunar"
 				square_operator saw_operator noise_operator sampler_operator sampler fm fm4 fm6 fm8 dx dx9 dx7 dx5
 				sensitivity sens filter delay reverb freeverb chorus stereo_chorus
 				pan power_pan linear_pan stereo_pan stereo_power_pan stereo_linear_pan
-				drywet drywet_mono dry wet balance
+				drywet drywet_mono dry wet balance send return
 				level level1 level2 level3 level4 time1 time2 time3 time4 attack decay sustain release
 				freq amp gain ratio sync cutoff resonance formant formant_filter Q hold busy portamento porta
 				legato time speed wave pulse phase poly feedback highdamp diffusion
@@ -991,6 +991,10 @@ program lunar #machine := "lunar"
 
 [[InsertIO *parameters *pan *selector [["LEFT" "RIGHT" "PAN" : *] *]]
 	[AddParameterBlock *parameters pan *pan *selector 0 "index"]
+]
+
+[[InsertIO *parameters *gateway *selector [["LEFT" "RIGHT" "GATEWAY" : *] *]]
+	[AddParameterBlock *parameters gateway *gateway *selector 16384 "index"]
 ]
 
 [[InsertIO *parameters *delay *selector [["LEFT" "RIGHT" "FEEDBACK" "TIME" "HIGHDAMP"] ["LEFT" "RIGHT"]]]

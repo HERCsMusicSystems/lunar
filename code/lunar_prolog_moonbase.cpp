@@ -234,3 +234,9 @@ bool core_class :: code (PrologElement * parameters, PrologResolution * resoluti
 
 core_class :: core_class (orbiter_core * core) {this -> core = core;}
 
+bool jack_class :: code (PrologElement * parameters, PrologResolution * resolution) {
+	return true;
+}
+
+jack_class :: jack_class (orbiter_core * core) {this -> core = core;}
+

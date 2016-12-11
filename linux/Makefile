@@ -428,7 +428,7 @@ lunar_objects = \
 
 ~/bin/lunar: $(lunar_objects) lunar_prc.o $(graphics)
 	g++ $(lunar_objects) lunar_prc.o $(graphics) \
-	-o ~/bin/lunar -lpthread -lreadline -lasound -ldl -shared -fPIC `pkg-config --libs gtk+-2.0` -fopenmp
+	-o ~/bin/lunar -lpthread -lreadline -lasound -ldl -shared -fPIC `pkg-config --libs gtk+-2.0` `pkg-config --libs jack` -fopenmp
 
 /usr/lib/lunar.so: ~/bin/lunar
 	sudo cp ~/bin/lunar /usr/lib/lunar.so

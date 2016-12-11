@@ -321,6 +321,7 @@ PrologNativeCode * PrologLunarServiceClass :: getNativeCode (char * name) {
 	if (strcmp (name, "vector") == 0) return new vector_class (this);
 	if (strcmp (name, "CommandCentre") == 0) return new control_panel_class (this);
 	if (strcmp (name, "core") == 0) return new core_class (& core);
+	if (strcmp (name, "jack") == 0) return new jack_class (& core);
 	if (strcmp (name, "operator") == 0) return new operator_class (& core);
 	if (strcmp (name, "square_operator") == 0) return new square_operator_class (& core);
 	if (strcmp (name, "saw_operator") == 0) return new saw_operator_class (& core);

@@ -251,18 +251,26 @@ public:
 static int jack_process (jack_nframes_t nframes, void * arg) {
 	jack_action * base = (jack_action *) arg;
 	orbiter_core * core = base -> core;
-	double * moon = base -> module -> inputAddress (0);
-	double * left_moon = base -> module -> inputAddress (1);
-	double * right_moon = base -> module -> inputAddress (2);
+	lunar_core * moon = (lunar_core *) base -> module;
+	double * mono_moon = moon -> inputAddress (0);
+	double * left_moon = moon -> inputAddress (1);
+	double * right_moon = moon -> inputAddress (2);
 	double headroom_fraction = core -> headroom_fraction;
 	pthread_mutex_lock (& core -> main_mutex);
+	jack_default_audio_sample_t * left_in = (jack_default_audio_sample_t *) jack_port_get_buffer (jack_input_left, nframes);
+	jack_default_audio_sample_t * right_in = (jack_default_audio_sample_t *) jack_port_get_buffer (jack_input_right, nframes);
+	for (jack_nframes_t ind = 0; ind < nframes; ind++) {
+		moon -> line [moon -> line_write++] = (double) (* left_in++);
+		moon -> line [moon -> line_write++] = (double) (* right_in++);
+		if (moon -> line_write >= 16384) moon -> line_write = 0;
+	}
 	jack_default_audio_sample_t * left_out = (jack_default_audio_sample_t *) jack_port_get_buffer (jack_output_left, nframes);
 	jack_default_audio_sample_t * right_out = (jack_default_audio_sample_t *) jack_port_get_buffer (jack_output_right, nframes);
 	for (jack_nframes_t ind = 0; ind < nframes; ind++) {
 		core -> propagate_signals ();
 		core -> move_modules ();
-		* left_out++ = (jack_default_audio_sample_t) (((* moon) + (* left_moon)) * headroom_fraction);
-		* right_out++ = (jack_default_audio_sample_t) (((* moon) + (* right_moon)) * headroom_fraction);
+		* left_out++ = (jack_default_audio_sample_t) (((* mono_moon) + (* left_moon)) * headroom_fraction);
+		* right_out++ = (jack_default_audio_sample_t) (((* mono_moon) + (* right_moon)) * headroom_fraction);
 	}
 	pthread_mutex_unlock (& core -> main_mutex);
 	return 0;

@@ -234,7 +234,118 @@ bool core_class :: code (PrologElement * parameters, PrologResolution * resoluti
 
 core_class :: core_class (orbiter_core * core) {this -> core = core;}
 
+#include "jack/jack.h"
+
+static jack_client_t * jack_client = 0;
+static jack_port_t * jack_input_left = 0;
+static jack_port_t * jack_input_right = 0;
+static jack_port_t * jack_output_left = 0;
+static jack_port_t * jack_output_right = 0;
+
+class jack_action : public PrologNativeOrbiter {
+public:
+	jack_action (PrologAtom * atom, orbiter_core * core) : PrologNativeOrbiter (atom, core, new lunar_core (core)) {cores++; printf ("JACK moonbase created.\n");}
+	~ jack_action (void) {cores--; jack_client_close (jack_client); jack_client = 0; printf ("JACK moonbase destroyed.\n");}
+};
+
+static int jack_process (jack_nframes_t nframes, void * arg) {
+	jack_action * base = (jack_action *) arg;
+	orbiter_core * core = base -> core;
+	double * moon = base -> module -> inputAddress (0);
+	double * left_moon = base -> module -> inputAddress (1);
+	double * right_moon = base -> module -> inputAddress (2);
+	double headroom_fraction = core -> headroom_fraction;
+	pthread_mutex_lock (& core -> main_mutex);
+	jack_default_audio_sample_t * left_out = (jack_default_audio_sample_t *) jack_port_get_buffer (jack_output_left, nframes);
+	jack_default_audio_sample_t * right_out = (jack_default_audio_sample_t *) jack_port_get_buffer (jack_output_right, nframes);
+	for (jack_nframes_t ind = 0; ind < nframes; ind++) {
+		core -> propagate_signals ();
+		core -> move_modules ();
+		* left_out++ = (jack_default_audio_sample_t) (((* moon) + (* left_moon)) * headroom_fraction);
+		* right_out++ = (jack_default_audio_sample_t) (((* moon) + (* right_moon)) * headroom_fraction);
+	}
+	pthread_mutex_unlock (& core -> main_mutex);
+	return 0;
+}
+/*
+void alpha_callback (int frames, AudioBuffers * data, void * source) {
+	core_action * base = (core_action *) source;
+	orbiter_core * core = base -> core;
+	double * moon = base -> module -> inputAddress (0);
+	double * left_moon = base -> module -> inputAddress (1);
+	double * right_moon = base -> module -> inputAddress (2);
+	double headroom_fraction = core -> headroom_fraction;
+	pthread_mutex_lock (& core -> main_mutex);
+	for (int ind = 0; ind < frames; ind++) {
+		core -> propagate_signals ();
+		core -> move_modules ();
+		data -> insertStereo (((* moon) + (* left_moon)) * headroom_fraction, ((* moon) + (* right_moon)) * headroom_fraction);
+	}
+	pthread_mutex_unlock (& core -> main_mutex);
+}
+
+void beta_callback (int frames, AudioBuffers * data, void * source) {
+	core_action * base = (core_action *) source;
+	orbiter_core * core = base -> core;
+	lunar_core * moon = (lunar_core *) base -> module;
+	pthread_mutex_lock (& core -> main_mutex);
+	for (int ind = 0; ind < frames; ind++) {
+		moon -> line [moon -> line_write++] = data -> getStereoLeftRight ();
+		moon -> line [moon -> line_write++] = data -> getStereoLeftRight ();
+		if (moon -> line_write >= 16384) moon -> line_write = 0;
+	}
+	pthread_mutex_unlock (& core -> main_mutex);
+}
+
+*/
+static void jack_shutdown (void * arg) {
+	printf ("JACK SERVER STOPPED\n");
+}
+
 bool jack_class :: code (PrologElement * parameters, PrologResolution * resolution) {
+	if (cores > 0 || jack_client != 0) return false;
+	PrologElement * atom = 0;
+	PrologElement * name = 0;
+	double centre_frequency = -1.0;
+	double headroom_fraction = -1.0;
+	int requested_number_of_actives = -1;
+	while (parameters -> isPair ()) {
+		PrologElement * el = parameters -> getLeft ();
+		if (el -> isAtom () || el -> isVar ()) atom = el;
+		if (el -> isText ()) name = el;
+		if (el -> isInteger ()) {
+			if (centre_frequency < 0.0) centre_frequency = (double) el -> getInteger ();
+			else requested_number_of_actives = el -> getInteger ();
+		}
+		if (el -> isDouble ()) {
+			if (centre_frequency < 0.0) centre_frequency = el -> getDouble ();
+			else headroom_fraction = el -> getDouble ();
+		}
+		parameters = parameters -> getRight ();
+	}
+	if (atom == 0) return false;
+	if (centre_frequency >= 0.0) core -> centre_frequency = centre_frequency;
+	if (headroom_fraction >= 0.0) core -> headroom_fraction = headroom_fraction;
+	if (requested_number_of_actives > 0) core -> requested_active_size = requested_number_of_actives;
+	if (jack_client != 0) {jack_client_close (jack_client); jack_client = 0; return true;}
+	jack_status_t jack_status;
+	const char * server_name = 0;
+	jack_client = jack_client_open (name == 0 ? "LUNAR" : name -> getText (), JackNullOption, & jack_status, server_name);
+	if (jack_client == 0) return false;
+	if (atom -> isVar ()) atom -> setAtom (new PrologAtom ());
+	if (! atom -> isAtom ()) return false;
+	printf ("HORIZONTAL = %i\n", jack_get_sample_rate (jack_client));
+	core -> sampling_frequency = (double) jack_get_sample_rate (jack_client);
+	core -> recalculate ();
+	jack_action * machine = new jack_action (atom -> getAtom (), core);
+	if (! atom -> getAtom () -> setMachine (machine)) {delete machine; return false;}
+	jack_set_process_callback (jack_client, jack_process, machine);
+	jack_on_shutdown (jack_client, jack_shutdown, machine);
+	jack_input_left = jack_port_register (jack_client, "LEFT INPUT", JACK_DEFAULT_AUDIO_TYPE, JackPortIsInput, 0);
+	jack_input_right = jack_port_register (jack_client, "RIGHT INPUT", JACK_DEFAULT_AUDIO_TYPE, JackPortIsInput, 0);
+	jack_output_left = jack_port_register (jack_client, "LEFT OUTPUT", JACK_DEFAULT_AUDIO_TYPE, JackPortIsOutput, 0);
+	jack_output_right = jack_port_register (jack_client, "RIGHT OUTPUT", JACK_DEFAULT_AUDIO_TYPE, JackPortIsOutput, 0);
+	if (jack_activate (jack_client) != 0) return false;
 	return true;
 }
 

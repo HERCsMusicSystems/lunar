@@ -54,7 +54,7 @@ lunar_wave.o: ../code/lunar_wave.cpp ../code/lunar_wave.h ../code/lunar.h
 
 lunar_prolog_moonbase.o: ../code/lunar_prolog_moonbase.cpp ../code/lunar_moonbase.h ../code/prolog_lunar.h ../code/multiplatform_audio.h\
 	$(pc)prolog.h ../code/lunar.h
-	g++ -Wno-write-strings -I. -I$(pc) ../code/lunar_prolog_moonbase.cpp -c -o lunar_prolog_moonbase.o -fPIC
+	g++ -Wno-write-strings -I. -I$(pc) ../code/lunar_prolog_moonbase.cpp -c -o lunar_prolog_moonbase.o `pkg-config --cflags jack` -fPIC
 
 lunar_prolog_landers.o: ../code/lunar_prolog_landers.cpp ../code/lunar_prolog_landers.h ../code/chromatic.h\
 			 ../code/prolog_lunar.h $(pc)prolog.h ../code/lunar.h ../code/lunar_landers.h ../code/lunar_wave.h ../code/lunar_moonbase.h

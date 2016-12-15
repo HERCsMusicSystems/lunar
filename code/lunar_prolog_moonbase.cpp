@@ -235,12 +235,15 @@ bool core_class :: code (PrologElement * parameters, PrologResolution * resoluti
 core_class :: core_class (orbiter_core * core) {this -> core = core;}
 
 #include "jack/jack.h"
+#include "jack/midiport.h"
 
 static jack_client_t * jack_client = 0;
 static jack_port_t * jack_input_left = 0;
 static jack_port_t * jack_input_right = 0;
 static jack_port_t * jack_output_left = 0;
 static jack_port_t * jack_output_right = 0;
+static jack_port_t * jack_midi_in = 0;
+static jack_port_t * jack_midi_out = 0;
 
 class jack_action : public PrologNativeOrbiter {
 public:
@@ -256,9 +259,16 @@ static int jack_process (jack_nframes_t nframes, void * arg) {
 	double * left_moon = moon -> inputAddress (1);
 	double * right_moon = moon -> inputAddress (2);
 	double headroom_fraction = core -> headroom_fraction;
-	pthread_mutex_lock (& core -> main_mutex);
+	void * midi_in = jack_port_get_buffer (jack_midi_in, nframes);
+	jack_midi_event_t event;
+	jack_nframes_t events = jack_midi_get_event_count (midi_in);
+	for (int ind = 0; ind < events; ind++) {
+		jack_midi_event_get (& event, midi_in, ind);
+		printf ("MIDI %d/%d = %x\n", event . time, nframes, * (event . buffer));
+	}
 	jack_default_audio_sample_t * left_in = (jack_default_audio_sample_t *) jack_port_get_buffer (jack_input_left, nframes);
 	jack_default_audio_sample_t * right_in = (jack_default_audio_sample_t *) jack_port_get_buffer (jack_input_right, nframes);
+	pthread_mutex_lock (& core -> main_mutex);
 	for (jack_nframes_t ind = 0; ind < nframes; ind++) {
 		moon -> line [moon -> line_write++] = (double) (* left_in++);
 		moon -> line [moon -> line_write++] = (double) (* right_in++);
@@ -275,37 +285,7 @@ static int jack_process (jack_nframes_t nframes, void * arg) {
 	pthread_mutex_unlock (& core -> main_mutex);
 	return 0;
 }
-/*
-void alpha_callback (int frames, AudioBuffers * data, void * source) {
-	core_action * base = (core_action *) source;
-	orbiter_core * core = base -> core;
-	double * moon = base -> module -> inputAddress (0);
-	double * left_moon = base -> module -> inputAddress (1);
-	double * right_moon = base -> module -> inputAddress (2);
-	double headroom_fraction = core -> headroom_fraction;
-	pthread_mutex_lock (& core -> main_mutex);
-	for (int ind = 0; ind < frames; ind++) {
-		core -> propagate_signals ();
-		core -> move_modules ();
-		data -> insertStereo (((* moon) + (* left_moon)) * headroom_fraction, ((* moon) + (* right_moon)) * headroom_fraction);
-	}
-	pthread_mutex_unlock (& core -> main_mutex);
-}
 
-void beta_callback (int frames, AudioBuffers * data, void * source) {
-	core_action * base = (core_action *) source;
-	orbiter_core * core = base -> core;
-	lunar_core * moon = (lunar_core *) base -> module;
-	pthread_mutex_lock (& core -> main_mutex);
-	for (int ind = 0; ind < frames; ind++) {
-		moon -> line [moon -> line_write++] = data -> getStereoLeftRight ();
-		moon -> line [moon -> line_write++] = data -> getStereoLeftRight ();
-		if (moon -> line_write >= 16384) moon -> line_write = 0;
-	}
-	pthread_mutex_unlock (& core -> main_mutex);
-}
-
-*/
 static void jack_shutdown (void * arg) {
 	printf ("JACK SERVER STOPPED\n");
 }
@@ -353,6 +333,8 @@ bool jack_class :: code (PrologElement * parameters, PrologResolution * resoluti
 	jack_input_right = jack_port_register (jack_client, "RIGHT INPUT", JACK_DEFAULT_AUDIO_TYPE, JackPortIsInput, 0);
 	jack_output_left = jack_port_register (jack_client, "LEFT OUTPUT", JACK_DEFAULT_AUDIO_TYPE, JackPortIsOutput, 0);
 	jack_output_right = jack_port_register (jack_client, "RIGHT OUTPUT", JACK_DEFAULT_AUDIO_TYPE, JackPortIsOutput, 0);
+	jack_midi_in = jack_port_register (jack_client, "MIDI INPUT", JACK_DEFAULT_MIDI_TYPE, JackPortIsInput, 0);
+	jack_midi_out = jack_port_register (jack_client, "MIDI OUTPUT", JACK_DEFAULT_MIDI_TYPE, JackPortIsOutput, 0);
 	if (jack_activate (jack_client) != 0) return false;
 	return true;
 }

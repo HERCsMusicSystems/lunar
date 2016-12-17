@@ -247,8 +247,33 @@ static jack_port_t * jack_midi_out = 0;
 
 class jack_action : public PrologNativeOrbiter {
 public:
-	jack_action (PrologAtom * atom, orbiter_core * core) : PrologNativeOrbiter (atom, core, new lunar_core (core)) {cores++; printf ("JACK moonbase created.\n");}
-	~ jack_action (void) {cores--; jack_client_close (jack_client); jack_client = 0; printf ("JACK moonbase destroyed.\n");}
+	PrologRoot * root;
+	PrologAtom * midi_callback;
+	void callback (jack_midi_event_t * event) {
+		if (midi_callback == 0) return;
+		PrologElement * query = root -> pair (
+								root -> pair (root -> atom (midi_callback),
+								root -> pair (root -> integer (event -> buffer [0]),
+								root -> pair (root -> integer (event -> buffer [1]),
+								root -> pair (root -> integer (event -> buffer [2]),
+									root -> earth ())))), root -> earth ());
+		query = root -> pair (root -> head (0), query);
+		root -> resolution (query);
+		delete query;
+	}
+	jack_action (PrologRoot * root, PrologAtom * atom, PrologAtom * midi_callback, orbiter_core * core)
+	: PrologNativeOrbiter (atom, core, new lunar_core (core)) {
+		this -> root = root;
+		this -> midi_callback = midi_callback;
+		if (midi_callback != 0) {COLLECTOR_REFERENCE_INC (midi_callback);}
+		cores++; printf ("JACK moonbase created.\n");
+	}
+	~ jack_action (void) {
+		cores--;
+		jack_client_close (jack_client); jack_client = 0;
+		if (midi_callback) midi_callback -> removeAtom (); midi_callback = 0;
+		printf ("JACK moonbase destroyed.\n");
+	}
 };
 
 static int jack_process (jack_nframes_t nframes, void * arg) {
@@ -280,9 +305,12 @@ static int jack_process (jack_nframes_t nframes, void * arg) {
 	for (jack_nframes_t ind = 0; ind < nframes; ind++) {
 		if (event_time <= ind) {
 			pthread_mutex_unlock (& core -> main_mutex);
-			printf ("PROCESS MIDI %d/%d = %x\n", event_time, ind, * (event . buffer));
-			if (events > event_index++) {jack_midi_event_get (& event, midi_in, event_index++); event_time = event . time;}
-			else event_time = nframes + 1;
+			while (event_time <= ind) {
+				base -> callback (& event);
+				printf ("PROCESS MIDI %d/%d = %x\n", event_time, ind, * (event . buffer));
+				if (events > event_index++) {jack_midi_event_get (& event, midi_in, event_index++); event_time = event . time;}
+				else event_time = nframes + 1;
+			}
 			pthread_mutex_lock (& core -> main_mutex);
 		}
 		core -> propagate_signals ();
@@ -293,6 +321,7 @@ static int jack_process (jack_nframes_t nframes, void * arg) {
 	pthread_mutex_unlock (& core -> main_mutex);
 	while (event_index < events) {
 		jack_midi_event_get (& event, midi_in, event_index++);
+		base -> callback (& event);
 		printf ("MIDI %d/%d = %x\n", event . time, nframes, * (event . buffer));
 	}
 	return 0;
@@ -306,12 +335,14 @@ bool jack_class :: code (PrologElement * parameters, PrologResolution * resoluti
 	if (cores > 0 || jack_client != 0) return false;
 	PrologElement * atom = 0;
 	PrologElement * name = 0;
+	PrologElement * midi_callback = 0;
 	double centre_frequency = -1.0;
 	double headroom_fraction = -1.0;
 	int requested_number_of_actives = -1;
 	while (parameters -> isPair ()) {
 		PrologElement * el = parameters -> getLeft ();
-		if (el -> isAtom () || el -> isVar ()) atom = el;
+		if (el -> isVar ()) atom = el;
+		if (el -> isAtom ()) {if (atom == 0) atom = el; else if (midi_callback == 0) midi_callback = el;}
 		if (el -> isText ()) name = el;
 		if (el -> isInteger ()) {
 			if (centre_frequency < 0.0) centre_frequency = (double) el -> getInteger ();
@@ -337,7 +368,7 @@ bool jack_class :: code (PrologElement * parameters, PrologResolution * resoluti
 	printf ("HORIZONTAL = %i\n", jack_get_sample_rate (jack_client));
 	core -> sampling_frequency = (double) jack_get_sample_rate (jack_client);
 	core -> recalculate ();
-	jack_action * machine = new jack_action (atom -> getAtom (), core);
+	jack_action * machine = new jack_action (root, atom -> getAtom (), midi_callback == 0 ? 0 : midi_callback -> getAtom (), core);
 	if (! atom -> getAtom () -> setMachine (machine)) {delete machine; return false;}
 	jack_set_process_callback (jack_client, jack_process, machine);
 	jack_on_shutdown (jack_client, jack_shutdown, machine);
@@ -351,5 +382,5 @@ bool jack_class :: code (PrologElement * parameters, PrologResolution * resoluti
 	return true;
 }
 
-jack_class :: jack_class (orbiter_core * core) {this -> core = core;}
+jack_class :: jack_class (PrologRoot * root, orbiter_core * core) {this -> root = root; this -> core = core;}
 

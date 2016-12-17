@@ -249,23 +249,100 @@ class jack_action : public PrologNativeOrbiter {
 public:
 	PrologRoot * root;
 	PrologAtom * midi_callback;
+	PrologAtom * keyoff, * keyon, * polyaftertouch, * control, * programchange, * aftertouch, * pitch;
+	PrologAtom * sysex, * timingclock, * start, * cont, * stop, * activesensing;
 	void callback (jack_midi_event_t * event) {
 		if (midi_callback == 0) return;
+		int command = event -> buffer [0];
+		if ((command >= 0x80 && command < 0xc0) || (command >= 0xe0 && command < 0xf0)) two_parameters (command, event -> buffer [1], event -> buffer [2]);
+		else if (command < 0xf0) one_parameter (command, event -> buffer [1]);
+		else {
+			PrologElement * query;
+			PrologElement * el;
+			int sub, bi = 1;
+			switch (command) {
+			case 0xf0:
+				el = root -> earth ();
+				query = root -> pair (root -> head (0), root -> pair (root -> pair (root -> atom (midi_callback),
+											root -> pair (root -> atom (sysex), el)), root -> earth ()));
+				sub = event -> buffer [bi++];
+				while (sub >= 0 && sub < 128) {
+					el -> setPair (root -> integer (sub), root -> earth ());
+					el = el -> getRight ();
+					sub = event -> buffer [bi++];
+				}
+				root -> resolution (query); delete query;
+				break;
+			case 0xf8: zero_parameters (timingclock); break;
+			case 0xfa: zero_parameters (start); break;
+			case 0xfb: zero_parameters (cont); break;
+			case 0xfc: zero_parameters (stop); break;
+			case 0xfe: zero_parameters (activesensing); break;
+			default: break;
+			}
+		}
+	}
+	void zero_parameters (PrologAtom * command) {
+		PrologElement * query = root -> pair (root -> head (0), root -> pair (root -> pair (root -> atom (midi_callback),
+											root -> pair (root -> atom (command), root -> earth ())), root -> earth ()));
+		root -> resolution (query); delete query;
+	}
+	void two_parameters (int command, int p1, int p2) {
+		int channel = command & 0xf; command &= 0xf0;
+		PrologAtom * command_atom = keyoff;
+		switch (command) {
+		case 0x80: command_atom = keyoff; break;
+		case 0x90: command_atom = keyon; break;
+		case 0xa0: command_atom = polyaftertouch; break;
+		case 0xb0: command_atom = control; break;
+		case 0xe0: command_atom = pitch; break;
+		default: command_atom = sysex; break;
+		}
 		PrologElement * query = root -> pair (
 								root -> pair (root -> atom (midi_callback),
-								root -> pair (root -> integer (event -> buffer [0]),
-								root -> pair (root -> integer (event -> buffer [1]),
-								root -> pair (root -> integer (event -> buffer [2]),
+								root -> pair (root -> atom (command_atom),
+								root -> pair (root -> integer (channel),
+								root -> pair (root -> integer (p1),
+								root -> pair (root -> integer (p2),
+									root -> earth ()))))), root -> earth ());
+		query = root -> pair (root -> head (0), query);
+		root -> resolution (query);
+		delete query;
+	}
+	void one_parameter (int command, int p) {
+		int channel = command & 0xf; command &= 0xf0;
+		PrologElement * query = root -> pair (
+								root -> pair (root -> atom (midi_callback),
+								root -> pair (root -> atom (command < 0xd0 ? programchange : aftertouch),
+								root -> pair (root -> integer (channel),
+								root -> pair (root -> integer (p),
 									root -> earth ())))), root -> earth ());
 		query = root -> pair (root -> head (0), query);
 		root -> resolution (query);
 		delete query;
 	}
-	jack_action (PrologRoot * root, PrologAtom * atom, PrologAtom * midi_callback, orbiter_core * core)
+	jack_action (PrologRoot * root, PrologDirectory * directory, PrologAtom * atom, PrologAtom * midi_callback, orbiter_core * core)
 	: PrologNativeOrbiter (atom, core, new lunar_core (core)) {
 		this -> root = root;
 		this -> midi_callback = midi_callback;
 		if (midi_callback != 0) {COLLECTOR_REFERENCE_INC (midi_callback);}
+	keyoff = keyon = polyaftertouch = control = programchange = aftertouch = pitch = 0;
+	sysex = timingclock = start = cont = stop = activesensing = 0;
+	if (directory != 0) {
+		keyoff = directory -> searchAtom ("keyoff");
+		keyon = directory -> searchAtom ("keyon");
+		polyaftertouch = directory -> searchAtom ("polyaftertouch");
+		control = directory -> searchAtom ("control");
+		programchange = directory -> searchAtom ("programchange");
+		aftertouch = directory -> searchAtom ("aftertouch");
+		pitch = directory -> searchAtom ("pitch");
+		sysex = directory -> searchAtom ("sysex");
+		timingclock = directory -> searchAtom ("timingclock");
+		start = directory -> searchAtom ("START");
+		cont = directory -> searchAtom ("CONTINUE");
+		stop = directory -> searchAtom ("STOP");
+		activesensing = directory -> searchAtom ("activesensing");
+	}
 		cores++; printf ("JACK moonbase created.\n");
 	}
 	~ jack_action (void) {
@@ -368,7 +445,7 @@ bool jack_class :: code (PrologElement * parameters, PrologResolution * resoluti
 	printf ("HORIZONTAL = %i\n", jack_get_sample_rate (jack_client));
 	core -> sampling_frequency = (double) jack_get_sample_rate (jack_client);
 	core -> recalculate ();
-	jack_action * machine = new jack_action (root, atom -> getAtom (), midi_callback == 0 ? 0 : midi_callback -> getAtom (), core);
+	jack_action * machine = new jack_action (root, directory, atom -> getAtom (), midi_callback == 0 ? 0 : midi_callback -> getAtom (), core);
 	if (! atom -> getAtom () -> setMachine (machine)) {delete machine; return false;}
 	jack_set_process_callback (jack_client, jack_process, machine);
 	jack_on_shutdown (jack_client, jack_shutdown, machine);
@@ -382,5 +459,7 @@ bool jack_class :: code (PrologElement * parameters, PrologResolution * resoluti
 	return true;
 }
 
-jack_class :: jack_class (PrologRoot * root, orbiter_core * core) {this -> root = root; this -> core = core;}
+jack_class :: jack_class (PrologRoot * root, PrologDirectory * directory, orbiter_core * core) {
+	this -> root = root; this -> directory = directory, this -> core = core;
+}
 

@@ -260,29 +260,41 @@ static int jack_process (jack_nframes_t nframes, void * arg) {
 	double * right_moon = moon -> inputAddress (2);
 	double headroom_fraction = core -> headroom_fraction;
 	void * midi_in = jack_port_get_buffer (jack_midi_in, nframes);
-	jack_midi_event_t event;
-	jack_nframes_t events = jack_midi_get_event_count (midi_in);
-	for (int ind = 0; ind < events; ind++) {
-		jack_midi_event_get (& event, midi_in, ind);
-		printf ("MIDI %d/%d = %x\n", event . time, nframes, * (event . buffer));
-	}
 	jack_default_audio_sample_t * left_in = (jack_default_audio_sample_t *) jack_port_get_buffer (jack_input_left, nframes);
 	jack_default_audio_sample_t * right_in = (jack_default_audio_sample_t *) jack_port_get_buffer (jack_input_right, nframes);
-	pthread_mutex_lock (& core -> main_mutex);
+	moon -> line_read = moon -> line_write;
 	for (jack_nframes_t ind = 0; ind < nframes; ind++) {
 		moon -> line [moon -> line_write++] = (double) (* left_in++);
 		moon -> line [moon -> line_write++] = (double) (* right_in++);
 		if (moon -> line_write >= 16384) moon -> line_write = 0;
 	}
+	jack_midi_event_t event;
+	jack_nframes_t events = jack_midi_get_event_count (midi_in);
+	int event_index = 0;
+	jack_nframes_t event_time;
+	if (events > 0) {jack_midi_event_get (& event, midi_in, event_index++); event_time = event . time;}
+	else event_time = nframes + 1;
+	pthread_mutex_lock (& core -> main_mutex);
 	jack_default_audio_sample_t * left_out = (jack_default_audio_sample_t *) jack_port_get_buffer (jack_output_left, nframes);
 	jack_default_audio_sample_t * right_out = (jack_default_audio_sample_t *) jack_port_get_buffer (jack_output_right, nframes);
 	for (jack_nframes_t ind = 0; ind < nframes; ind++) {
+		if (event_time <= ind) {
+			pthread_mutex_unlock (& core -> main_mutex);
+			printf ("PROCESS MIDI %d/%d = %x\n", event_time, ind, * (event . buffer));
+			if (events > event_index++) {jack_midi_event_get (& event, midi_in, event_index++); event_time = event . time;}
+			else event_time = nframes + 1;
+			pthread_mutex_lock (& core -> main_mutex);
+		}
 		core -> propagate_signals ();
 		core -> move_modules ();
 		* left_out++ = (jack_default_audio_sample_t) (((* mono_moon) + (* left_moon)) * headroom_fraction);
 		* right_out++ = (jack_default_audio_sample_t) (((* mono_moon) + (* right_moon)) * headroom_fraction);
 	}
 	pthread_mutex_unlock (& core -> main_mutex);
+	while (event_index < events) {
+		jack_midi_event_get (& event, midi_in, event_index++);
+		printf ("MIDI %d/%d = %x\n", event . time, nframes, * (event . buffer));
+	}
 	return 0;
 }
 

@@ -236,6 +236,7 @@ core_class :: core_class (orbiter_core * core) {this -> core = core;}
 
 #include "jack/jack.h"
 #include "jack/midiport.h"
+#include "chromatic.h"
 
 static jack_client_t * jack_client = 0;
 static jack_port_t * jack_input_left = 0;
@@ -251,6 +252,8 @@ public:
 	PrologAtom * midi_callback;
 	PrologAtom * keyoff, * keyon, * polyaftertouch, * control, * programchange, * aftertouch, * pitch;
 	PrologAtom * sysex, * timingclock, * start, * cont, * stop, * activesensing;
+	chromatograph graph;
+	pthread_mutex_t locker;
 	void callback (jack_midi_event_t * event) {
 		if (midi_callback == 0) return;
 		int command = event -> buffer [0];
@@ -321,18 +324,82 @@ public:
 		root -> resolution (query);
 		delete query;
 	}
-	bool code (PrologElement * parameters, PrologResolution * resolution) {
-		if (parameters -> isPair ()) {
-			PrologElement * command = parameters -> getLeft ();
-			if (command -> isAtom ()) {
-				PrologAtom * command_atom = command -> getAtom ();
-				if (command_atom == keyon) {printf ("KEYON....\n"); return true;}
+	void send_one (int commnad) {}
+	void send_two (int command, int program) {}
+	void send_three (int command, int key, int velocity) {
+	}
+	bool code (PrologElement * original, PrologResolution * resolution) {
+		if (original -> isPair ()) {
+			PrologElement * parameters = original -> getLeft ();
+			if (parameters -> isAtom ()) {
+				PrologAtom * atom = parameters -> getAtom ();
+				parameters = original -> getRight ();
+				int channel; int key; double velocity;
+				unsigned char data;
+				if (atom == keyoff) {
+					if (! graph . get_channel (& parameters, & channel)) return false;
+					if (parameters -> isEarth ()) {send_three (0xb0 + channel, 123, 0); return true;}
+					if (! graph . get_key (& parameters, & key)) return false;
+					if (parameters -> isEarth ()) {send_three (0x80 + channel, key, 0); return true;}
+					if (! graph . get_velocity (& parameters, & velocity)) return false;
+					send_three (0x80 + channel, key, (int) velocity);
+					return true;
+				}
+				if (atom == keyon) {
+					if (! graph . get_channel (& parameters, & channel)) return false;
+					if (! graph . get_key (& parameters, & key)) return false;
+					if (parameters -> isEarth ()) {send_three (0x90 + channel, key, 100); return true;}
+					if (! graph . get_velocity (& parameters, & velocity)) return false;
+					send_three (0x90 + channel, key, (int) velocity);
+					return true;
+				}
+				if (atom == polyaftertouch || atom == control) {
+					if (! graph . get_channel (& parameters, & channel)) return false;
+					if (! graph . get_key (& parameters, & key)) return false;
+					if (! graph . get_velocity (& parameters, & velocity)) return false;
+					send_three ((atom == control ? 0xb0 : 0xa0) + channel, key, (int) velocity);
+					return true;
+				}
+				if (atom == programchange || atom == aftertouch) {
+					if (! graph . get_channel (& parameters, & channel)) return false;
+					if (! graph . get_key (& parameters, & key)) return false;
+					send_two ((atom == programchange ? 0xc0 : 0xd0) + channel, key);
+					return true;
+				}
+				if (atom == pitch) {
+					if (! graph . get_channel (& parameters, & channel)) return false;
+					if (! graph . get_key (& parameters, & key)) return false;
+					if (parameters -> isEarth ()) {send_three (0xe0 + channel, 0, key); return true;}
+					int msb; if (! graph . get_key (& parameters, & msb)) return false;
+					send_three (0xe0 + channel, key, msb);
+					return true;
+				}
+				if (atom == sysex) {
+					pthread_mutex_lock (& locker);
+					data = 0xf0; //write (tc, & data, 1);
+					while (parameters -> isPair ()) {
+						if (graph . get_key (& parameters, & key)) {data = (unsigned char) key; }//write (tc, & data, 1);}
+						else if (parameters -> getLeft () -> isText ()) {
+							char * cp = parameters -> getLeft () -> getText ();
+							while (* cp != '\0') {data = (unsigned char) * cp++; }//write (tc, & data, 1);}
+							parameters = parameters -> getRight ();
+						} else parameters = parameters -> getRight ();
+					}
+					data = 0xf7; //write (tc, & data, 1);
+					pthread_mutex_unlock (& locker);
+					return true;
+				}
+				if (atom == timingclock) {send_one (0xf8); return true;}
+				if (atom == start) {send_one (0xfa); return true;}
+				if (atom == cont) {send_one (0xfb); return true;}
+				if (atom == stop) {send_one (0xfc); return true;}
+				if (atom == activesensing) {send_one (0xfe); return true;}
 			}
 		}
-		return PrologNativeOrbiter :: code (parameters, resolution);
+		return PrologNativeOrbiter :: code (original, resolution);
 	}
 	jack_action (PrologRoot * root, PrologDirectory * directory, PrologAtom * atom, PrologAtom * midi_callback, orbiter_core * core)
-	: PrologNativeOrbiter (atom, core, new lunar_core (core)) {
+	: PrologNativeOrbiter (atom, core, new lunar_core (core)), graph (directory) {
 		this -> root = root;
 		this -> midi_callback = midi_callback;
 		if (midi_callback != 0) {COLLECTOR_REFERENCE_INC (midi_callback);}
@@ -353,12 +420,14 @@ public:
 			stop = directory -> searchAtom ("STOP");
 			activesensing = directory -> searchAtom ("activesensing");
 		}
+		pthread_mutex_init (& locker, 0);
 		cores++; printf ("JACK moonbase created.\n");
 	}
 	~ jack_action (void) {
 		cores--;
 		jack_client_close (jack_client); jack_client = 0;
 		if (midi_callback) midi_callback -> removeAtom (); midi_callback = 0;
+		pthread_mutex_destroy (& locker);
 		printf ("JACK moonbase destroyed.\n");
 	}
 };

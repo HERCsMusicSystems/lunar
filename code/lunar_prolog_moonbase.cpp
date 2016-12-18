@@ -246,6 +246,7 @@ static jack_port_t * jack_output_right = 0;
 static jack_port_t * jack_midi_in = 0;
 static jack_port_t * jack_midi_out = 0;
 
+#define MSGB 2048
 class jack_action : public PrologNativeOrbiter {
 public:
 	PrologRoot * root;
@@ -254,6 +255,8 @@ public:
 	PrologAtom * sysex, * timingclock, * start, * cont, * stop, * activesensing;
 	chromatograph graph;
 	pthread_mutex_t locker;
+	jack_midi_data_t messages [MSGB];
+	int message_from, message_to;
 	void callback (jack_midi_event_t * event) {
 		if (midi_callback == 0) return;
 		int command = event -> buffer [0];
@@ -324,9 +327,23 @@ public:
 		root -> resolution (query);
 		delete query;
 	}
-	void send_one (int commnad) {}
-	void send_two (int command, int program) {}
+	void send_one (int command) {
+		pthread_mutex_lock (& locker);
+		messages [message_to++] = command; if (message_to >= MSGB) message_to = 0;
+		pthread_mutex_unlock (& locker);
+	}
+	void send_two (int command, int program) {
+		pthread_mutex_lock (& locker);
+		messages [message_to++] = command; if (message_to >= MSGB) message_to = 0;
+		messages [message_to++] = program; if (message_to >= MSGB) message_to = 0;
+		pthread_mutex_unlock (& locker);
+	}
 	void send_three (int command, int key, int velocity) {
+		pthread_mutex_lock (& locker);
+		messages [message_to++] = command; if (message_to >= MSGB) message_to = 0;
+		messages [message_to++] = key; if (message_to >= MSGB) message_to = 0;
+		messages [message_to++] = velocity; if (message_to >= MSGB) message_to = 0;
+		pthread_mutex_unlock (& locker);
 	}
 	bool code (PrologElement * original, PrologResolution * resolution) {
 		if (original -> isPair ()) {
@@ -376,7 +393,8 @@ public:
 				}
 				if (atom == sysex) {
 					pthread_mutex_lock (& locker);
-					data = 0xf0; //write (tc, & data, 1);
+					//data = 0xf0;
+					messages [message_to++] = 0xf0; if (message_to >= MSGB) message_to = 0;//write (tc, & data, 1);
 					while (parameters -> isPair ()) {
 						if (graph . get_key (& parameters, & key)) {data = (unsigned char) key; }//write (tc, & data, 1);}
 						else if (parameters -> getLeft () -> isText ()) {
@@ -420,6 +438,7 @@ public:
 			stop = directory -> searchAtom ("STOP");
 			activesensing = directory -> searchAtom ("activesensing");
 		}
+		message_from = message_to = 0;
 		pthread_mutex_init (& locker, 0);
 		cores++; printf ("JACK moonbase created.\n");
 	}

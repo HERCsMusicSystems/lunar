@@ -321,6 +321,16 @@ public:
 		root -> resolution (query);
 		delete query;
 	}
+	bool code (PrologElement * parameters, PrologResolution * resolution) {
+		if (parameters -> isPair ()) {
+			PrologElement * command = parameters -> getLeft ();
+			if (command -> isAtom ()) {
+				PrologAtom * command_atom = command -> getAtom ();
+				if (command_atom == keyon) {printf ("KEYON....\n"); return true;}
+			}
+		}
+		return PrologNativeOrbiter :: code (parameters, resolution);
+	}
 	jack_action (PrologRoot * root, PrologDirectory * directory, PrologAtom * atom, PrologAtom * midi_callback, orbiter_core * core)
 	: PrologNativeOrbiter (atom, core, new lunar_core (core)) {
 		this -> root = root;

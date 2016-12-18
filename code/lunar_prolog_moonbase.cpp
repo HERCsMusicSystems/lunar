@@ -326,23 +326,23 @@ public:
 		this -> root = root;
 		this -> midi_callback = midi_callback;
 		if (midi_callback != 0) {COLLECTOR_REFERENCE_INC (midi_callback);}
-	keyoff = keyon = polyaftertouch = control = programchange = aftertouch = pitch = 0;
-	sysex = timingclock = start = cont = stop = activesensing = 0;
-	if (directory != 0) {
-		keyoff = directory -> searchAtom ("keyoff");
-		keyon = directory -> searchAtom ("keyon");
-		polyaftertouch = directory -> searchAtom ("polyaftertouch");
-		control = directory -> searchAtom ("control");
-		programchange = directory -> searchAtom ("programchange");
-		aftertouch = directory -> searchAtom ("aftertouch");
-		pitch = directory -> searchAtom ("pitch");
-		sysex = directory -> searchAtom ("sysex");
-		timingclock = directory -> searchAtom ("timingclock");
-		start = directory -> searchAtom ("START");
-		cont = directory -> searchAtom ("CONTINUE");
-		stop = directory -> searchAtom ("STOP");
-		activesensing = directory -> searchAtom ("activesensing");
-	}
+		keyoff = keyon = polyaftertouch = control = programchange = aftertouch = pitch = 0;
+		sysex = timingclock = start = cont = stop = activesensing = 0;
+		if (directory != 0) {
+			keyoff = directory -> searchAtom ("keyoff");
+			keyon = directory -> searchAtom ("keyon");
+			polyaftertouch = directory -> searchAtom ("polyaftertouch");
+			control = directory -> searchAtom ("control");
+			programchange = directory -> searchAtom ("programchange");
+			aftertouch = directory -> searchAtom ("aftertouch");
+			pitch = directory -> searchAtom ("pitch");
+			sysex = directory -> searchAtom ("sysex");
+			timingclock = directory -> searchAtom ("timingclock");
+			start = directory -> searchAtom ("START");
+			cont = directory -> searchAtom ("CONTINUE");
+			stop = directory -> searchAtom ("STOP");
+			activesensing = directory -> searchAtom ("activesensing");
+		}
 		cores++; printf ("JACK moonbase created.\n");
 	}
 	~ jack_action (void) {

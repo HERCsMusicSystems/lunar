@@ -429,11 +429,19 @@ public:
 			ind++;
 			int size = 1;
 			jack_midi_data_t data = messages [ind];
-			while (data < 0x80 && data != 0xf7 && ind < message_to && ind < MSGB) {size++; data = messages [ind++];}
+			while (data >= 0 && data < 0x80 && data != 0xf7 && ind < message_to && ind < MSGB) {
+				printf ("%i %i %i =>   ", ind, size, data);
+				size++; data = messages [ind++];
+			}
 			if (ind < MSGB) {
-				jack_midi_data_t * dat = jack_midi_event_reserve (port, time, size);
-				if (dat != 0) {while (size-- > 0) * dat++ = * mdp++;}
-				//jack_midi_event_write (port, time, mdp, size);
+				printf ("command [%i %i %i] = ", size, data, messages [ind]);
+				for (int sub = 0; sub < size; sub++) {
+					printf ("%i  ", mdp [sub]);
+				}
+				printf ("\n");
+				//jack_midi_data_t * dat = jack_midi_event_reserve (port, time, size);
+				//if (dat != 0) {while (size-- > 0) * dat++ = * mdp++;}
+				////jack_midi_event_write (port, time, mdp, size);
 			}
 		}
 		message_to = 0;
@@ -526,6 +534,7 @@ static int jack_process (jack_nframes_t nframes, void * arg) {
 			pthread_mutex_unlock (& core -> main_mutex);
 			while (event_time <= ind) {
 				base -> callback (& event);
+				jack_midi_event_write (midi_out, event_time, event . buffer, event . size);
 				printf ("PROCESS MIDI %d/%d = %x\n", event_time, ind, * (event . buffer));
 				if (events > event_index) {jack_midi_event_get (& event, midi_in, event_index++); event_time = event . time;}
 				else event_time = nframes + 1;

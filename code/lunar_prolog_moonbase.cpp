@@ -421,51 +421,26 @@ public:
 		return PrologNativeOrbiter :: code (original, resolution);
 	}
 	void propagate_messages (void * port, jack_nframes_t time) {
-		if (message_to < 1) return;
+		if (message_to < 1 || message_to >= MSGB) return;
 		pthread_mutex_lock (& locker);
 		int ind = 0;
 		while (ind < message_to) {
 			jack_midi_data_t * mdp = messages + ind;
+			printf ("command [%i] ", * mdp);
 			ind++;
 			int size = 1;
-			jack_midi_data_t data = messages [ind];
-			while (data >= 0 && data < 0x80 && data != 0xf7 && ind < message_to && ind < MSGB) {
-				printf ("%i %i %i =>   ", ind, size, data);
-				size++; data = messages [ind++];
+			jack_midi_data_t dat = messages [ind];
+			while ((dat < 128 || dat == 0xf7) && ind < message_to) {
+				printf ("%i ", messages [ind]);
+				ind++; size++;
+				dat = messages [ind];
 			}
-			if (ind < MSGB) {
-				printf ("command [%i %i %i] = ", size, data, messages [ind]);
-				for (int sub = 0; sub < size; sub++) {
-					printf ("%i  ", mdp [sub]);
-				}
-				printf ("\n");
-				//jack_midi_data_t * dat = jack_midi_event_reserve (port, time, size);
-				//if (dat != 0) {while (size-- > 0) * dat++ = * mdp++;}
-				////jack_midi_event_write (port, time, mdp, size);
-			}
+			printf ("{%i}\n", size);
+			if (ind <= message_to) jack_midi_event_write (port, time, mdp, size);
 		}
 		message_to = 0;
 		pthread_mutex_unlock (& locker);
 	}
-/*	void propagate_messagess (void * port, jack_nframes_t time) {
-		if (message_to < 1) return;
-		pthread_mutex_lock (& locker);
-		jack_midi_data_t * mdp = messages + (message_from++); if (message_from >= MSGB) message_from = 0;
-		int ind = 1;
-		while (message_from != message_to) {
-			jack_midi_data_t data = messages [message_from];
-			if (data >= 128) {
-				jack_midi_event_write (port, time, mdp, ind);
-				mdp = messages + message_from;
-				ind = 0;
-			}
-			message_from++; if (message_from >= MSGB) message_from = 0;
-			ind++;
-		}
-		jack_midi_event_write (port, time, mdp, ind);
-		message_to = 0;
-		pthread_mutex_unlock (& locker);
-	}*/
 	jack_action (PrologRoot * root, PrologDirectory * directory, PrologAtom * atom, PrologAtom * midi_callback, orbiter_core * core)
 	: PrologNativeOrbiter (atom, core, new lunar_core (core)), graph (directory) {
 		this -> root = root;

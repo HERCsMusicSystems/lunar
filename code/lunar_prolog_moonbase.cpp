@@ -256,7 +256,7 @@ public:
 	chromatograph graph;
 	pthread_mutex_t locker;
 	jack_midi_data_t messages [MSGB];
-	int message_from, message_to;
+	int message_to;
 	void callback (jack_midi_event_t * event) {
 		if (midi_callback == 0) return;
 		int command = event -> buffer [0];
@@ -329,20 +329,26 @@ public:
 	}
 	void send_one (int command) {
 		pthread_mutex_lock (& locker);
-		messages [message_to++] = command; if (message_to >= MSGB) message_to = 0;
+		if (message_to < MSGB - 1) {
+			messages [message_to++] = command;
+		}
 		pthread_mutex_unlock (& locker);
 	}
 	void send_two (int command, int program) {
 		pthread_mutex_lock (& locker);
-		messages [message_to++] = command; if (message_to >= MSGB) message_to = 0;
-		messages [message_to++] = program; if (message_to >= MSGB) message_to = 0;
+		if (message_to < MSGB - 2) {
+			messages [message_to++] = command;
+			messages [message_to++] = program;
+		}
 		pthread_mutex_unlock (& locker);
 	}
 	void send_three (int command, int key, int velocity) {
 		pthread_mutex_lock (& locker);
-		messages [message_to++] = command; if (message_to >= MSGB) message_to = 0;
-		messages [message_to++] = key; if (message_to >= MSGB) message_to = 0;
-		messages [message_to++] = velocity; if (message_to >= MSGB) message_to = 0;
+		if (message_to < MSGB - 3) {
+			messages [message_to++] = command;
+			messages [message_to++] = key;
+			messages [message_to++] = velocity;
+		}
 		pthread_mutex_unlock (& locker);
 	}
 	bool code (PrologElement * original, PrologResolution * resolution) {
@@ -352,7 +358,6 @@ public:
 				PrologAtom * atom = parameters -> getAtom ();
 				parameters = original -> getRight ();
 				int channel; int key; double velocity;
-				unsigned char data;
 				if (atom == keyoff) {
 					if (! graph . get_channel (& parameters, & channel)) return false;
 					if (parameters -> isEarth ()) {send_three (0xb0 + channel, 123, 0); return true;}
@@ -393,17 +398,16 @@ public:
 				}
 				if (atom == sysex) {
 					pthread_mutex_lock (& locker);
-					//data = 0xf0;
-					messages [message_to++] = 0xf0; if (message_to >= MSGB) message_to = 0;//write (tc, & data, 1);
+					messages [message_to++] = 0xf0;
 					while (parameters -> isPair ()) {
-						if (graph . get_key (& parameters, & key)) {data = (unsigned char) key; }//write (tc, & data, 1);}
+						if (graph . get_key (& parameters, & key)) {if (message_to < MSGB) messages [message_to++] = key;}
 						else if (parameters -> getLeft () -> isText ()) {
 							char * cp = parameters -> getLeft () -> getText ();
-							while (* cp != '\0') {data = (unsigned char) * cp++; }//write (tc, & data, 1);}
+							while (* cp != '\0') {if (message_to < MSGB) messages [message_to++] = * cp++;}
 							parameters = parameters -> getRight ();
 						} else parameters = parameters -> getRight ();
 					}
-					data = 0xf7; //write (tc, & data, 1);
+					if (message_to < MSGB) messages [message_to++] = 0xf7;
 					pthread_mutex_unlock (& locker);
 					return true;
 				}
@@ -416,6 +420,44 @@ public:
 		}
 		return PrologNativeOrbiter :: code (original, resolution);
 	}
+	void propagate_messages (void * port, jack_nframes_t time) {
+		if (message_to < 1) return;
+		pthread_mutex_lock (& locker);
+		int ind = 0;
+		while (ind < message_to) {
+			jack_midi_data_t * mdp = messages + ind;
+			ind++;
+			int size = 1;
+			jack_midi_data_t data = messages [ind];
+			while (data < 0x80 && data != 0xf7 && ind < message_to && ind < MSGB) {size++; data = messages [ind++];}
+			if (ind < MSGB) {
+				jack_midi_data_t * dat = jack_midi_event_reserve (port, time, size);
+				if (dat != 0) {while (size-- > 0) * dat++ = * mdp++;}
+				//jack_midi_event_write (port, time, mdp, size);
+			}
+		}
+		message_to = 0;
+		pthread_mutex_unlock (& locker);
+	}
+/*	void propagate_messagess (void * port, jack_nframes_t time) {
+		if (message_to < 1) return;
+		pthread_mutex_lock (& locker);
+		jack_midi_data_t * mdp = messages + (message_from++); if (message_from >= MSGB) message_from = 0;
+		int ind = 1;
+		while (message_from != message_to) {
+			jack_midi_data_t data = messages [message_from];
+			if (data >= 128) {
+				jack_midi_event_write (port, time, mdp, ind);
+				mdp = messages + message_from;
+				ind = 0;
+			}
+			message_from++; if (message_from >= MSGB) message_from = 0;
+			ind++;
+		}
+		jack_midi_event_write (port, time, mdp, ind);
+		message_to = 0;
+		pthread_mutex_unlock (& locker);
+	}*/
 	jack_action (PrologRoot * root, PrologDirectory * directory, PrologAtom * atom, PrologAtom * midi_callback, orbiter_core * core)
 	: PrologNativeOrbiter (atom, core, new lunar_core (core)), graph (directory) {
 		this -> root = root;
@@ -438,7 +480,7 @@ public:
 			stop = directory -> searchAtom ("STOP");
 			activesensing = directory -> searchAtom ("activesensing");
 		}
-		message_from = message_to = 0;
+		message_to = 0;
 		pthread_mutex_init (& locker, 0);
 		cores++; printf ("JACK moonbase created.\n");
 	}
@@ -460,6 +502,8 @@ static int jack_process (jack_nframes_t nframes, void * arg) {
 	double * right_moon = moon -> inputAddress (2);
 	double headroom_fraction = core -> headroom_fraction;
 	void * midi_in = jack_port_get_buffer (jack_midi_in, nframes);
+	void * midi_out = jack_port_get_buffer (jack_midi_out, nframes);
+	jack_midi_clear_buffer (midi_out);
 	jack_default_audio_sample_t * left_in = (jack_default_audio_sample_t *) jack_port_get_buffer (jack_input_left, nframes);
 	jack_default_audio_sample_t * right_in = (jack_default_audio_sample_t *) jack_port_get_buffer (jack_input_right, nframes);
 	moon -> line_read = moon -> line_write;
@@ -470,7 +514,7 @@ static int jack_process (jack_nframes_t nframes, void * arg) {
 	}
 	jack_midi_event_t event;
 	jack_nframes_t events = jack_midi_get_event_count (midi_in);
-	int event_index = 0;
+	jack_nframes_t event_index = 0;
 	jack_nframes_t event_time;
 	if (events > 0) {jack_midi_event_get (& event, midi_in, event_index++); event_time = event . time;}
 	else event_time = nframes + 1;
@@ -483,7 +527,7 @@ static int jack_process (jack_nframes_t nframes, void * arg) {
 			while (event_time <= ind) {
 				base -> callback (& event);
 				printf ("PROCESS MIDI %d/%d = %x\n", event_time, ind, * (event . buffer));
-				if (events > event_index++) {jack_midi_event_get (& event, midi_in, event_index++); event_time = event . time;}
+				if (events > event_index) {jack_midi_event_get (& event, midi_in, event_index++); event_time = event . time;}
 				else event_time = nframes + 1;
 			}
 			pthread_mutex_lock (& core -> main_mutex);
@@ -492,6 +536,7 @@ static int jack_process (jack_nframes_t nframes, void * arg) {
 		core -> move_modules ();
 		* left_out++ = (jack_default_audio_sample_t) (((* mono_moon) + (* left_moon)) * headroom_fraction);
 		* right_out++ = (jack_default_audio_sample_t) (((* mono_moon) + (* right_moon)) * headroom_fraction);
+		base -> propagate_messages (midi_out, ind);
 	}
 	pthread_mutex_unlock (& core -> main_mutex);
 	while (event_index < events) {

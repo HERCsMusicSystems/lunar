@@ -53,6 +53,7 @@ static gint AudioModulePanelKeyon (GtkWidget * viewport, GdkEventButton * event,
 	//	gtk_window_begin_move_drag (GTK_WINDOW (gtk_widget_get_toplevel (viewport)), event -> button, event -> x_root, event -> y_root, event -> time);
 	//	return FALSE;
 	//}
+	if (event -> type != GDK_BUTTON_PRESS) return TRUE;
 	action -> captured_button = event -> button;
 	point location (event -> x, event -> y);
 	action -> captured_location = location;

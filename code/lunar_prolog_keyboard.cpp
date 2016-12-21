@@ -102,6 +102,7 @@ static gboolean RedrawKeyboard (GtkWidget * viewport, GdkEvent * event, keyboard
 }
 
 static gint KeyboardKeyon (GtkWidget * viewport, GdkEventButton * event, keyboard_action * machine) {
+	if (event -> type != GDK_BUTTON_PRESS) return TRUE;
 	point location ((int) event -> x, (int) event -> y);
 	if ((int) event -> button == 1) machine -> keyboard . keyon (location);
 	else machine -> keyboard . keyoff (location);

@@ -426,16 +426,13 @@ public:
 		int ind = 0;
 		while (ind < message_to) {
 			jack_midi_data_t * mdp = messages + ind;
-			printf ("command [%i] ", * mdp);
 			ind++;
 			int size = 1;
 			jack_midi_data_t dat = messages [ind];
 			while ((dat < 128 || dat == 0xf7) && ind < message_to) {
-				printf ("%i ", messages [ind]);
 				ind++; size++;
 				dat = messages [ind];
 			}
-			printf ("{%i}\n", size);
 			if (ind <= message_to) jack_midi_event_write (port, time, mdp, size);
 		}
 		message_to = 0;
@@ -510,7 +507,6 @@ static int jack_process (jack_nframes_t nframes, void * arg) {
 			while (event_time <= ind) {
 				base -> callback (& event);
 				jack_midi_event_write (midi_out, event_time, event . buffer, event . size);
-				printf ("PROCESS MIDI %d/%d = %x\n", event_time, ind, * (event . buffer));
 				if (events > event_index) {jack_midi_event_get (& event, midi_in, event_index++); event_time = event . time;}
 				else event_time = nframes + 1;
 			}
@@ -526,7 +522,6 @@ static int jack_process (jack_nframes_t nframes, void * arg) {
 	while (event_index < events) {
 		jack_midi_event_get (& event, midi_in, event_index++);
 		base -> callback (& event);
-		printf ("MIDI %d/%d = %x\n", event . time, nframes, * (event . buffer));
 	}
 	return 0;
 }

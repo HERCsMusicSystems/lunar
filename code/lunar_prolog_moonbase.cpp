@@ -234,3 +234,354 @@ bool core_class :: code (PrologElement * parameters, PrologResolution * resoluti
 
 core_class :: core_class (orbiter_core * core) {this -> core = core;}
 
+#include "jack/jack.h"
+#include "jack/midiport.h"
+#include "chromatic.h"
+
+static jack_client_t * jack_client = 0;
+static jack_port_t * jack_input_left = 0;
+static jack_port_t * jack_input_right = 0;
+static jack_port_t * jack_output_left = 0;
+static jack_port_t * jack_output_right = 0;
+static jack_port_t * jack_midi_in = 0;
+static jack_port_t * jack_midi_out = 0;
+
+#define MSGB 2048
+class jack_action : public PrologNativeOrbiter {
+public:
+	PrologRoot * root;
+	PrologAtom * midi_callback;
+	PrologAtom * keyoff, * keyon, * polyaftertouch, * control, * programchange, * aftertouch, * pitch;
+	PrologAtom * sysex, * timingclock, * start, * cont, * stop, * activesensing;
+	chromatograph graph;
+	pthread_mutex_t locker;
+	jack_midi_data_t messages [MSGB];
+	int message_to;
+	void callback (jack_midi_event_t * event) {
+		if (midi_callback == 0) return;
+		int command = event -> buffer [0];
+		if ((command >= 0x80 && command < 0xc0) || (command >= 0xe0 && command < 0xf0)) two_parameters (command, event -> buffer [1], event -> buffer [2]);
+		else if (command < 0xf0) one_parameter (command, event -> buffer [1]);
+		else {
+			PrologElement * query;
+			PrologElement * el;
+			int sub, bi = 1;
+			switch (command) {
+			case 0xf0:
+				el = root -> earth ();
+				query = root -> pair (root -> head (0), root -> pair (root -> pair (root -> atom (midi_callback),
+											root -> pair (root -> atom (sysex), el)), root -> earth ()));
+				sub = event -> buffer [bi++];
+				while (sub >= 0 && sub < 128) {
+					el -> setPair (root -> integer (sub), root -> earth ());
+					el = el -> getRight ();
+					sub = event -> buffer [bi++];
+				}
+				root -> resolution (query); delete query;
+				break;
+			case 0xf8: zero_parameters (timingclock); break;
+			case 0xfa: zero_parameters (start); break;
+			case 0xfb: zero_parameters (cont); break;
+			case 0xfc: zero_parameters (stop); break;
+			case 0xfe: zero_parameters (activesensing); break;
+			default: break;
+			}
+		}
+	}
+	void zero_parameters (PrologAtom * command) {
+		PrologElement * query = root -> pair (root -> head (0), root -> pair (root -> pair (root -> atom (midi_callback),
+											root -> pair (root -> atom (command), root -> earth ())), root -> earth ()));
+		root -> resolution (query); delete query;
+	}
+	void two_parameters (int command, int p1, int p2) {
+		int channel = command & 0xf; command &= 0xf0;
+		PrologAtom * command_atom = keyoff;
+		switch (command) {
+		case 0x80: command_atom = keyoff; break;
+		case 0x90: command_atom = keyon; break;
+		case 0xa0: command_atom = polyaftertouch; break;
+		case 0xb0: command_atom = control; break;
+		case 0xe0: command_atom = pitch; break;
+		default: command_atom = sysex; break;
+		}
+		PrologElement * query = root -> pair (
+								root -> pair (root -> atom (midi_callback),
+								root -> pair (root -> atom (command_atom),
+								root -> pair (root -> integer (channel),
+								root -> pair (root -> integer (p1),
+								root -> pair (root -> integer (p2),
+									root -> earth ()))))), root -> earth ());
+		query = root -> pair (root -> head (0), query);
+		root -> resolution (query);
+		delete query;
+	}
+	void one_parameter (int command, int p) {
+		int channel = command & 0xf; command &= 0xf0;
+		PrologElement * query = root -> pair (
+								root -> pair (root -> atom (midi_callback),
+								root -> pair (root -> atom (command < 0xd0 ? programchange : aftertouch),
+								root -> pair (root -> integer (channel),
+								root -> pair (root -> integer (p),
+									root -> earth ())))), root -> earth ());
+		query = root -> pair (root -> head (0), query);
+		root -> resolution (query);
+		delete query;
+	}
+	void send_one (int command) {
+		pthread_mutex_lock (& locker);
+		if (message_to < MSGB - 1) {
+			messages [message_to++] = command;
+		}
+		pthread_mutex_unlock (& locker);
+	}
+	void send_two (int command, int program) {
+		pthread_mutex_lock (& locker);
+		if (message_to < MSGB - 2) {
+			messages [message_to++] = command;
+			messages [message_to++] = program;
+		}
+		pthread_mutex_unlock (& locker);
+	}
+	void send_three (int command, int key, int velocity) {
+		pthread_mutex_lock (& locker);
+		if (message_to < MSGB - 3) {
+			messages [message_to++] = command;
+			messages [message_to++] = key;
+			messages [message_to++] = velocity;
+		}
+		pthread_mutex_unlock (& locker);
+	}
+	bool code (PrologElement * original, PrologResolution * resolution) {
+		if (original -> isPair ()) {
+			PrologElement * parameters = original -> getLeft ();
+			if (parameters -> isAtom ()) {
+				PrologAtom * atom = parameters -> getAtom ();
+				parameters = original -> getRight ();
+				int channel; int key; double velocity;
+				if (atom == keyoff) {
+					if (! graph . get_channel (& parameters, & channel)) return false;
+					if (parameters -> isEarth ()) {send_three (0xb0 + channel, 123, 0); return true;}
+					if (! graph . get_key (& parameters, & key)) return false;
+					if (parameters -> isEarth ()) {send_three (0x80 + channel, key, 0); return true;}
+					if (! graph . get_velocity (& parameters, & velocity)) return false;
+					send_three (0x80 + channel, key, (int) velocity);
+					return true;
+				}
+				if (atom == keyon) {
+					if (! graph . get_channel (& parameters, & channel)) return false;
+					if (! graph . get_key (& parameters, & key)) return false;
+					if (parameters -> isEarth ()) {send_three (0x90 + channel, key, 100); return true;}
+					if (! graph . get_velocity (& parameters, & velocity)) return false;
+					send_three (0x90 + channel, key, (int) velocity);
+					return true;
+				}
+				if (atom == polyaftertouch || atom == control) {
+					if (! graph . get_channel (& parameters, & channel)) return false;
+					if (! graph . get_key (& parameters, & key)) return false;
+					if (! graph . get_velocity (& parameters, & velocity)) return false;
+					send_three ((atom == control ? 0xb0 : 0xa0) + channel, key, (int) velocity);
+					return true;
+				}
+				if (atom == programchange || atom == aftertouch) {
+					if (! graph . get_channel (& parameters, & channel)) return false;
+					if (! graph . get_key (& parameters, & key)) return false;
+					send_two ((atom == programchange ? 0xc0 : 0xd0) + channel, key);
+					return true;
+				}
+				if (atom == pitch) {
+					if (! graph . get_channel (& parameters, & channel)) return false;
+					if (! graph . get_key (& parameters, & key)) return false;
+					if (parameters -> isEarth ()) {send_three (0xe0 + channel, 0, key); return true;}
+					int msb; if (! graph . get_key (& parameters, & msb)) return false;
+					send_three (0xe0 + channel, key, msb);
+					return true;
+				}
+				if (atom == sysex) {
+					pthread_mutex_lock (& locker);
+					messages [message_to++] = 0xf0;
+					while (parameters -> isPair ()) {
+						if (graph . get_key (& parameters, & key)) {if (message_to < MSGB) messages [message_to++] = key;}
+						else if (parameters -> getLeft () -> isText ()) {
+							char * cp = parameters -> getLeft () -> getText ();
+							while (* cp != '\0') {if (message_to < MSGB) messages [message_to++] = * cp++;}
+							parameters = parameters -> getRight ();
+						} else parameters = parameters -> getRight ();
+					}
+					if (message_to < MSGB) messages [message_to++] = 0xf7;
+					pthread_mutex_unlock (& locker);
+					return true;
+				}
+				if (atom == timingclock) {send_one (0xf8); return true;}
+				if (atom == start) {send_one (0xfa); return true;}
+				if (atom == cont) {send_one (0xfb); return true;}
+				if (atom == stop) {send_one (0xfc); return true;}
+				if (atom == activesensing) {send_one (0xfe); return true;}
+			}
+		}
+		return PrologNativeOrbiter :: code (original, resolution);
+	}
+	void propagate_messages (void * port, jack_nframes_t time) {
+		if (message_to < 1 || message_to >= MSGB) return;
+		pthread_mutex_lock (& locker);
+		int ind = 0;
+		while (ind < message_to) {
+			jack_midi_data_t * mdp = messages + ind;
+			ind++;
+			int size = 1;
+			jack_midi_data_t dat = messages [ind];
+			while ((dat < 128 || dat == 0xf7) && ind < message_to) {
+				ind++; size++;
+				dat = messages [ind];
+			}
+			if (ind <= message_to) jack_midi_event_write (port, time, mdp, size);
+		}
+		message_to = 0;
+		pthread_mutex_unlock (& locker);
+	}
+	jack_action (PrologRoot * root, PrologDirectory * directory, PrologAtom * atom, PrologAtom * midi_callback, orbiter_core * core)
+	: PrologNativeOrbiter (atom, core, new lunar_core (core)), graph (directory) {
+		this -> root = root;
+		this -> midi_callback = midi_callback;
+		if (midi_callback != 0) {COLLECTOR_REFERENCE_INC (midi_callback);}
+		keyoff = keyon = polyaftertouch = control = programchange = aftertouch = pitch = 0;
+		sysex = timingclock = start = cont = stop = activesensing = 0;
+		if (directory != 0) {
+			keyoff = directory -> searchAtom ("keyoff");
+			keyon = directory -> searchAtom ("keyon");
+			polyaftertouch = directory -> searchAtom ("polyaftertouch");
+			control = directory -> searchAtom ("control");
+			programchange = directory -> searchAtom ("programchange");
+			aftertouch = directory -> searchAtom ("aftertouch");
+			pitch = directory -> searchAtom ("pitch");
+			sysex = directory -> searchAtom ("sysex");
+			timingclock = directory -> searchAtom ("timingclock");
+			start = directory -> searchAtom ("START");
+			cont = directory -> searchAtom ("CONTINUE");
+			stop = directory -> searchAtom ("STOP");
+			activesensing = directory -> searchAtom ("activesensing");
+		}
+		message_to = 0;
+		pthread_mutex_init (& locker, 0);
+		cores++; printf ("JACK moonbase created.\n");
+	}
+	~ jack_action (void) {
+		cores--;
+		jack_client_close (jack_client); jack_client = 0;
+		if (midi_callback) midi_callback -> removeAtom (); midi_callback = 0;
+		pthread_mutex_destroy (& locker);
+		printf ("JACK moonbase destroyed.\n");
+	}
+};
+
+static int jack_process (jack_nframes_t nframes, void * arg) {
+	jack_action * base = (jack_action *) arg;
+	orbiter_core * core = base -> core;
+	lunar_core * moon = (lunar_core *) base -> module;
+	double * mono_moon = moon -> inputAddress (0);
+	double * left_moon = moon -> inputAddress (1);
+	double * right_moon = moon -> inputAddress (2);
+	double headroom_fraction = core -> headroom_fraction;
+	void * midi_in = jack_port_get_buffer (jack_midi_in, nframes);
+	void * midi_out = jack_port_get_buffer (jack_midi_out, nframes);
+	jack_midi_clear_buffer (midi_out);
+	jack_default_audio_sample_t * left_in = (jack_default_audio_sample_t *) jack_port_get_buffer (jack_input_left, nframes);
+	jack_default_audio_sample_t * right_in = (jack_default_audio_sample_t *) jack_port_get_buffer (jack_input_right, nframes);
+	moon -> line_read = moon -> line_write;
+	for (jack_nframes_t ind = 0; ind < nframes; ind++) {
+		moon -> line [moon -> line_write++] = (double) (* left_in++);
+		moon -> line [moon -> line_write++] = (double) (* right_in++);
+		if (moon -> line_write >= 16384) moon -> line_write = 0;
+	}
+	jack_midi_event_t event;
+	jack_nframes_t events = jack_midi_get_event_count (midi_in);
+	jack_nframes_t event_index = 0;
+	jack_nframes_t event_time;
+	if (events > 0) {jack_midi_event_get (& event, midi_in, event_index++); event_time = event . time;}
+	else event_time = nframes + 1;
+	pthread_mutex_lock (& core -> main_mutex);
+	jack_default_audio_sample_t * left_out = (jack_default_audio_sample_t *) jack_port_get_buffer (jack_output_left, nframes);
+	jack_default_audio_sample_t * right_out = (jack_default_audio_sample_t *) jack_port_get_buffer (jack_output_right, nframes);
+	for (jack_nframes_t ind = 0; ind < nframes; ind++) {
+		if (event_time <= ind) {
+			pthread_mutex_unlock (& core -> main_mutex);
+			while (event_time <= ind) {
+				base -> callback (& event);
+				jack_midi_event_write (midi_out, event_time, event . buffer, event . size);
+				if (events > event_index) {jack_midi_event_get (& event, midi_in, event_index++); event_time = event . time;}
+				else event_time = nframes + 1;
+			}
+			pthread_mutex_lock (& core -> main_mutex);
+		}
+		core -> propagate_signals ();
+		core -> move_modules ();
+		* left_out++ = (jack_default_audio_sample_t) (((* mono_moon) + (* left_moon)) * headroom_fraction);
+		* right_out++ = (jack_default_audio_sample_t) (((* mono_moon) + (* right_moon)) * headroom_fraction);
+		base -> propagate_messages (midi_out, ind);
+	}
+	pthread_mutex_unlock (& core -> main_mutex);
+	while (event_index < events) {
+		jack_midi_event_get (& event, midi_in, event_index++);
+		base -> callback (& event);
+	}
+	return 0;
+}
+
+static void jack_shutdown (void * arg) {
+	printf ("JACK SERVER STOPPED\n");
+}
+
+bool jack_class :: code (PrologElement * parameters, PrologResolution * resolution) {
+	if (cores > 0 || jack_client != 0) return false;
+	PrologElement * atom = 0;
+	PrologElement * name = 0;
+	PrologElement * midi_callback = 0;
+	double centre_frequency = -1.0;
+	double headroom_fraction = -1.0;
+	int requested_number_of_actives = -1;
+	while (parameters -> isPair ()) {
+		PrologElement * el = parameters -> getLeft ();
+		if (el -> isVar ()) atom = el;
+		if (el -> isAtom ()) {if (atom == 0) atom = el; else if (midi_callback == 0) midi_callback = el;}
+		if (el -> isText ()) name = el;
+		if (el -> isInteger ()) {
+			if (centre_frequency < 0.0) centre_frequency = (double) el -> getInteger ();
+			else requested_number_of_actives = el -> getInteger ();
+		}
+		if (el -> isDouble ()) {
+			if (centre_frequency < 0.0) centre_frequency = el -> getDouble ();
+			else headroom_fraction = el -> getDouble ();
+		}
+		parameters = parameters -> getRight ();
+	}
+	if (atom == 0) return false;
+	if (centre_frequency >= 0.0) core -> centre_frequency = centre_frequency;
+	if (headroom_fraction >= 0.0) core -> headroom_fraction = headroom_fraction;
+	if (requested_number_of_actives > 0) core -> requested_active_size = requested_number_of_actives;
+	if (jack_client != 0) {jack_client_close (jack_client); jack_client = 0; return true;}
+	jack_status_t jack_status;
+	const char * server_name = 0;
+	jack_client = jack_client_open (name == 0 ? "LUNAR" : name -> getText (), JackNullOption, & jack_status, server_name);
+	if (jack_client == 0) return false;
+	if (atom -> isVar ()) atom -> setAtom (new PrologAtom ());
+	if (! atom -> isAtom ()) return false;
+	printf ("HORIZONTAL = %i\n", jack_get_sample_rate (jack_client));
+	core -> sampling_frequency = (double) jack_get_sample_rate (jack_client);
+	core -> recalculate ();
+	jack_action * machine = new jack_action (root, directory, atom -> getAtom (), midi_callback == 0 ? 0 : midi_callback -> getAtom (), core);
+	if (! atom -> getAtom () -> setMachine (machine)) {delete machine; return false;}
+	jack_set_process_callback (jack_client, jack_process, machine);
+	jack_on_shutdown (jack_client, jack_shutdown, machine);
+	jack_input_left = jack_port_register (jack_client, "LEFT INPUT", JACK_DEFAULT_AUDIO_TYPE, JackPortIsInput, 0);
+	jack_input_right = jack_port_register (jack_client, "RIGHT INPUT", JACK_DEFAULT_AUDIO_TYPE, JackPortIsInput, 0);
+	jack_output_left = jack_port_register (jack_client, "LEFT OUTPUT", JACK_DEFAULT_AUDIO_TYPE, JackPortIsOutput, 0);
+	jack_output_right = jack_port_register (jack_client, "RIGHT OUTPUT", JACK_DEFAULT_AUDIO_TYPE, JackPortIsOutput, 0);
+	jack_midi_in = jack_port_register (jack_client, "MIDI INPUT", JACK_DEFAULT_MIDI_TYPE, JackPortIsInput, 0);
+	jack_midi_out = jack_port_register (jack_client, "MIDI OUTPUT", JACK_DEFAULT_MIDI_TYPE, JackPortIsOutput, 0);
+	if (jack_activate (jack_client) != 0) return false;
+	return true;
+}
+
+jack_class :: jack_class (PrologRoot * root, PrologDirectory * directory, orbiter_core * core) {
+	this -> root = root; this -> directory = directory, this -> core = core;
+}
+

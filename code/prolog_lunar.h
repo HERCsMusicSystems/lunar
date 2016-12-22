@@ -200,6 +200,15 @@ public:
 	core_class (orbiter_core * core);
 };
 
+class jack_class : public PrologNativeCode {
+public:
+	PrologRoot * root;
+	PrologDirectory * directory;
+	orbiter_core * core;
+	bool code (PrologElement * parameters, PrologResolution * resolution);
+	jack_class (PrologRoot * root, PrologDirectory * directory, orbiter_core * core);
+};
+
 class operator_class : public PrologNativeOrbiterCreator {
 public:
 	virtual orbiter * create_orbiter (PrologElement * parameters);

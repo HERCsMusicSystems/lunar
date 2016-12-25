@@ -2142,11 +2142,12 @@ A typical construction of an instrument and inserting it into the superstructure
 <div class="doc_precdicate">
      <a id="predicate_AUDIO_HARDWARE_SETTINGS">
        <div class="doc_predicate_header">
-         [AUDIO_HARDWARE_SETTINGS [center_freq sampling_freq latency ....]]
+         [AUDIO_HARDWARE_SETTINGS [core center_freq sampling_freq latency ....]]
        </div>
        <div class="doc_predicate_body">
          This is the global variable, which is used by <a href="#predicate_CommanderHardwareAction">CommanderHardwareAction</a>
          to switch the audio hardware on and off.
+         The first parameter determines kinad of core used (core / jack).
        </div>
      </a>
 </div>

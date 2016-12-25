@@ -1523,7 +1523,7 @@ program lunar #machine := "lunar"
 [[td_call : *]]
 
 auto := [
-			[var cb_callback cb_path cb_edit_path [InstrumentIndex 0] [AUDIO_HARDWARE_SETTINGS [330 48000 128 0 0]]]
+			[var cb_callback cb_path cb_edit_path [InstrumentIndex 0] [AUDIO_HARDWARE_SETTINGS [core 330 48000 128 0 0]]]
 			[ARRAY MIDI_CHANNELS 128]
 			[FOR *i 0 127 1 [MIDI_CHANNELS *i midi_monitor]]
 		]
@@ -1531,7 +1531,10 @@ auto := [
 private [AddParameterBlock SubRestore cb_callback cb_path cb_edit_path CBsub ICBsub process_mode FindLfoKnob]
 
 [[CommanderHardwareAction] [has_machine reactor] / [reactor] [show "HARDWARE DEACTIVATED"]]
-[[CommanderHardwareAction] [AUDIO_HARDWARE_SETTINGS : *x] [core reactor : *x] [ConnectAllMoons reactor] [show "HARDWARE ACTIVATED"]]
+[[CommanderHardwareAction]
+	[AUDIO_HARDWARE_SETTINGS : *x] [show *x] [= *x [*core : *parameters]] [*core reactor : *parameters] [ConnectAllMoons reactor]
+	[show "HARDWARE ACTIVATED"]
+]
 
 end := [[auto_atoms] [CorePanel Core] [gtk_command] [TRY [Core]]] .
 

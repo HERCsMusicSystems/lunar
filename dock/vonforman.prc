@@ -2,8 +2,9 @@ import studio
 import lunar
 
 program vonforman [BuildVonForman BuildVonFormanPart VF LGV LGT LGP STK STV AEG FEGS MORPH MORPHFM
-					BuildOscillatorBlock BuildFilterBlock InsertOscillatorBlock InsertFilterBlock BuildOscillator BuildFilter
-					CheckOrder
+					BuildOscillatorBlock BuildFilterBlock InsertOscillatorBlock InsertFilterBlock
+					BuildOscillatorControllers InsertOscillatorControllers
+					CheckOrder Preset
 					]
 
 [[LGV *gate *lfo] [gateway *gate] [*gate "enter" *lfo "vibrato"]]
@@ -34,25 +35,40 @@ program vonforman [BuildVonForman BuildVonFormanPart VF LGV LGT LGP STK STV AEG 
 [[CheckOrder 46 4 6] /]
 [[CheckOrder *  4 4]]
 
+[[BuildOscillatorControllers 0 *pitch *lfo1 *lfo2 []] /]
+[[BuildOscillatorControllers *order *pitch *lfo1 *lfo2 [[*pitchfreq *lfo1freq *lfo2freq *lfo1amp *lfo2amp] : *ctrls]]
+	[LGP *pitchfreq *pitch]
+	[LGV *lfo1freq *lfo1] [LGV *lfo2freq *lfo2] [LGV *lfo1amp *lfo1] [LGV *lfo2amp *lfo2]
+	[-- *order *next] / [BuildOscillatorControllers *next *pitch *lfo1 *lfo2 *ctrls]
+]
+
+[[InsertOscillatorControllers *index *VF []] /]
+[[InsertOscillatorControllers *index *VF [[*pitchfreq *lfo1freq *lfo2freq *lfo1amp *lfo2amp] : *ctrls]]
+	[Insert *pitchfreq *VF vco *index sens freq pitch]
+	[Insert *lfo1freq *VF vco *index sens freq lfo 1]
+	[Insert *lfo2freq *VF vco *index sens freq lfo 2]
+	[Insert *lfo1amp *VF vco *index sens amp lfo 1]
+	[Insert *lfo2amp *VF vco *index sens amp lfo 2]
+	[++ *index *next] / [InsertOscillatorControllers *next *VF *ctrls]
+]
+
 [[BuildVonForman *order *polyphony] / [BuildVonForman *order *polyphony * * *]]
 
 [[BuildVonForman *order *polyphony *VonForman *VonFormanCB *volume]
+	[CheckOrder *order *order1 *order2]
 	[Moonbase *VonForman *VonFormanCB VF *volume]
 	[moonbase *CB] [key_map *key_map] [arpeggiator *VonFormanCB *CB]
 	[auto_data *XData] [parameter_block *X "index"] [*XData *X]
 	[auto_data *YData] [parameter_block *Y "index"] [*YData *Y]
 	[parameter_block *pitch "index"]
-	[LGP *pitchfreq1 *pitch] [LGP *pitchfreq2 *pitch] [LGP *pitchfreq3 *pitch] [LGP *pitchfreq4 *pitch] [LGP *pitchfreqf *pitch]
+	[LGP *pitchfreqf *pitch]
 	[parameter_block *modulation "index"]
 	[lfo *lfo1] [lfo *lfo2]
 		[gateway *vibrato] [*vibrato *modulation] [*lfo1 "vibrato" *vibrato]
 		[gateway *wahwah] [*wahwah *modulation] [*lfo1 "wahwah" *wahwah]
 		[gateway *lfo1x] [gateway *lfo1y] [gateway *lfo2x] [gateway *lfo2y]
 		[*lfo1x *lfo1] [*lfo1y *lfo1] [*lfo2x *lfo2] [*lfo2y *lfo2]
-	[LGV *lfo1freq1 *lfo1] [LGV *lfo1freq2 *lfo1] [LGV *lfo1freq3 *lfo1] [LGV *lfo1freq4 *lfo1]
-	[LGV *lfo2freq1 *lfo2] [LGV *lfo2freq2 *lfo2] [LGV *lfo2freq3 *lfo2] [LGV *lfo2freq4 *lfo2]
-	[LGT *lfo1amp1 *lfo1] [LGT *lfo1amp2 *lfo1] [LGT *lfo1amp3 *lfo1] [LGT *lfo1amp4 *lfo1]
-	[LGT *lfo2amp1 *lfo2] [LGT *lfo2amp2 *lfo2] [LGT *lfo2amp3 *lfo2] [LGT *lfo2amp4 *lfo2]
+	[BuildOscillatorControllers *order1 *pitch *lfo1 *lfo2 *ctrls]
 	[stereo_pan *pan] [stereo_gateway *dry] [delay *delay] [drywet *drywet] [volume *volume] [stereo_chorus *chorus]
 	[*pan "pan" *lfo1 "pan"] [*pan "pan" *lfo2 "pan"]
 	[ConnectStereo *pan *chorus] [ConnectStereo *dry *pan] [ConnectStereo *delay *dry] [ConnectDryWet *drywet *dry *delay]
@@ -90,35 +106,11 @@ program vonforman [BuildVonForman BuildVonFormanPart VF LGV LGT LGP STK STV AEG 
 	[InsertFor *VonForman lfo 2 wahwah]
 	[InsertFor *VonForman lfo 2 pan]
 	;==========================================
-	[CheckOrder *order *order1 *order2]
 	[REPEAT *polyphony [BuildVonFormanPart *order1 *order2 *VonForman *VonFormanCB *chorus *key_map
 						*lfo1 *lfo2 *XData *YData *lfo1x *lfo1y *lfo2x *lfo2y
-						*pitchfreq1 *pitchfreq2 *pitchfreq3 *pitchfreq4 *pitchfreqf
-						*lfo1freq1 *lfo1freq2 *lfo1freq3 *lfo1freq4
-						*lfo2freq1 *lfo2freq2 *lfo2freq3 *lfo2freq4
-						*lfo1amp1 *lfo1amp2 *lfo1amp3 *lfo1amp4
-						*lfo2amp1 *lfo2amp2 *lfo2amp3 *lfo2amp4
-	]]
-	[Insert *pitchfreq1 *VonForman vco 1 sens freq pitch]
-	[Insert *pitchfreq2 *VonForman vco 2 sens freq pitch]
-	[Insert *pitchfreq3 *VonForman vco 3 sens freq pitch]
-	[Insert *pitchfreq4 *VonForman vco 4 sens freq pitch]
-	[Insert *lfo1freq1 *VonForman vco 1 sens freq lfo 1]
-	[Insert *lfo1freq2 *VonForman vco 2 sens freq lfo 1]
-	[Insert *lfo1freq3 *VonForman vco 3 sens freq lfo 1]
-	[Insert *lfo1freq4 *VonForman vco 4 sens freq lfo 1]
-	[Insert *lfo2freq1 *VonForman vco 1 sens freq lfo 2]
-	[Insert *lfo2freq2 *VonForman vco 2 sens freq lfo 2]
-	[Insert *lfo2freq3 *VonForman vco 3 sens freq lfo 2]
-	[Insert *lfo2freq4 *VonForman vco 4 sens freq lfo 2]
-	[Insert *lfo1amp1 *VonForman vco 1 sens amp lfo 1]
-	[Insert *lfo1amp2 *VonForman vco 2 sens amp lfo 1]
-	[Insert *lfo1amp3 *VonForman vco 3 sens amp lfo 1]
-	[Insert *lfo1amp4 *VonForman vco 4 sens amp lfo 1]
-	[Insert *lfo2amp1 *VonForman vco 1 sens amp lfo 2]
-	[Insert *lfo2amp2 *VonForman vco 2 sens amp lfo 2]
-	[Insert *lfo2amp3 *VonForman vco 3 sens amp lfo 2]
-	[Insert *lfo2amp4 *VonForman vco 4 sens amp lfo 2]
+						*pitchfreqf *ctrls]
+	]
+	[InsertOscillatorControllers 1 *VonForman *ctrls]
 	[Insert *pitchfreqf *VonForman filter sens pitch]
 	;==============================
 	[InsertBlock *XData *VonForman vector X]
@@ -157,66 +149,39 @@ program vonforman [BuildVonForman BuildVonFormanPart VF LGV LGT LGP STK STV AEG 
 	[Lunar -8192 *VonForman core delay balance]
 	[Lunar 512 *VonForman vco 1 sens freq pitch]
 	[Lunar 256 *VonForman core sens vibrato]
-	[Lunar 16384 *VonForman vco 1 sens freq lfo 1]
-	[Lunar 16384 *VonForman vco 2 sens freq lfo 1]
-	[Lunar 16384 *VonForman vco 3 sens freq lfo 1]
-	[Lunar 16384 *VonForman vco 4 sens freq lfo 1]
-	[Lunar 128 *VonForman vco 1 sens freq key right]
-	[Lunar 128 *VonForman vco 2 sens freq key right]
-	[Lunar 128 *VonForman vco 3 sens freq key right]
-	[Lunar 128 *VonForman vco 4 sens freq key right]
-	[Lunar -128 *VonForman vco 1 sens freq key left]
-	[Lunar -128 *VonForman vco 2 sens freq key left]
-	[Lunar -128 *VonForman vco 3 sens freq key left]
-	[Lunar -128 *VonForman vco 4 sens freq key left]
 	[Lunar 1792 *VonForman lfo 1 speed]
-	[Lunar 12800 *VonForman vco 1 sens amp velocity BP]
-	[Lunar 12800 *VonForman vco 2 sens amp velocity BP]
-	[Lunar 12800 *VonForman vco 3 sens amp velocity BP]
-	[Lunar 12800 *VonForman vco 4 sens amp velocity BP]
 	[Lunar 12800 *VonForman core sens velocity BP]
 	[Lunar -64 *VonForman core sens velocity left]
-	[Lunar 16384 *VonForman vector amp 1 A]
-	[Lunar 16384 *VonForman vector amp 1 B]
-	[Lunar 16384 *VonForman vector amp 1 C]
-	[Lunar 16384 *VonForman vector amp 1 D]
-	[Lunar 16384 *VonForman vector amp 2 A]
-	[Lunar 16384 *VonForman vector amp 2 B]
-	[Lunar 16384 *VonForman vector amp 2 C]
-	[Lunar 16384 *VonForman vector amp 2 D]
-	[Lunar 16384 *VonForman vector amp 3 A]
-	[Lunar 16384 *VonForman vector amp 3 B]
-	[Lunar 16384 *VonForman vector amp 3 C]
-	[Lunar 16384 *VonForman vector amp 3 D]
-	[Lunar 16384 *VonForman vector amp 4 A]
-	[Lunar 16384 *VonForman vector amp 4 B]
-	[Lunar 16384 *VonForman vector amp 4 C]
-	[Lunar 16384 *VonForman vector amp 4 D]
+	[Preset 1 *order1 *VonForman]
 ]
 
-[[BuildVonFormanPart *order1 *order2 *VF *cb *line *key_map
-						*lfo1 *lfo2 *XData *YData *lfo1x *lfo1y *lfo2x *lfo2y
-						*pitchfreq1 *pitchfreq2 *pitchfreq3 *pitchfreq4 *pitchfreqf
-						*lfo1freq1 *lfo1freq2 *lfo1freq3 *lfo1freq4
-						*lfo2freq1 *lfo2freq2 *lfo2freq3 *lfo2freq4
-						*lfo1amp1 *lfo1amp2 *lfo1amp3 *lfo1amp4
-						*lfo2amp1 *lfo2amp2 *lfo2amp3 *lfo2amp4
-	]
-	;========== TRIGGER ==============
-	[trigger *trigger *key_map] [*cb *trigger] [*lfo1 "trigger" *trigger "trigger"] [*lfo2 "trigger" *trigger "trigger"]
-	;========== AUTO VECTOR ==========
-	[auto *X *XData] [*X "trigger" *trigger "trigger"] [*XData "trigger" *trigger "trigger"]
-	[auto *Y *YData] [*Y "trigger" *trigger "trigger"] [*YData "trigger" *trigger "trigger"]
-	;========== ADSR =================
-	[adsr *adsr] [*adsr "trigger" *trigger "trigger"] [*trigger "busy" *adsr "busy"]
-	[*lfo1 "trigger" *adsr "busy"] [*lfo2 "trigger" *adsr "busy"]
-	[sensitivity *egscal] [*egscal *trigger] [*adsr "attack" *egscal] [*adsr "decay" *egscal] [*adsr "release" *egscal]
-	;========== FREQ EG
-	[eg *freqeg] [*freqeg "trigger" *trigger "trigger"]
-	[sensitivity *fegscal] [*fegscal *trigger] [*freqeg "time1" *fegscal] [*freqeg "time2" *fegscal] [*freqeg "time3" *fegscal] [*freqeg "time4" *fegscal]
-	;========== NOISE ================
-	[noise_operator *noise] [eg *noise_eg] [*noise_eg "trigger" *trigger "trigger"] [*noise "amp" *noise_eg]
-	;========== FM VCO ===============
+[[Preset *index *order *VF] [> *index *order] /]
+[[Preset *index *order *VF]
+	[Lunar 16384 *VF vco *index sens freq lfo 1]
+	[Lunar 128   *VF vco *index sens freq key right]
+	[Lunar -128  *VF vco *index sens freq key left]
+	[Lunar 12800 *VF vco *index sens amp velocity BP]
+	[Lunar 16384 *VF vector amp *index A]
+	[Lunar 16384 *VF vector amp *index B]
+	[Lunar 16384 *VF vector amp *index C]
+	[Lunar 16384 *VF vector amp *index D]
+	[++ *index *next] / [Preset *next *order *VF]
+]
+
+[[BuildOscillatorBlock 4 *fm *trigger *freqeg *X *Y *lfo1x *lfo1y *lfo2x *lfo2y
+						[
+							[*freq1 *amp1 *velocity1 *ampeg1 *egscal1 *freqeg1 *fma1]
+							[*freq2 *amp2 *velocity2 *ampeg2 *egscal2 *freqeg2 *fma2]
+							[*freq3 *amp3 *velocity3 *ampeg3 *egscal3 *freqeg3 *fma3]
+							[*freq4 *amp4 *velocity4 *ampeg4 *egscal4 *freqeg4 *fma4]
+						]
+						[
+							[*pitchfreq1 *lfo1freq1 *lfo2freq1 *lfo1amp1 *lfo2amp1]
+							[*pitchfreq2 *lfo1freq2 *lfo2freq2 *lfo1amp2 *lfo2amp2]
+							[*pitchfreq3 *lfo1freq3 *lfo2freq3 *lfo1amp3 *lfo2amp3]
+							[*pitchfreq4 *lfo1freq4 *lfo2freq4 *lfo1amp4 *lfo2amp4]
+						]
+		]
 	[fm4 *fm] [*fm "trigger" *trigger "trigger"]
 	[STK *freq1 *fm "freq1" *trigger] [STK *freq2 *fm "freq2" *trigger] [STK *freq3 *fm "freq3" *trigger] [STK *freq4 *fm "freq4" *trigger]
 	[STK *amp1 *fm "amp1" *trigger] [STK *amp2 *fm "amp2" *trigger] [STK *amp3 *fm "amp3" *trigger] [STK *amp4 *fm "amp4" *trigger]
@@ -232,6 +197,75 @@ program vonforman [BuildVonForman BuildVonFormanPart VF LGV LGT LGP STK STV AEG 
 	[MORPHFM *fma2 *fm "gain2" *X *Y *lfo1x *lfo1y *lfo2x *lfo2y]
 	[MORPHFM *fma3 *fm "gain3" *X *Y *lfo1x *lfo1y *lfo2x *lfo2y]
 	[MORPHFM *fma4 *fm "gain4" *X *Y *lfo1x *lfo1y *lfo2x *lfo2y]
+]
+
+[[BuildOscillatorBlock 6 *fm *trigger *freqeg *X *Y *lfo1x *lfo1y *lfo2x *lfo2y
+						[
+							[*freq1 *amp1 *velocity1 *ampeg1 *egscal1 *freqeg1 *fma1]
+							[*freq2 *amp2 *velocity2 *ampeg2 *egscal2 *freqeg2 *fma2]
+							[*freq3 *amp3 *velocity3 *ampeg3 *egscal3 *freqeg3 *fma3]
+							[*freq4 *amp4 *velocity4 *ampeg4 *egscal4 *freqeg4 *fma4]
+							[*freq4 *amp5 *velocity5 *ampeg5 *egscal5 *freqeg5 *fma5]
+							[*freq4 *amp6 *velocity6 *ampeg6 *egscal6 *freqeg6 *fma6]
+						]
+						[
+							[*pitchfreq1 *lfo1freq1 *lfo2freq1 *lfo1amp1 *lfo2amp1]
+							[*pitchfreq2 *lfo1freq2 *lfo2freq2 *lfo1amp2 *lfo2amp2]
+							[*pitchfreq3 *lfo1freq3 *lfo2freq3 *lfo1amp3 *lfo2amp3]
+							[*pitchfreq4 *lfo1freq4 *lfo2freq4 *lfo1amp4 *lfo2amp4]
+							[*pitchfreq5 *lfo1freq5 *lfo2freq5 *lfo1amp5 *lfo2amp5]
+							[*pitchfreq6 *lfo1freq6 *lfo2freq6 *lfo1amp6 *lfo2amp6]
+						]
+		]
+	[fm4 *fm] [*fm "trigger" *trigger "trigger"]
+	[STK *freq1 *fm "freq1" *trigger] [STK *freq2 *fm "freq2" *trigger]
+		[STK *freq3 *fm "freq3" *trigger] [STK *freq4 *fm "freq4" *trigger]
+		[STK *freq5 *fm "freq5" *trigger] [STK *freq6 *fm "freq6" *trigger]
+	[STK *amp1 *fm "amp1" *trigger] [STK *amp2 *fm "amp2" *trigger]
+		[STK *amp3 *fm "amp3" *trigger] [STK *amp4 *fm "amp4" *trigger]
+		[STK *amp5 *fm "amp5" *trigger] [STK *amp6 *fm "amp6" *trigger]
+	[STV *velocity1 *fm "amp1" *trigger] [STV *velocity2 *fm "amp2" *trigger]
+		[STV *velocity3 *fm "amp3" *trigger] [STV *velocity4 *fm "amp4" *trigger]
+		[STV *velocity5 *fm "amp5" *trigger] [STV *velocity6 *fm "amp6" *trigger]
+	[AEG *ampeg1 *fm "amp1" *trigger *egscal1] [AEG *ampeg2 *fm "amp2" *trigger *egscal2]
+		[AEG *ampeg3 *fm "amp3" *trigger *egscal3] [AEG *ampeg4 *fm "amp4" *trigger *egscal4]
+		[AEG *ampeg5 *fm "amp5" *trigger *egscal5] [AEG *ampeg6 *fm "amp6" *trigger *egscal6]
+	[FEGS *freqeg1 *freqeg *fm "freq1"] [FEGS *freqeg2 *freqeg *fm "freq2"]
+		[FEGS *freqeg3 *freqeg *fm "freq3"] [FEGS *freqeg4 *freqeg *fm "freq4"]
+		[FEGS *freqeg5 *freqeg *fm "freq5"] [FEGS *freqeg6 *freqeg *fm "freq6"]
+	[*fm "freq1" *pitchfreq1] [*fm "freq2" *pitchfreq2] [*fm "freq3" *pitchfreq3] [*fm "freq4" *pitchfreq4] [*fm "freq5" *pitchfreq5] [*fm "freq6" *pitchfreq6]
+	[*fm "freq1" *lfo1freq1] [*fm "freq2" *lfo1freq2] [*fm "freq3" *lfo1freq3] [*fm "freq4" *lfo1freq4] [*fm "freq5" *lfo1freq5] [*fm "freq6" *lfo1freq6]
+	[*fm "freq1" *lfo2freq1] [*fm "freq2" *lfo2freq2] [*fm "freq3" *lfo2freq3] [*fm "freq4" *lfo2freq4] [*fm "freq5" *lfo2freq5] [*fm "freq6" *lfo2freq6]
+	[*fm "amp1" *lfo1amp1] [*fm "amp2" *lfo1amp2] [*fm "amp3" *lfo1amp3] [*fm "amp4" *lfo1amp4] [*fm "amp5" *lfo1amp5] [*fm "amp6" *lfo1amp6]
+	[*fm "amp1" *lfo2amp1] [*fm "amp2" *lfo2amp2] [*fm "amp3" *lfo2amp3] [*fm "amp4" *lfo2amp4] [*fm "amp5" *lfo2amp5] [*fm "amp6" *lfo2amp6]
+	[MORPHFM *fma1 *fm "gain1" *X *Y *lfo1x *lfo1y *lfo2x *lfo2y]
+	[MORPHFM *fma2 *fm "gain2" *X *Y *lfo1x *lfo1y *lfo2x *lfo2y]
+	[MORPHFM *fma3 *fm "gain3" *X *Y *lfo1x *lfo1y *lfo2x *lfo2y]
+	[MORPHFM *fma4 *fm "gain4" *X *Y *lfo1x *lfo1y *lfo2x *lfo2y]
+	[MORPHFM *fma5 *fm "gain5" *X *Y *lfo1x *lfo1y *lfo2x *lfo2y]
+	[MORPHFM *fma6 *fm "gain6" *X *Y *lfo1x *lfo1y *lfo2x *lfo2y]
+]
+
+[[BuildVonFormanPart *order1 *order2 *VF *cb *line *key_map
+						*lfo1 *lfo2 *XData *YData *lfo1x *lfo1y *lfo2x *lfo2y
+						*pitchfreqf *ctrls
+	]
+	;========== TRIGGER ==============
+	[trigger *trigger *key_map] [*cb *trigger] [*lfo1 "trigger" *trigger "trigger"] [*lfo2 "trigger" *trigger "trigger"]
+	;========== AUTO VECTOR ==========
+	[auto *X *XData] [*X "trigger" *trigger "trigger"] [*XData "trigger" *trigger "trigger"]
+	[auto *Y *YData] [*Y "trigger" *trigger "trigger"] [*YData "trigger" *trigger "trigger"]
+	;========== ADSR =================
+	[adsr *adsr] [*adsr "trigger" *trigger "trigger"] [*trigger "busy" *adsr "busy"]
+	[*lfo1 "trigger" *adsr "busy"] [*lfo2 "trigger" *adsr "busy"]
+	[sensitivity *egscal] [*egscal *trigger] [*adsr "attack" *egscal] [*adsr "decay" *egscal] [*adsr "release" *egscal]
+	;========== FREQ EG ==============
+	[eg *freqeg] [*freqeg "trigger" *trigger "trigger"]
+	[sensitivity *fegscal] [*fegscal *trigger] [*freqeg "time1" *fegscal] [*freqeg "time2" *fegscal] [*freqeg "time3" *fegscal] [*freqeg "time4" *fegscal]
+	;========== NOISE ================
+	[noise_operator *noise] [eg *noise_eg] [*noise_eg "trigger" *trigger "trigger"] [*noise "amp" *noise_eg]
+	;========== FM VCO ===============
+	[BuildOscillatorBlock *order1 *fm *trigger *freqeg *X *Y *lfo1x *lfo1y *lfo2x *lfo2y *oscillators *ctrls]
 	;========== FILTER ===============
 	[filter *filter] [*filter "gain" *adsr] [*filter *noise] [*filter *fm]
 	[STK *filter_key *filter "freq" *trigger]
@@ -246,20 +280,13 @@ program vonforman [BuildVonForman BuildVonFormanPart VF LGV LGT LGP STK STV AEG 
 	[BuildFilterBlock *order2 *X *Y *lfo1x *lfo1y *lfo2x *lfo2y *fm *noise *adsr *lfo1 *lfo2 *velocity *line *formant_filters]
 	;========== SUPERSTRUCTURE =======
 	[Insert *fm *VF vco]
-	[Insert *ampeg1 *VF vco 1 eg] [Insert *ampeg2 *VF vco 2 eg] [Insert *ampeg3 *VF vco 3 eg] [Insert *ampeg4 *VF vco 4 eg]
-	[Insert *egscal1 *VF vco 1 eg egscal] [Insert *egscal2 *VF vco 2 eg egscal] [Insert *egscal3 *VF vco 3 eg egscal] [Insert *egscal4 *VF vco 4 eg egscal]
-	[Insert *freq1 *VF vco 1 sens freq key] [Insert *freq2 *VF vco 2 sens freq key] [Insert *freq3 *VF vco 3 sens freq key] [Insert *freq4 *VF vco 4 sens freq key]
-	[Insert *freqeg1 *VF vco 1 sens freq eg] [Insert *freqeg2 *VF vco 2 sens freq eg] [Insert *freqeg3 *VF vco 3 sens freq eg] [Insert *freqeg4 *VF vco 4 sens freq eg]
-	[Insert *amp1 *VF vco 1 sens amp key] [Insert *amp2 *VF vco 2 sens amp key] [Insert *amp3 *VF vco 3 sens amp key] [Insert *amp4 *VF vco 4 sens amp key]
-	[Insert *velocity1 *VF vco 1 sens amp velocity] [Insert *velocity2 *VF vco 2 sens amp velocity]
-		[Insert *velocity3 *VF vco 3 sens amp velocity] [Insert *velocity4 *VF vco 4 sens amp velocity]
 	[Insert *noise *VF vco noise]
 	[Insert *noise_eg *VF vco noise]
 	[Insert *filter *VF filter]
 	[Insert *filter_key *VF filter sens key]
 	[Insert *freqegf *VF filter sens eg]
 	[InsertFilterBlock *VF 1 *formant_filters]
-	[Insert *fma1 *VF vector amp 1] [Insert *fma2 *VF vector amp 2] [Insert *fma3 *VF vector amp 3] [Insert *fma4 *VF vector amp 4]
+	[InsertOscillatorBlock *VF 1 *oscillators]
 	[Insert *adsr *VF adsr amp]
 	[Insert *egscal *VF adsr amp egscal]
 	[Insert *freqeg *VF adsr freq]
@@ -269,7 +296,8 @@ program vonforman [BuildVonForman BuildVonFormanPart VF LGV LGT LGP STK STV AEG 
 	[AddModule *X *VF] [AddModule *Y *VF]
 ]
 
-[[BuildFilter [*filter *freq *reso *q] *X *Y *lfo1x *lfo1y *lfo2x *lfo2y *fm *noise *adsr *lfo1 *lfo2 *velocity *line]
+[[BuildFilterBlock 0 *X *Y *lfo1x *lfo1y *lfo2x *lfo2y *fm *noise *adsr *lfo1 *lfo2 *velocity *line []]]
+[[BuildFilterBlock *order *X *Y *lfo1x *lfo1y *lfo2x *lfo2y *fm *noise *adsr *lfo1 *lfo2 *velocity *line [[*filter *freq *reso *q] : *filters]] [< 0 *order]
 	[formant_filter *filter]
 	[MORPH *freq *filter "freq"      *X *Y *lfo1x *lfo1y *lfo2x *lfo2y]
 	[MORPH *reso *filter "resonance" *X *Y *lfo1x *lfo1y *lfo2x *lfo2y]
@@ -277,24 +305,36 @@ program vonforman [BuildVonForman BuildVonFormanPart VF LGV LGT LGP STK STV AEG 
 	[*filter "gain" *adsr] [*filter *noise] [*filter *fm]
 	[*filter "amp" *lfo1 "tremolo"] [*filter "amp" *lfo2 "tremolo"]
 	[*filter "amp" *velocity] [*line *filter]
-]
-
-[[BuildFilterBlock 0 *X *Y *lfo1x *lfo1y *lfo2x *lfo2y *fm *noise *adsr *lfo1 *lfo2 *velocity *line []]]
-[[BuildFilterBlock *order *X *Y *lfo1x *lfo1y *lfo2x *lfo2y *fm *noise *adsr *lfo1 *lfo2 *velocity *line [*filter : *filters]] [< 0 *order]
-	[BuildFilter *filter *X *Y *lfo1x *lfo1y *lfo2x *lfo2y *fm *noise *adsr *lfo1 *lfo2 *velocity *line]
 	[-- *order *next] / [BuildFilterBlock *next *X *Y *lfo1x *lfo1y *lfo2x *lfo2y *fm *noise *adsr *lfo1 *lfo2 *velocity *line *filters]
 ]
 
-[[InsertFilterBlock *VF *index []]]
+[[InsertFilterBlock *VF *index []] /]
 [[InsertFilterBlock *VF *index [[*filter *freq *reso *q] : *filters]]
 	[Insert *filter *VF formant *index]
 	[Insert *freq *VF vector formant *index freq]
 	[Insert *reso *VF vector formant *index resonance]
 	[Insert *q *VF vector formant *index Q]
-	[++ *index *next] [InsertFilterBlock *VF *next *filters]
+	[++ *index *next] / [InsertFilterBlock *VF *next *filters]
 ]
 
-private [LGV LGT LGP STK STV AEG FEGS MORPH MORPHFM BuildOscillatorBlock BuildFilterBlock InsertOscillatorBlock InsertFilterBlock BuildOscillator BuildFilter CheckOrder]
+[[InsertOscillatorBlock *VF *index []] /]
+[[InsertOscillatorBlock *VF *index [[*freq *amp *velocity *ampeg *egscal *freqeg *vector] : *oscillators]]
+	[Insert *ampeg *VF vco *index eg]
+	[Insert *egscal *VF vco *index eg egscal]
+	[Insert *freq *VF vco *index sens freq key]
+	[Insert *freqeg *VF vco *index sens freq eg]
+	[Insert *amp *VF vco *index sens amp key]
+	[Insert *velocity *VF vco *index sens amp velocity]
+	[Insert *vector *VF vector amp *index]
+	[++ *index *next] / [InsertOscillatorBlock *VF *next *oscillators]
+]
+
+private [
+			LGV LGT LGP STK STV AEG FEGS MORPH MORPHFM
+			BuildOscillatorBlock BuildFilterBlock InsertOscillatorBlock InsertFilterBlock
+			BuildOscillatorControllers InsertOscillatorControllers
+			CheckOrder Preset
+		]
 
 end .
 

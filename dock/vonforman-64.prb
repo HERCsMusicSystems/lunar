@@ -1,0 +1,8 @@
+
+[import "vonforman"]
+
+[BuildVonForman 64 6]
+
+[show "VonForman created."]
+
+[exit]

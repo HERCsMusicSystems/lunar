@@ -75,8 +75,8 @@ program vonforman [BuildVonForman BuildVonFormanPart VF LGV LGT LGP STK STV AEG 
 	[freeverb *verb]
 	[ConnectStereo *verb *drywet]
 	[ConnectStereo *volume *verb]
-	[Insert *volume *VonForman core]
-	[Insert *pan *VonForman core]
+	[InsertRamp *volume "volume" 6 12800 *VonForman core volume]
+	[InsertRamp *pan "pan" 6 0 *VonForman core pan]
 	[Insert *chorus *VonForman core chorus]
 	[Insert *dry *VonForman core delay]
 	[Insert *drywet *VonForman core delay]
@@ -253,8 +253,8 @@ program vonforman [BuildVonForman BuildVonFormanPart VF LGV LGT LGP STK STV AEG 
 	;========== TRIGGER ==============
 	[trigger *trigger *key_map] [*cb *trigger] [*lfo1 "trigger" *trigger "trigger"] [*lfo2 "trigger" *trigger "trigger"]
 	;========== AUTO VECTOR ==========
-	[auto *X *XData] [*X "trigger" *trigger "trigger"] [*XData "trigger" *trigger "trigger"]
-	[auto *Y *YData] [*Y "trigger" *trigger "trigger"] [*YData "trigger" *trigger "trigger"]
+	[auto *X *XData 6] [*X "trigger" *trigger "trigger"] [*XData "trigger" *trigger "trigger"]
+	[auto *Y *YData 6] [*Y "trigger" *trigger "trigger"] [*YData "trigger" *trigger "trigger"]
 	;========== ADSR =================
 	[adsr *adsr] [*adsr "trigger" *trigger "trigger"] [*trigger "busy" *adsr "busy"]
 	[*lfo1 "trigger" *adsr "busy"] [*lfo2 "trigger" *adsr "busy"]

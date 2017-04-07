@@ -28,7 +28,7 @@ program lunar #machine := "lunar"
 				Lunar Lander Activate Deactivate
 				Connect ConnectStereo ConnectDryWet Disconnect DisconnectStereo DisconnectDryWet
 				AddParameterBlock AddNamedParameterBlock
-				Moonbase AddModule Insert InsertPB InsertController InsertFor InsertIO InsertBlock Store Restore SubRestore
+				Moonbase AddModule Insert InsertPB InsertRamp InsertController InsertFor InsertIO InsertBlock Store Restore SubRestore
 				Moons AllocateChannel CloseAllMoons ConnectAllMoons ConnectMoon
 				Cbb Cb C C# Cx
 				Dbb Db D D# Dx
@@ -884,6 +884,13 @@ program lunar #machine := "lunar"
 [[InsertPB *pb *base : *selector]
 	[*base *parameters *modules : *]
 	[addcl [[*parameters *pb : *selector]]]
+]
+
+[[InsertRamp *module *port *change *initial *instrument : *path]
+	[parameter_block *p1 *change] [parameter_block *p2 "index"]
+	[*p1 *initial] [*p2 *initial]
+	[*module *port *p1] [*p1 *p2]
+	[InsertPB *p2 *instrument : *path]
 ]
 
 [[InsertBlock *block *base : *selector]

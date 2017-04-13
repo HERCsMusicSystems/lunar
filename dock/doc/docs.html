@@ -92,6 +92,7 @@
         <a href="#predicate_Moonbase">Moonbase</a>
         <a href="#predicate_base">moonbase</a>
         <a href="#predicate_moonbase_monitor">moonbase_monitor</a>
+        <a href="#predicate_multitrack">multitrack</a>
         <a href="#predicate_polysequencer">polysequencer</a>
         <a href="#predicate_prolog_sequencer">prolog_sequencer</a>
         <a href="#predicate_Restore">Restore</a>
@@ -1641,6 +1642,22 @@ A typical construction of an instrument and inserting it into the superstructure
 </div>
 
 <div class="doc_predicate">
+    <a id="predicate_multitrack">
+        <div class="doc_predicate_header">
+            [multitrack clock [seq1 1] [se2 2] ....].<br />
+            Utility for building several sequencers connected to one timingclock.
+        </div>
+        <div class="doc_predicate_body">
+            This definition makes it easy to build a polysequencer constructed from several separate sequencers.
+            The clock will be constructed as timingclock.
+            Each separate sequencer will be connected to instrument present in the superstructure and identified by numbers.
+            The speed of all sequencers will be set to zero.
+            The clock's signal, trigger and variation outputs will be connected to each sequencer.
+        </div>
+    </a>
+</div>
+
+<div class="doc_predicate">
     <a id="predicate_polysequencer">
         <div class="doc_predicate_header">
             [polysequencer module base-1 base-2 .... base-n] => Creates a polysequencer module connected to several base modules.<br />
@@ -1718,6 +1735,9 @@ A typical construction of an instrument and inserting it into the superstructure
         <div class="doc_predicate_body">
             Reads a file with preset values for all parameter blocks inserted into the superstructore
             of the instrument.
+            The instrument can be identified by its symbol or by an integer value corresponding to its position within the superstructure.
+            The file name can be identified by an integer.
+            In such case the file name will be constructed using the instrument's symbol as a folder name and the number provided followed by txt extension.
         </div>
     </a>
 </div>
@@ -1782,13 +1802,16 @@ A typical construction of an instrument and inserting it into the superstructure
             <b>Note:</b> module adheres to the behaviour of a <a href="#predicate_base">base</a> module.<br />
         </div>
         <div class="doc_predicate_body">
-            <b>Signals:</b> [["SPEED" "TRIGGER"] ["SIGNAL"]]<br />
+            <b>Signals:</b> [["SPEED" "TRIGGER" "VARIATION"] ["SIGNAL" "TRIGGER" "VARIATION"]]<br />
             Generates timing clock impulses, which can be used to synchronise arpeggiators and (poly)sequencers.<br />
             <b>INPUTS:</b><br />
             <b>Speed:</b> determines beats per minute (assuming 24 ticks in a beat).<br />
             <b>Trigger:</b> activates (ONE) or deactivates (ZERO) timing clock.<br />
+            <b>Variation:</b> used to pass value to <a href="#predicate_sequencer">sequencers</a>.<br />
             <b>OUTPUTS:</b><br />
             <b>Signal:</b> timing clock impulses.<br />
+            <b>Trigger:</b> copy of the trigger input (for <a href="#predicate_sequencer">sequencers</a>).<br />
+            <b>Variation:</b> copy of the variation input (for <a href="#predicate_sequencer">sequencers</a>).<br />
         </div>
     </a>
 </div>

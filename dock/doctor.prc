@@ -14,9 +14,10 @@ program doctor [Doctor BuildDoctor BuildDoctorPart cs_waveforms]
 ;			"Doctor/snare_hit_roll.wav"
 ;			"Doctor/snare_soft_roll.wav"
 ;			"Doctor/snare_loop.wav"
-[[cs_waveforms *waveforms]
-	[TRY
-		[wave *waveforms
+;[[cs_waveforms *waveforms]
+;	[TRY
+;		[wave *waveforms
+auto := [[TRY [wave cs_waveforms
 			"Doctor/surdo_mute.wav"
 			"Doctor/surdo_open.wav"
 			"Doctor/hi_q.wav"
@@ -93,7 +94,7 @@ program doctor [Doctor BuildDoctor BuildDoctorPart cs_waveforms]
 	]
 ]
 
-[[BuildDoctor *polyphony] / [cs_waveforms *waveforms] / [BuildDoctor *polyphony *waveforms]]
+[[BuildDoctor *polyphony] / [BuildDoctor *polyphony cs_waveforms]]
 [[BuildDoctor *polyphony *waveforms] / [BuildDoctor *polyphony * * * *waveforms]]
 
 [[BuildDoctor *polyphony *Doctor *DoctorCB *volume *waveforms]
@@ -108,7 +109,7 @@ program doctor [Doctor BuildDoctor BuildDoctorPart cs_waveforms]
 	[ConnectStereo *verb *drywet]
 	[ConnectStereo *volume *verb]
 	[Insert *volume *Doctor core]
-	[Insert *pan *Doctor core]
+	[InsertRamp *pan "pan" 6 0 *Doctor core pan]
 	[InsertPB *pitch *Doctor core pitch]
 	[InsertPB *modulation *Doctor core modulation]
 	[Insert *chorus *Doctor core chorus]

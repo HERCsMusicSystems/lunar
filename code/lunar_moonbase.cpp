@@ -158,11 +158,12 @@ moonbase :: moonbase (orbiter_core * core) : CommandModule (core) {
 
 moonbase :: ~ moonbase (void) {pthread_mutex_destroy (& critical);}
 
-int lunar_timingclock :: numberOfInputs (void) {return 2;}
+int lunar_timingclock :: numberOfInputs (void) {return 3;}
 char * lunar_timingclock :: inputName (int ind) {
 	switch (ind) {
 	case 0: return "SPEED"; break;
 	case 1: return "TRIGGER"; break;
+	case 2: return "VARIATION"; break;
 	default: break;
 	}
 	return orbiter :: inputName (ind);
@@ -171,17 +172,37 @@ double * lunar_timingclock :: inputAddress (int ind) {
 	switch (ind) {
 	case 0: return & tempo; break;
 	case 1: return & trigger; break;
+	case 2: return & variation; break;
 	default: break;
 	}
 	return orbiter :: inputAddress (ind);
 }
+int lunar_timingclock :: numberOfOutputs (void) {return 3;}
+char * lunar_timingclock :: outputName (int ind) {
+	switch (ind) {
+	case 1: return "TRIGGER"; break;
+	case 2: return "VARIATION"; break;
+	default: break;
+	}
+	return orbiter :: outputName (ind);
+}
+double * lunar_timingclock :: outputAddress (int ind) {
+	switch (ind) {
+	case 1: return & output_trigger; break;
+	case 2: return & output_variation; break;
+	default: break;
+	}
+	return orbiter :: outputAddress (ind);
+}
 void lunar_timingclock :: move (void) {
+	output_trigger = trigger;
+	output_variation = variation;
 	if (signal != 0.0) signal = 0.0;
 	if (trigger < 1.0) return;
 	if (time >= 1.0) {signal = 1.0; time = 0.0;}
 	time += core -> sample_duration * tempo * 0.4;
 }
-lunar_timingclock :: lunar_timingclock (orbiter_core * core) : orbiter (core) {time = trigger = 0.0; tempo = 140.0; initialise (); activate ();}
+lunar_timingclock :: lunar_timingclock (orbiter_core * core) : orbiter (core) {time = trigger = output_trigger = variation = output_variation = 0.0; tempo = 140.0; initialise (); activate ();}
 
 void up1 (arpeggiator * arp) {
 	if (arp -> index < 0) arp -> index = 0;

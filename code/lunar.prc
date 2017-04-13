@@ -9,7 +9,7 @@ program lunar #machine := "lunar"
 			[
 				small_keyboard keyboard big_keyboard oscilloscope spectroscope big_oscilloscope big_spectroscope vector CommandCentre detector
 				noise orbiter X Y modulation vibrato tremolo wahwah range
-				core jack base moonbase arpeggiator sequencer prolog_sequencer polysequencer
+				core jack base moonbase arpeggiator sequencer prolog_sequencer polysequencer multitrack
 				operator parameter_block latch morph auto auto_data key_map velocity_map impulse
 				trigger delay1 delay2 mixer stereo_mixer gateway stereo_gateway amplifier stereo_amplifier volume mono_volume
 				lfo envelope adsr adsr-linear eg eg-linear-expo egscaling egscal vca vca-adsr vca-eg vco ring ringmod DCOffsetFilter DCOffsetFilterMono
@@ -837,6 +837,18 @@ program lunar #machine := "lunar"
 	[SELECT [[ConnectStereo *reactor *line]/] [[*reactor *line]/]]/
 ]
 
+[[multitrack *clock [*seq *index] : *seqs]
+	[TRY [timingclock *clock] [show "timingclock constructed"]]
+	[Moons *name *index *cb : *]
+	[sequencer *seq *cb]
+	[*seq "speed" 0]
+	[*seq "timingclock" *clock]
+	[*seq "trigger" *clock "trigger"]
+	[*seq "variation" *clock "variation"]
+	/ [multitrack *clock : *seqs]
+]
+[[multitrack *]]
+
 [[AddNamedParameterBlock *parameters *module *name *selector *initial *style]
 	[*parameters *pb : *selector] /
 	[*module *name *pb]
@@ -1284,6 +1296,8 @@ program lunar #machine := "lunar"
 	[*tc "\n"]
 	[*tc]
 ]
+
+[[Restore *moonbase *program] [is_integer *moonbase] [Moons *moon *moonbase : *] / [Restore *moon *program]]
 
 [[Restore *moonbase *program]
 	[is_integer *program] /

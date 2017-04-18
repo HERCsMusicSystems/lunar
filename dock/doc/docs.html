@@ -138,6 +138,7 @@
         <a href="#predicate_CommanderHardwareAction">CommanderHardwareAction</a>
         <a href="#predicate_core">core</a>
         <a href="#predicate_midi">midi</a>
+        <a href="#predicate_midicom">midicom</a>
     </li>
     <li><a href="#panels">Panels</a>
         <br />
@@ -2270,6 +2271,19 @@ A typical construction of an instrument and inserting it into the superstructure
             [income_midi CONTINUE] => Continue<br />
             [income_midi STOP] => Stop<br />
             [income_midi activesensing] => Active Sensing<br />
+        </div>
+    </a>
+</div>
+
+<div class="doc_predicate">
+    <a id="predicate_midicom">
+        <div class="doc_predicate_header">
+            [midicom module callback "COM#" rate size stop_bits parity dtr_control timeout] => Creates a MIDI interface on a COM port serial device.<br />
+        </div>
+        <div class="doc_predicate_body">
+            Opens MIDI interface on a device connected to a COM port (Windows only).
+            All parameters except module and "COM#" are optional and are provided in the order of importance.
+            Otherwise works identical to <a href="#predicate_midi">midi</a>
         </div>
     </a>
 </div>

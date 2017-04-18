@@ -191,6 +191,329 @@ public:
 	midi_class (PrologRoot * root, PrologDirectory * directory) {this -> root = root; this -> directory = directory;}
 };
 
+#ifdef WIN32
+
+class midi_com_code : public PrologNativeCode {
+public:
+	unsigned char command;
+	unsigned char channel;
+	int v1, v2, running_command;
+	PrologAtom * keyoff, * keyon, * polyaftertouch, * control, * programchange, * aftertouch, * pitch;
+	PrologAtom * sysex, * timingclock, * start, * cont, * stop, * activesensing;
+	chromatograph graph;
+	pthread_mutex_t locker;
+public:
+	PrologRoot * root;
+	PrologAtom * atom;
+	PrologAtom * callback;
+	pthread_t thread;
+	bool should_continue;
+	HANDLE fd;
+	void run (void);
+	void one_parameter (void);
+	void two_parameters (void);
+	void send_one (int command);
+	void send_two (int command, int key);
+	void send_three (int command, int key, int velocity);
+	bool code (PrologElement * parameters, PrologResolution * resolution);
+	bool port_not_found (void);
+	midi_com_code (PrologRoot * root, PrologDirectory * directory, PrologAtom * atom, PrologAtom * callback, char * location, int rate, int size, int stop_bits, int parity, int dtr_control, int timeout);
+	~ midi_com_code (void);
+};
+
+static int midi_com_tmread (HANDLE fd) {
+	int ind = 0;
+	DWORD read = 0;
+	ReadFile (fd, & ind, 1, & read, NULL);
+	if (read < 1) return -1;
+	return ind;
+}
+
+static int midi_com_tmreadt (HANDLE fd) {int ind = midi_com_tmread (fd); while (ind < 0) ind = midi_com_tmread (fd); return ind;}
+
+static void * midi_com_runner (void * parameters) {
+	midi_com_code * code = (midi_com_code *) parameters;
+	code -> run ();
+	return 0;
+}
+
+void midi_com_code :: run (void) {
+	should_continue = true;
+	while (should_continue) {
+		v1 = midi_com_tmread (fd);
+		if (v1 < 0) continue;
+		if (v1 < 128) {
+			if (command >= 0x80) {
+				if (command >= 0xc0 && command < 0xe0) one_parameter ();
+				else {v2 = midi_com_tmreadt (fd); two_parameters ();}
+			}
+		} else {
+			command = v1; channel = command & 0xf;
+			if ((command >= 0x80 && command < 0xc0) || (command >= 0xe0 && command < 0xf0)) {
+				command &= 0xf0; v1 = midi_com_tmreadt (fd); v2 = midi_com_tmreadt (fd); two_parameters ();
+			} else if (command < 0xf0) {
+					command &= 0xf0; v1 = midi_com_tmreadt (fd); one_parameter ();
+			} else {
+				PrologElement * query;
+				PrologElement * el;
+				int sub;
+				switch (command) {
+				case 0xf0:
+					el = root -> earth ();
+					query = root -> pair (root -> head (0), root -> pair (root -> pair (root -> atom (callback),
+											root -> pair (root -> atom (sysex), el)), root -> earth ()));
+					sub = midi_com_tmreadt (fd);
+					while (sub >= 0 && sub < 128) {
+						el -> setPair (root -> integer (sub), root -> earth ());
+						el = el -> getRight ();
+						sub = midi_com_tmreadt (fd);
+					}
+					root -> resolution (query); delete query;
+					break;
+				case 0xf8:
+					query = root -> pair (root -> head (0), root -> pair (root -> pair (root -> atom (callback),
+											root -> pair (root -> atom (timingclock), root -> earth ())), root -> earth ()));
+					root -> resolution (query); delete query;
+					break;
+				case 0xfa:
+					query = root -> pair (root -> head (0), root -> pair (root -> pair (root -> atom (callback),
+											root -> pair (root -> atom (start), root -> earth ())), root -> earth ()));
+					root -> resolution (query); delete query;
+					break;
+				case 0xfb:
+					query = root -> pair (root -> head (0), root -> pair (root -> pair (root -> atom (callback),
+											root -> pair (root -> atom (cont), root -> earth ())), root -> earth ()));
+					root -> resolution (query); delete query;
+					break;
+				case 0xfc:
+					query = root -> pair (root -> head (0), root -> pair (root -> pair (root -> atom (callback),
+											root -> pair (root -> atom (stop), root -> earth ())), root -> earth ()));
+					root -> resolution (query); delete query;
+					break;
+				case 0xfe:
+					query = root -> pair (root -> head (0), root -> pair (root -> pair (root -> atom (callback),
+											root -> pair (root -> atom (activesensing), root -> earth ())), root -> earth ()));
+					root -> resolution (query); delete query;
+					break;
+				}
+			}
+		}
+	}
+	should_continue = true;
+}
+
+void midi_com_code :: one_parameter (void) {
+	PrologElement * query = root -> pair (root -> atom (callback),
+								root -> pair (root -> atom (command < 0xd0 ? programchange : aftertouch),
+								root -> pair (root -> integer (channel),
+								root -> pair (root -> integer (v1),
+								root -> earth ()))));
+	query = root -> pair (root -> head (0), root -> pair (query, root -> earth ()));
+	root -> resolution (query);
+	delete query;
+}
+
+void midi_com_code :: two_parameters (void) {
+	PrologAtom * command_atom;
+	switch (command) {
+	case 0x80: command_atom = keyoff; break;
+	case 0x90: command_atom = keyon; break;
+	case 0xa0: command_atom = polyaftertouch; break;
+	case 0xb0: command_atom = control; break;
+	case 0xe0: command_atom = pitch; break;
+	default: command_atom = sysex; break;
+	}
+	PrologElement * query = root -> pair (root -> atom (callback),
+								root -> pair (root -> atom (command_atom),
+								root -> pair (root -> integer (channel),
+								root -> pair (root -> integer (v1),
+								root -> pair (root -> integer (v2),
+								root -> earth ())))));
+	query = root -> pair (root -> head (0), root -> pair (query, root -> earth ()));
+	root -> resolution (query);
+	delete query;
+}
+
+bool midi_com_code :: code (PrologElement * parameters, PrologResolution * resolution) {
+	if (parameters -> isEarth ()) {atom -> setMachine (0); delete this; return true;}
+	if (! parameters -> isPair ()) return false;
+	PrologElement * ae = parameters -> getLeft ();
+	if (! ae -> isAtom ()) return false;
+	PrologAtom * atom = ae -> getAtom ();
+	parameters = parameters -> getRight ();
+	int channel; int key; double velocity;
+	unsigned char data;
+	if (atom == keyoff) {
+		if (! graph . get_channel (& parameters, & channel)) return false;
+		if (parameters -> isEarth ()) {send_three (0xb0 + channel, 123, 0); return true;}
+		if (! graph . get_key (& parameters, & key)) return false;
+		if (parameters -> isEarth ()) {send_three (0x80 + channel, key, 0); return true;}
+		if (! graph . get_velocity (& parameters, & velocity)) return false;
+		send_three (0x80 + channel, key, (int) velocity);
+		return true;
+	}
+	if (atom == keyon) {
+		if (! graph . get_channel (& parameters, & channel)) return false;
+		if (! graph . get_key (& parameters, & key)) return false;
+		if (parameters -> isEarth ()) {send_three (0x90 + channel, key, 100); return true;}
+		if (! graph . get_velocity (& parameters, & velocity)) return false;
+		send_three (0x90 + channel, key, (int) velocity);
+		return true;
+	}
+	if (atom == polyaftertouch || atom == control) {
+		if (! graph . get_channel (& parameters, & channel)) return false;
+		if (! graph . get_key (& parameters, & key)) return false;
+		if (! graph . get_velocity (& parameters, & velocity)) return false;
+		send_three ((atom == control ? 0xb0 : 0xa0) + channel, key, (int) velocity);
+		return true;
+	}
+	if (atom == programchange || atom == aftertouch) {
+		if (! graph . get_channel (& parameters, & channel)) return false;
+		if (! graph . get_key (& parameters, & key)) return false;
+		send_two ((atom == programchange ? 0xc0 : 0xd0) + channel, key);
+		return true;
+	}
+	if (atom == pitch) {
+		if (! graph . get_channel (& parameters, & channel)) return false;
+		if (! graph . get_key (& parameters, & key)) return false;
+		if (parameters -> isEarth ()) {send_three (0xe0 + channel, 0, key); return true;}
+		int msb; if (! graph . get_key (& parameters, & msb)) return false;
+		send_three (0xe0 + channel, key, msb);
+		return true;
+	}
+	if (atom == sysex) {
+		pthread_mutex_lock (& locker);
+		running_command = 0xf0;
+		DWORD written;
+		data = 0xf0; WriteFile (fd, & data, 1, & written, NULL);
+		while (parameters -> isPair ()) {
+			if (graph . get_key (& parameters, & key)) {data = (unsigned char) key; WriteFile (fd, & data, 1, & written, NULL);}
+			else if (parameters -> getLeft () -> isText ()) {
+				char * cp = parameters -> getLeft () -> getText ();
+				while (* cp != '\0') {data = (unsigned char) * cp++; WriteFile (fd, & data, 1, & written, NULL);}
+				parameters = parameters -> getRight ();
+			} else parameters = parameters -> getRight ();
+		}
+		data = 0xf7; WriteFile (fd, & data, 1, & written, NULL);
+		pthread_mutex_unlock (& locker);
+		return true;
+	}
+	if (atom == timingclock) {send_one (0xf8); return true;}
+	if (atom == start) {send_one (0xfa); return true;}
+	if (atom == cont) {send_one (0xfb); return true;}
+	if (atom == stop) {send_one (0xfc); return true;}
+	if (atom == activesensing) {send_one (0xfe); return true;}
+	return false;
+}
+
+void midi_com_code :: send_one (int command) {DWORD written; WriteFile (fd, & command, 1, & written, NULL);}
+void midi_com_code :: send_two (int command, int data) {DWORD written; WriteFile (fd, & command, 1, & written, NULL); WriteFile (fd, & data, 1, & written, NULL);}
+void midi_com_code :: send_three (int command, int v1, int v2) {DWORD written; WriteFile (fd, & command, 1, & written, NULL); WriteFile (fd, & v1, 1, & written, NULL); WriteFile (fd, & v2, 1, & written, NULL);}
+
+bool midi_com_code :: port_not_found (void) {return fd == INVALID_HANDLE_VALUE;}
+
+midi_com_code :: midi_com_code (PrologRoot * root, PrologDirectory * directory, PrologAtom * atom, PrologAtom * callback, char * location, int rate, int size, int stop_bits, int parity, int dtr_control, int timeout)
+				: graph (directory) {
+	command = channel = 0;
+	keyoff = keyon = polyaftertouch = control = programchange = aftertouch = pitch = 0;
+	sysex = timingclock = start = cont = stop = activesensing = 0;
+	running_command = -1;
+	if (directory != 0) {
+		keyoff = directory -> searchAtom ("keyoff");
+		keyon = directory -> searchAtom ("keyon");
+		polyaftertouch = directory -> searchAtom ("polyaftertouch");
+		control = directory -> searchAtom ("control");
+		programchange = directory -> searchAtom ("programchange");
+		aftertouch = directory -> searchAtom ("aftertouch");
+		pitch = directory -> searchAtom ("pitch");
+		sysex = directory -> searchAtom ("sysex");
+		timingclock = directory -> searchAtom ("timingclock");
+		start = directory -> searchAtom ("START");
+		cont = directory -> searchAtom ("CONTINUE");
+		stop = directory -> searchAtom ("STOP");
+		activesensing = directory -> searchAtom ("activesensing");
+	}
+	this -> should_continue = false;
+	this -> root = root;
+	this -> atom = atom;
+	this -> callback = callback;
+	if (callback != 0) {COLLECTOR_REFERENCE_INC (callback);}
+	fd = CreateFile (location, GENERIC_READ | GENERIC_WRITE, 0, NULL, OPEN_EXISTING, 0, NULL);
+	DCB dcb; dcb . DCBlength = sizeof (DCB);
+	GetCommState (fd, & dcb);
+	if (rate >= 0) dcb . BaudRate = rate;
+	if (size >= 0) dcb . ByteSize = size;
+	if (stop_bits >= 0) dcb . StopBits = stop_bits;
+	if (parity >= 0) dcb . Parity = parity;
+	if (dtr_control >= 0) dcb . fDtrControl = dtr_control;
+	SetCommState (fd, & dcb);
+	if (timeout >= 0) {
+		COMMTIMEOUTS cmt;
+		GetCommTimeouts (fd, & cmt);
+		cmt . ReadIntervalTimeout = timeout;
+		cmt . ReadTotalTimeoutMultiplier = 1;
+		cmt . ReadTotalTimeoutConstant = 1;
+		SetCommTimeouts (fd, & cmt);
+	}
+	if (callback == 0) return;
+	if (port_not_found ()) return;
+	pthread_create (& thread, 0, midi_com_runner, this);
+	pthread_detach (thread);
+}
+
+midi_com_code :: ~ midi_com_code (void) {
+	if (should_continue) {should_continue = false; while (! should_continue) Sleep (100);}
+	if (callback != 0) callback -> removeAtom (); callback = 0;
+	if (! port_not_found ()) {CloseHandle (fd);}
+}
+
+class midi_com_class : public PrologNativeCode {
+public:
+	PrologRoot * root;
+	PrologDirectory * directory;
+	bool code (PrologElement * parameters, PrologResolution * resolution) {
+		PrologElement * path = 0;
+		PrologElement * atom = 0;
+		PrologElement * callback = 0;
+		int rate = -1, size = -1, stop_bits = -1, parity = -1, dtr_control = -1, timeout = -1;
+		while (parameters -> isPair ()) {
+			PrologElement * el = parameters -> getLeft ();
+			if (el -> isText ()) path = el;
+			if (el -> isVar ()) el -> setAtom (new PrologAtom ());
+			if (el -> isAtom ()) {if (atom == 0) atom = el; else callback = el;}
+			if (el -> isInteger ()) {
+				if (rate < 0) rate = el -> getInteger ();
+				else if (size < 0) size = el -> getInteger ();
+				else if (stop_bits < 0) stop_bits = el -> getInteger ();
+				else if (parity < 0) parity = el -> getInteger ();
+				else if (dtr_control < 0) dtr_control = el -> getInteger ();
+				else timeout = el -> getInteger ();
+			}
+			parameters = parameters -> getRight ();
+		}
+		if (timeout < 0) timeout = 10;
+		if (atom == 0) return false;
+		if (atom -> getAtom () -> getMachine () != 0) return false;
+		char * serial_location = 0;
+		if (path != 0) serial_location = path -> getText ();
+		else return false;
+		midi_com_code * mc = new midi_com_code (root, directory, atom -> getAtom (), callback != 0 ? callback -> getAtom () : 0, serial_location, rate, size, stop_bits, parity, dtr_control, timeout);
+		if (mc -> port_not_found ()) {delete mc; return false;}
+		if (atom -> getAtom () -> setMachine (mc)) return true;
+		delete mc;
+		return false;
+	}
+	midi_com_class (PrologRoot * root, PrologDirectory * directory) {this -> root = root; this -> directory = directory;}
+};
+
+#else
+
+class midi_com_class : public midi_class {
+public: midi_com_class (PrologRoot * root, PrologDirectory * directory) : midi_class (root, directory) {}
+};
+
+#endif
+
 class move_modules_class : public PrologNativeCode {
 public:
 	orbiter_core * core;
@@ -386,6 +709,7 @@ PrologNativeCode * PrologLunarServiceClass :: getNativeCode (char * name) {
 	if (strcmp (name, "orbiter") == 0) return new orbiter_statistics ();
 	if (strcmp (name, "arranger_array") == 0) return new arranger_array (this);
 	if (strcmp (name, "midi") == 0) return new midi_class (this -> root, directory);
+	if (strcmp (name, "midicom") == 0) return new midi_com_class (this -> root, directory);
 	if (strcmp (name, "ParameterBlockPanel") == 0) return new parameter_block_panel_class (this);
 	if (strcmp (name, "AdsrPanel") == 0) return new adsr_panel_class (this);
 	if (strcmp (name, "EGPanel") == 0) return new eg_panel_class (this);

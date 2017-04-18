@@ -46,7 +46,7 @@ program lunar #machine := "lunar"
 				Ab/ A/ A#/
 				Bb/ B/ b/ B#/
 				Hb/ H/ H#/
-				midi
+				midi midicom
 				ParameterBlockPanel AdsrPanel EGPanel FEGPanel DX9Panel FM4Panel CorePanel LfoPanel FilterPanel FormantFilterPanel
 				DelayPanel ChorusPanel StereoChorusPanel FreeverbPanel
 				BuildParameterBlockPanel BuildAdsrPanel BuildEGPanel BuildFEGPanel BuildDX9Panel BuildFM4Panel BuildLfoPanel
@@ -150,6 +150,7 @@ program lunar #machine := "lunar"
 #machine arranger_array := "arranger_array"
 
 #machine midi := "midi"
+#machine midicom := "midicom"
 
 #machine ParameterBlockPanel := "ParameterBlockPanel"
 #machine AdsrPanel := "AdsrPanel"

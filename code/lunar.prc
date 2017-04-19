@@ -52,7 +52,6 @@ program lunar #machine := "lunar"
 				BuildParameterBlockPanel BuildAdsrPanel BuildEGPanel BuildFEGPanel BuildDX9Panel BuildFM4Panel BuildLfoPanel
 				BuildFilterPanel BuildFormantFilterPanel
 				BuildDelayPanel BuildChorusPanel BuildStereoChorusPanel BuildFreeverbPanel
-				FindLfoKnob
 				MoveModules PropagateSignals MoveCore LunarDrop FUNCTION_KEY
 				CreateDistributor CloseDistributor Distribute Redistribute
 				CCCB CCCBContinuation cb_callback cb_path cb_edit_path process_mode CBsub ICBsub
@@ -354,9 +353,6 @@ program lunar #machine := "lunar"
 	[APPEND *path [wet] *wet_path] [*parameters *wet : *wet_path]
 	[FreeverbPanel *panel *feedback *diffusion *highdamp *dry *wet]
 ]
-
-[[FindLfoKnob [] *parameters]]
-[[FindLfoKnob *knob *parameters : *path] [*parameters *knob : *path]]
 
 [[CreateDistributor *distributor]
 	[create_atom *distributor]
@@ -1550,7 +1546,7 @@ auto := [
 			[FOR *i 0 127 1 [MIDI_CHANNELS *i midi_monitor]]
 		]
 
-private [AddParameterBlock SubRestore cb_callback cb_path cb_edit_path CBsub ICBsub process_mode FindLfoKnob]
+private [AddParameterBlock SubRestore cb_callback cb_path cb_edit_path CBsub ICBsub process_mode]
 
 [[CommanderHardwareAction] [has_machine reactor] / [reactor] [show "HARDWARE DEACTIVATED"]]
 [[CommanderHardwareAction]

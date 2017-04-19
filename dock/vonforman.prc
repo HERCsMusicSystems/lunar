@@ -147,7 +147,6 @@ program vonforman [BuildVonForman BuildVonFormanPart VF LGV LGT LGP STK STV AEG 
 	;==============================
 	[Lunar -16384 *VonForman vco noise amp]
 	[Lunar -8192 *VonForman core delay balance]
-	[Lunar 512 *VonForman vco 1 sens freq pitch]
 	[Lunar 256 *VonForman core sens vibrato]
 	[Lunar 1792 *VonForman lfo 1 speed]
 	[Lunar 12800 *VonForman core sens velocity BP]
@@ -157,6 +156,7 @@ program vonforman [BuildVonForman BuildVonFormanPart VF LGV LGT LGP STK STV AEG 
 
 [[Preset *index *order *VF] [> *index *order] /]
 [[Preset *index *order *VF]
+	[Lunar 512 *VF vco *index sens freq pitch]
 	[Lunar 16384 *VF vco *index sens freq lfo 1]
 	[Lunar 128   *VF vco *index sens freq key right]
 	[Lunar -128  *VF vco *index sens freq key left]

@@ -440,7 +440,7 @@ lunar_map :: lunar_map (orbiter_core * core, int initial) : orbiter (core) {
 	initialise ();
 }
 
-int lunar_trigger :: numberOfInputs (void) {return 7;}
+int lunar_trigger :: numberOfInputs (void) {return 8;}
 char * lunar_trigger :: inputName (int ind) {
 	switch (ind) {
 	case 0: return "BUSY"; break;
@@ -448,8 +448,9 @@ char * lunar_trigger :: inputName (int ind) {
 	case 2: return "PORTA"; break;
 	case 3: return "TIME"; break;
 	case 4: return "LEGATO"; break;
-	case 5: return "TRANSPOSE"; break;
-	case 6: return "MODE"; break;
+	case 5: return "RAMP"; break;
+	case 6: return "TRANSPOSE"; break;
+	case 7: return "MODE"; break;
 	default: break;
 	}
 	return orbiter :: inputName (ind);
@@ -461,8 +462,9 @@ double * lunar_trigger :: inputAddress (int ind) {
 	case 2: return & porta_switch; break;
 	case 3: return & porta_time; break;
 	case 4: return & porta_control; break;
-	case 5: return & transpose; break;
-	case 6: return & mode; break;
+	case 5: return & porta_ramp; break;
+	case 6: return & transpose; break;
+	case 7: return & mode; break;
 	default: break;
 	}
 	return orbiter :: inputAddress (ind);
@@ -521,7 +523,14 @@ void lunar_trigger :: sub_keyon (int key) {
 	target = core -> arrange_note (key, transpose, mode, key_map == 0 ? 0 : key_map -> map);
 	this -> key = key;
 	if (porta_switch == 0.0 || porta_time == 0.0 || (porta_control != 0.0 && keystack_pointer < 1)) time = 0.0;
-	else {delta = target - signal; time = 1.0;}
+	else {
+		delta = target - signal;
+		if (porta_ramp == 0.0) time = 1.0;
+		else {
+			if (delta >= 0.0) {time = delta / 1536.0; delta = 1536.0;}
+			else {time = delta / -1536.0; delta = -1536.0;}
+		}
+	}
 	add_stack (key);
 }
 void lunar_trigger :: sub_velocity (int velocity) {
@@ -587,6 +596,7 @@ lunar_trigger :: lunar_trigger (orbiter_core * core, lunar_trigger * next) : orb
 	signal = delay2 = delay1 = trigger = busy = 0.0;
 	delta = target = 0.0;
 	porta_switch = porta_time = porta_control = 0.0;
+	porta_ramp = 128.0;
 	hold_ctrl = 0.0;
 	time = 2.0;
 	target_velocity = velocity = 12800.0;

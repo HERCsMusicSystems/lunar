@@ -267,7 +267,7 @@ private:
 	lunar_map * key_map;
 	lunar_map * velocity_map;
 	double velocity, trigger, delay1, delay2;
-	double delta, target, porta_switch, porta_control, porta_time, time, hold_ctrl;
+	double delta, target, porta_switch, porta_control, porta_ramp, porta_time, time, hold_ctrl;
 	double transpose, mode;
 	bool polyphonic_ground_request;
 	double target_velocity;

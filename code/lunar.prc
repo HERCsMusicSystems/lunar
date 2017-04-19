@@ -20,7 +20,7 @@ program lunar #machine := "lunar"
 				drywet drywet_mono dry wet balance send return
 				level level1 level2 level3 level4 time1 time2 time3 time4 attack decay sustain release
 				freq amp gain ratio sync cutoff resonance formant formant_filter Q hold busy portamento porta
-				legato time speed wave pulse phase poly feedback highdamp diffusion
+				legato ramp time speed wave pulse phase poly feedback highdamp diffusion
 				mono left right mic mic_left mic_right breakpoint BP algo key_ratio
 				key velocity keyon keyoff polyaftertouch control programchange aftertouch pitch
 				sysex timingclock START CONTINUE STOP activesensing
@@ -972,10 +972,11 @@ program lunar #machine := "lunar"
 	[AddParameterBlock *parameters level4 *adsr *selector 0 "index"]
 ]
 
-[[InsertIO *parameters *trigger *selector [["BUSY" "HOLD" "PORTA" "TIME" "LEGATO" "TRANSPOSE" "MODE" : *] *]]
+[[InsertIO *parameters *trigger *selector [["BUSY" "HOLD" "PORTA" "TIME" "LEGATO" "RAMP" "TRANSPOSE" "MODE" : *] *]]
 	[AddParameterBlock *parameters porta *trigger *selector 0 "onoff"]
 	[AddParameterBlock *parameters time *trigger *selector 0 "time"]
 	[AddParameterBlock *parameters legato *trigger *selector 0 "onoff"]
+	[AddParameterBlock *parameters ramp *trigger *selector 128 "onoff"]
 	[AddParameterBlock *parameters hold *trigger *selector 0 "onoff"]
 	[AddParameterBlock *parameters transpose *trigger *selector 0 "index"]
 	[AddParameterBlock *parameters mode *trigger *selector -128 "index"]

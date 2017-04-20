@@ -976,7 +976,7 @@ program lunar #machine := "lunar"
 	[AddParameterBlock *parameters porta *trigger *selector 0 "onoff"]
 	[AddParameterBlock *parameters time *trigger *selector 0 "time"]
 	[AddParameterBlock *parameters legato *trigger *selector 0 "onoff"]
-	[AddParameterBlock *parameters ramp *trigger *selector 128 "onoff"]
+	[AddParameterBlock *parameters ramp *trigger *selector 0 "onoff"]
 	[AddParameterBlock *parameters hold *trigger *selector 0 "onoff"]
 	[AddParameterBlock *parameters transpose *trigger *selector 0 "index"]
 	[AddParameterBlock *parameters mode *trigger *selector -128 "index"]

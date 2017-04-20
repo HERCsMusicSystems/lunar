@@ -375,7 +375,7 @@ poly
 [portamento porta]0.0
 [portamento time]0.0
 [portamento legato]0.0
-[portamento ramp]128.0
+[portamento ramp]0.0
 [portamento hold]0.0
 [portamento transpose]0.0
 [portamento mode]-128.0

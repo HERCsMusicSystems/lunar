@@ -596,7 +596,7 @@ lunar_trigger :: lunar_trigger (orbiter_core * core, lunar_trigger * next) : orb
 	signal = delay2 = delay1 = trigger = busy = 0.0;
 	delta = target = 0.0;
 	porta_switch = porta_time = porta_control = 0.0;
-	porta_ramp = 128.0;
+	porta_ramp = 0.0;
 	hold_ctrl = 0.0;
 	time = 2.0;
 	target_velocity = velocity = 12800.0;

@@ -1156,7 +1156,8 @@ Core also functions as an audio source (connected directly to the sound hardware
             <b>OUTPUTS:</b><br />
             <b>Key:</b> is the MIDI key number translated into the range between -8192.0 .. 8192.0.<br />
             <b>Velocity:</b> is the MIDI velocity value translated into the range between 0.0 .. 16384.0.<br />
-            <b>Trigger:</b> translates MIDI keyon/keyoff commands into the range between 0.0 .. 1.0.<br />
+            <b>Trigger:</b> translates MIDI keyon/keyoff commands into the range between 0.0 .. 1.0.
+                If poly/mono retrigger is required then the value spikes to 16384.o for the duration of one sample.<br />
             <b>Delay1:</b> is the <b>"TRIGGER"</b> value delayed by 1 sample.<br />
             <b>Delay2:</b> is the <b>"TRIGGER"</b> value delayed by 2 samples.<br />
         </div>

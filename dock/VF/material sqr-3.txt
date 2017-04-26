@@ -20,7 +20,7 @@ poly
 [vco 1 ratio]2.0
 [vco 1 feedback]12800.0
 [vco 2 freq]0.0
-[vco 2 amp]0.0
+[vco 2 amp]-2560.0
 [vco 2 ratio]1.0
 [vco 2 feedback]0.0
 [vco 3 freq]0.0
@@ -28,7 +28,7 @@ poly
 [vco 3 ratio]2.0
 [vco 3 feedback]12800.0
 [vco 4 freq]0.0
-[vco 4 amp]0.0
+[vco 4 amp]-2560.0
 [vco 4 ratio]1.0
 [vco 4 feedback]0.0
 [vco 5 freq]0.0
@@ -36,7 +36,7 @@ poly
 [vco 5 ratio]2.0
 [vco 5 feedback]12800.0
 [vco 6 freq]0.0
-[vco 6 amp]0.0
+[vco 6 amp]-2560.0
 [vco 6 ratio]1.0
 [vco 6 feedback]0.0
 [vco noise amp]-16384.0

@@ -12,9 +12,9 @@ mono
 [vco algo 3 4]0.0
 [vco algo 3 5]0.0
 [vco algo 3 6]0.0
-[vco algo 4 5]0.0
+[vco algo 4 5]1.0
 [vco algo 4 6]0.0
-[vco algo 5 6]0.0
+[vco algo 5 6]1.0
 [vco 1 freq]0.0
 [vco 1 amp]-3840.0
 [vco 1 ratio]2.0
@@ -24,7 +24,7 @@ mono
 [vco 2 ratio]2.0
 [vco 2 feedback]0.0
 [vco 3 freq]0.0
-[vco 3 amp]0.0
+[vco 3 amp]-1536.0
 [vco 3 ratio]1.0
 [vco 3 feedback]0.0
 [vco 4 freq]0.0
@@ -36,7 +36,7 @@ mono
 [vco 5 ratio]2.0
 [vco 5 feedback]0.0
 [vco 6 freq]0.0
-[vco 6 amp]0.0
+[vco 6 amp]-1536.0
 [vco 6 ratio]1.0
 [vco 6 feedback]0.0
 [vco noise amp]-16384.0

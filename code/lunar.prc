@@ -12,7 +12,7 @@ program lunar #machine := "lunar"
 				core jack base moonbase arpeggiator sequencer prolog_sequencer polysequencer multitrack
 				operator parameter_block latch morph auto auto_data key_map velocity_map impulse
 				trigger delay1 delay2 mixer stereo_mixer gateway stereo_gateway amplifier stereo_amplifier volume mono_volume
-				lfo envelope adsr adsr-linear eg eg-linear-expo egscaling egscal vca vca-adsr vca-eg vco ring ringmod DCOffsetFilter DCOffsetFilterMono
+				lfo envelope adsr adsr-linear eg eg-linear-expo egscaling egscal adsrscal vca vca-adsr vca-eg vco ring ringmod DCOffsetFilter DCOffsetFilterMono
 				index shift bias variation transpose mode arranger_array
 				square_operator saw_operator noise_operator sampler_operator sampler fm fm4 fm6 fm8 dx dx9 dx7 dx5
 				sensitivity sens filter delay reverb freeverb chorus stereo_chorus
@@ -845,6 +845,16 @@ program lunar #machine := "lunar"
 	/ [multitrack *clock : *seqs]
 ]
 [[multitrack *]]
+
+[[egscal *eg *scal *trigger]
+	[eg *eg] [*eg "trigger" *trigger "trigger"]
+	[sensitivity *scal] [*scal *trigger] [*eg "time1" *scal] [*eg "time2" *scal] [*eg "time3" *scal] [*eg "time4" *scal]
+]
+
+[[adsrscal *adsr *scal *trigger]
+	[adsr *adsr] [*adsr "trigger" *trigger "trigger"]
+	[sensitivity *scal] [*scal *trigger] [*adsr "attack" *scal] [*adsr "decay" *scal] [*adsr "release" *scal]
+]
 
 [[AddNamedParameterBlock *parameters *module *name *selector *initial *style]
 	[*parameters *pb : *selector] /

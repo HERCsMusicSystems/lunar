@@ -73,6 +73,7 @@
         <a href="#predicate_wave">wave</a>
     </li>
     <li><a href="#superstructure">Superstructure</a><br />
+        <a href="#predicate_adsrscal">adsrscal</a>
         <a href="#predicate_arpeggiator">arpeggiator</a>
         <a href="#predicate_arranger_array">arranger_array</a>
         <a href="#predicate_base">base</a>
@@ -81,6 +82,7 @@
         <a href="#predicate_ConnectAllMoons">ConnectAllMoons</a>
         <a href="#predicate_ConnectMoon">ConnectMoon</a>
         <a href="#predicate_detector">detector</a>
+        <a href="#predicate_egscal">egscal</a>
         <a href="#predicate_income_midi">income_midi</a>
         <a href="#predicate_Insert">Insert</a>
         <a href="#predicate_InsertBlock">InsertBlock</a>
@@ -1388,6 +1390,18 @@ A typical construction of an instrument and inserting it into the superstructure
 </div>
 
 <div class="doc_predicate">
+    <a id="predicate_adsrscal">
+        <div class="doc_predicate_header">
+            [adsrscal adsr scal trigger] => Creates adsr and scaling.<br />
+            <b>Note:</b> module adheres to the behaviour of a <a href="#predicate_base">base</a> module.<br />
+        </div>
+        <div class="doc_predicate_body">
+            Macro for creating adsr and scaling modules connected to a trigger.
+        </div>
+    </a>
+</div>
+
+<div class="doc_predicate">
     <a id="predicate_arranger_array">
         <div class="doc_predicate_header">
             [arranger_array *reference_note] => sets or returns the global arranger reference note.<br />
@@ -1499,6 +1513,18 @@ A typical construction of an instrument and inserting it into the superstructure
         </div>
         <div class="doc_predicate_body">
             Connect one instrument from the superstructure to the audio recipient.
+        </div>
+    </a>
+</div>
+
+<div class="doc_predicate">
+    <a id="predicate_egscal">
+        <div class="doc_predicate_header">
+            [egscal eg scal trigger] => Creates eg and scaling.<br />
+            <b>Note:</b> module adheres to the behaviour of a <a href="#predicate_base">base</a> module.<br />
+        </div>
+        <div class="doc_predicate_body">
+            Macro for creating eg and scaling modules connected to a trigger.
         </div>
     </a>
 </div>

@@ -12,10 +12,7 @@ program vonforman [BuildVonForman BuildVonFormanPart VF LGV LGT LGP STK STV AEG 
 [[LGP *gate *pb] [gateway *gate] [*gate *pb]]
 [[STK *sens *module *input *trigger] [sensitivity *sens] [*sens "signal" *trigger "key"] [*module *input *sens]]
 [[STV *sens *module *input *trigger] [sensitivity *sens] [*sens "signal" *trigger "velocity"] [*module *input *sens]]
-[[AEG *eg *fm *input *trigger *egscal]
-	[eg *eg] [*eg "trigger" *trigger "trigger"] [*fm *input *eg]
-	[sensitivity *egscal] [*egscal *trigger] [*eg "time1" *egscal] [*eg "time2" *egscal] [*eg "time3" *egscal] [*eg "time4" *egscal]
-]
+[[AEG *eg *fm *input *trigger *egscal] [egscal *eg *egscal *trigger] [*fm *input *eg]]
 [[FEGS *sens *eg *fm *input] [gateway *sens] [*sens *eg] [*fm *input *sens]]
 [[MORPH *morph *ff *name *x *y *lfo1x *lfo1y *lfo2x *lfo2y]
 	[morph *morph]
@@ -258,12 +255,10 @@ program vonforman [BuildVonForman BuildVonFormanPart VF LGV LGT LGP STK STV AEG 
 	[auto *X *XData 6] [*X "trigger" *trigger "trigger"] [*XData "trigger" *trigger "trigger"]
 	[auto *Y *YData 6] [*Y "trigger" *trigger "trigger"] [*YData "trigger" *trigger "trigger"]
 	;========== ADSR =================
-	[adsr *adsr] [*adsr "trigger" *trigger "trigger"] [*trigger "busy" *adsr "busy"]
+	[adsrscal *adsr *egscal *trigger] [*trigger "busy" *adsr "busy"]
 	[*lfo1 "trigger" *adsr "busy"] [*lfo2 "trigger" *adsr "busy"]
-	[sensitivity *egscal] [*egscal *trigger] [*adsr "attack" *egscal] [*adsr "decay" *egscal] [*adsr "release" *egscal]
 	;========== FREQ EG ==============
-	[eg *freqeg] [*freqeg "trigger" *trigger "trigger"]
-	[sensitivity *fegscal] [*fegscal *trigger] [*freqeg "time1" *fegscal] [*freqeg "time2" *fegscal] [*freqeg "time3" *fegscal] [*freqeg "time4" *fegscal]
+	[egscal *freqeg *fegscal *trigger]
 	;========== NOISE ================
 	[noise_operator *noise] [eg *noise_eg] [*noise_eg "trigger" *trigger "trigger"] [*noise "amp" *noise_eg]
 	;========== FM VCO ===============
@@ -274,9 +269,7 @@ program vonforman [BuildVonForman BuildVonFormanPart VF LGV LGT LGP STK STV AEG 
 	[FEGS *freqegf *freqeg *filter "freq"]
 	[*filter "freq" *pitchfreqf]
 	[*filter "freq" *lfo1 "wahwah"] [*filter "freq" *lfo2 "wahwah"]
-	[eg *cteg] [*cteg "trigger" *trigger "trigger"]
-	[sensitivity *ctegscal] [*ctegscal *trigger] [*cteg "time1" *ctegscal] [*cteg "time2" *ctegscal] [*cteg "time3" *ctegscal] [*cteg "time4" *ctegscal]
-	[*filter "freq" *cteg]
+	[egscal *cteg *ctegscal *trigger] [*filter "freq" *cteg]
 	;========== VELOCITY =============
 	[sensitivity *velocity] [*velocity "signal" *trigger "velocity"] [*filter "amp" *velocity]
 	[sensitivity *ctvelocity] [*ctvelocity "signal" *trigger "velocity"] [*filter "freq" *ctvelocity]

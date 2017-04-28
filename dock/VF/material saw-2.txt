@@ -62,7 +62,7 @@ mono
 [vco 1 sens freq key BP]0.0
 [vco 1 sens freq key left]-128.0
 [vco 1 sens freq key right]128.0
-[vco 1 sens freq eg]0.0
+[vco 1 sens freq eg]16384.0
 [vco 1 sens amp key BP]1024.0
 [vco 1 sens amp key left]0.0
 [vco 1 sens amp key right]-128.0
@@ -87,7 +87,7 @@ mono
 [vco 2 sens freq key BP]0.0
 [vco 2 sens freq key left]-128.0
 [vco 2 sens freq key right]128.0
-[vco 2 sens freq eg]0.0
+[vco 2 sens freq eg]16384.0
 [vco 2 sens amp key BP]1024.0
 [vco 2 sens amp key left]0.0
 [vco 2 sens amp key right]-128.0
@@ -112,7 +112,7 @@ mono
 [vco 3 sens freq key BP]0.0
 [vco 3 sens freq key left]-128.0
 [vco 3 sens freq key right]128.0
-[vco 3 sens freq eg]0.0
+[vco 3 sens freq eg]16384.0
 [vco 3 sens amp key BP]0.0
 [vco 3 sens amp key left]0.0
 [vco 3 sens amp key right]0.0
@@ -137,7 +137,7 @@ mono
 [vco 4 sens freq key BP]0.0
 [vco 4 sens freq key left]-128.0
 [vco 4 sens freq key right]128.0
-[vco 4 sens freq eg]0.0
+[vco 4 sens freq eg]16384.0
 [vco 4 sens amp key BP]0.0
 [vco 4 sens amp key left]0.0
 [vco 4 sens amp key right]0.0
@@ -162,7 +162,7 @@ mono
 [vco 5 sens freq key BP]0.0
 [vco 5 sens freq key left]-128.0
 [vco 5 sens freq key right]128.0
-[vco 5 sens freq eg]0.0
+[vco 5 sens freq eg]16384.0
 [vco 5 sens amp key BP]0.0
 [vco 5 sens amp key left]0.0
 [vco 5 sens amp key right]0.0
@@ -187,7 +187,7 @@ mono
 [vco 6 sens freq key BP]0.0
 [vco 6 sens freq key left]-128.0
 [vco 6 sens freq key right]128.0
-[vco 6 sens freq eg]0.0
+[vco 6 sens freq eg]16384.0
 [vco 6 sens amp key BP]0.0
 [vco 6 sens amp key left]0.0
 [vco 6 sens amp key right]0.0

@@ -151,6 +151,7 @@ program vonforman [BuildVonForman BuildVonFormanPart VF LGV LGT LGP STK STV AEG 
 	[Lunar 1792 *VonForman lfo 1 speed]
 	[Lunar 12800 *VonForman core sens velocity BP]
 	[Lunar -64 *VonForman core sens velocity left]
+	[Lunar 12800 *VonForman filter sens velocity BP]
 	[Preset 1 *order1 *VonForman]
 ]
 
@@ -161,6 +162,7 @@ program vonforman [BuildVonForman BuildVonFormanPart VF LGV LGT LGP STK STV AEG 
 	[Lunar 128   *VF vco *index sens freq key right]
 	[Lunar -128  *VF vco *index sens freq key left]
 	[Lunar 12800 *VF vco *index sens amp velocity BP]
+	[Lunar 16384 *VF vco *index sens freq eg]
 	[Lunar 16384 *VF vector amp *index A]
 	[Lunar 16384 *VF vector amp *index B]
 	[Lunar 16384 *VF vector amp *index C]
@@ -272,8 +274,12 @@ program vonforman [BuildVonForman BuildVonFormanPart VF LGV LGT LGP STK STV AEG 
 	[FEGS *freqegf *freqeg *filter "freq"]
 	[*filter "freq" *pitchfreqf]
 	[*filter "freq" *lfo1 "wahwah"] [*filter "freq" *lfo2 "wahwah"]
+	[eg *cteg] [*cteg "trigger" *trigger "trigger"]
+	[sensitivity *ctegscal] [*ctegscal *trigger] [*cteg "time1" *ctegscal] [*cteg "time2" *ctegscal] [*cteg "time3" *ctegscal] [*cteg "time4" *ctegscal]
+	[*filter "freq" *cteg]
 	;========== VELOCITY =============
 	[sensitivity *velocity] [*velocity "signal" *trigger "velocity"] [*filter "amp" *velocity]
+	[sensitivity *ctvelocity] [*ctvelocity "signal" *trigger "velocity"] [*filter "freq" *ctvelocity]
 	;========== LINE CONNECTION ======
 	[*line *filter]
 	;========== FORMANT FILTERS ======
@@ -283,7 +289,10 @@ program vonforman [BuildVonForman BuildVonFormanPart VF LGV LGT LGP STK STV AEG 
 	[Insert *noise *VF vco noise]
 	[Insert *noise_eg *VF vco noise]
 	[Insert *filter *VF filter]
+	[Insert *cteg *VF filter eg]
+	[Insert *ctegscal *VF filter eg egscal]
 	[Insert *filter_key *VF filter sens key]
+	[Insert *ctvelocity *VF filter sens velocity]
 	[Insert *freqegf *VF filter sens eg]
 	[InsertFilterBlock *VF 1 *formant_filters]
 	[InsertOscillatorBlock *VF 1 *oscillators]

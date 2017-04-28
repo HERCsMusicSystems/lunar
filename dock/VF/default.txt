@@ -104,9 +104,23 @@ poly
 [filter freq]5120.0
 [filter resonance]0.0
 [filter amp]0.0
+[filter eg time1]0.0
+[filter eg time2]0.0
+[filter eg time3]0.0
+[filter eg time4]0.0
+[filter eg level1]0.0
+[filter eg level2]0.0
+[filter eg level3]0.0
+[filter eg level4]0.0
+[filter eg egscal BP]0.0
+[filter eg egscal left]0.0
+[filter eg egscal right]0.0
 [filter sens key BP]0.0
 [filter sens key left]0.0
 [filter sens key right]0.0
+[filter sens velocity BP]12800.0
+[filter sens velocity left]0.0
+[filter sens velocity right]0.0
 [filter sens eg]0.0
 [formant 1 freq]5120.0
 [formant 1 resonance]0.0
@@ -218,7 +232,7 @@ poly
 [vco 1 sens freq key BP]0.0
 [vco 1 sens freq key left]-128.0
 [vco 1 sens freq key right]128.0
-[vco 1 sens freq eg]0.0
+[vco 1 sens freq eg]16384.0
 [vco 1 sens amp key BP]0.0
 [vco 1 sens amp key left]0.0
 [vco 1 sens amp key right]0.0
@@ -243,7 +257,7 @@ poly
 [vco 2 sens freq key BP]0.0
 [vco 2 sens freq key left]-128.0
 [vco 2 sens freq key right]128.0
-[vco 2 sens freq eg]0.0
+[vco 2 sens freq eg]16384.0
 [vco 2 sens amp key BP]0.0
 [vco 2 sens amp key left]0.0
 [vco 2 sens amp key right]0.0
@@ -268,7 +282,7 @@ poly
 [vco 3 sens freq key BP]0.0
 [vco 3 sens freq key left]-128.0
 [vco 3 sens freq key right]128.0
-[vco 3 sens freq eg]0.0
+[vco 3 sens freq eg]16384.0
 [vco 3 sens amp key BP]0.0
 [vco 3 sens amp key left]0.0
 [vco 3 sens amp key right]0.0
@@ -293,7 +307,7 @@ poly
 [vco 4 sens freq key BP]0.0
 [vco 4 sens freq key left]-128.0
 [vco 4 sens freq key right]128.0
-[vco 4 sens freq eg]0.0
+[vco 4 sens freq eg]16384.0
 [vco 4 sens amp key BP]0.0
 [vco 4 sens amp key left]0.0
 [vco 4 sens amp key right]0.0
@@ -318,7 +332,7 @@ poly
 [vco 5 sens freq key BP]0.0
 [vco 5 sens freq key left]-128.0
 [vco 5 sens freq key right]128.0
-[vco 5 sens freq eg]0.0
+[vco 5 sens freq eg]16384.0
 [vco 5 sens amp key BP]0.0
 [vco 5 sens amp key left]0.0
 [vco 5 sens amp key right]0.0
@@ -343,7 +357,7 @@ poly
 [vco 6 sens freq key BP]0.0
 [vco 6 sens freq key left]-128.0
 [vco 6 sens freq key right]128.0
-[vco 6 sens freq eg]0.0
+[vco 6 sens freq eg]16384.0
 [vco 6 sens amp key BP]0.0
 [vco 6 sens amp key left]0.0
 [vco 6 sens amp key right]0.0

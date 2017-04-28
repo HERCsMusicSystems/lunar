@@ -59,6 +59,7 @@ private:
 	double ctrl_lsbs [129];
 	double shifts [129];
 	bool mono_mode;
+	bool no_ground;
 	int previous_key;
 	int base_key;
 	int key_counter;

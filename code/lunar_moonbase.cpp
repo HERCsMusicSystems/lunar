@@ -84,8 +84,9 @@ void moonbase :: keyon (int key, int velocity) {
 	lunar_trigger * trigger = select ();
 	if (key_counter++ == 0) base_key = key;
 	if (trigger != 0) {
-		if (mono_mode) trigger -> keyon (key, velocity);
+		if (mono_mode && no_ground) trigger -> keyon (key, velocity);
 		else trigger -> ground (key, velocity, base_key, previous_key >= 0 ? previous_key : key);
+		no_ground = true;
 	}
 	previous_key = key;
 	pthread_mutex_unlock (& critical);
@@ -108,8 +109,8 @@ void moonbase :: keyoff (int key, int velocity) {
 	key_counter--; if (key_counter < 0) key_counter = 0;
 	pthread_mutex_unlock (& critical);
 }
-void moonbase :: mono (void) {mono_mode = true; signal = 0.0; keyoff (); base_key = 64; previous_key = -1;}
-void moonbase :: poly (void) {mono_mode = false; signal = 1.0; keyoff (); base_key = 64; previous_key = -1;}
+void moonbase :: mono (void) {mono_mode = true; no_ground = false; signal = 0.0; keyoff (); base_key = 64; previous_key = -1;}
+void moonbase :: poly (void) {mono_mode = false; no_ground = false; signal = 1.0; keyoff (); base_key = 64; previous_key = -1;}
 bool moonbase :: isMonoMode (void) {return mono_mode;}
 void moonbase :: control (int ctrl, double value) {
 	if (ctrl < 0 || ctrl > 128) return;
@@ -151,7 +152,7 @@ bool moonbase :: release (void) {
 }
 moonbase :: moonbase (orbiter_core * core) : CommandModule (core) {
 	pthread_mutex_init (& critical, 0);
-	choice = triggers = 0; mono_mode = false; signal = 1.0; base_key = 64; previous_key = -1; key_counter = 0;
+	choice = triggers = 0; mono_mode = no_ground = false; signal = 1.0; base_key = 64; previous_key = -1; key_counter = 0;
 	for (int ind = 0; ind < 129; ind++) {controllers [ind] = 0; ctrl_lsbs [ind] = 0; shifts [ind] = 0.0;}
 	initialise ();
 }

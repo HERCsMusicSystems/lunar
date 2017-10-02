@@ -275,7 +275,7 @@ private:
 	int keystack_pointer;
 	void add_stack (int key);
 	void drop_stack (int key);
-	void sub_keyon (int key);
+	void sub_keyon (int key, int from_keyon = true);
 	void sub_velocity (int velocity);
 	pthread_mutex_t critical;
 public:

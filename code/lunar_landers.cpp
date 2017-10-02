@@ -517,12 +517,12 @@ void lunar_trigger :: drop_stack (int key) {
 		}
 	}
 	if (continue_playing) return;
-	if (keystack_pointer > 0) sub_keyon (keystack [--keystack_pointer]);
+	if (keystack_pointer > 0) sub_keyon (keystack [--keystack_pointer], false);
 }
-void lunar_trigger :: sub_keyon (int key) {
+void lunar_trigger :: sub_keyon (int key, int from_keyon) {
 	target = core -> arrange_note (key, transpose, mode, key_map == 0 ? 0 : key_map -> map);
 	this -> key = key;
-	if (porta_switch == 0.0 || porta_time == 0.0 || (porta_control != 0.0 && keystack_pointer < 1)) time = 0.0;
+	if (porta_switch == 0.0 || porta_time == 0.0 || (porta_control != 0.0 && keystack_pointer < 1 && from_keyon)) time = 0.0;
 	else {
 		delta = target - signal;
 		if (porta_ramp == 0.0) time = 1.0;

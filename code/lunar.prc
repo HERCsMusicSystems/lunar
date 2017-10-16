@@ -67,6 +67,7 @@ program lunar #machine := "lunar"
 				BuildIntegratedForman integrated_forman Forman FormanBlocks
 				BuildIntegratedVonForman integrated_vonforman VonForman VonFormanBlocks
 				CommanderHardwareAction AUDIO_HARDWARE_SETTINGS
+				computer_keyboard
 			]
 
 #machine small_keyboard := "small_keyboard"
@@ -1550,6 +1551,48 @@ program lunar #machine := "lunar"
 [[td_process 19 5 2 1]]		; sus 4 6 min			CASIO
 [[td_call *root *mode] [add *mode 1 *m1] [Moons * * *cb : *] [*cb control 81 *root] [*cb control 82 *m1] fail]
 [[td_call : *]]
+
+;[[computer_keyboard : *command] [show *command] fail]
+[[computer_keyboard keyon *key *velocity] [income_midi keyon 0 *key *velocity]]
+[[computer_keyboard  49 * *v] [income_midi keyon 0 58 *v]] ; b
+[[computer_keyboard 113 * *v] [income_midi keyon 0 59 *v]] ; h
+[[computer_keyboard 119 * *v] [income_midi keyon 0 60 *v]] ; c
+[[computer_keyboard  51 * *v] [income_midi keyon 0 61 *v]] ; cis
+[[computer_keyboard 101 * *v] [income_midi keyon 0 62 *v]] ; d
+[[computer_keyboard  52 * *v] [income_midi keyon 0 63 *v]] ; es
+[[computer_keyboard 114 * *v] [income_midi keyon 0 64 *v]] ; e
+[[computer_keyboard 116 * *v] [income_midi keyon 0 65 *v]] ; f
+[[computer_keyboard  54 * *v] [income_midi keyon 0 66 *v]] ; fis
+[[computer_keyboard 121 * *v] [income_midi keyon 0 67 *v]] ; g
+[[computer_keyboard  55 * *v] [income_midi keyon 0 68 *v]] ; gis
+[[computer_keyboard 117 * *v] [income_midi keyon 0 69 *v]] ; a
+[[computer_keyboard  56 * *v] [income_midi keyon 0 70 *v]] ; b
+[[computer_keyboard 105 * *v] [income_midi keyon 0 71 *v]] ; h
+[[computer_keyboard 111 * *v] [income_midi keyon 0 72 *v]] ; c
+[[computer_keyboard  48 * *v] [income_midi keyon 0 73 *v]] ; cis
+[[computer_keyboard 112 * *v] [income_midi keyon 0 74 *v]] ; d
+[[computer_keyboard  45 * *v] [income_midi keyon 0 75 *v]] ; es
+[[computer_keyboard  91 * *v] [income_midi keyon 0 76 *v]] ; e
+[[computer_keyboard  93 * *v] [income_midi keyon 0 77 *v]] ; f
+
+[[computer_keyboard  97 * *v] [income_midi keyon 0 46 *v]] ; b
+[[computer_keyboard 122 * *v] [income_midi keyon 0 47 *v]] ; h
+[[computer_keyboard 120 * *v] [income_midi keyon 0 48 *v]] ; c
+[[computer_keyboard 100 * *v] [income_midi keyon 0 49 *v]] ; cis
+[[computer_keyboard  99 * *v] [income_midi keyon 0 50 *v]] ; d
+[[computer_keyboard 102 * *v] [income_midi keyon 0 51 *v]] ; es
+[[computer_keyboard 118 * *v] [income_midi keyon 0 52 *v]] ; e
+[[computer_keyboard  98 * *v] [income_midi keyon 0 53 *v]] ; f
+[[computer_keyboard 104 * *v] [income_midi keyon 0 54 *v]] ; fis
+[[computer_keyboard 110 * *v] [income_midi keyon 0 55 *v]] ; g
+[[computer_keyboard 106 * *v] [income_midi keyon 0 56 *v]] ; gis
+[[computer_keyboard 109 * *v] [income_midi keyon 0 57 *v]] ; a
+[[computer_keyboard 107 * *v] [income_midi keyon 0 58 *v]] ; b
+[[computer_keyboard  44 * *v] [income_midi keyon 0 59 *v]] ; h
+[[computer_keyboard  46 * *v] [income_midi keyon 0 60 *v]] ; c
+[[computer_keyboard  59 * *v] [income_midi keyon 0 61 *v]] ; cis
+[[computer_keyboard  47 * *v] [income_midi keyon 0 62 *v]] ; d
+[[computer_keyboard  39 * *v] [income_midi keyon 0 63 *v]] ; es
 
 auto := [
 			[var cb_callback cb_path cb_edit_path [InstrumentIndex 0] [AUDIO_HARDWARE_SETTINGS [core 330 48000 128 0 0]]]

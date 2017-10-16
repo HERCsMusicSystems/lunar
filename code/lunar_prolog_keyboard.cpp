@@ -36,12 +36,40 @@ public:
 	PrologAtom * atom;
 	PrologAtom * command;
 	GtkWidget * viewport;
+	int key_table [128], state_table [128], table_pointer;
 	keyboard_active_graphics keyboard;
 	point location;
+	void add_to_played (int key, int state) {key_table [table_pointer] = key; state_table [table_pointer] = state; table_pointer++;}
+	bool already_playing (int key, int state) {
+		for (int ind = 0; ind < table_pointer; ind++) {if (key_table [ind] == key && state_table [ind] == state) return true;}
+		return false;
+	}
+	void remove_from_played (int key, int state) {
+		for (int ind = 0; ind < table_pointer; ind++) {
+			if (key_table [ind] == key && state_table [ind] == state) {
+				table_pointer--;
+				for (int sub = ind; sub < table_pointer; sub++) {
+					key_table [sub] = key_table [sub + 1];
+					state_table [sub] = state_table [sub + 1];
+				}
+				return;
+			}
+		}
+	}
 	void action (int velocity) {
 		PrologElement * query = root -> pair (root -> atom (command),
 								root -> pair (root -> atom (keyon),
 								root -> pair (root -> integer (keyboard . key),
+								root -> pair (root -> integer (velocity),
+								root -> earth ()))));
+		query = root -> pair (root -> head (0), root -> pair (query, root -> earth ()));
+		root -> resolution (query);
+		delete query;
+	}
+	void function_key (int key, int control, int velocity) {
+		PrologElement * query = root -> pair (root -> atom (command),
+								root -> pair (root -> integer (key),
+								root -> pair (root -> integer (control),
 								root -> pair (root -> integer (velocity),
 								root -> earth ()))));
 		query = root -> pair (root -> head (0), root -> pair (query, root -> earth ()));
@@ -61,6 +89,7 @@ public:
 		this -> atom = atom; COLLECTOR_REFERENCE_INC (atom);
 		this -> command = command; COLLECTOR_REFERENCE_INC (command);
 		viewport = 0;
+		table_pointer = 0;
 	}
 	~ keyboard_action (void) {
 		atom -> setMachine (0);
@@ -115,6 +144,23 @@ static gint KeyboardKeyoff (GtkWidget * viewport, GdkEventButton * event, keyboa
 	return TRUE;
 }
 
+static gint FunctionKey (GtkWidget * viewport, GdkEventKey * event, keyboard_action * machine) {
+	int key = (int) event -> keyval;
+	int state = (int) event -> state;
+	if (machine -> already_playing (key, state)) return TRUE;
+	machine -> function_key (key, state, 100);
+	machine -> add_to_played (key, state);
+	return TRUE;
+}
+
+static gint FunctionKeyRelease (GtkWidget * viewport, GdkEventKey * event, keyboard_action * machine) {
+	int key = (int) event -> keyval;
+	int state = (int) event -> state;
+	machine -> function_key ((int) event -> keyval, (int) event -> state, 0);
+	machine -> remove_from_played (key, state);
+	return TRUE;
+}
+
 static gboolean CreateKeyboardIdleCode (keyboard_action * parameter) {
 	parameter -> viewport = gtk_window_new (GTK_WINDOW_TOPLEVEL);
 	gtk_window_set_title (GTK_WINDOW (parameter -> viewport), parameter -> atom -> name ());
@@ -125,6 +171,8 @@ static gboolean CreateKeyboardIdleCode (keyboard_action * parameter) {
 	gtk_widget_add_events (parameter -> viewport, GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK);
 	g_signal_connect (G_OBJECT (parameter -> viewport), "button_press_event", G_CALLBACK (KeyboardKeyon), parameter);
 	g_signal_connect (G_OBJECT (parameter -> viewport), "button_release_event", G_CALLBACK (KeyboardKeyoff), parameter);
+	g_signal_connect (G_OBJECT (parameter -> viewport), "key-press-event", G_CALLBACK (FunctionKey), parameter);
+	g_signal_connect (G_OBJECT (parameter -> viewport), "key-release-event", G_CALLBACK (FunctionKeyRelease), parameter);
 	gtk_window_resize (GTK_WINDOW (parameter -> viewport), (int) parameter -> keyboard . location . size . x, (int) parameter -> keyboard . location . size . y);
 	gtk_widget_show_all (parameter -> viewport);
 	return FALSE;

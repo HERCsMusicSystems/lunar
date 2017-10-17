@@ -38,10 +38,16 @@
 #define CHORUS_PANEL_PNG                231
 #define STEREO_CHORUS_PANEL_PNG         232
 #define FREEVERB_PANEL_PNG              233
+#define SMALL_KEYBOARD_LONG_PNG         234
+#define KEYBOARD_LONG_PNG               235
+#define BIG_KEYBOARD_LONG_PNG           236
 
 #define SMALL_KEYBOARD_SIZE             435
 #define KEYBOARD_SIZE                   579
 #define BIG_KEYBOARD_SIZE               1765
+#define SMALL_KEYBOARD_LONG_SIZE        1535
+#define KEYBOARD_LONG_SIZE              2218
+#define BIG_KEYBOARD_LONG_SIZE          3013
 #define VECTOR_FRAME_SIZE               6171
 #define VECTOR_HANDLE_SIZE              1151
 #define KNOB_SIZE                       3917

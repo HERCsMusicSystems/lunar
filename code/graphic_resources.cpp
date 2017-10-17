@@ -46,6 +46,12 @@ extern char resource_keyboard_start;
 extern char resource_keyboard_end;
 extern char resource_big_keyboard_start;
 extern char resource_big_keyboard_end;
+extern char resource_small_keyboard_long_start;
+extern char resource_small_keyboard_long_end;
+extern char resource_keyboard_long_start;
+extern char resource_keyboard_long_end;
+extern char resource_big_keyboard_long_start;
+extern char resource_big_keyboard_long_end;
 extern char resource_knob_start;
 extern char resource_knob_end;
 extern char resource_knob_surface_start;
@@ -129,6 +135,9 @@ GraphicResources :: GraphicResources (void) {
 	png_closure small_keyboard_closure (GetResource (SMALL_KEYBOARD_PNG), SMALL_KEYBOARD_SIZE);
 	png_closure keyboard_closure (GetResource (KEYBOARD_PNG), KEYBOARD_SIZE);
 	png_closure big_keyboard_closure (GetResource (BIG_KEYBOARD_PNG), BIG_KEYBOARD_SIZE);
+	png_closure small_keyboard_long_closure (GetResource (SMALL_KEYBOARD_LONG_PNG), SMALL_KEYBOARD_LONG_SIZE);
+	png_closure keyboard_long_closure (GetResource (KEYBOARD_LONG_PNG), KEYBOARD_LONG_SIZE);
+	png_closure big_keyboard_long_closure (GetResource (BIG_KEYBOARD_LONG_PNG), BIG_KEYBOARD_LONG_SIZE);
 	png_closure knob_closure (GetResource (KNOB_PNG), KNOB_SIZE);
 	png_closure knob_surface_closure (GetResource (KNOB_SURFACE_PNG), KNOB_SURFACE_SIZE);
 	png_closure knob_handle_closure (GetResource (KNOB_HANDLE_PNG), KNOB_HANDLE_SIZE);
@@ -162,6 +171,9 @@ GraphicResources :: GraphicResources (void) {
 	png_closure small_keyboard_closure (& resource_small_keyboard_start, & resource_small_keyboard_end);
 	png_closure keyboard_closure (& resource_keyboard_start, & resource_keyboard_end);
 	png_closure big_keyboard_closure (& resource_big_keyboard_start, & resource_big_keyboard_end);
+	png_closure small_keyboard_long_closure (& resource_small_keyboard_long_start, & resource_small_keyboard_long_end);
+	png_closure keyboard_long_closure (& resource_keyboard_long_start, & resource_keyboard_long_end);
+	png_closure big_keyboard_long_closure (& resource_big_keyboard_long_start, & resource_big_keyboard_long_end);
 	png_closure knob_closure (& resource_knob_start, & resource_knob_end);
 	png_closure knob_surface_closure (& resource_knob_surface_start, & resource_knob_surface_end);
 	png_closure knob_handle_closure (& resource_knob_handle_start, & resource_knob_handle_end);
@@ -195,6 +207,9 @@ GraphicResources :: GraphicResources (void) {
 	small_keyboard_surface = cairo_image_surface_create_from_png_stream (png_reader, & small_keyboard_closure);
 	keyboard_surface = cairo_image_surface_create_from_png_stream (png_reader, & keyboard_closure);
 	big_keyboard_surface = cairo_image_surface_create_from_png_stream (png_reader, & big_keyboard_closure);
+	small_keyboard_long_surface = cairo_image_surface_create_from_png_stream (png_reader, & small_keyboard_long_closure);
+	keyboard_long_surface = cairo_image_surface_create_from_png_stream (png_reader, & keyboard_long_closure);
+	big_keyboard_long_surface = cairo_image_surface_create_from_png_stream (png_reader, & big_keyboard_long_closure);
 	knob = cairo_image_surface_create_from_png_stream (png_reader, & knob_closure);
 	knob_surface = cairo_image_surface_create_from_png_stream (png_reader, & knob_surface_closure);
 	knob_handle = cairo_image_surface_create_from_png_stream (png_reader, & knob_handle_closure);
@@ -230,6 +245,9 @@ GraphicResources :: ~ GraphicResources (void) {
 	if (small_keyboard_surface != 0) cairo_surface_destroy (small_keyboard_surface);
 	if (keyboard_surface != 0) cairo_surface_destroy (keyboard_surface);
 	if (big_keyboard_surface != 0) cairo_surface_destroy (big_keyboard_surface);
+	if (small_keyboard_long_surface != 0) cairo_surface_destroy (small_keyboard_long_surface);
+	if (keyboard_long_surface != 0) cairo_surface_destroy (keyboard_long_surface);
+	if (big_keyboard_long_surface != 0) cairo_surface_destroy (big_keyboard_long_surface);
 	if (knob != 0) cairo_surface_destroy (knob);
 	if (knob_surface != 0) cairo_surface_destroy (knob_surface);
 	if (knob_handle != 0) cairo_surface_destroy (knob_handle);
@@ -467,6 +485,27 @@ keyboard_active_graphics :: keyboard_active_graphics (point location, int type, 
 		calculator . set_keyboard_layout_y (132, 88);
 		calculator . set_keyboard_layout_x (22, 2, 4, 6, 8, 10);
 		calculator . set_ambitus (17, 54);
+		break;
+	case 3:
+		if (resources != 0 && active_surface) surface = resources -> small_keyboard_long_surface;
+		this -> location . size = point (826, 67);
+		calculator . set_keyboard_layout_y (66, 44);
+		calculator . set_keyboard_layout_x (11, 1, 2, 3, 4, 5);
+		calculator . set_ambitus (0, 75);
+		break;
+	case 4:
+		if (resources != 0 && active_surface) surface = resources -> keyboard_long_surface;
+		this -> location . size = point (1201, 100);
+		calculator . set_keyboard_layout_y (99, 66);
+		calculator . set_keyboard_layout_x (16, 2, 3, 4, 5, 6);
+		calculator . set_ambitus (0, 75);
+		break;
+	case 5:
+		if (resources != 0 && active_surface) surface = resources -> big_keyboard_long_surface;
+		this -> location . size = point (1651, 133);
+		calculator . set_keyboard_layout_y (132, 88);
+		calculator . set_keyboard_layout_x (22, 2, 4, 6, 8, 10);
+		calculator . set_ambitus (0, 75);
 		break;
 	default:
 		if (resources != 0 && active_surface) surface = resources -> small_keyboard_surface;

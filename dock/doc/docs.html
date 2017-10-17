@@ -123,12 +123,14 @@
         <a href="#predicate_BuildLfoPanel">BuildLfoPanel</a>
         <a href="#predicate_BuildParameterBlockPanel">BuildParameterBlockPanel</a>
         <a href="#predicate_BuildStereoChorusPanel">BuildStereoChorusPanel</a>
+        <a href="#predicate_computer_keyboard">computer_keyboard</a>
         <a href="#predicate_Connect">Connect</a>
         <a href="#predicate_ConnectDryWet">ConnectDryWet</a>
         <a href="#predicate_ConnectStereo">ConnectStereo</a>
         <a href="#predicate_DisconnectDryWet">DisconnectDryWet</a>
         <a href="#predicate_DisconnectStereo">DisconnectStereo</a>
         <a href="#predicate_LoopWave">LoopWave</a>
+        <a href="#predicate_midi_monitor">midi_monitor</a>
         <a href="#predicate_MoveCore">MoveCore</a>
         <a href="#predicate_MoveModules">MoveModules</a>
         <a href="#predicate_orbiter">orbiter</a>
@@ -146,6 +148,7 @@
         <br />
         <a href="#predicate_AdsrPanel">AdsrPanel</a>
         <a href="#predicate_big_keyboard">big_keyboard</a>
+        <a href="#predicate_big_keyboard_long">big_keyboard_long</a>
         <a href="#predicate_big_oscilloscope">big_oscilloscope</a>
         <a href="#predicate_big_spectroscope">big_spectroscope</a>
         <a href="#predicate_ChorusPanel">ChorusPanel</a>
@@ -160,10 +163,12 @@
         <a href="#predicate_FormantFilterPanel">FormantFilterPanel</a>
         <a href="#predicate_FreeverbPanel">FreeverbPanel</a>
         <a href="#predicate_keyboard">keyboard</a>
+        <a href="#predicate_keyboard_long">keyboard_long</a>
         <a href="#predicate_LfoPanel">LfoPanel</a>
         <a href="#predicate_oscilloscope">oscilloscope</a>
         <a href="#predicate_ParameterBlockPanel">ParameterBlockPanel</a>
         <a href="#predicate_small_keyboard">small_keyboard</a>
+        <a href="#predicate_small_keyboard_long">small_keyboard_long</a>
         <a href="#predicate_spectroscope">spectroscope</a>
         <a href="#predicate_StereoChorusPanel">StereoChorusPanel</a>
         <a href="#predicate_vector">vector</a>
@@ -2060,6 +2065,19 @@ A typical construction of an instrument and inserting it into the superstructure
 </div>
 
 <div class="doc_predicate">
+    <a id="predicate_computer_keyboard">
+        <div class="doc_predicate_header">
+            [[computer_keyboard keyon key velocity] ....]<br />
+            [[computer_keyboard computer_key status velocity] ....]
+        </div>
+        <div class="doc_predicate_body">
+            Transmits parameter to the Superstructure on channel 0.
+            Can be used as a callback to <a href="#predicate_keyboard">all keyboards</a>.
+        </div>
+    </a>
+</div>
+
+<div class="doc_predicate">
     <a id="predicate_Connect">
         <div class="doc_predicate_header">
             [Connect : *modules] => Connects two modules.<br />
@@ -2121,6 +2139,19 @@ A typical construction of an instrument and inserting it into the superstructure
             Creates a copy of an audio wave file with loop section.
             The <b>to</b> parameter is the first sample of the tail section and as such
             does not belong to the loop itself.
+        </div>
+    </a>
+</div>
+
+<div class="doc_predicate">
+    <a id="predicate_midi_monitor">
+        <div class="doc_predicate_header">
+            [[midi_monitor activesensing]]<br />
+            [[midi_monitor : *command] [show *command]]
+        </div>
+        <div class="doc_predicate_body">
+            Callback for displaying incoming midi messages.
+            Can be used with <a href="#predicate_midi">midi</a> interfaces.
         </div>
     </a>
 </div>
@@ -2343,11 +2374,36 @@ A typical construction of an instrument and inserting it into the superstructure
             [atom] => closes the panel<br />
             callback is called as follows:<br />
             [callback keyon key 100] => for keyon<br />
-            [callback keyon key 0] => for keyoff
+            [callback keyon key 0] => for keyoff<br />
+            [callback computer_keyboard_key status 100] => for keyon<br />
+            [callback computer_keyboard_key status 0] => for keyoff<br />
+            <font color=red>Attention! It is practical to construct keyboard with <a href="#predicate_computer_keyboard">computer_keyboard</a> callback
+            as it communicates directly with the Superstructure.</font>
         </div>
         <div class="doc_predicate_body">
             Creates a panel containing a big keyboard.<br />
             <img src="big_keyboard.png" />
+        </div>
+    </a>
+</div>
+
+<div class="doc_predicate">
+    <a id="predicate_big_keyboard_long">
+        <div class="doc_predicate_header">
+            [big_keyboard_long atom callback]<br />
+            [atom *x *y] => reposition on the screen<br />
+            [atom] => closes the panel<br />
+            callback is called as follows:<br />
+            [callback keyon key 100] => for keyon<br />
+            [callback keyon key 0] => for keyoff<br />
+            [callback computer_keyboard_key status 100] => for keyon<br />
+            [callback computer_keyboard_key status 0] => for keyoff<br />
+            <font color=red>Attention! It is practical to construct keyboard with <a href="#predicate_computer_keyboard">computer_keyboard</a> callback
+            as it communicates directly with the Superstructure.</font>
+        </div>
+        <div class="doc_predicate_body">
+            Creates a panel containing a big keyboard.<br />
+            <img src="big_keyboard_long.png" />
         </div>
     </a>
 </div>
@@ -2582,11 +2638,36 @@ A typical construction of an instrument and inserting it into the superstructure
             [atom] => closes the panel<br />
             callback is called as follows:<br />
             [callback keyon key 100] => for keyon<br />
-            [callback keyon key 0] => for keyoff
+            [callback keyon key 0] => for keyoff<br />
+            [callback computer_keyboard_key status 100] => for keyon<br />
+            [callback computer_keyboard_key status 0] => for keyoff<br />
+            <font color=red>Attention! It is practical to construct keyboard with <a href="#predicate_computer_keyboard">computer_keyboard</a> callback
+            as it communicates directly with the Superstructure.</font>
         </div>
         <div class="doc_predicate_body">
             Creates a panel containing a keyboard.<br />
             <img src="keyboard.png" />
+        </div>
+    </a>
+</div>
+
+<div class="doc_predicate">
+    <a id="predicate_keyboard_long">
+        <div class="doc_predicate_header">
+            [keyboard_long atom callback]<br />
+            [atom *x *y] => reposition on the screen<br />
+            [atom] => closes the panel<br />
+            callback is called as follows:<br />
+            [callback keyon key 100] => for keyon<br />
+            [callback keyon key 0] => for keyoff<br />
+            [callback computer_keyboard_key status 100] => for keyon<br />
+            [callback computer_keyboard_key status 0] => for keyoff<br />
+            <font color=red>Attention! It is practical to construct keyboard with <a href="#predicate_computer_keyboard">computer_keyboard</a> callback
+            as it communicates directly with the Superstructure.</font>
+        </div>
+        <div class="doc_predicate_body">
+            Creates a panel containing a keyboard.<br />
+            <img src="keyboard_long.png" />
         </div>
     </a>
 </div>
@@ -2651,11 +2732,36 @@ A typical construction of an instrument and inserting it into the superstructure
             [atom] => closes the panel<br />
             callback is called as follows:<br />
             [callback keyon key 100] => for keyon<br />
-            [callback keyon key 0] => for keyoff
+            [callback keyon key 0] => for keyoff<br />
+            [callback computer_keyboard_key status 100] => for keyon<br />
+            [callback computer_keyboard_key status 0] => for keyoff<br />
+            <font color=red>Attention! It is practical to construct keyboard with <a href="#predicate_computer_keyboard">computer_keyboard</a> callback
+            as it communicates directly with the Superstructure.</font>
         </div>
         <div class="doc_predicate_body">
             Creates a panel containing a small keyboard.<br />
             <img src="small_keyboard.png" />
+        </div>
+    </a>
+</div>
+
+<div class="doc_predicate">
+    <a id="predicate_small_keyboard_long">
+        <div class="doc_predicate_header">
+            [small_keyboard_long atom callback]<br />
+            [atom *x *y] => reposition on the screen<br />
+            [atom] => closes the panel<br />
+            callback is called as follows:<br />
+            [callback keyon key 100] => for keyon<br />
+            [callback keyon key 0] => for keyoff<br />
+            [callback computer_keyboard_key status 100] => for keyon<br />
+            [callback computer_keyboard_key status 0] => for keyoff<br />
+            <font color=red>Attention! It is practical to construct keyboard with <a href="#predicate_computer_keyboard">computer_keyboard</a> callback
+            as it communicates directly with the Superstructure.</font>
+        </div>
+        <div class="doc_predicate_body">
+            Creates a panel containing a small keyboard.<br />
+            <img src="small_keyboard_long.png" />
         </div>
     </a>
 </div>

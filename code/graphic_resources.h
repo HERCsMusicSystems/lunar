@@ -36,6 +36,9 @@ public:
 	cairo_surface_t * small_keyboard_surface;
 	cairo_surface_t * keyboard_surface;
 	cairo_surface_t * big_keyboard_surface;
+	cairo_surface_t * small_keyboard_long_surface;
+	cairo_surface_t * keyboard_long_surface;
+	cairo_surface_t * big_keyboard_long_surface;
 	cairo_surface_t * knob;
 	cairo_surface_t * knob_surface;
 	cairo_surface_t * knob_handle;

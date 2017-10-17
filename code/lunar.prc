@@ -7,7 +7,8 @@ import prcgtk
 
 program lunar #machine := "lunar"
 			[
-				small_keyboard keyboard big_keyboard oscilloscope spectroscope big_oscilloscope big_spectroscope vector CommandCentre detector
+				small_keyboard keyboard big_keyboard small_keyboard_long keyboard_long big_keyboard_long
+				oscilloscope spectroscope big_oscilloscope big_spectroscope vector CommandCentre detector
 				noise orbiter X Y modulation vibrato tremolo wahwah range
 				core jack base moonbase arpeggiator sequencer prolog_sequencer polysequencer multitrack
 				operator parameter_block latch morph auto auto_data key_map velocity_map impulse
@@ -73,6 +74,9 @@ program lunar #machine := "lunar"
 #machine small_keyboard := "small_keyboard"
 #machine keyboard := "keyboard"
 #machine big_keyboard := "big_keyboard"
+#machine small_keyboard_long := "small_keyboard_long"
+#machine keyboard_long := "keyboard_long"
+#machine big_keyboard_long := "big_keyboard_long"
 #machine oscilloscope := "oscilloscope"
 #machine spectroscope := "spectroscope"
 #machine big_oscilloscope := "big_oscilloscope"

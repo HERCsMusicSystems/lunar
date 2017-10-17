@@ -183,6 +183,30 @@ big_keyboard.o: ../graphics/big_keyboard.png
 		../graphics/big_keyboard.png big_keyboard.o
 	objdump -t big_keyboard.o
 
+small_keyboard_long.o: ../graphics/small_keyboard_long.png
+	objcopy --input binary --output elf64-x86-64 --binary-architecture i386\
+		--redefine-sym _binary____graphics_small_keyboard_long_png_start=resource_small_keyboard_long_start\
+		--redefine-sym _binary____graphics_small_keyboard_long_png_end=resource_small_keyboard_long_end\
+		--redefine-sym _binary____graphics_small_keyboard_long_png_size=resource_small_keyboard_long_size\
+		../graphics/small_keyboard_long.png small_keyboard_long.o
+	objdump -t small_keyboard_long.o
+
+keyboard_long.o: ../graphics/keyboard_long.png
+	objcopy --input binary --output elf64-x86-64 --binary-architecture i386\
+		--redefine-sym _binary____graphics_keyboard_long_png_start=resource_keyboard_long_start\
+		--redefine-sym _binary____graphics_keyboard_long_png_end=resource_keyboard_long_end\
+		--redefine-sym _binary____graphics_keyboard_long_png_size=resource_keyboard_long_size\
+		../graphics/keyboard_long.png keyboard_long.o
+	objdump -t keyboard_long.o
+
+big_keyboard_long.o: ../graphics/big_keyboard_long.png
+	objcopy --input binary --output elf64-x86-64 --binary-architecture i386\
+		--redefine-sym _binary____graphics_big_keyboard_long_png_start=resource_big_keyboard_long_start\
+		--redefine-sym _binary____graphics_big_keyboard_long_png_end=resource_big_keyboard_long_end\
+		--redefine-sym _binary____graphics_big_keyboard_long_png_size=resource_big_keyboard_long_size\
+		../graphics/big_keyboard_long.png big_keyboard_long.o
+	objdump -t big_keyboard_long.o
+
 vector_frame.o: ../graphics/vector_frame.png
 	objcopy --input binary --output elf64-x86-64 --binary-architecture i386\
 		--redefine-sym _binary____graphics_vector_frame_png_start=resource_vector_frame_start\
@@ -402,7 +426,8 @@ prcgtk.o: ../code/prcgtk.cpp ../code/prolog_lunar.h ../code/lunar.h\
 	$(pc)prolog_http.h $(pc)prolog_distribution.h $(pc)prolog_control.h
 	g++ -Wno-write-strings -I. -I$(pc) ../code/prcgtk.cpp -c -o prcgtk.o `pkg-config --cflags gtk+-2.0`
 
-graphics = small_keyboard.o keyboard.o big_keyboard.o vector_frame.o vector_handle.o knob.o knob_surface.o\
+graphics = small_keyboard.o keyboard.o big_keyboard.o small_keyboard_long.o keyboard_long.o big_keyboard_long.o
+	vector_frame.o vector_handle.o knob.o knob_surface.o\
 	knob_handle.o display.o button_on.o button_off.o encoder_surface.o encoder_handle.o slider_surface.o slider_handle.o\
 	command_centre.o adsr_panel.o eg_panel.o fm4_panel.o fm4_algo.o core_panel.o\
 	lfo_panel.o lfo_vibrato.o lfo_tremolo.o lfo_wah_wah.o lfo_pan.o filter_panel.o formant_filter_panel.o\

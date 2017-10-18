@@ -68,7 +68,7 @@ program lunar #machine := "lunar"
 				BuildIntegratedForman integrated_forman Forman FormanBlocks
 				BuildIntegratedVonForman integrated_vonforman VonForman VonFormanBlocks
 				CommanderHardwareAction AUDIO_HARDWARE_SETTINGS
-				computer_keyboard
+				computer_keyboard hex_keyboard
 			]
 
 #machine small_keyboard := "small_keyboard"
@@ -1556,7 +1556,6 @@ program lunar #machine := "lunar"
 [[td_call *root *mode] [add *mode 1 *m1] [Moons * * *cb : *] [*cb control 81 *root] [*cb control 82 *m1] fail]
 [[td_call : *]]
 
-;[[computer_keyboard : *command] [show *command] fail]
 [[computer_keyboard keyon *key *velocity] [income_midi keyon 0 *key *velocity]]
 [[computer_keyboard  49 * *v] [income_midi keyon 0 58 *v]] ; b
 [[computer_keyboard 113 * *v] [income_midi keyon 0 59 *v]] ; h
@@ -1597,6 +1596,62 @@ program lunar #machine := "lunar"
 [[computer_keyboard  59 * *v] [income_midi keyon 0 61 *v]] ; cis
 [[computer_keyboard  47 * *v] [income_midi keyon 0 62 *v]] ; d
 [[computer_keyboard  39 * *v] [income_midi keyon 0 63 *v]] ; es
+
+[[hex_keyboard 65289 * *v] [income_midi keyon 0 45 *v]] ; TAB
+[[hex_keyboard 113 * *v] [income_midi keyon 0 48 *v]] ; q
+[[hex_keyboard 119 * *v] [income_midi keyon 0 51 *v]] ; w
+[[hex_keyboard 101 * *v] [income_midi keyon 0 54 *v]] ; e
+[[hex_keyboard 114 * *v] [income_midi keyon 0 57 *v]] ; r
+[[hex_keyboard 116 * *v] [income_midi keyon 0 60 *v]] ; t
+[[hex_keyboard 121 * *v] [income_midi keyon 0 63 *v]] ; y
+[[hex_keyboard 117 * *v] [income_midi keyon 0 66 *v]] ; u
+[[hex_keyboard 105 * *v] [income_midi keyon 0 69 *v]] ; i
+[[hex_keyboard 111 * *v] [income_midi keyon 0 72 *v]] ; o
+[[hex_keyboard 112 * *v] [income_midi keyon 0 75 *v]] ; p
+[[hex_keyboard  91 * *v] [income_midi keyon 0 78 *v]] ; [
+[[hex_keyboard  93 * *v] [income_midi keyon 0 81 *v]] ; ]
+[[hex_keyboard  92 * *v] [income_midi keyon 0 84 *v]] ; \
+
+[[hex_keyboard  97 * *v] [income_midi keyon 0 50 *v]] ; a
+[[hex_keyboard 115 * *v] [income_midi keyon 0 53 *v]] ; s
+[[hex_keyboard 100 * *v] [income_midi keyon 0 56 *v]] ; d
+[[hex_keyboard 102 * *v] [income_midi keyon 0 59 *v]] ; f
+[[hex_keyboard 103 * *v] [income_midi keyon 0 62 *v]] ; g
+[[hex_keyboard 104 * *v] [income_midi keyon 0 65 *v]] ; h
+[[hex_keyboard 106 * *v] [income_midi keyon 0 68 *v]] ; j
+[[hex_keyboard 107 * *v] [income_midi keyon 0 71 *v]] ; k
+[[hex_keyboard 108 * *v] [income_midi keyon 0 74 *v]] ; l
+[[hex_keyboard  59 * *v] [income_midi keyon 0 77 *v]] ; ;
+[[hex_keyboard  39 * *v] [income_midi keyon 0 80 *v]] ; '
+[[hex_keyboard 65293 * *v] [income_midi keyon 0 83 *v]] ; ENTER
+
+[[hex_keyboard  96 * *v] [income_midi keyon 0 43 *v]] ; `
+[[hex_keyboard  49 * *v] [income_midi keyon 0 46 *v]] ; 1
+[[hex_keyboard  50 * *v] [income_midi keyon 0 49 *v]] ; 2
+[[hex_keyboard  51 * *v] [income_midi keyon 0 52 *v]] ; 3
+[[hex_keyboard  52 * *v] [income_midi keyon 0 55 *v]] ; 4
+[[hex_keyboard  53 * *v] [income_midi keyon 0 58 *v]] ; 5
+[[hex_keyboard  54 * *v] [income_midi keyon 0 61 *v]] ; 6
+[[hex_keyboard  55 * *v] [income_midi keyon 0 64 *v]] ; 7
+[[hex_keyboard  56 * *v] [income_midi keyon 0 67 *v]] ; 8
+[[hex_keyboard  57 * *v] [income_midi keyon 0 70 *v]] ; 9
+[[hex_keyboard  48 * *v] [income_midi keyon 0 73 *v]] ; 0
+[[hex_keyboard  45 * *v] [income_midi keyon 0 76 *v]] ; -
+[[hex_keyboard  61 * *v] [income_midi keyon 0 79 *v]] ; =
+[[hex_keyboard  65288 * *v] [income_midi keyon 0 82 *v]] ; BACKSPACE
+
+[[hex_keyboard 122 * *v] [income_midi keyon 0 52 *v]] ; z
+[[hex_keyboard 120 * *v] [income_midi keyon 0 55 *v]] ; x
+[[hex_keyboard  99 * *v] [income_midi keyon 0 58 *v]] ; c
+[[hex_keyboard 118 * *v] [income_midi keyon 0 61 *v]] ; v
+[[hex_keyboard  98 * *v] [income_midi keyon 0 64 *v]] ; b
+[[hex_keyboard 110 * *v] [income_midi keyon 0 67 *v]] ; n
+[[hex_keyboard 109 * *v] [income_midi keyon 0 70 *v]] ; m
+[[hex_keyboard  44 * *v] [income_midi keyon 0 73 *v]] ; ,
+[[hex_keyboard  46 * *v] [income_midi keyon 0 76 *v]] ; .
+[[hex_keyboard  47 * *v] [income_midi keyon 0 79 *v]] ; /
+
+[[hex_keyboard : *x] [show *x]]
 
 auto := [
 			[var cb_callback cb_path cb_edit_path [InstrumentIndex 0] [AUDIO_HARDWARE_SETTINGS [core 330 48000 128 0 0]]]

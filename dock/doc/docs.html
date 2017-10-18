@@ -129,6 +129,7 @@
         <a href="#predicate_ConnectStereo">ConnectStereo</a>
         <a href="#predicate_DisconnectDryWet">DisconnectDryWet</a>
         <a href="#predicate_DisconnectStereo">DisconnectStereo</a>
+        <a href="#predicate_hex_keyboard">hex_keyboard</a>
         <a href="#predicate_LoopWave">LoopWave</a>
         <a href="#predicate_midi_monitor">midi_monitor</a>
         <a href="#predicate_MoveCore">MoveCore</a>
@@ -2126,6 +2127,20 @@ A typical construction of an instrument and inserting it into the superstructure
             It replaces four lines of disconnections.
             Works with input modules with <b>"LEFT"</b> and <b>"RIGHT"</b> signals
             and output modules with <b>"DRYLEFT"</b>, <b>"DRYRIGHT"</b>, <b>"WETLEFT"</b> and <b>"WETRIGHT"</b> signals.
+        </div>
+    </a>
+</div>
+
+<div class="doc_predicate">
+    <a id="predicate_hex_keyboard">
+        <div class="doc_predicate_header">
+            [[hex_keyboard keyon key velocity] ....]<br />
+            [[hex_keyboard computer_key status velocity] ....]
+        </div>
+        <div class="doc_predicate_body">
+            Transmits parameter to the Superstructure on channel 0.
+            Emulates button accordion layout (western-style).
+            Can be used as a callback to <a href="#predicate_keyboard">all keyboards</a>.
         </div>
     </a>
 </div>

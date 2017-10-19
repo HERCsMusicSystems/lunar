@@ -1597,6 +1597,7 @@ program lunar #machine := "lunar"
 [[computer_keyboard  47 * *v] [income_midi keyon 0 62 *v]] ; d
 [[computer_keyboard  39 * *v] [income_midi keyon 0 63 *v]] ; es
 
+[[hex_keyboard keyon *key *velocity] [income_midi keyon 0 *key *velocity]]
 [[hex_keyboard 65289 * *v] [income_midi keyon 0 45 *v]] ; TAB
 [[hex_keyboard 113 * *v] [income_midi keyon 0 48 *v]] ; q
 [[hex_keyboard 119 * *v] [income_midi keyon 0 51 *v]] ; w

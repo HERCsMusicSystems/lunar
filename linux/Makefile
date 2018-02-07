@@ -426,7 +426,7 @@ prcgtk.o: ../code/prcgtk.cpp ../code/prolog_lunar.h ../code/lunar.h\
 	$(pc)prolog_http.h $(pc)prolog_distribution.h $(pc)prolog_control.h
 	g++ -Wno-write-strings -I. -I$(pc) ../code/prcgtk.cpp -c -o prcgtk.o `pkg-config --cflags gtk+-2.0`
 
-graphics = small_keyboard.o keyboard.o big_keyboard.o small_keyboard_long.o keyboard_long.o big_keyboard_long.o
+graphics = small_keyboard.o keyboard.o big_keyboard.o small_keyboard_long.o keyboard_long.o big_keyboard_long.o\
 	vector_frame.o vector_handle.o knob.o knob_surface.o\
 	knob_handle.o display.o button_on.o button_off.o encoder_surface.o encoder_handle.o slider_surface.o slider_handle.o\
 	command_centre.o adsr_panel.o eg_panel.o fm4_panel.o fm4_algo.o core_panel.o\

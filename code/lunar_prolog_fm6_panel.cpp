@@ -28,17 +28,21 @@
 
 class fm6_panel_action : public AudioModulePanel {
 public:
-	PrologAtom * algo, * a12, * a13, * a14, * a23, * a24, * a34;
+	PrologAtom * algo, * a12, * a13, * a14, * a15, * a16, * a23, * a24, * a25, * a26, * a34, * a35, * a36, * a45, * a46, * a56;
 	PrologAtom * freq1, * amp1, * ratio1, * feedback1;
 	PrologAtom * freq2, * amp2, * ratio2, * feedback2;
 	PrologAtom * freq3, * amp3, * ratio3, * feedback3;
 	PrologAtom * freq4, * amp4, * ratio4, * feedback4;
+	PrologAtom * freq5, * amp5, * ratio5, * feedback5;
+	PrologAtom * freq6, * amp6, * ratio6, * feedback6;
 	knob_active_graphics ALGO;
 	knob_active_graphics FREQ1, AMP1, RATIO1, FEEDBACK1;
 	knob_active_graphics FREQ2, AMP2, RATIO2, FEEDBACK2;
 	knob_active_graphics FREQ3, AMP3, RATIO3, FEEDBACK3;
 	knob_active_graphics FREQ4, AMP4, RATIO4, FEEDBACK4;
-	button_active_graphics feed12, feed13, feed14, feed23, feed24, feed34;
+	knob_active_graphics FREQ5, AMP5, RATIO5, FEEDBACK5;
+	knob_active_graphics FREQ6, AMP6, RATIO6, FEEDBACK6;
+	button_active_graphics feed12, feed13, feed14, feed15, feed16, feed23, feed24, feed25, feed26, feed34, feed35, feed36, feed45, feed46, feed56;
 	cairo_surface_t * algo_image;
 	bool dx;
 	void move (PrologAtom * a, double v) {
@@ -306,12 +310,29 @@ public:
 	AMP4 (point (380, 98), 0, resources, true, active, -16384.0, 0.0),
 	RATIO4 (point (450, 98), 0, resources, true, active, 1.0, 33.0),
 	FEEDBACK4 (point (520, 98), 0, resources, true, active, 0.0, 16384.0),
+	FREQ5 (point (18, 186), 0, resources, true, active, -8192.0, 8192.0),
+	AMP5 (point (88, 186), 0, resources, true, active, -16384.0, 0.0),
+	RATIO5 (point (158, 186), 0, resources, true, active, 1.0, 33.0),
+	FEEDBACK5 (point (228, 186), 0, resources, true, active, 0.0, 16384.0),
+	FREQ6 (point (310, 186), 0, resources, true, active, -8192.0, 8192.0),
+	AMP6 (point (380, 186), 0, resources, true, active, -16384.0, 0.0),
+	RATIO6 (point (450, 186), 0, resources, true, active, 1.0, 33.0),
+	FEEDBACK6 (point (520, 186), 0, resources, true, active, 0.0, 16384.0),
 	feed12 (point (584, 118), 0, resources, true),
 	feed13 (point (610, 118), 0, resources, true),
 	feed14 (point (636, 118), 0, resources, true),
+	feed15 (point (662, 118), 0, resources, true),
+	feed16 (point (698, 118), 0, resources, true),
 	feed23 (point (610, 138), 0, resources, true),
 	feed24 (point (636, 138), 0, resources, true),
+	feed25 (point (662, 138), 0, resources, true),
+	feed26 (point (698, 138), 0, resources, true),
 	feed34 (point (636, 158), 0, resources, true),
+	feed35 (point (662, 158), 0, resources, true),
+	feed36 (point (698, 158), 0, resources, true),
+	feed45 (point (662, 178), 0, resources, true),
+	feed46 (point (698, 178), 0, resources, true),
+	feed56 (point (698, 198), 0, resources, true),
 	AudioModulePanel (root, atom, resources != 0 ? resources -> fm6_panel_surface : 0) {
 		this -> dx = dx;
 		algo_image = resources != 0 ? resources -> fm4_algo_surface : 0;

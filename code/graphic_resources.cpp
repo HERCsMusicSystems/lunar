@@ -80,6 +80,8 @@ extern char resource_eg_panel_start;
 extern char resource_eg_panel_end;
 extern char resource_fm4_panel_start;
 extern char resource_fm4_panel_end;
+extern char resource_fm6_panel_start;
+extern char resource_fm6_panel_end;
 extern char resource_fm4_algo_start;
 extern char resource_fm4_algo_end;
 extern char resource_core_panel_start;
@@ -152,6 +154,7 @@ GraphicResources :: GraphicResources (void) {
 	png_closure adsr_panel_surface_closure (GetResource (ADSR_PANEL_PNG), ADSR_PANEL_SIZE);
 	png_closure eg_panel_surface_closure (GetResource (EG_PANEL_PNG), EG_PANEL_SIZE);
 	png_closure fm4_panel_surface_closure (GetResource (FM4_PANEL_PNG), FM4_PANEL_SIZE);
+	png_closure fm6_panel_surface_closure (GetResource (FM6_PANEL_PNG), FM6_PANEL_SIZE);
 	png_closure fm4_algo_surface_closure (GetResource (FM4_ALGO_PNG), FM4_ALGO_SIZE);
 	png_closure core_panel_surface_closure (GetResource (CORE_PANEL_PNG), CORE_PANEL_SIZE);
 	png_closure lfo_panel_surface_closure (GetResource (LFO_PANEL_PNG), LFO_PANEL_SIZE);
@@ -188,6 +191,7 @@ GraphicResources :: GraphicResources (void) {
 	png_closure adsr_panel_surface_closure (& resource_adsr_panel_start, & resource_adsr_panel_end);
 	png_closure eg_panel_surface_closure (& resource_eg_panel_start, & resource_eg_panel_end);
 	png_closure fm4_panel_surface_closure (& resource_fm4_panel_start, & resource_fm4_panel_end);
+	png_closure fm6_panel_surface_closure (& resource_fm6_panel_start, & resource_fm6_panel_end);
 	png_closure fm4_algo_surface_closure (& resource_fm4_algo_start, & resource_fm4_algo_end);
 	png_closure core_panel_surface_closure (& resource_core_panel_start, & resource_core_panel_end);
 	png_closure lfo_panel_surface_closure (& resource_lfo_panel_start, & resource_lfo_panel_end);
@@ -224,6 +228,7 @@ GraphicResources :: GraphicResources (void) {
 	adsr_panel_surface = cairo_image_surface_create_from_png_stream (png_reader, & adsr_panel_surface_closure);
 	eg_panel_surface = cairo_image_surface_create_from_png_stream (png_reader, & eg_panel_surface_closure);
 	fm4_panel_surface = cairo_image_surface_create_from_png_stream (png_reader, & fm4_panel_surface_closure);
+	fm6_panel_surface = cairo_image_surface_create_from_png_stream (png_reader, & fm6_panel_surface_closure);
 	fm4_algo_surface = cairo_image_surface_create_from_png_stream (png_reader, & fm4_algo_surface_closure);
 	core_panel_surface = cairo_image_surface_create_from_png_stream (png_reader, & core_panel_surface_closure);
 	lfo_panel_surface = cairo_image_surface_create_from_png_stream (png_reader, & lfo_panel_surface_closure);
@@ -262,6 +267,7 @@ GraphicResources :: ~ GraphicResources (void) {
 	if (adsr_panel_surface != 0) cairo_surface_destroy (adsr_panel_surface);
 	if (eg_panel_surface != 0) cairo_surface_destroy (eg_panel_surface);
 	if (fm4_panel_surface != 0) cairo_surface_destroy (fm4_panel_surface);
+	if (fm6_panel_surface != 0) cairo_surface_destroy (fm6_panel_surface);
 	if (fm4_algo_surface != 0) cairo_surface_destroy (fm4_algo_surface);
 	if (core_panel_surface != 0) cairo_surface_destroy (core_panel_surface);
 	if (lfo_panel_surface != 0) cairo_surface_destroy (lfo_panel_surface);

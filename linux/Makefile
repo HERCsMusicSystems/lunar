@@ -17,7 +17,7 @@ objects = \
 	keyboard_calculator.o lunar_prolog_moonbase.o lunar_moonbase.o lunar_prolog_landers.o chromatic.o lunar_landers.o lunar_wave.o\
 	lunar_prolog_vector.o lunar_prolog_control_panel.o graphics2d.o graphic_resources.o multiplatform_audio.o\
 	lunar_prolog_parameter_block_panel.o lunar_prolog_adsr_panel.o lunar_prolog_eg_panel.o\
-	lunar_prolog_fm4_panel.o lunar_prolog_core_panel.o lunar_prolog_lfo_panel.o lunar_prolog_filter_panel.o\
+	lunar_prolog_fm4_panel.o lunar_prolog_fm6_panel.o lunar_prolog_core_panel.o lunar_prolog_lfo_panel.o lunar_prolog_filter_panel.o\
 	lunar_prolog_delay_panel.o lunar_prolog_chorus_panel.o lunar_prolog_schorus_panel.o lunar_prolog_freeverb_panel.o lunar_prolog_panel_base.o\
 	lunar_linux_midi.o prcgtk.o
 
@@ -91,6 +91,10 @@ lunar_prolog_eg_panel.o: ../code/lunar_prolog_eg_panel.cpp ../code/lunar.h ../co
 lunar_prolog_fm4_panel.o: ../code/lunar_prolog_fm4_panel.cpp ../code/lunar.h ../code/prolog_lunar.h ../code/lunar_prolog_panel_base.h $(pc)prolog.h\
 			$(pc)graphics2d.h ../code/graphic_resources.h
 	g++ -Wno-write-strings -I. -I$(pc) ../code/lunar_prolog_fm4_panel.cpp -c -o lunar_prolog_fm4_panel.o `pkg-config --cflags gtk+-2.0` -fPIC
+
+lunar_prolog_fm6_panel.o: ../code/lunar_prolog_fm6_panel.cpp ../code/lunar.h ../code/prolog_lunar.h ../code/lunar_prolog_panel_base.h $(pc)prolog.h\
+			$(pc)graphics2d.h ../code/graphic_resources.h
+	g++ -Wno-write-strings -I. -I$(pc) ../code/lunar_prolog_fm6_panel.cpp -c -o lunar_prolog_fm6_panel.o `pkg-config --cflags gtk+-2.0` -fPIC
 
 lunar_prolog_core_panel.o: ../code/lunar_prolog_core_panel.cpp ../code/lunar.h ../code/prolog_lunar.h $(pc)prolog.h\
 			$(pc)graphics2d.h ../code/graphic_resources.h
@@ -324,6 +328,13 @@ fm4_panel.o: ../graphics/fm4_panel.png
 		../graphics/fm4_panel.png fm4_panel.o
 	objdump -t fm4_panel.o
 
+fm6_panel.o: ../graphics/fm6_panel.png
+	objcopy --input binary --output elf64-x86-64 --binary-architecture i386\
+		--redefine-sym _binary____graphics_fm6_panel_png_start=resource_fm6_panel_start\
+		--redefine-sym _binary____graphics_fm6_panel_png_end=resource_fm6_panel_end\
+		../graphics/fm6_panel.png fm6_panel.o
+	objdump -t fm6_panel.o
+
 fm4_algo.o: ../graphics/fm4_algo.png
 	objcopy --input binary --output elf64-x86-64 --binary-architecture i386\
 		--redefine-sym _binary____graphics_fm4_algo_png_start=resource_fm4_algo_start\
@@ -429,7 +440,7 @@ prcgtk.o: ../code/prcgtk.cpp ../code/prolog_lunar.h ../code/lunar.h\
 graphics = small_keyboard.o keyboard.o big_keyboard.o small_keyboard_long.o keyboard_long.o big_keyboard_long.o\
 	vector_frame.o vector_handle.o knob.o knob_surface.o\
 	knob_handle.o display.o button_on.o button_off.o encoder_surface.o encoder_handle.o slider_surface.o slider_handle.o\
-	command_centre.o adsr_panel.o eg_panel.o fm4_panel.o fm4_algo.o core_panel.o\
+	command_centre.o adsr_panel.o eg_panel.o fm4_panel.o fm6_panel.o fm4_algo.o core_panel.o\
 	lfo_panel.o lfo_vibrato.o lfo_tremolo.o lfo_wah_wah.o lfo_pan.o filter_panel.o formant_filter_panel.o\
 	delay_panel.o chorus_panel.o stereo_chorus_panel.o freeverb_panel.o
 
@@ -437,8 +448,8 @@ lunar_objects = \
 	prolog_lunar.o lunar_core.o lunar_prolog_oscilloscope.o lunar_prolog_keyboard.o lunar_prolog_operator.o lunar_operator.o\
 	keyboard_calculator.o lunar_prolog_moonbase.o lunar_moonbase.o lunar_prolog_landers.o chromatic.o lunar_landers.o lunar_wave.o\
 	lunar_prolog_vector.o lunar_prolog_control_panel.o graphics2d.o graphic_resources.o multiplatform_audio.o\
-	lunar_prolog_parameter_block_panel.o lunar_prolog_adsr_panel.o lunar_prolog_eg_panel.o\
-	lunar_prolog_fm4_panel.o lunar_prolog_core_panel.o lunar_prolog_lfo_panel.o lunar_prolog_filter_panel.o lunar_prolog_formant_filter_panel.o\
+	lunar_prolog_parameter_block_panel.o lunar_prolog_adsr_panel.o lunar_prolog_eg_panel.o lunar_prolog_fm4_panel.o lunar_prolog_fm6_panel.o\
+	lunar_prolog_core_panel.o lunar_prolog_lfo_panel.o lunar_prolog_filter_panel.o lunar_prolog_formant_filter_panel.o\
 	lunar_prolog_delay_panel.o lunar_prolog_chorus_panel.o lunar_prolog_schorus_panel.o lunar_prolog_freeverb_panel.o lunar_prolog_panel_base.o\
 	lunar_integrated_components.o lunar_integrated_alarm.o lunar_integrated_microdot.o lunar_integrated_abakos.o lunar_integrated_phobos.o\
 	lunar_linux_midi.o

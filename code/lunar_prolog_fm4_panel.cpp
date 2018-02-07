@@ -78,7 +78,7 @@ public:
 		query = root -> pair (root -> pair (root -> atom (ratio4), root -> pair (root -> var (15), root -> earth ())), query);
 		query = root -> pair (root -> pair (root -> atom (amp4), root -> pair (root -> var (14), root -> earth ())), query);
 		query = root -> pair (root -> pair (root -> atom (freq4), root -> pair (root -> var (13), root -> earth ())), query);
-		query = root -> pair (root -> pair (root -> atom (feedback4), root -> pair (root -> var (12), root -> earth ())), query);
+		query = root -> pair (root -> pair (root -> atom (feedback3), root -> pair (root -> var (12), root -> earth ())), query);
 		query = root -> pair (root -> pair (root -> atom (ratio3), root -> pair (root -> var (11), root -> earth ())), query);
 		query = root -> pair (root -> pair (root -> atom (amp3), root -> pair (root -> var (10), root -> earth ())), query);
 		query = root -> pair (root -> pair (root -> atom (freq3), root -> pair (root -> var (9), root -> earth ())), query);
@@ -161,7 +161,7 @@ public:
 		query = root -> pair (root -> pair (root -> atom (ratio4), root -> pair (root -> var (20), root -> earth ())), query);
 		query = root -> pair (root -> pair (root -> atom (amp4), root -> pair (root -> var (19), root -> earth ())), query);
 		query = root -> pair (root -> pair (root -> atom (freq4), root -> pair (root -> var (18), root -> earth ())), query);
-		query = root -> pair (root -> pair (root -> atom (feedback4), root -> pair (root -> var (17), root -> earth ())), query);
+		query = root -> pair (root -> pair (root -> atom (feedback3), root -> pair (root -> var (17), root -> earth ())), query);
 		query = root -> pair (root -> pair (root -> atom (ratio3), root -> pair (root -> var (16), root -> earth ())), query);
 		query = root -> pair (root -> pair (root -> atom (amp3), root -> pair (root -> var (15), root -> earth ())), query);
 		query = root -> pair (root -> pair (root -> atom (freq3), root -> pair (root -> var (14), root -> earth ())), query);

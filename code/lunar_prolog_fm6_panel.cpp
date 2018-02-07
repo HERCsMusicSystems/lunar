@@ -312,6 +312,22 @@ public:
 			if (sub -> isNumber ()) RATIO4 . setValue (sub -> getNumber ());
 			el = el -> getRight (); if (! el -> isPair ()) {delete query; return;} sub = el -> getLeft ();
 			if (sub -> isNumber ()) FEEDBACK4 . setValue (sub -> getNumber ());
+			el = el -> getRight (); if (! el -> isPair ()) {delete query; return;} sub = el -> getLeft ();
+			if (sub -> isNumber ()) FREQ5 . setValue (sub -> getNumber ());
+			el = el -> getRight (); if (! el -> isPair ()) {delete query; return;} sub = el -> getLeft ();
+			if (sub -> isNumber ()) AMP5 . setValue (sub -> getNumber ());
+			el = el -> getRight (); if (! el -> isPair ()) {delete query; return;} sub = el -> getLeft ();
+			if (sub -> isNumber ()) RATIO5 . setValue (sub -> getNumber ());
+			el = el -> getRight (); if (! el -> isPair ()) {delete query; return;} sub = el -> getLeft ();
+			if (sub -> isNumber ()) FEEDBACK5 . setValue (sub -> getNumber ());
+			el = el -> getRight (); if (! el -> isPair ()) {delete query; return;} sub = el -> getLeft ();
+			if (sub -> isNumber ()) FREQ6 . setValue (sub -> getNumber ());
+			el = el -> getRight (); if (! el -> isPair ()) {delete query; return;} sub = el -> getLeft ();
+			if (sub -> isNumber ()) AMP6 . setValue (sub -> getNumber ());
+			el = el -> getRight (); if (! el -> isPair ()) {delete query; return;} sub = el -> getLeft ();
+			if (sub -> isNumber ()) RATIO6 . setValue (sub -> getNumber ());
+			el = el -> getRight (); if (! el -> isPair ()) {delete query; return;} sub = el -> getLeft ();
+			if (sub -> isNumber ()) FEEDBACK6 . setValue (sub -> getNumber ());
 		}
 		delete query;
 	}

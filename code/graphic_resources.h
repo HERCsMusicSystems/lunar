@@ -54,6 +54,7 @@ public:
 	cairo_surface_t * eg_panel_surface;
 	cairo_surface_t * fm4_panel_surface;
 	cairo_surface_t * fm4_algo_surface;
+	cairo_surface_t * fm6_panel_surface;
 	cairo_surface_t * core_panel_surface;
 	cairo_surface_t * lfo_panel_surface;
 	cairo_surface_t * lfo_vibrato_surface;

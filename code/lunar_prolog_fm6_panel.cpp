@@ -334,11 +334,17 @@ public:
 	void feedback (void) {if (dx) feedback_dx (); else feedback_fm ();}
 	void redraw (cairo_t * cr) {
 		if (dx) {cairo_set_source_surface (cr, algo_image, 598, 98); cairo_paint (cr); ALGO . draw (cr);}
-		else {feed12 . draw (cr); feed13 . draw (cr); feed14 . draw (cr); feed23 . draw (cr); feed24 . draw (cr); feed34 . draw (cr);}
+		else {
+			feed12 . draw (cr); feed13 . draw (cr); feed14 . draw (cr); feed15 . draw (cr); feed16 . draw (cr);
+			feed23 . draw (cr); feed24 . draw (cr); feed25 . draw (cr); feed26 . draw (cr);
+			feed34 . draw (cr); feed35 . draw (cr); feed36 . draw (cr); feed45 . draw (cr); feed46 . draw (cr); feed56 . draw (cr);
+		}
 		FREQ1 . draw (cr); AMP1 . draw (cr); RATIO1 . draw (cr); FEEDBACK1 . draw (cr);
 		FREQ2 . draw (cr); AMP2 . draw (cr); RATIO2 . draw (cr); FEEDBACK2 . draw (cr);
 		FREQ3 . draw (cr); AMP3 . draw (cr); RATIO3 . draw (cr); FEEDBACK3 . draw (cr);
 		FREQ4 . draw (cr); AMP4 . draw (cr); RATIO4 . draw (cr); FEEDBACK4 . draw (cr);
+		FREQ5 . draw (cr); AMP5 . draw (cr); RATIO5 . draw (cr); FEEDBACK5 . draw (cr);
+		FREQ6 . draw (cr); AMP6 . draw (cr); RATIO6 . draw (cr); FEEDBACK6 . draw (cr);
 	}
 	void MouseKeyon (point location, int button) {
 		if (dx) ALGO . keyon (location);

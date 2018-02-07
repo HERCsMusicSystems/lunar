@@ -76,13 +76,29 @@ public:
 									root -> pair (root -> var (13),
 									root -> pair (root -> var (14),
 									root -> pair (root -> var (15),
-									root -> pair (root -> var (16), root -> earth ())))))))))))))))));
+									root -> pair (root -> var (16),
+									root -> pair (root -> var (17),
+									root -> pair (root -> var (18),
+									root -> pair (root -> var (19),
+									root -> pair (root -> var (20),
+									root -> pair (root -> var (21),
+									root -> pair (root -> var (22),
+									root -> pair (root -> var (23),
+									root -> pair (root -> var (24), root -> earth ())))))))))))))))))))))))));
 		PrologElement * query;
-		query = root -> pair (root -> pair (root -> atom (feedback4), root -> pair (root -> var (16), root -> earth ())), root -> earth ());
+		query = root -> pair (root -> pair (root -> atom (feedback6), root -> pair (root -> var (24), root -> earth ())), root -> earth ());
+		query = root -> pair (root -> pair (root -> atom (ratio6), root -> pair (root -> var (23), root -> earth ())), query);
+		query = root -> pair (root -> pair (root -> atom (amp6), root -> pair (root -> var (22), root -> earth ())), query);
+		query = root -> pair (root -> pair (root -> atom (freq6), root -> pair (root -> var (21), root -> earth ())), query);
+		query = root -> pair (root -> pair (root -> atom (feedback5), root -> pair (root -> var (20), root -> earth ())), query);
+		query = root -> pair (root -> pair (root -> atom (ratio5), root -> pair (root -> var (19), root -> earth ())), query);
+		query = root -> pair (root -> pair (root -> atom (amp5), root -> pair (root -> var (18), root -> earth ())), query);
+		query = root -> pair (root -> pair (root -> atom (freq5), root -> pair (root -> var (17), root -> earth ())), query);
+		query = root -> pair (root -> pair (root -> atom (feedback4), root -> pair (root -> var (16), root -> earth ())), query);
 		query = root -> pair (root -> pair (root -> atom (ratio4), root -> pair (root -> var (15), root -> earth ())), query);
 		query = root -> pair (root -> pair (root -> atom (amp4), root -> pair (root -> var (14), root -> earth ())), query);
 		query = root -> pair (root -> pair (root -> atom (freq4), root -> pair (root -> var (13), root -> earth ())), query);
-		query = root -> pair (root -> pair (root -> atom (feedback4), root -> pair (root -> var (12), root -> earth ())), query);
+		query = root -> pair (root -> pair (root -> atom (feedback3), root -> pair (root -> var (12), root -> earth ())), query);
 		query = root -> pair (root -> pair (root -> atom (ratio3), root -> pair (root -> var (11), root -> earth ())), query);
 		query = root -> pair (root -> pair (root -> atom (amp3), root -> pair (root -> var (10), root -> earth ())), query);
 		query = root -> pair (root -> pair (root -> atom (freq3), root -> pair (root -> var (9), root -> earth ())), query);
@@ -134,6 +150,22 @@ public:
 			if (sub -> isNumber ()) RATIO4 . setValue (sub -> getNumber ());
 			el = el -> getRight (); if (! el -> isPair ()) {delete query; return;} sub = el -> getLeft ();
 			if (sub -> isNumber ()) FEEDBACK4 . setValue (sub -> getNumber ());
+			el = el -> getRight (); if (! el -> isPair ()) {delete query; return;} sub = el -> getLeft ();
+			if (sub -> isNumber ()) FREQ5 . setValue (sub -> getNumber ());
+			el = el -> getRight (); if (! el -> isPair ()) {delete query; return;} sub = el -> getLeft ();
+			if (sub -> isNumber ()) AMP5 . setValue (sub -> getNumber ());
+			el = el -> getRight (); if (! el -> isPair ()) {delete query; return;} sub = el -> getLeft ();
+			if (sub -> isNumber ()) RATIO5 . setValue (sub -> getNumber ());
+			el = el -> getRight (); if (! el -> isPair ()) {delete query; return;} sub = el -> getLeft ();
+			if (sub -> isNumber ()) FEEDBACK5 . setValue (sub -> getNumber ());
+			el = el -> getRight (); if (! el -> isPair ()) {delete query; return;} sub = el -> getLeft ();
+			if (sub -> isNumber ()) FREQ6 . setValue (sub -> getNumber ());
+			el = el -> getRight (); if (! el -> isPair ()) {delete query; return;} sub = el -> getLeft ();
+			if (sub -> isNumber ()) AMP6 . setValue (sub -> getNumber ());
+			el = el -> getRight (); if (! el -> isPair ()) {delete query; return;} sub = el -> getLeft ();
+			if (sub -> isNumber ()) RATIO6 . setValue (sub -> getNumber ());
+			el = el -> getRight (); if (! el -> isPair ()) {delete query; return;} sub = el -> getLeft ();
+			if (sub -> isNumber ()) FEEDBACK6 . setValue (sub -> getNumber ());
 		}
 		delete query;
 	}
@@ -159,27 +191,61 @@ public:
 									root -> pair (root -> var (18),
 									root -> pair (root -> var (19),
 									root -> pair (root -> var (20),
-									root -> pair (root -> var (21), root -> earth ()))))))))))))))))))))));
+									root -> pair (root -> var (21),
+									root -> pair (root -> var (22),
+									root -> pair (root -> var (23),
+									root -> pair (root -> var (24),
+									root -> pair (root -> var (25),
+									root -> pair (root -> var (26),
+									root -> pair (root -> var (27),
+									root -> pair (root -> var (28),
+									root -> pair (root -> var (29),
+									root -> pair (root -> var (30),
+									root -> pair (root -> var (31),
+									root -> pair (root -> var (32),
+									root -> pair (root -> var (33),
+									root -> pair (root -> var (34),
+									root -> pair (root -> var (35),
+									root -> pair (root -> var (36),
+									root -> pair (root -> var (37),
+									root -> pair (root -> var (38), root -> earth ())))))))))))))))))))))))))))))))))))))));
 		PrologElement * query;
-		query = root -> pair (root -> pair (root -> atom (feedback4), root -> pair (root -> var (21), root -> earth ())), root -> earth ());
-		query = root -> pair (root -> pair (root -> atom (ratio4), root -> pair (root -> var (20), root -> earth ())), query);
-		query = root -> pair (root -> pair (root -> atom (amp4), root -> pair (root -> var (19), root -> earth ())), query);
-		query = root -> pair (root -> pair (root -> atom (freq4), root -> pair (root -> var (18), root -> earth ())), query);
-		query = root -> pair (root -> pair (root -> atom (feedback4), root -> pair (root -> var (17), root -> earth ())), query);
-		query = root -> pair (root -> pair (root -> atom (ratio3), root -> pair (root -> var (16), root -> earth ())), query);
-		query = root -> pair (root -> pair (root -> atom (amp3), root -> pair (root -> var (15), root -> earth ())), query);
-		query = root -> pair (root -> pair (root -> atom (freq3), root -> pair (root -> var (14), root -> earth ())), query);
-		query = root -> pair (root -> pair (root -> atom (feedback2), root -> pair (root -> var (13), root -> earth ())), query);
-		query = root -> pair (root -> pair (root -> atom (ratio2), root -> pair (root -> var (12), root -> earth ())), query);
-		query = root -> pair (root -> pair (root -> atom (amp2), root -> pair (root -> var (11), root -> earth ())), query);
-		query = root -> pair (root -> pair (root -> atom (freq2), root -> pair (root -> var (10), root -> earth ())), query);
-		query = root -> pair (root -> pair (root -> atom (feedback1), root -> pair (root -> var (9), root -> earth ())), query);
-		query = root -> pair (root -> pair (root -> atom (ratio1), root -> pair (root -> var (8), root -> earth ())), query);
-		query = root -> pair (root -> pair (root -> atom (amp1), root -> pair (root -> var (7), root -> earth ())), query);
-		query = root -> pair (root -> pair (root -> atom (freq1), root -> pair (root -> var (6), root -> earth ())), query);
-		query = root -> pair (root -> pair (root -> atom (a34), root -> pair (root -> var (5), root -> earth ())), query);
-		query = root -> pair (root -> pair (root -> atom (a24), root -> pair (root -> var (4), root -> earth ())), query);
-		query = root -> pair (root -> pair (root -> atom (a23), root -> pair (root -> var (3), root -> earth ())), query);
+		query = root -> pair (root -> pair (root -> atom (feedback6), root -> pair (root -> var (38), root -> earth ())), root -> earth ());
+		query = root -> pair (root -> pair (root -> atom (ratio6), root -> pair (root -> var (37), root -> earth ())), query);
+		query = root -> pair (root -> pair (root -> atom (amp6), root -> pair (root -> var (36), root -> earth ())), query);
+		query = root -> pair (root -> pair (root -> atom (freq6), root -> pair (root -> var (35), root -> earth ())), query);
+		query = root -> pair (root -> pair (root -> atom (feedback5), root -> pair (root -> var (34), root -> earth ())), query);
+		query = root -> pair (root -> pair (root -> atom (ratio5), root -> pair (root -> var (33), root -> earth ())), query);
+		query = root -> pair (root -> pair (root -> atom (amp5), root -> pair (root -> var (32), root -> earth ())), query);
+		query = root -> pair (root -> pair (root -> atom (freq5), root -> pair (root -> var (31), root -> earth ())), query);
+		query = root -> pair (root -> pair (root -> atom (feedback4), root -> pair (root -> var (30), root -> earth ())), query);
+		query = root -> pair (root -> pair (root -> atom (ratio4), root -> pair (root -> var (29), root -> earth ())), query);
+		query = root -> pair (root -> pair (root -> atom (amp4), root -> pair (root -> var (28), root -> earth ())), query);
+		query = root -> pair (root -> pair (root -> atom (freq4), root -> pair (root -> var (27), root -> earth ())), query);
+		query = root -> pair (root -> pair (root -> atom (feedback3), root -> pair (root -> var (26), root -> earth ())), query);
+		query = root -> pair (root -> pair (root -> atom (ratio3), root -> pair (root -> var (25), root -> earth ())), query);
+		query = root -> pair (root -> pair (root -> atom (amp3), root -> pair (root -> var (24), root -> earth ())), query);
+		query = root -> pair (root -> pair (root -> atom (freq3), root -> pair (root -> var (23), root -> earth ())), query);
+		query = root -> pair (root -> pair (root -> atom (feedback2), root -> pair (root -> var (22), root -> earth ())), query);
+		query = root -> pair (root -> pair (root -> atom (ratio2), root -> pair (root -> var (21), root -> earth ())), query);
+		query = root -> pair (root -> pair (root -> atom (amp2), root -> pair (root -> var (20), root -> earth ())), query);
+		query = root -> pair (root -> pair (root -> atom (freq2), root -> pair (root -> var (19), root -> earth ())), query);
+		query = root -> pair (root -> pair (root -> atom (feedback1), root -> pair (root -> var (18), root -> earth ())), query);
+		query = root -> pair (root -> pair (root -> atom (ratio1), root -> pair (root -> var (17), root -> earth ())), query);
+		query = root -> pair (root -> pair (root -> atom (amp1), root -> pair (root -> var (16), root -> earth ())), query);
+		query = root -> pair (root -> pair (root -> atom (freq1), root -> pair (root -> var (15), root -> earth ())), query);
+		query = root -> pair (root -> pair (root -> atom (a56), root -> pair (root -> var (14), root -> earth ())), query);
+		query = root -> pair (root -> pair (root -> atom (a46), root -> pair (root -> var (13), root -> earth ())), query);
+		query = root -> pair (root -> pair (root -> atom (a45), root -> pair (root -> var (12), root -> earth ())), query);
+		query = root -> pair (root -> pair (root -> atom (a36), root -> pair (root -> var (11), root -> earth ())), query);
+		query = root -> pair (root -> pair (root -> atom (a35), root -> pair (root -> var (10), root -> earth ())), query);
+		query = root -> pair (root -> pair (root -> atom (a34), root -> pair (root -> var (9), root -> earth ())), query);
+		query = root -> pair (root -> pair (root -> atom (a26), root -> pair (root -> var (8), root -> earth ())), query);
+		query = root -> pair (root -> pair (root -> atom (a25), root -> pair (root -> var (7), root -> earth ())), query);
+		query = root -> pair (root -> pair (root -> atom (a24), root -> pair (root -> var (6), root -> earth ())), query);
+		query = root -> pair (root -> pair (root -> atom (a23), root -> pair (root -> var (5), root -> earth ())), query);
+		query = root -> pair (root -> pair (root -> atom (a16), root -> pair (root -> var (4), root -> earth ())), query);
+		query = root -> pair (root -> pair (root -> atom (a15), root -> pair (root -> var (3), root -> earth ())), query);
 		query = root -> pair (root -> pair (root -> atom (a14), root -> pair (root -> var (2), root -> earth ())), query);
 		query = root -> pair (root -> pair (root -> atom (a13), root -> pair (root -> var (1), root -> earth ())), query);
 		query = root -> pair (root -> pair (root -> atom (a12), root -> pair (root -> var (0), root -> earth ())), query);
@@ -195,11 +261,25 @@ public:
 			el = el -> getRight (); if (! el -> isPair ()) {delete query; return;} sub = el -> getLeft ();
 			if (sub -> isNumber ()) feed14 . engaged = (sub -> getNumber () != 0.0);
 			el = el -> getRight (); if (! el -> isPair ()) {delete query; return;} sub = el -> getLeft ();
+			if (sub -> isNumber ()) feed15 . engaged = (sub -> getNumber () != 0.0);
+			el = el -> getRight (); if (! el -> isPair ()) {delete query; return;} sub = el -> getLeft ();
+			if (sub -> isNumber ()) feed16 . engaged = (sub -> getNumber () != 0.0);
+			el = el -> getRight (); if (! el -> isPair ()) {delete query; return;} sub = el -> getLeft ();
 			if (sub -> isNumber ()) feed23 . engaged = (sub -> getNumber () != 0.0);
 			el = el -> getRight (); if (! el -> isPair ()) {delete query; return;} sub = el -> getLeft ();
 			if (sub -> isNumber ()) feed24 . engaged = (sub -> getNumber () != 0.0);
 			el = el -> getRight (); if (! el -> isPair ()) {delete query; return;} sub = el -> getLeft ();
+			if (sub -> isNumber ()) feed25 . engaged = (sub -> getNumber () != 0.0);
+			el = el -> getRight (); if (! el -> isPair ()) {delete query; return;} sub = el -> getLeft ();
+			if (sub -> isNumber ()) feed26 . engaged = (sub -> getNumber () != 0.0);
+			el = el -> getRight (); if (! el -> isPair ()) {delete query; return;} sub = el -> getLeft ();
 			if (sub -> isNumber ()) feed34 . engaged = (sub -> getNumber () != 0.0);
+			el = el -> getRight (); if (! el -> isPair ()) {delete query; return;} sub = el -> getLeft ();
+			if (sub -> isNumber ()) feed45 . engaged = (sub -> getNumber () != 0.0);
+			el = el -> getRight (); if (! el -> isPair ()) {delete query; return;} sub = el -> getLeft ();
+			if (sub -> isNumber ()) feed46 . engaged = (sub -> getNumber () != 0.0);
+			el = el -> getRight (); if (! el -> isPair ()) {delete query; return;} sub = el -> getLeft ();
+			if (sub -> isNumber ()) feed56 . engaged = (sub -> getNumber () != 0.0);
 			el = el -> getRight (); if (! el -> isPair ()) {delete query; return;} sub = el -> getLeft ();
 			if (sub -> isNumber ()) FREQ1 . setValue (sub -> getNumber ());
 			el = el -> getRight (); if (! el -> isPair ()) {delete query; return;} sub = el -> getLeft ();

@@ -48,9 +48,10 @@ program lunar #machine := "lunar"
 				Bb/ B/ b/ B#/
 				Hb/ H/ H#/
 				midi midicom
-				ParameterBlockPanel AdsrPanel EGPanel FEGPanel DX9Panel FM4Panel CorePanel LfoPanel FilterPanel FormantFilterPanel
+				ParameterBlockPanel AdsrPanel EGPanel FEGPanel DX9Panel FM4Panel DX7Panel FM6Panel CorePanel LfoPanel FilterPanel FormantFilterPanel
 				DelayPanel ChorusPanel StereoChorusPanel FreeverbPanel
-				BuildParameterBlockPanel BuildAdsrPanel BuildEGPanel BuildFEGPanel BuildDX9Panel BuildFM4Panel BuildLfoPanel
+				BuildParameterBlockPanel BuildAdsrPanel BuildEGPanel BuildFEGPanel BuildLfoPanel
+				BuildDX9Panel BuildFM4Panel BuildDX7Panel BuildFM6Panel
 				BuildFilterPanel BuildFormantFilterPanel
 				BuildDelayPanel BuildChorusPanel BuildStereoChorusPanel BuildFreeverbPanel
 				MoveModules PropagateSignals MoveCore LunarDrop FUNCTION_KEY
@@ -162,6 +163,8 @@ program lunar #machine := "lunar"
 #machine FEGPanel := "FEGPanel"
 #machine DX9Panel := "DX9Panel"
 #machine FM4Panel := "FM4Panel"
+#machine DX7Panel := "DX7Panel"
+#machine FM6Panel := "FM6Panel"
 #machine CorePanel := "CorePanel"
 #machine LfoPanel := "LfoPanel"
 #machine FilterPanel := "FilterPanel"
@@ -258,6 +261,43 @@ program lunar #machine := "lunar"
 	]
 ]
 
+[[BuildDX7Panel *panel *instrument : *path]
+	[*instrument *parameters : *]
+	[APPEND *path [algo] *algo_path] [*parameters *algo : *algo_path]
+	[APPEND *path [1 freq] *freq1_path] [*parameters *freq1 : *freq1_path]
+	[APPEND *path [1 amp] *amp1_path] [*parameters *amp1 : *amp1_path]
+	[APPEND *path [1 ratio] *ratio1_path] [*parameters *ratio1 : *ratio1_path]
+	[APPEND *path [1 feedback] *feedback1_path] [*parameters *feedback1 : *feedback1_path]
+	[APPEND *path [2 freq] *freq2_path] [*parameters *freq2 : *freq2_path]
+	[APPEND *path [2 amp] *amp2_path] [*parameters *amp2 : *amp2_path]
+	[APPEND *path [2 ratio] *ratio2_path] [*parameters *ratio2 : *ratio2_path]
+	[APPEND *path [2 feedback] *feedback2_path] [*parameters *feedback2 : *feedback2_path]
+	[APPEND *path [3 freq] *freq3_path] [*parameters *freq3 : *freq3_path]
+	[APPEND *path [3 amp] *amp3_path] [*parameters *amp3 : *amp3_path]
+	[APPEND *path [3 ratio] *ratio3_path] [*parameters *ratio3 : *ratio3_path]
+	[APPEND *path [3 feedback] *feedback3_path] [*parameters *feedback3 : *feedback3_path]
+	[APPEND *path [4 freq] *freq4_path] [*parameters *freq4 : *freq4_path]
+	[APPEND *path [4 amp] *amp4_path] [*parameters *amp4 : *amp4_path]
+	[APPEND *path [4 ratio] *ratio4_path] [*parameters *ratio4 : *ratio4_path]
+	[APPEND *path [4 feedback] *feedback4_path] [*parameters *feedback4 : *feedback4_path]
+	[APPEND *path [5 freq] *freq5_path] [*parameters *freq5 : *freq5_path]
+	[APPEND *path [5 amp] *amp5_path] [*parameters *amp5 : *amp5_path]
+	[APPEND *path [5 ratio] *ratio5_path] [*parameters *ratio5 : *ratio5_path]
+	[APPEND *path [5 feedback] *feedback5_path] [*parameters *feedback5 : *feedback5_path]
+	[APPEND *path [6 freq] *freq6_path] [*parameters *freq6 : *freq6_path]
+	[APPEND *path [6 amp] *amp6_path] [*parameters *amp6 : *amp6_path]
+	[APPEND *path [6 ratio] *ratio6_path] [*parameters *ratio6 : *ratio6_path]
+	[APPEND *path [6 feedback] *feedback6_path] [*parameters *feedback6 : *feedback6_path]
+	[DX7Panel *panel *algo
+		*freq1 *amp1 *ratio1 *feedback1
+		*freq2 *amp2 *ratio2 *feedback2
+		*freq3 *amp3 *ratio3 *feedback3
+		*freq4 *amp4 *ratio4 *feedback4
+		*freq5 *amp5 *ratio5 *feedback5
+		*freq6 *amp6 *ratio6 *feedback6
+	]
+]
+
 [[BuildFM4Panel *panel *instrument : *path]
 	[*instrument *parameters : *]
 	[APPEND *path [algo 1 2] *a12_path] [*parameters *a12 : *a12_path]
@@ -287,6 +327,57 @@ program lunar #machine := "lunar"
 		*freq2 *amp2 *ratio2 *feedback2
 		*freq3 *amp3 *ratio3 *feedback3
 		*freq4 *amp4 *ratio4 *feedback4
+	]
+]
+
+[[BuildFM6Panel *panel *instrument : *path]
+	[*instrument *parameters : *]
+	[APPEND *path [algo 1 2] *a12_path] [*parameters *a12 : *a12_path]
+	[APPEND *path [algo 1 3] *a13_path] [*parameters *a13 : *a13_path]
+	[APPEND *path [algo 1 4] *a14_path] [*parameters *a14 : *a14_path]
+	[APPEND *path [algo 1 5] *a15_path] [*parameters *a15 : *a16_path]
+	[APPEND *path [algo 1 6] *a16_path] [*parameters *a16 : *a16_path]
+	[APPEND *path [algo 2 3] *a23_path] [*parameters *a23 : *a23_path]
+	[APPEND *path [algo 2 4] *a24_path] [*parameters *a24 : *a24_path]
+	[APPEND *path [algo 2 5] *a25_path] [*parameters *a25 : *a25_path]
+	[APPEND *path [algo 2 6] *a26_path] [*parameters *a26 : *a26_path]
+	[APPEND *path [algo 3 4] *a34_path] [*parameters *a34 : *a34_path]
+	[APPEND *path [algo 3 5] *a35_path] [*parameters *a35 : *a35_path]
+	[APPEND *path [algo 3 6] *a36_path] [*parameters *a36 : *a36_path]
+	[APPEND *path [algo 4 5] *a45_path] [*parameters *a45 : *a45_path]
+	[APPEND *path [algo 4 6] *a46_path] [*parameters *a46 : *a46_path]
+	[APPEND *path [algo 5 6] *a56_path] [*parameters *a56 : *a56_path]
+	[APPEND *path [1 freq] *freq1_path] [*parameters *freq1 : *freq1_path]
+	[APPEND *path [1 amp] *amp1_path] [*parameters *amp1 : *amp1_path]
+	[APPEND *path [1 ratio] *ratio1_path] [*parameters *ratio1 : *ratio1_path]
+	[APPEND *path [1 feedback] *feedback1_path] [*parameters *feedback1 : *feedback1_path]
+	[APPEND *path [2 freq] *freq2_path] [*parameters *freq2 : *freq2_path]
+	[APPEND *path [2 amp] *amp2_path] [*parameters *amp2 : *amp2_path]
+	[APPEND *path [2 ratio] *ratio2_path] [*parameters *ratio2 : *ratio2_path]
+	[APPEND *path [2 feedback] *feedback2_path] [*parameters *feedback2 : *feedback2_path]
+	[APPEND *path [3 freq] *freq3_path] [*parameters *freq3 : *freq3_path]
+	[APPEND *path [3 amp] *amp3_path] [*parameters *amp3 : *amp3_path]
+	[APPEND *path [3 ratio] *ratio3_path] [*parameters *ratio3 : *ratio3_path]
+	[APPEND *path [3 feedback] *feedback3_path] [*parameters *feedback3 : *feedback3_path]
+	[APPEND *path [4 freq] *freq4_path] [*parameters *freq4 : *freq4_path]
+	[APPEND *path [4 amp] *amp4_path] [*parameters *amp4 : *amp4_path]
+	[APPEND *path [4 ratio] *ratio4_path] [*parameters *ratio4 : *ratio4_path]
+	[APPEND *path [4 feedback] *feedback4_path] [*parameters *feedback4 : *feedback4_path]
+	[APPEND *path [5 freq] *freq5_path] [*parameters *freq5 : *freq5_path]
+	[APPEND *path [5 amp] *amp5_path] [*parameters *amp5 : *amp5_path]
+	[APPEND *path [5 ratio] *ratio5_path] [*parameters *ratio5 : *ratio5_path]
+	[APPEND *path [5 feedback] *feedback5_path] [*parameters *feedback5 : *feedback5_path]
+	[APPEND *path [6 freq] *freq6_path] [*parameters *freq6 : *freq6_path]
+	[APPEND *path [6 amp] *amp6_path] [*parameters *amp6 : *amp6_path]
+	[APPEND *path [6 ratio] *ratio6_path] [*parameters *ratio6 : *ratio6_path]
+	[APPEND *path [6 feedback] *feedback6_path] [*parameters *feedback6 : *feedback6_path]
+	[FM6Panel *panel *a12 *a13 *a14 *a15 *a16 *a23 *a24 *a25 *a26 *a34 *a35 *a36 *a45 *a46 *a56
+		*freq1 *amp1 *ratio1 *feedback1
+		*freq2 *amp2 *ratio2 *feedback2
+		*freq3 *amp3 *ratio3 *feedback3
+		*freq4 *amp4 *ratio4 *feedback4
+		*freq5 *amp5 *ratio5 *feedback5
+		*freq6 *amp6 *ratio6 *feedback6
 	]
 ]
 

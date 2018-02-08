@@ -119,6 +119,15 @@ public:
 	fm4_panel_class (PrologLunarServiceClass * servo, bool dx);
 };
 
+class fm6_panel_class : public PrologNativeCode {
+public:
+	bool dx;
+	PrologRoot * root;
+	GraphicResources * resources;
+	bool code (PrologElement * parameters, PrologResolution * resolution);
+	fm6_panel_class (PrologLunarServiceClass * servo, bool dx);
+};
+
 class core_panel_class : public PrologNativeCode {
 public:
 	PrologRoot * root;

@@ -65,7 +65,7 @@
 #define ADSR_PANEL_SIZE                 19916
 #define EG_PANEL_SIZE                   37224
 #define FM4_PANEL_SIZE                  71437
-#define FM6_PANEL_SIZE                  103583
+#define FM6_PANEL_SIZE                  104542
 #define FM4_ALGO_SIZE                   5705
 #define CORE_PANEL_SIZE                 114617
 #define LFO_PANEL_SIZE                  48642

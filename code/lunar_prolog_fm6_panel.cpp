@@ -275,6 +275,10 @@ public:
 			el = el -> getRight (); if (! el -> isPair ()) {delete query; return;} sub = el -> getLeft ();
 			if (sub -> isNumber ()) feed34 . engaged = (sub -> getNumber () != 0.0);
 			el = el -> getRight (); if (! el -> isPair ()) {delete query; return;} sub = el -> getLeft ();
+			if (sub -> isNumber ()) feed35 . engaged = (sub -> getNumber () != 0.0);
+			el = el -> getRight (); if (! el -> isPair ()) {delete query; return;} sub = el -> getLeft ();
+			if (sub -> isNumber ()) feed36 . engaged = (sub -> getNumber () != 0.0);
+			el = el -> getRight (); if (! el -> isPair ()) {delete query; return;} sub = el -> getLeft ();
 			if (sub -> isNumber ()) feed45 . engaged = (sub -> getNumber () != 0.0);
 			el = el -> getRight (); if (! el -> isPair ()) {delete query; return;} sub = el -> getLeft ();
 			if (sub -> isNumber ()) feed46 . engaged = (sub -> getNumber () != 0.0);
@@ -352,12 +356,23 @@ public:
 		FREQ2 . keyon (location); AMP2 . keyon (location); RATIO2 . keyon (location); FEEDBACK2 . keyon (location);
 		FREQ3 . keyon (location); AMP3 . keyon (location); RATIO3 . keyon (location); FEEDBACK3 . keyon (location);
 		FREQ4 . keyon (location); AMP4 . keyon (location); RATIO4 . keyon (location); FEEDBACK4 . keyon (location);
+		FREQ5 . keyon (location); AMP5 . keyon (location); RATIO5 . keyon (location); FEEDBACK5 . keyon (location);
+		FREQ6 . keyon (location); AMP6 . keyon (location); RATIO6 . keyon (location); FEEDBACK6 . keyon (location);
 		if (feed12 . keyon (location)) {feed12 . engaged = ! feed12 . engaged; interconnection_changed (a12, feed12 . engaged); update ();}
 		if (feed13 . keyon (location)) {feed13 . engaged = ! feed13 . engaged; interconnection_changed (a13, feed13 . engaged); update ();}
 		if (feed14 . keyon (location)) {feed14 . engaged = ! feed14 . engaged; interconnection_changed (a14, feed14 . engaged); update ();}
+		if (feed15 . keyon (location)) {feed15 . engaged = ! feed15 . engaged; interconnection_changed (a15, feed15 . engaged); update ();}
+		if (feed16 . keyon (location)) {feed16 . engaged = ! feed16 . engaged; interconnection_changed (a16, feed16 . engaged); update ();}
 		if (feed23 . keyon (location)) {feed23 . engaged = ! feed23 . engaged; interconnection_changed (a23, feed23 . engaged); update ();}
 		if (feed24 . keyon (location)) {feed24 . engaged = ! feed24 . engaged; interconnection_changed (a24, feed24 . engaged); update ();}
+		if (feed25 . keyon (location)) {feed25 . engaged = ! feed25 . engaged; interconnection_changed (a25, feed25 . engaged); update ();}
+		if (feed26 . keyon (location)) {feed26 . engaged = ! feed26 . engaged; interconnection_changed (a26, feed26 . engaged); update ();}
 		if (feed34 . keyon (location)) {feed34 . engaged = ! feed34 . engaged; interconnection_changed (a34, feed34 . engaged); update ();}
+		if (feed35 . keyon (location)) {feed35 . engaged = ! feed35 . engaged; interconnection_changed (a35, feed35 . engaged); update ();}
+		if (feed36 . keyon (location)) {feed36 . engaged = ! feed36 . engaged; interconnection_changed (a36, feed36 . engaged); update ();}
+		if (feed45 . keyon (location)) {feed45 . engaged = ! feed45 . engaged; interconnection_changed (a45, feed45 . engaged); update ();}
+		if (feed46 . keyon (location)) {feed46 . engaged = ! feed46 . engaged; interconnection_changed (a46, feed46 . engaged); update ();}
+		if (feed56 . keyon (location)) {feed56 . engaged = ! feed56 . engaged; interconnection_changed (a56, feed56 . engaged); update ();}
 	}
 	void MouseKeyoff (point location, int button) {
 		if (dx) ALGO . keyoff (location);
@@ -365,6 +380,8 @@ public:
 		FREQ2 . keyoff (location); AMP2 . keyoff (location); RATIO2 . keyoff (location); FEEDBACK2 . keyoff (location);
 		FREQ3 . keyoff (location); AMP3 . keyoff (location); RATIO3 . keyoff (location); FEEDBACK3 . keyoff (location);
 		FREQ4 . keyoff (location); AMP4 . keyoff (location); RATIO4 . keyoff (location); FEEDBACK4 . keyoff (location);
+		FREQ5 . keyoff (location); AMP5 . keyoff (location); RATIO5 . keyoff (location); FEEDBACK5 . keyoff (location);
+		FREQ6 . keyoff (location); AMP6 . keyoff (location); RATIO6 . keyoff (location); FEEDBACK6 . keyoff (location);
 	}
 	void MouseMove (point delta) {
 		bool redraw = false;
@@ -385,16 +402,28 @@ public:
 		if (AMP4 . move (delta)) {move (amp4, AMP4 . value); redraw = true;}
 		if (RATIO4 . move (delta)) {move (ratio4, RATIO4 . value); redraw = true;}
 		if (FEEDBACK4 . move (delta)) {move (feedback4, FEEDBACK4 . value); redraw = true;}
+		if (FREQ5 . move (delta)) {move (freq5, FREQ5 . value); redraw = true;}
+		if (AMP5 . move (delta)) {move (amp5, AMP5 . value); redraw = true;}
+		if (RATIO5 . move (delta)) {move (ratio5, RATIO5 . value); redraw = true;}
+		if (FEEDBACK5 . move (delta)) {move (feedback5, FEEDBACK5 . value); redraw = true;}
+		if (FREQ6 . move (delta)) {move (freq6, FREQ6 . value); redraw = true;}
+		if (AMP6 . move (delta)) {move (amp6, AMP6 . value); redraw = true;}
+		if (RATIO6 . move (delta)) {move (ratio6, RATIO6 . value); redraw = true;}
+		if (FEEDBACK6 . move (delta)) {move (feedback6, FEEDBACK6 . value); redraw = true;}
 		if (redraw) update ();
 	}
 	void FunctionKey (int key, int state) {}
 	fm6_panel_action (GraphicResources * resources, PrologRoot * root, PrologAtom * atom, PrologAtom * algo,
-		PrologAtom * a12, PrologAtom * a13, PrologAtom * a14,
-		PrologAtom * a23, PrologAtom * a24, PrologAtom * a34,
+		PrologAtom * a12, PrologAtom * a13, PrologAtom * a14, PrologAtom * a15, PrologAtom * a16,
+		PrologAtom * a23, PrologAtom * a24, PrologAtom * a25, PrologAtom * a26,
+		PrologAtom * a34, PrologAtom * a35, PrologAtom * a36, PrologAtom * a45, PrologAtom * a46, PrologAtom * a56,
 		PrologAtom * freq1, PrologAtom * amp1, PrologAtom * ratio1, PrologAtom * feedback1,
 		PrologAtom * freq2, PrologAtom * amp2, PrologAtom * ratio2, PrologAtom * feedback2,
 		PrologAtom * freq3, PrologAtom * amp3, PrologAtom * ratio3, PrologAtom * feedback3,
-		PrologAtom * freq4, PrologAtom * amp4, PrologAtom * ratio4, PrologAtom * feedback4, bool active, bool dx) :
+		PrologAtom * freq4, PrologAtom * amp4, PrologAtom * ratio4, PrologAtom * feedback4,
+		PrologAtom * freq5, PrologAtom * amp5, PrologAtom * ratio5, PrologAtom * feedback5,
+		PrologAtom * freq6, PrologAtom * amp6, PrologAtom * ratio6, PrologAtom * feedback6,
+		bool active, bool dx) :
 	ALGO (point (598, 98), 0, resources, true, active, 0.0, 7.0),
 	FREQ1 (point (18, 10), 0, resources, true, active, -8192.0, 8192.0),
 	AMP1 (point (88, 10), 0, resources, true, active, -16384.0, 0.0),
@@ -420,21 +449,21 @@ public:
 	AMP6 (point (380, 186), 0, resources, true, active, -16384.0, 0.0),
 	RATIO6 (point (450, 186), 0, resources, true, active, 1.0, 33.0),
 	FEEDBACK6 (point (520, 186), 0, resources, true, active, 0.0, 16384.0),
-	feed12 (point (584, 118), 0, resources, true),
-	feed13 (point (610, 118), 0, resources, true),
-	feed14 (point (636, 118), 0, resources, true),
-	feed15 (point (662, 118), 0, resources, true),
-	feed16 (point (698, 118), 0, resources, true),
-	feed23 (point (610, 138), 0, resources, true),
-	feed24 (point (636, 138), 0, resources, true),
-	feed25 (point (662, 138), 0, resources, true),
-	feed26 (point (698, 138), 0, resources, true),
-	feed34 (point (636, 158), 0, resources, true),
-	feed35 (point (662, 158), 0, resources, true),
-	feed36 (point (698, 158), 0, resources, true),
-	feed45 (point (662, 178), 0, resources, true),
-	feed46 (point (698, 178), 0, resources, true),
-	feed56 (point (698, 198), 0, resources, true),
+	feed12 (point (600, 20), 0, resources, true),
+	feed13 (point (600, 40), 0, resources, true),
+	feed14 (point (600, 60), 0, resources, true),
+	feed15 (point (600, 80), 0, resources, true),
+	feed16 (point (600, 100), 0, resources, true),
+	feed23 (point (640, 20), 0, resources, true),
+	feed24 (point (640, 40), 0, resources, true),
+	feed25 (point (640, 60), 0, resources, true),
+	feed26 (point (640, 80), 0, resources, true),
+	feed34 (point (600, 140), 0, resources, true),
+	feed35 (point (600, 160), 0, resources, true),
+	feed36 (point (600, 180), 0, resources, true),
+	feed45 (point (640, 140), 0, resources, true),
+	feed46 (point (640, 160), 0, resources, true),
+	feed56 (point (640, 200), 0, resources, true),
 	AudioModulePanel (root, atom, resources != 0 ? resources -> fm6_panel_surface : 0) {
 		this -> dx = dx;
 		algo_image = resources != 0 ? resources -> fm4_algo_surface : 0;
@@ -442,9 +471,18 @@ public:
 		this -> a12 = a12; if (a12 != 0) {COLLECTOR_REFERENCE_INC (a12);}
 		this -> a13 = a13; if (a13 != 0) {COLLECTOR_REFERENCE_INC (a13);}
 		this -> a14 = a14; if (a14 != 0) {COLLECTOR_REFERENCE_INC (a14);}
+		this -> a15 = a15; if (a15 != 0) {COLLECTOR_REFERENCE_INC (a15);}
+		this -> a16 = a16; if (a16 != 0) {COLLECTOR_REFERENCE_INC (a16);}
 		this -> a23 = a23; if (a23 != 0) {COLLECTOR_REFERENCE_INC (a23);}
 		this -> a24 = a24; if (a24 != 0) {COLLECTOR_REFERENCE_INC (a24);}
+		this -> a25 = a25; if (a25 != 0) {COLLECTOR_REFERENCE_INC (a25);}
+		this -> a26 = a26; if (a26 != 0) {COLLECTOR_REFERENCE_INC (a26);}
 		this -> a34 = a34; if (a34 != 0) {COLLECTOR_REFERENCE_INC (a34);}
+		this -> a35 = a35; if (a35 != 0) {COLLECTOR_REFERENCE_INC (a35);}
+		this -> a36 = a36; if (a36 != 0) {COLLECTOR_REFERENCE_INC (a36);}
+		this -> a45 = a45; if (a45 != 0) {COLLECTOR_REFERENCE_INC (a45);}
+		this -> a46 = a46; if (a46 != 0) {COLLECTOR_REFERENCE_INC (a46);}
+		this -> a56 = a56; if (a56 != 0) {COLLECTOR_REFERENCE_INC (a56);}
 		this -> freq1 = freq1; COLLECTOR_REFERENCE_INC (freq1);
 		this -> amp1 = amp1; COLLECTOR_REFERENCE_INC (amp1);
 		this -> ratio1 = ratio1; COLLECTOR_REFERENCE_INC (ratio1);
@@ -461,41 +499,64 @@ public:
 		this -> amp4 = amp4; COLLECTOR_REFERENCE_INC (amp4);
 		this -> ratio4 = ratio4; COLLECTOR_REFERENCE_INC (ratio4);
 		this -> feedback4 = feedback4; COLLECTOR_REFERENCE_INC (feedback4);
+		this -> freq5 = freq5; COLLECTOR_REFERENCE_INC (freq5);
+		this -> amp5 = amp5; COLLECTOR_REFERENCE_INC (amp5);
+		this -> ratio5 = ratio5; COLLECTOR_REFERENCE_INC (ratio5);
+		this -> feedback5 = feedback5; COLLECTOR_REFERENCE_INC (feedback5);
+		this -> freq6 = freq6; COLLECTOR_REFERENCE_INC (freq6);
+		this -> amp6 = amp6; COLLECTOR_REFERENCE_INC (amp6);
+		this -> ratio6 = ratio6; COLLECTOR_REFERENCE_INC (ratio6);
+		this -> feedback6 = feedback6; COLLECTOR_REFERENCE_INC (feedback6);
 		feedback ();
 	}
 	~ fm6_panel_action (void) {
 		if (algo != 0) algo -> removeAtom ();
-		if (a12 != 0) a12 -> removeAtom (); if (a13 != 0) a13 -> removeAtom (); if (a14 != 0) a14 -> removeAtom ();
-		if (a23 != 0) a23 -> removeAtom (); if (a24 != 0) a24 -> removeAtom (); if (a34 != 0) a34 -> removeAtom ();
+		if (a12 != 0) a12 -> removeAtom (); if (a13 != 0) a13 -> removeAtom (); if (a14 != 0) a14 -> removeAtom (); if (a15 != 0) a15 -> removeAtom (); if (a16 != 0) a16 -> removeAtom ();
+		if (a23 != 0) a23 -> removeAtom (); if (a24 != 0) a24 -> removeAtom (); if (a25 != 0) a25 -> removeAtom (); if (a26 != 0) a26 -> removeAtom ();
+		if (a34 != 0) a34 -> removeAtom (); if (a35 != 0) a35 -> removeAtom (); if (a36 != 0) a36 -> removeAtom ();
+		if (a45 != 0) a45 -> removeAtom (); if (a46 != 0) a46 -> removeAtom (); if (a56 != 0) a56 -> removeAtom ();
 		freq1 -> removeAtom (); amp1 -> removeAtom (); ratio1 -> removeAtom (); feedback1 -> removeAtom ();
 		freq2 -> removeAtom (); amp2 -> removeAtom (); ratio2 -> removeAtom (); feedback2 -> removeAtom ();
 		freq3 -> removeAtom (); amp3 -> removeAtom (); ratio3 -> removeAtom (); feedback3 -> removeAtom ();
 		freq4 -> removeAtom (); amp4 -> removeAtom (); ratio4 -> removeAtom (); feedback4 -> removeAtom ();
+		freq5 -> removeAtom (); amp5 -> removeAtom (); ratio5 -> removeAtom (); feedback5 -> removeAtom ();
+		freq6 -> removeAtom (); amp6 -> removeAtom (); ratio6 -> removeAtom (); feedback6 -> removeAtom ();
 	}
 };
 
 bool fm6_panel_class :: code (PrologElement * parameters, PrologResolution * resolution) {
 	PrologElement * atom = 0;
 	PrologElement * algo = 0;
-	PrologElement * a12 = 0, * a13 = 0, * a14 = 0, * a23 = 0, * a24 = 0, * a34 = 0;
+	PrologElement * a12 = 0, * a13 = 0, * a14 = 0, * a15 = 0, * a16 = 0, * a23 = 0, * a24 = 0, * a25 = 0, * a26 = 0, * a34 = 0, * a35 = 0, * a36 = 0, * a45 = 0, * a46 = 0, * a56 = 0;
 	PrologElement * freq1 = 0, * amp1 = 0, * ratio1 = 0, * feedback1 = 0;
 	PrologElement * freq2 = 0, * amp2 = 0, * ratio2 = 0, * feedback2 = 0;
 	PrologElement * freq3 = 0, * amp3 = 0, * ratio3 = 0, * feedback3 = 0;
 	PrologElement * freq4 = 0, * amp4 = 0, * ratio4 = 0, * feedback4 = 0;
+	PrologElement * freq5 = 0, * amp5 = 0, * ratio5 = 0, * feedback5 = 0;
+	PrologElement * freq6 = 0, * amp6 = 0, * ratio6 = 0, * feedback6 = 0;
 	while (parameters -> isPair ()) {
 		PrologElement * el = parameters -> getLeft ();
 		if (el -> isVar ()) atom = el;
 		if (el -> isAtom ()) {
 			if (atom == 0) atom = el;
-			else if (algo == 0 && a34 == 0) {
+			else if (algo == 0 && a56 == 0) {
 				if (dx) algo = el;
 				else {
 					if (a12 == 0) a12 = el;
 					else if (a13 == 0) a13 = el;
 					else if (a14 == 0) a14 = el;
+					else if (a15 == 0) a15 = el;
+					else if (a16 == 0) a16 = el;
 					else if (a23 == 0) a23 = el;
 					else if (a24 == 0) a24 = el;
+					else if (a25 == 0) a25 = el;
+					else if (a26 == 0) a26 = el;
 					else if (a34 == 0) a34 = el;
+					else if (a35 == 0) a35 = el;
+					else if (a36 == 0) a36 = el;
+					else if (a45 == 0) a45 = el;
+					else if (a46 == 0) a46 = el;
+					else if (a56 == 0) a56 = el;
 				}
 			} else if (freq1 == 0) freq1 = el;
 			else if (amp1 == 0) amp1 = el;
@@ -513,6 +574,14 @@ bool fm6_panel_class :: code (PrologElement * parameters, PrologResolution * res
 			else if (amp4 == 0) amp4 = el;
 			else if (ratio4 == 0) ratio4 = el;
 			else if (feedback4 == 0) feedback4 = el;
+			else if (freq5 == 0) freq5 = el;
+			else if (amp5 == 0) amp5 = el;
+			else if (ratio5 == 0) ratio5 = el;
+			else if (feedback5 == 0) feedback5 = el;
+			else if (freq6 == 0) freq6 = el;
+			else if (amp6 == 0) amp6 = el;
+			else if (ratio6 == 0) ratio6 = el;
+			else if (feedback6 == 0) feedback6 = el;
 		}
 		parameters = parameters -> getRight ();
 	}
@@ -521,12 +590,16 @@ bool fm6_panel_class :: code (PrologElement * parameters, PrologResolution * res
 	if (atom -> getAtom () -> getMachine () != 0) return false;
 	fm6_panel_action * machine = new fm6_panel_action (resources, root, atom -> getAtom (),
 		algo ? algo -> getAtom () : 0,
-		a12 ? a12 -> getAtom () : 0, a13 ? a13 -> getAtom () : 0, a14 ? a14 -> getAtom () : 0,
-		a23 ? a23 -> getAtom () : 0, a24 ? a24 -> getAtom () : 0, a34 ? a34 -> getAtom () : 0,
+		a12 ? a12 -> getAtom () : 0, a13 ? a13 -> getAtom () : 0, a14 ? a14 -> getAtom () : 0, a15 ? a15 -> getAtom () : 0, a16 ? a16 -> getAtom () : 0,
+		a23 ? a23 -> getAtom () : 0, a24 ? a24 -> getAtom () : 0, a25 ? a25 -> getAtom () : 0, a26 ? a26 -> getAtom () : 0,
+		a34 ? a34 -> getAtom () : 0, a35 ? a35 -> getAtom () : 0, a36 ? a36 -> getAtom () : 0, a45 ? a45 -> getAtom () : 0, a46 ? a46 -> getAtom () : 0, a56 ? a56 -> getAtom () : 0,
 		freq1 -> getAtom (), amp1 -> getAtom (), ratio1 -> getAtom (), feedback1 -> getAtom (),
 		freq2 -> getAtom (), amp2 -> getAtom (), ratio2 -> getAtom (), feedback2 -> getAtom (),
 		freq3 -> getAtom (), amp3 -> getAtom (), ratio3 -> getAtom (), feedback3 -> getAtom (),
-		freq4 -> getAtom (), amp4 -> getAtom (), ratio4 -> getAtom (), feedback4 -> getAtom (), false, dx);
+		freq4 -> getAtom (), amp4 -> getAtom (), ratio4 -> getAtom (), feedback4 -> getAtom (),
+		freq5 -> getAtom (), amp5 -> getAtom (), ratio5 -> getAtom (), feedback5 -> getAtom (),
+		freq6 -> getAtom (), amp6 -> getAtom (), ratio6 -> getAtom (), feedback6 -> getAtom (),
+		false, dx);
 	if (! atom -> getAtom () -> setMachine (machine)) {delete machine; return false;}
 	machine -> BuildPanel ();
 	return true;

@@ -35,7 +35,7 @@ program vonforman [BuildVonForman BuildVonFormanPart VF LGV LGT LGP STK STV AEG 
 [[BuildOscillatorControllers 0 *pitch *lfo1 *lfo2 []] /]
 [[BuildOscillatorControllers *order *pitch *lfo1 *lfo2 [[*pitchfreq *lfo1freq *lfo2freq *lfo1amp *lfo2amp] : *ctrls]]
 	[LGP *pitchfreq *pitch]
-	[LGV *lfo1freq *lfo1] [LGV *lfo2freq *lfo2] [LGV *lfo1amp *lfo1] [LGV *lfo2amp *lfo2]
+	[LGV *lfo1freq *lfo1] [LGV *lfo2freq *lfo2] [LGT *lfo1amp *lfo1] [LGT *lfo2amp *lfo2]
 	[-- *order *next] / [BuildOscillatorControllers *next *pitch *lfo1 *lfo2 *ctrls]
 ]
 

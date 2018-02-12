@@ -155,6 +155,9 @@ program vonforman [BuildVonForman BuildVonFormanPart VF LGV LGT LGP STK STV AEG 
 	[Lunar 12800 *VonForman core sens velocity BP]
 	[Lunar -64 *VonForman core sens velocity left]
 	[Lunar 12800 *VonForman filter sens velocity BP]
+	[Lunar 16384 *VonForman mixer filter dry]
+	[Lunar 16384 *VonForman mixer vco filter]
+	[Lunar 16384 *VonForman mixer noise filter]
 	[Preset 1 *order1 *VonForman]
 ]
 
@@ -272,6 +275,7 @@ program vonforman [BuildVonForman BuildVonFormanPart VF LGV LGT LGP STK STV AEG 
 	[auto *Y *YData 6] [*Y "trigger" *trigger "trigger"] [*YData "trigger" *trigger "trigger"]
 	;========== ADSR =================
 	[adsrscal *adsr *egscal *trigger] [*trigger "busy" *adsr "busy"]
+	[control *mixer] [*mixer "gateway" *adsr]
 	[*lfo1 "trigger" *adsr "busy"] [*lfo2 "trigger" *adsr "busy"]
 	;========== FREQ EG ==============
 	[egscal *freqeg *fegscal *trigger]
@@ -292,11 +296,14 @@ program vonforman [BuildVonForman BuildVonFormanPart VF LGV LGT LGP STK STV AEG 
 	[sensitivity *velocity] [*velocity "signal" *trigger "velocity"] [*filter "amp" *velocity]
 	[sensitivity *ctvelocity] [*ctvelocity "signal" *trigger "velocity"] [*filter "freq" *ctvelocity]
 	;========== LINE CONNECTION ======
-	[gateway *fmdry] [*fmdry *fm] [*line *fmdry]
-	[gateway *noisedry] [*noisedry *noise] [*line *noisedry]
-	[*line *filter]
+	[gateway *fmdry] [*fmdry *fm] [*mixer *fmdry]
+	[gateway *noisedry] [*noisedry *noise] [*mixer *noisedry]
+	[gateway *filterdry] [*filterdry *filter] [*mixer *filterdry]
+	[gateway *fmfilter] [*fmfilter *fm] [*filter *fmfilter]
+	[gateway *noisefilter] [*noisefilter *noise] [*filter *noisefilter]
+	[*line *mixer]
 	;========== FORMANT FILTERS ======
-	[BuildFilterBlock *order2 *X *Y *lfo1x *lfo1y *lfo2x *lfo2y *fm *noise *adsr *lfo1 *lfo2 *velocity *line *formant_filters]
+	[BuildFilterBlock *order2 *X *Y *lfo1x *lfo1y *lfo2x *lfo2y *fm *noise *adsr *lfo1 *lfo2 *velocity *mixer *formant_filters]
 	;========== SUPERSTRUCTURE =======
 	[Insert *fm *VF vco]
 	[Insert *noise *VF vco noise]
@@ -313,6 +320,9 @@ program vonforman [BuildVonForman BuildVonFormanPart VF LGV LGT LGP STK STV AEG 
 	[Insert *vcfreso *VF vector filter resonance]
 	[Insert *fmdry *VF mixer vco dry]
 	[Insert *noisedry *VF mixer noise dry]
+	[Insert *filterdry *VF mixer filter dry]
+	[Insert *fmfilter *VF mixer vco filter]
+	[Insert *noisefilter *VF mixer noise filter]
 	[InsertOscillatorBlock *VF 1 *oscillators]
 	[Insert *adsr *VF adsr amp]
 	[Insert *egscal *VF adsr amp egscal]

@@ -158,6 +158,14 @@ program vonforman [BuildVonForman BuildVonFormanPart VF LGV LGT LGP STK STV AEG 
 	[Lunar 16384 *VonForman mixer filter dry]
 	[Lunar 16384 *VonForman mixer vco filter]
 	[Lunar 16384 *VonForman mixer noise filter]
+	[Lunar 16384 *VonForman vector filter amp A]
+	[Lunar 16384 *VonForman vector filter amp B]
+	[Lunar 16384 *VonForman vector filter amp C]
+	[Lunar 16384 *VonForman vector filter amp D]
+	[Lunar 16384 *VonForman vector noise A]
+	[Lunar 16384 *VonForman vector noise B]
+	[Lunar 16384 *VonForman vector noise C]
+	[Lunar 16384 *VonForman vector noise D]
 	[Preset 1 *order1 *VonForman]
 ]
 
@@ -281,6 +289,7 @@ program vonforman [BuildVonForman BuildVonFormanPart VF LGV LGT LGP STK STV AEG 
 	[egscal *freqeg *fegscal *trigger]
 	;========== NOISE ================
 	[noise_operator *noise] [egscal *noise_eg *noise_egscal *trigger] [*noise "amp" *noise_eg]
+	[MORPHFM *noisegain *noise "gain" *X *Y *lfo1x *lfo1y *lfo2x *lfo2y]
 	;========== FM VCO ===============
 	[BuildOscillatorBlock *order1 *fm *trigger *freqeg *X *Y *lfo1x *lfo1y *lfo2x *lfo2y *oscillators *ctrls]
 	;========== FILTER ===============
@@ -293,6 +302,7 @@ program vonforman [BuildVonForman BuildVonFormanPart VF LGV LGT LGP STK STV AEG 
 	[egscal *cteg *ctegscal *trigger] [*filter "freq" *cteg]
 	[MORPH *vcffreq *filter "freq" *X *Y *lfo1x *lfo1y *lfo2x *lfo2y]
 	[MORPH *vcfreso *filter "resonance" *X *Y *lfo1x *lfo1y *lfo2x *lfo2y]
+	[MORPHFM *vcfgain *filter "gain" *X *Y *lfo1x *lfo1y *lfo2x *lfo2y]
 	;========== VELOCITY =============
 	[sensitivity *velocity] [*velocity "signal" *trigger "velocity"] [*filter "amp" *velocity]
 	[sensitivity *ctvelocity] [*ctvelocity "signal" *trigger "velocity"] [*filter "freq" *ctvelocity]
@@ -319,12 +329,14 @@ program vonforman [BuildVonForman BuildVonFormanPart VF LGV LGT LGP STK STV AEG 
 	[InsertFilterBlock *VF 1 *formant_filters]
 	[Insert *vcffreq *VF vector filter freq]
 	[Insert *vcfreso *VF vector filter resonance]
+	[Insert *vcfgain *VF vector filter amp]
 	[Insert *fmdry *VF mixer vco dry]
 	[Insert *noisedry *VF mixer noise dry]
 	[Insert *filterdry *VF mixer filter dry]
 	[Insert *fmfilter *VF mixer vco filter]
 	[Insert *noisefilter *VF mixer noise filter]
 	[InsertOscillatorBlock *VF 1 *oscillators]
+	[Insert *noisegain *VF vector noise]
 	[Insert *adsr *VF adsr amp]
 	[Insert *egscal *VF adsr amp egscal]
 	[Insert *freqeg *VF adsr freq]

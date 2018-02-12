@@ -284,6 +284,8 @@ program vonforman [BuildVonForman BuildVonFormanPart VF LGV LGT LGP STK STV AEG 
 	[*filter "freq" *pitchfreqf]
 	[*filter "freq" *lfo1 "wahwah"] [*filter "freq" *lfo2 "wahwah"]
 	[egscal *cteg *ctegscal *trigger] [*filter "freq" *cteg]
+	[MORPH *vcffreq *filter "freq" *X *Y *lfo1x *lfo1y *lfo2x *lfo2y]
+	[MORPH *vcfreso *filter "resonance" *X *Y *lfo1x *lfo1y *lfo2x *lfo2y]
 	;========== VELOCITY =============
 	[sensitivity *velocity] [*velocity "signal" *trigger "velocity"] [*filter "amp" *velocity]
 	[sensitivity *ctvelocity] [*ctvelocity "signal" *trigger "velocity"] [*filter "freq" *ctvelocity]
@@ -302,6 +304,8 @@ program vonforman [BuildVonForman BuildVonFormanPart VF LGV LGT LGP STK STV AEG 
 	[Insert *ctvelocity *VF filter sens velocity]
 	[Insert *freqegf *VF filter sens eg]
 	[InsertFilterBlock *VF 1 *formant_filters]
+	[Insert *vcffreq *VF vector filter freq]
+	[Insert *vcfreso *VF vector filter resonance]
 	[InsertOscillatorBlock *VF 1 *oscillators]
 	[Insert *adsr *VF adsr amp]
 	[Insert *egscal *VF adsr amp egscal]

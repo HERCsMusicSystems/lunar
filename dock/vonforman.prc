@@ -60,6 +60,7 @@ program vonforman [BuildVonForman BuildVonFormanPart VF LGV LGT LGP STK STV AEG 
 	[parameter_block *pitch "index"]
 	[LGP *pitchfreqf *pitch]
 	[parameter_block *modulation "index"]
+	[sensitivity *modulationfreqf] [*modulationfreqf *modulation]
 	[lfo *lfo1] [lfo *lfo2]
 		[gateway *vibrato] [*vibrato *modulation] [*lfo1 "vibrato" *vibrato]
 		[gateway *tremolo] [*tremolo *modulation] [*lfo1 "tremolo" *tremolo]
@@ -109,10 +110,11 @@ program vonforman [BuildVonForman BuildVonFormanPart VF LGV LGT LGP STK STV AEG 
 	;==========================================
 	[REPEAT *polyphony [BuildVonFormanPart *order1 *order2 *VonForman *VonFormanCB *chorus *key_map
 						*lfo1 *lfo2 *XData *YData *lfo1x *lfo1y *lfo2x *lfo2y
-						*pitchfreqf *ctrls]
+						*pitchfreqf *modulationfreqf *ctrls]
 	]
 	[InsertOscillatorControllers 1 *VonForman *ctrls]
 	[Insert *pitchfreqf *VonForman filter sens pitch]
+	[Insert *modulationfreqf *VonForman filter sens modulation]
 	;==============================
 	[InsertBlock *XData *VonForman vector X]
 	[InsertBlock *YData *VonForman vector Y]
@@ -261,7 +263,7 @@ program vonforman [BuildVonForman BuildVonFormanPart VF LGV LGT LGP STK STV AEG 
 
 [[BuildVonFormanPart *order1 *order2 *VF *cb *line *key_map
 						*lfo1 *lfo2 *XData *YData *lfo1x *lfo1y *lfo2x *lfo2y
-						*pitchfreqf *ctrls
+						*pitchfreqf *modulationfreqf *ctrls
 	]
 	;========== TRIGGER ==============
 	[trigger *trigger *key_map] [*cb *trigger] [*lfo1 "trigger" *trigger "trigger"] [*lfo2 "trigger" *trigger "trigger"]
@@ -281,7 +283,7 @@ program vonforman [BuildVonForman BuildVonFormanPart VF LGV LGT LGP STK STV AEG 
 	[filter *filter] [*filter "gain" *adsr] [*filter *noise] [*filter *fm]
 	[STK *filter_key *filter "freq" *trigger]
 	[FEGS *freqegf *freqeg *filter "freq"]
-	[*filter "freq" *pitchfreqf]
+	[*filter "freq" *pitchfreqf] [*filter "freq" *modulationfreqf]
 	[*filter "freq" *lfo1 "wahwah"] [*filter "freq" *lfo2 "wahwah"]
 	[egscal *cteg *ctegscal *trigger] [*filter "freq" *cteg]
 	[MORPH *vcffreq *filter "freq" *X *Y *lfo1x *lfo1y *lfo2x *lfo2y]

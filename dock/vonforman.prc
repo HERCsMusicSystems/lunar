@@ -276,7 +276,7 @@ program vonforman [BuildVonForman BuildVonFormanPart VF LGV LGT LGP STK STV AEG 
 	;========== FREQ EG ==============
 	[egscal *freqeg *fegscal *trigger]
 	;========== NOISE ================
-	[noise_operator *noise] [eg *noise_eg] [*noise_eg "trigger" *trigger "trigger"] [*noise "amp" *noise_eg]
+	[noise_operator *noise] [egscal *noise_eg *noise_egscal *trigger] [*noise "amp" *noise_eg]
 	;========== FM VCO ===============
 	[BuildOscillatorBlock *order1 *fm *trigger *freqeg *X *Y *lfo1x *lfo1y *lfo2x *lfo2y *oscillators *ctrls]
 	;========== FILTER ===============
@@ -298,7 +298,8 @@ program vonforman [BuildVonForman BuildVonFormanPart VF LGV LGT LGP STK STV AEG 
 	;========== SUPERSTRUCTURE =======
 	[Insert *fm *VF vco]
 	[Insert *noise *VF vco noise]
-	[Insert *noise_eg *VF vco noise]
+	[Insert *noise_eg *VF vco noise eg]
+	[Insert *noise_egscal *VF vco noise egscal]
 	[Insert *filter *VF filter]
 	[Insert *cteg *VF filter eg]
 	[Insert *ctegscal *VF filter eg egscal]

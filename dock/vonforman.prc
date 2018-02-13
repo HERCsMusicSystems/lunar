@@ -4,7 +4,7 @@ import lunar
 program vonforman [BuildVonForman BuildVonFormanPart VF LGV LGT LGP STK STV AEG FEGS MORPH MORPHFM
 					BuildOscillatorBlock BuildFilterBlock InsertOscillatorBlock InsertFilterBlock
 					BuildOscillatorControllers InsertOscillatorControllers
-					CheckOrder Preset
+					CheckOrder Preset FormantPreset
 					]
 
 [[LGV *gate *lfo] [gateway *gate] [*gate "enter" *lfo "vibrato"]]
@@ -168,6 +168,7 @@ program vonforman [BuildVonForman BuildVonFormanPart VF LGV LGT LGP STK STV AEG 
 	[Lunar 16384 *VonForman vector noise C]
 	[Lunar 16384 *VonForman vector noise D]
 	[Preset 1 *order1 *VonForman]
+	[FormantPreset 1 *order2 *VonForman]
 ]
 
 [[Preset *index *order *VF] [> *index *order] /]
@@ -183,6 +184,13 @@ program vonforman [BuildVonForman BuildVonFormanPart VF LGV LGT LGP STK STV AEG 
 	[Lunar 16384 *VF vector amp *index C]
 	[Lunar 16384 *VF vector amp *index D]
 	[++ *index *next] / [Preset *next *order *VF]
+]
+
+[[FormantPreset *index *order *VF] [> *index *order] /]
+[[FormantPreset *index *order *VF]
+	[Lunar 16384 *VF mixer vco formant *index]
+	[Lunar 16384 *VF mixer noise formant *index]
+	[++ *index *next] / [FormantPreset *next *order *VF]
 ]
 
 [[BuildOscillatorBlock 4 *fm *trigger *freqeg *X *Y *lfo1x *lfo1y *lfo2x *lfo2y

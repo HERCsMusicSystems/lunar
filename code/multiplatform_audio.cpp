@@ -887,7 +887,7 @@ static bool audio_transmission_dx_start (HWND hwnd, int device_index) {
 	pcmwf . wBitsPerSample = 16;
 	memset (& dsbdesc, 0, sizeof (DSBUFFERDESC));
 	dsbdesc . dwSize = sizeof (DSBUFFERDESC);
-	dsbdesc . dwFlags = DSBCAPS_CTRLPOSITIONNOTIFY | DSBCAPS_GETCURRENTPOSITION2;
+	dsbdesc . dwFlags = DSBCAPS_CTRLPOSITIONNOTIFY | DSBCAPS_GETCURRENTPOSITION2 | DSBCAPS_GLOBALFOCUS;
 	dsbdesc . dwBufferBytes = audio_block_size + audio_block_size; //BUFFER_SIZE;
 	dsbdesc . lpwfxFormat = (LPWAVEFORMATEX) & pcmwf;
 	if (FAILED (hr = audio_lpds -> CreateSoundBuffer (& dsbdesc, & audio_lpdsb, NULL))) {printf ("Direct X: Buffer not created.\n"); return false;}

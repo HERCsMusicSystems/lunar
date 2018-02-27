@@ -40,14 +40,14 @@ poly
 [vco 6 ratio]1.0
 [vco 6 feedback]0.0
 [vco noise amp]-16384.0
-[vco noise time1]0.0
-[vco noise time2]0.0
-[vco noise time3]0.0
-[vco noise time4]0.0
-[vco noise level1]0.0
-[vco noise level2]0.0
-[vco noise level3]0.0
-[vco noise level4]0.0
+[vco noise eg time1]0.0
+[vco noise eg time2]0.0
+[vco noise eg time3]0.0
+[vco noise eg time4]0.0
+[vco noise eg level1]0.0
+[vco noise eg level2]0.0
+[vco noise eg level3]0.0
+[vco noise eg level4]0.0
 [vco 1 eg time1]0.0
 [vco 1 eg time2]0.0
 [vco 1 eg time3]0.0

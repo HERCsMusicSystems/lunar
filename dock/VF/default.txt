@@ -18,14 +18,16 @@ poly
 [core freeverb highdamp]0.0
 [core freeverb dry]16384.0
 [core freeverb wet]0.0
-[core X]0.0
-[core Y]0.0
-[core auto control]0.0
-[core auto speed]0.0
+[core vector X]0.0
+[core vector Y]0.0
+[core vector auto control]0.0
+[core vector auto speed]0.0
 [core pitch]0.0
 [core modulation]0.0
-[core sens vibrato]256.0
-[core sens wahwah]0.0
+[core sens lfo vibrato]256.0
+[core sens lfo tremolo]0.0
+[core sens lfo wahwah]0.0
+[core sens lfo pan]0.0
 [arpeggiator speed]140.0
 [arpeggiator subdivision]24.0
 [arpeggiator active]0.0
@@ -93,14 +95,17 @@ poly
 [vco 6 ratio]1.0
 [vco 6 feedback]0.0
 [vco noise amp]-16384.0
-[vco noise time1]0.0
-[vco noise time2]0.0
-[vco noise time3]0.0
-[vco noise time4]0.0
-[vco noise level1]0.0
-[vco noise level2]0.0
-[vco noise level3]0.0
-[vco noise level4]0.0
+[vco noise eg time1]0.0
+[vco noise eg time2]0.0
+[vco noise eg time3]0.0
+[vco noise eg time4]0.0
+[vco noise eg level1]0.0
+[vco noise eg level2]0.0
+[vco noise eg level3]0.0
+[vco noise eg level4]0.0
+[vco noise egscal BP]0.0
+[vco noise egscal left]0.0
+[vco noise egscal right]0.0
 [filter freq]5120.0
 [filter resonance]0.0
 [filter amp]0.0
@@ -138,6 +143,9 @@ poly
 [vector formant 1 Q B]0.0
 [vector formant 1 Q C]0.0
 [vector formant 1 Q D]0.0
+[mixer vco formant 1]16384.0
+[mixer noise formant 1]16384.0
+[mixer filter formant 1]0.0
 [formant 2 freq]5120.0
 [formant 2 resonance]0.0
 [formant 2 Q]0.0
@@ -154,6 +162,9 @@ poly
 [vector formant 2 Q B]0.0
 [vector formant 2 Q C]0.0
 [vector formant 2 Q D]0.0
+[mixer vco formant 2]16384.0
+[mixer noise formant 2]16384.0
+[mixer filter formant 2]0.0
 [formant 3 freq]5120.0
 [formant 3 resonance]0.0
 [formant 3 Q]0.0
@@ -170,6 +181,9 @@ poly
 [vector formant 3 Q B]0.0
 [vector formant 3 Q C]0.0
 [vector formant 3 Q D]0.0
+[mixer vco formant 3]16384.0
+[mixer noise formant 3]16384.0
+[mixer filter formant 3]0.0
 [formant 4 freq]5120.0
 [formant 4 resonance]0.0
 [formant 4 Q]0.0
@@ -186,6 +200,9 @@ poly
 [vector formant 4 Q B]0.0
 [vector formant 4 Q C]0.0
 [vector formant 4 Q D]0.0
+[mixer vco formant 4]16384.0
+[mixer noise formant 4]16384.0
+[mixer filter formant 4]0.0
 [formant 5 freq]5120.0
 [formant 5 resonance]0.0
 [formant 5 Q]0.0
@@ -202,6 +219,9 @@ poly
 [vector formant 5 Q B]0.0
 [vector formant 5 Q C]0.0
 [vector formant 5 Q D]0.0
+[mixer vco formant 5]16384.0
+[mixer noise formant 5]16384.0
+[mixer filter formant 5]0.0
 [formant 6 freq]5120.0
 [formant 6 resonance]0.0
 [formant 6 Q]0.0
@@ -218,6 +238,26 @@ poly
 [vector formant 6 Q B]0.0
 [vector formant 6 Q C]0.0
 [vector formant 6 Q D]0.0
+[mixer vco formant 6]16384.0
+[mixer noise formant 6]16384.0
+[mixer filter formant 6]0.0
+[vector filter freq A]0.0
+[vector filter freq B]0.0
+[vector filter freq C]0.0
+[vector filter freq D]0.0
+[vector filter resonance A]0.0
+[vector filter resonance B]0.0
+[vector filter resonance C]0.0
+[vector filter resonance D]0.0
+[vector filter amp A]16384.0
+[vector filter amp B]16384.0
+[vector filter amp C]16384.0
+[vector filter amp D]16384.0
+[mixer vco dry]0.0
+[mixer noise dry]0.0
+[mixer filter dry]16384.0
+[mixer vco filter]16384.0
+[mixer noise filter]16384.0
 [vco 1 eg time1]0.0
 [vco 1 eg time2]0.0
 [vco 1 eg time3]0.0
@@ -243,6 +283,10 @@ poly
 [vector amp 1 B]16384.0
 [vector amp 1 C]16384.0
 [vector amp 1 D]16384.0
+[vector freq 1 A]0.0
+[vector freq 1 B]0.0
+[vector freq 1 C]0.0
+[vector freq 1 D]0.0
 [vco 2 eg time1]0.0
 [vco 2 eg time2]0.0
 [vco 2 eg time3]0.0
@@ -268,6 +312,10 @@ poly
 [vector amp 2 B]16384.0
 [vector amp 2 C]16384.0
 [vector amp 2 D]16384.0
+[vector freq 2 A]0.0
+[vector freq 2 B]0.0
+[vector freq 2 C]0.0
+[vector freq 2 D]0.0
 [vco 3 eg time1]0.0
 [vco 3 eg time2]0.0
 [vco 3 eg time3]0.0
@@ -293,6 +341,10 @@ poly
 [vector amp 3 B]16384.0
 [vector amp 3 C]16384.0
 [vector amp 3 D]16384.0
+[vector freq 3 A]0.0
+[vector freq 3 B]0.0
+[vector freq 3 C]0.0
+[vector freq 3 D]0.0
 [vco 4 eg time1]0.0
 [vco 4 eg time2]0.0
 [vco 4 eg time3]0.0
@@ -318,6 +370,10 @@ poly
 [vector amp 4 B]16384.0
 [vector amp 4 C]16384.0
 [vector amp 4 D]16384.0
+[vector freq 4 A]0.0
+[vector freq 4 B]0.0
+[vector freq 4 C]0.0
+[vector freq 4 D]0.0
 [vco 5 eg time1]0.0
 [vco 5 eg time2]0.0
 [vco 5 eg time3]0.0
@@ -343,6 +399,10 @@ poly
 [vector amp 5 B]16384.0
 [vector amp 5 C]16384.0
 [vector amp 5 D]16384.0
+[vector freq 5 A]0.0
+[vector freq 5 B]0.0
+[vector freq 5 C]0.0
+[vector freq 5 D]0.0
 [vco 6 eg time1]0.0
 [vco 6 eg time2]0.0
 [vco 6 eg time3]0.0
@@ -368,6 +428,14 @@ poly
 [vector amp 6 B]16384.0
 [vector amp 6 C]16384.0
 [vector amp 6 D]16384.0
+[vector freq 6 A]0.0
+[vector freq 6 B]0.0
+[vector freq 6 C]0.0
+[vector freq 6 D]0.0
+[vector noise A]16384.0
+[vector noise B]16384.0
+[vector noise C]16384.0
+[vector noise D]16384.0
 [adsr amp attack]0.0
 [adsr amp decay]0.0
 [adsr amp sustain]0.0
@@ -397,36 +465,57 @@ poly
 [core sens velocity left]-64.0
 [core sens velocity right]0.0
 [vco 1 sens freq pitch]512.0
+[vco 1 sens amp modulation BP]0.0
+[vco 1 sens amp modulation left]0.0
+[vco 1 sens amp modulation right]0.0
 [vco 1 sens freq lfo 1]16384.0
 [vco 1 sens freq lfo 2]0.0
 [vco 1 sens amp lfo 1]0.0
 [vco 1 sens amp lfo 2]0.0
 [vco 2 sens freq pitch]512.0
+[vco 2 sens amp modulation BP]0.0
+[vco 2 sens amp modulation left]0.0
+[vco 2 sens amp modulation right]0.0
 [vco 2 sens freq lfo 1]16384.0
 [vco 2 sens freq lfo 2]0.0
 [vco 2 sens amp lfo 1]0.0
 [vco 2 sens amp lfo 2]0.0
 [vco 3 sens freq pitch]512.0
+[vco 3 sens amp modulation BP]0.0
+[vco 3 sens amp modulation left]0.0
+[vco 3 sens amp modulation right]0.0
 [vco 3 sens freq lfo 1]16384.0
 [vco 3 sens freq lfo 2]0.0
 [vco 3 sens amp lfo 1]0.0
 [vco 3 sens amp lfo 2]0.0
 [vco 4 sens freq pitch]512.0
+[vco 4 sens amp modulation BP]0.0
+[vco 4 sens amp modulation left]0.0
+[vco 4 sens amp modulation right]0.0
 [vco 4 sens freq lfo 1]16384.0
 [vco 4 sens freq lfo 2]0.0
 [vco 4 sens amp lfo 1]0.0
 [vco 4 sens amp lfo 2]0.0
 [vco 5 sens freq pitch]512.0
+[vco 5 sens amp modulation BP]0.0
+[vco 5 sens amp modulation left]0.0
+[vco 5 sens amp modulation right]0.0
 [vco 5 sens freq lfo 1]16384.0
 [vco 5 sens freq lfo 2]0.0
 [vco 5 sens amp lfo 1]0.0
 [vco 5 sens amp lfo 2]0.0
 [vco 6 sens freq pitch]512.0
+[vco 6 sens amp modulation BP]0.0
+[vco 6 sens amp modulation left]0.0
+[vco 6 sens amp modulation right]0.0
 [vco 6 sens freq lfo 1]16384.0
 [vco 6 sens freq lfo 2]0.0
 [vco 6 sens amp lfo 1]0.0
 [vco 6 sens amp lfo 2]0.0
 [filter sens pitch]0.0
+[filter sens modulation BP]0.0
+[filter sens modulation left]0.0
+[filter sens modulation right]0.0
 [vector X][]
 [vector Y][]
 [key_map][[]]

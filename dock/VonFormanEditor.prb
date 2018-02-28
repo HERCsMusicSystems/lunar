@@ -1,0 +1,23 @@
+[import "http"]
+
+
+[[VonForman_router *req *res]
+  [*req HTTP_URI : *route]
+  [VonForman_route *req *res : *route]
+]
+
+[[VonForman_route *req *res GET Lunar : *route]
+  [show *route]
+  [Lunar : *route]
+  [*res "HTTP/1.0 200 OK\nAccess-Control-Allow-Origin: *\n\n<body><h1>VonForman</h1></body>"]
+]
+
+[[VonForman_route *req *res GET return : *route]
+  [Lunar *value : *route]
+  [show [Lunar *value : *route]]
+  [*res "HTTP/1.0 200 OK\nAccess-Control-Allow-Origin: *\n\n<value>" [*value] "</value>"]
+]
+
+[webserver VonForman_server 30019 VonForman_router]
+
+[exit]

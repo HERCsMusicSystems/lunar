@@ -1,0 +1,58 @@
+Graularity:
+<input type = radio name = granulars onclick = "javascript: changeGranularity (1);" />1
+<input type = radio name = granulars onclick = "javascript: changeGranularity (8);" />8
+<input type = radio name = granulars onclick = "javascript: changeGranularity (64);" />64
+<input type = radio name = granulars onclick = "javascript: changeGranularity (128);" />128
+<input type = radio name = granulars onclick = "javascript: changeGranularity (512);" />512
+<input type = radio name = granulars onclick = "javascript: changeGranularity (2048);" />2048
+
+<br />
+
+<div id = editor>
+
+<input type = number class = granular min = 0 max = 16384 step = 128 id = 'core/volume' style = "width: 5em"; onchange = "javascript: Lunar (this);" />
+<input type = number class = granular min = -8192 max = 8192 step = 128 id = 'core/pan' style = "width: 5em"; onchange = "javascript: Lunar (this);" />
+
+</div>
+
+<script>
+
+var VonForman = 'VF-0';
+
+var Lunar = function (el) {
+  var url = "http://localhost:30019/Lunar/" + el . value + "/" + VonForman + "/" + el . id;
+  console . log (url);
+  var req = new XMLHttpRequest ();
+  req . onreadystatechange = function () {
+    if (req . readyState == 4 && req . status == 200)
+      console . log (req . responseText);
+  }
+  req . open ("GET", url, true);
+  req . send (null);
+};
+
+var changeGranularity = function (step) {
+  var inputs = document . getElementsByClassName ('granular');
+  for (var ind = 0; ind < inputs . length; ind++) inputs [ind] . step = step;
+};
+
+var Return = function (el) {
+  var url = "http://localhost:30019/return/" + VonForman + "/" + el . id;
+  console . log (url);
+  var req = new XMLHttpRequest ();
+  req . onreadystatechange = function () {
+    if (req . readyState == 4 && req . status == 200)
+      el . value = Number (req . responseXML . childNodes [0] . innerHTML);
+  }
+  req . open ("GET", url, true);
+  req . send (null);
+};
+
+var refresh = function () {
+  var inputs = document . getElementById ('editor') . getElementsByTagName ('input');
+  for (var ind = 0; ind < inputs . length; ind++) Return (inputs [ind]);
+};
+
+refresh ();
+
+</script>

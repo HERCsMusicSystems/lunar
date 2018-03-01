@@ -1,17 +1,194 @@
+<body>
+<font face = arial>
+
 Graularity:
-<input type = radio name = granulars onclick = "javascript: changeGranularity (1);" />1
-<input type = radio name = granulars onclick = "javascript: changeGranularity (8);" />8
-<input type = radio name = granulars onclick = "javascript: changeGranularity (64);" />64
-<input type = radio name = granulars onclick = "javascript: changeGranularity (128);" />128
-<input type = radio name = granulars onclick = "javascript: changeGranularity (512);" />512
-<input type = radio name = granulars onclick = "javascript: changeGranularity (2048);" />2048
+<input type = radio name = granulars id =    g1 onclick = "javascript: changeGranularity (1);" />1
+<input type = radio name = granulars id =    g8 onclick = "javascript: changeGranularity (8);" />8
+<input type = radio name = granulars id =   g64 onclick = "javascript: changeGranularity (64);" />64
+<input type = radio name = granulars id =  g128 onclick = "javascript: changeGranularity (128);" checked />128
+<input type = radio name = granulars id =  g512 onclick = "javascript: changeGranularity (512);" />512
+<input type = radio name = granulars id = g2048 onclick = "javascript: changeGranularity (2048);" />2048
 
 <br />
 
 <div id = editor>
 
-<input type = number class = granular min = 0 max = 16384 step = 128 id = 'core/volume' style = "width: 5em"; onchange = "javascript: Lunar (this);" />
-<input type = number class = granular min = -8192 max = 8192 step = 128 id = 'core/pan' style = "width: 5em"; onchange = "javascript: Lunar (this);" />
+<div id = chorus_div style = "background: #73AD21; border-radius: 12px; padding: 12px; display: inline-block; color: white;"><b>CORE</b>
+<table style = "color: white;">
+<tr><td>VOLUME:</td><td><input type = number class = granular min = 0 max = 16384 step = 128 id = 'core/volume' style = "width: 5em"; onchange = "javascript: Lunar (this);" /></td>
+<td>X</td><td>Y</td><td>Speed</td><td>Mode</td>
+</tr>
+<tr><td>PAN:</td><td><input type = number class = granular min = -8192 max = 8192 step = 128 id = 'core/pan' style = "width: 5em"; onchange = "javascript: Lunar (this);" /></td>
+<td><input type = number class = granular min = 0 max = 16384 step = 128 id = 'core/vector/X' style = "width: 5em"; onchange = "javascript: Lunar (this);" /></td>
+<td><input type = number class = granular min = 0 max = 16384 step = 128 id = 'core/vector/Y' style = "width: 5em"; onchange = "javascript: Lunar (this);" /></td>
+<td><input type = number class = granular min = -8192 max = 8192 step = 128 id = 'core/vector/auto/speed' style = "width: 5em"; onchange = "javascript: Lunar (this);" /></td>
+<td><select id = 'core/vector/auto/control' onchange = "javascript: Lunar (this);" >
+<option value = 0>Inactive</option>
+<option value = 1>Play</option>
+<option value = 2>Loop</option>
+<option value = 16>Record</option>
+</select></td>
+</tr>
+<tr><td>PITCH:</td><td><input type = number class = granular min = -8192 max = 8192 step = 128 id = 'core/pitch' style = "width: 5em"; onchange = "javascript: Lunar (this);" /></td><td>Vibrato</td><td>Tremolo</td><td>Wah Wah</td><td>Pan</td>
+</tr>
+<tr><td>MODULATION:</td><td><input type = number class = granular min = 0 max = 16384 step = 128 id = 'core/modulation' style = "width: 5em"; onchange = "javascript: Lunar (this);" /></td>
+<td><input type = number class = granular min = 0 max = 16384 step = 128 id = 'core/sens/lfo/vibrato' style = "width: 5em"; onchange = "javascript: Lunar (this);" /></td>
+<td><input type = number class = granular min = 0 max = 16384 step = 128 id = 'core/sens/lfo/tremolo' style = "width: 5em"; onchange = "javascript: Lunar (this);" /></td>
+<td><input type = number class = granular min = 0 max = 16384 step = 128 id = 'core/sens/lfo/wahwah' style = "width: 5em"; onchange = "javascript: Lunar (this);" /></td>
+<td><input type = number class = granular min = 0 max = 16384 step = 128 id = 'core/sens/lfo/pan' style = "width: 5em"; onchange = "javascript: Lunar (this);" /></td>
+</tr>
+<tr><td>VELOCITY:</td><td>Sens</td>
+<td><input type = number class = granular min = -8192 max = 8192 step = 128 id = 'core/sens/velocity/left' style = "width: 5em"; onchange = "javascript: Lunar (this);" /></td>
+<td><input type = number class = granular min = 0 max = 16384 step = 128 id = 'core/sens/velocity/BP' style = "width: 5em"; onchange = "javascript: Lunar (this);" /></td>
+<td><input type = number class = granular min = -8192 max = 8192 step = 128 id = 'core/sens/velocity/right' style = "width: 5em"; onchange = "javascript: Lunar (this);" /></td>
+</tr>
+</table>
+</div>
+
+<div id = chorus_div style = "background: #73AD21; border-radius: 12px; padding: 12px; display: inline-block; color: white;"><b>CHORUS</b>
+<table style = "color: white;">
+<tr><td>LEVEL:</td><td><input type = number class = granular min = 0 max = 16384 step = 128 id = 'core/chorus/level' style = "width: 5em"; onchange = "javascript: Lunar (this);" /></td></tr>
+<tr><td>TIME:</td><td><input type = number class = granular min = 0 max = 16384 step = 128 id = 'core/chorus/time' style = "width: 5em"; onchange = "javascript: Lunar (this);" /></td></tr>
+<tr><td>BIAS:</td><td><input type = number class = granular min = -8192 max = 8192 step = 128 id = 'core/chorus/bias' style = "width: 5em"; onchange = "javascript: Lunar (this);" /></td></tr>
+<tr><td>SPEED:</td><td><input type = number class = granular min = -8192 max = 8192 step = 128 id = 'core/chorus/speed' style = "width: 5em"; onchange = "javascript: Lunar (this);" /></td></tr>
+<tr><td>PHASE:</td><td><input type = number class = granular min = -8192 max = 8192 step = 128 id = 'core/chorus/phase' style = "width: 5em"; onchange = "javascript: Lunar (this);" /></td></tr>
+<tr><td>AMP:</td><td><input type = number class = granular min = 0 max = 16384 step = 128 id = 'core/chorus/amp' style = "width: 5em"; onchange = "javascript: Lunar (this);" /></td></tr>
+</table>
+</div>
+
+<div id = delay_div style = "background: #73AD21; border-radius: 12px; padding: 12px; display: inline-block; color: white;"><b>DELAY</b>
+<table style = "color: white;">
+<tr><td>GATEWAY:</td><td><input type = number class = granular min = 0 max = 16384 step = 128 id = 'core/delay/gateway' style = "width: 5em"; onchange = "javascript: Lunar (this);" /></td></tr>
+<tr><td>BALANCE:</td><td><input type = number class = granular min = -8192 max = 8192 step = 128 id = 'core/delay/balance' style = "width: 5em"; onchange = "javascript: Lunar (this);" /></td></tr>
+<tr><td>FEEDBACK:</td><td><input type = number class = granular min = 0 max = 16384 step = 128 id = 'core/delay/feedback' style = "width: 5em"; onchange = "javascript: Lunar (this);" /></td></tr>
+<tr><td>TIME:</td><td><input type = number class = granular min = 0 max = 16384 step = 128 id = 'core/delay/time' style = "width: 5em"; onchange = "javascript: Lunar (this);" /></td></tr>
+<tr><td>HIGHDAMP:</td><td><input type = number class = granular min = 0 max = 16384 step = 128 id = 'core/delay/highdamp' style = "width: 5em"; onchange = "javascript: Lunar (this);" /></td></tr>
+</td></tr>
+</table>
+</div>
+
+<div id = delay_div style = "background: #73AD21; border-radius: 12px; padding: 12px; display: inline-block; color: white;"><b>FREEVERB</b>
+<table style = "color: white;">
+<tr><td>FEEDBACK:</td><td><input type = number class = granular min = 0 max = 16384 step = 128 id = 'core/freeverb/feedback' style = "width: 5em"; onchange = "javascript: Lunar (this);" /></td></tr>
+<tr><td>DIFFUSION:</td><td><input type = number class = granular min = 0 max = 61384 step = 128 id = 'core/freeverb/diffusion' style = "width: 5em"; onchange = "javascript: Lunar (this);" /></td></tr>
+<tr><td>HIGHDAMP:</td><td><input type = number class = granular min = 0 max = 16384 step = 128 id = 'core/freeverb/highdamp' style = "width: 5em"; onchange = "javascript: Lunar (this);" /></td></tr>
+<tr><td>DRY:</td><td><input type = number class = granular min = 0 max = 16384 step = 128 id = 'core/freeverb/dry' style = "width: 5em"; onchange = "javascript: Lunar (this);" /></td></tr>
+<tr><td>WET:</td><td><input type = number class = granular min = 0 max = 16384 step = 128 id = 'core/freeverb/wet' style = "width: 5em"; onchange = "javascript: Lunar (this);" /></td></tr>
+</td></tr>
+</table>
+</div>
+
+<div id = chorus_div style = "background: #73AD21; border-radius: 12px; padding: 12px; display: inline-block; color: white;"><b>ARPEGGIATOR</b>
+<table style = "color: white;">
+<tr><td>SPEED:</td><td><input type = number min = 0 max = 16384 step = 1 id = 'arpeggiator/speed' style = "width: 5em"; onchange = "javascript: Lunar (this);" /></td></tr>
+<tr><td>DIVISION:</td><td><input type = number min = 0 max = 16384 step = 1 id = 'arpeggiator/subdivision' style = "width: 5em"; onchange = "javascript: Lunar (this);" /></td></tr>
+<tr><td>ACTIVE:</td><td><input type = number min = 0 max = 1 step = 1 id = 'arpeggiator/active' style = "width: 5em"; onchange = "javascript: Lunar (this);" /></td></tr>
+<tr><td>ALGO:</td><td><input type = number min = 0 max = 64 step = 1 id = 'arpeggiator/algo' style = "width: 5em"; onchange = "javascript: Lunar (this);" /></td></tr>
+<tr><td>HOLD:</td><td><input type = number min = 0 max = 1 step = 1 id = 'arpeggiator/hold' style = "width: 5em"; onchange = "javascript: Lunar (this);" /></td></tr>
+</table>
+</div>
+
+<br /><br />
+
+<div style="background: blue; display: inline-block; padding: 4px; border-radius: 8px;">
+
+<div id = chorus_div style = "background: #73AD21; border-radius: 12px; padding: 12px; display: inline-block; color: white;"><b>LFO 1</b>
+<table style = "color: white;">
+<tr><td>SPEED:</td><td><input type = number class = granular min = -8192 max = 8192 step = 128 id = 'lfo/1/speed' style = "width: 5em"; onchange = "javascript: Lunar (this);" /></td><td></td><td></td><td>X</td><td>Y</td></tr>
+<tr><td>WAVE:</td><td><input type = number min = 0 max = 4 step = 1 id = 'lfo/1/wave' style = "width: 5em"; onchange = "javascript: Lunar (this);" /></td>
+<td colspan = 2>VECTOR:</td>
+<td><input type = number class = granular min = 0 max = 16384 step = 128 id = 'lfo/1/vector/X' style = "width: 5em"; onchange = "javascript: Lunar (this);" /></td>
+<td><input type = number class = granular min = 0 max = 16384 step = 128 id = 'lfo/1/vector/Y' style = "width: 5em"; onchange = "javascript: Lunar (this);" /></td>
+</tr>
+<tr><td>PULSE:</td><td><input type = number class = granular min = -8192 max = 8192 step = 128 id = 'lfo/1/pulse' style = "width: 5em"; onchange = "javascript: Lunar (this);" /></td></tr>
+<tr><td>PHASE:</td><td><input type = number class = granular min = 0 max = 16384 step = 128 id = 'lfo/1/phase' style = "width: 5em"; onchange = "javascript: Lunar (this);" /></td><td>Vibrato</td><td>Tremolo</td><td>Wah Wah</td><td>Pan</td></tr>
+<tr><td>SYNC:</td><td><input type = number min = 0 max = 1 step = 1 id = 'lfo/1/sync' style = "width: 5em"; onchange = "javascript: Lunar (this);" /></td>
+<td><input type = number class = granular min = 0 max = 16384 step = 128 id = 'lfo/1/vibrato' style = "width: 5em"; onchange = "javascript: Lunar (this);" /></td>
+<td><input type = number class = granular min = 0 max = 16384 step = 128 id = 'lfo/1/tremolo' style = "width: 5em"; onchange = "javascript: Lunar (this);" /></td>
+<td><input type = number class = granular min = 0 max = 16384 step = 128 id = 'lfo/1/wahwah' style = "width: 5em"; onchange = "javascript: Lunar (this);" /></td>
+<td><input type = number class = granular min = 0 max = 16384 step = 128 id = 'lfo/1/pan' style = "width: 5em"; onchange = "javascript: Lunar (this);" /></td>
+</tr>
+</table>
+</div>
+
+<div id = chorus_div style = "background: #73AD21; border-radius: 12px; padding: 12px; display: inline-block; color: white;"><b>LFO 2</b>
+<table style = "color: white;">
+<tr><td>SPEED:</td><td><input type = number class = granular min = -8192 max = 8192 step = 128 id = 'lfo/2/speed' style = "width: 5em"; onchange = "javascript: Lunar (this);" /></td><td></td><td></td><td>X</td><td>Y</td></tr>
+<tr><td>WAVE:</td><td><input type = number min = 0 max = 4 step = 1 id = 'lfo/2/wave' style = "width: 5em"; onchange = "javascript: Lunar (this);" /></td>
+<td colspan = 2>VECTOR:</td>
+<td><input type = number class = granular min = 0 max = 16384 step = 128 id = 'lfo/2/vector/X' style = "width: 5em"; onchange = "javascript: Lunar (this);" /></td>
+<td><input type = number class = granular min = 0 max = 16384 step = 128 id = 'lfo/2/vector/Y' style = "width: 5em"; onchange = "javascript: Lunar (this);" /></td>
+</tr>
+<tr><td>PULSE:</td><td><input type = number class = granular min = -8192 max = 8192 step = 128 id = 'lfo/2/pulse' style = "width: 5em"; onchange = "javascript: Lunar (this);" /></td></tr>
+<tr><td>PHASE:</td><td><input type = number class = granular min = 0 max = 16384 step = 128 id = 'lfo/2/phase' style = "width: 5em"; onchange = "javascript: Lunar (this);" /></td><td>Vibrato</td><td>Tremolo</td><td>Wah Wah</td><td>Pan</td></tr>
+<tr><td>SYNC:</td><td><input type = number min = 0 max = 1 step = 1 id = 'lfo/2/sync' style = "width: 5em"; onchange = "javascript: Lunar (this);" /></td>
+<td><input type = number class = granular min = 0 max = 16384 step = 128 id = 'lfo/2/vibrato' style = "width: 5em"; onchange = "javascript: Lunar (this);" /></td>
+<td><input type = number class = granular min = 0 max = 16384 step = 128 id = 'lfo/2/tremolo' style = "width: 5em"; onchange = "javascript: Lunar (this);" /></td>
+<td><input type = number class = granular min = 0 max = 16384 step = 128 id = 'lfo/2/wahwah' style = "width: 5em"; onchange = "javascript: Lunar (this);" /></td>
+<td><input type = number class = granular min = 0 max = 16384 step = 128 id = 'lfo/2/pan' style = "width: 5em"; onchange = "javascript: Lunar (this);" /></td>
+</tr>
+</table>
+</div>
+
+</div>
+
+<br /><br />
+
+<div style="background: red; display: inline-block; padding: 4px; border-radius: 8px;">
+
+<div id = chorus_div style = "background: #73AD21; border-radius: 12px; padding: 12px; display: inline-block; color: white;">
+<table style = "color: white;">
+<tr><td colspan = 2><b>VCO 1</b></td>
+<td>Time</td><td colsp>Level</td><td colspan = 4 align = center>Freq sens</td><td colspan = 4 align = center>Amp sens</td>
+</tr>
+<tr><td>FREQ:</td><td><input type = number class = granular min = -8192 max = 8192 step = 128 id = 'vco/1/freq' style = "width: 5em"; onchange = "javascript: Lunar (this);" /></td>
+<td><input type = number class = granular min = 0 max = 16384 step = 128 id = 'vco/1/eg/time1' style = "width: 5em"; onchange = "javascript: Lunar (this);" /></td>
+<td><input type = number class = granular min = -16384 max = 0 step = 128 id = 'vco/1/eg/level1' style = "width: 5em"; onchange = "javascript: Lunar (this);" /></td>
+<td>Key</td>
+<td><input type = number class = granular min = -8192 max = 8192 step = 128 id = 'vco/1/sens/freq/key/left' style = "width: 5em"; onchange = "javascript: Lunar (this);" /></td>
+<td><input type = number class = granular min = -16384 max = 16384 step = 16384 id = 'vco/1/sens/freq/key/BP' style = "width: 5em"; onchange = "javascript: Lunar (this);" /></td>
+<td><input type = number class = granular min = -8192 max = 8192 step = 128 id = 'vco/1/sens/freq/key/right' style = "width: 5em"; onchange = "javascript: Lunar (this);" /></td>
+<td>Key</td>
+<td><input type = number class = granular min = -8192 max = 8192 step = 128 id = 'vco/1/sens/amp/key/left' style = "width: 5em"; onchange = "javascript: Lunar (this);" /></td>
+<td><input type = number class = granular min = -16384 max = 16384 step = 128 id = 'vco/1/sens/amp/key/BP' style = "width: 5em"; onchange = "javascript: Lunar (this);" /></td>
+<td><input type = number class = granular min = -8192 max = 8192 step = 128 id = 'vco/1/sens/amp/key/right' style = "width: 5em"; onchange = "javascript: Lunar (this);" /></td>
+</tr>
+<tr><td>AMP:</td><td><input type = number class = granular min = -16384 max = 0 step = 128 id = 'vco/1/amp' style = "width: 5em"; onchange = "javascript: Lunar (this);" /></td>
+<td><input type = number class = granular min = 0 max = 16384 step = 128 id = 'vco/1/eg/time2' style = "width: 5em"; onchange = "javascript: Lunar (this);" /></td>
+<td><input type = number class = granular min = -16384 max = 0 step = 128 id = 'vco/1/eg/level2' style = "width: 5em"; onchange = "javascript: Lunar (this);" /></td>
+<td>EG</td>
+<td><input type = number class = granular min = -16384 max = 16384 step = 128 id = 'vco/1/sens/freq/eg' style = "width: 5em"; onchange = "javascript: Lunar (this);" /></td>
+<td></td><td colspan = 2 align = right>Velocity</td>
+<td><input type = number class = granular min = -8192 max = 8192 step = 128 id = 'vco/1/sens/amp/velocity/left' style = "width: 5em"; onchange = "javascript: Lunar (this);" /></td>
+<td><input type = number class = granular min = -16384 max = 16384 step = 128 id = 'vco/1/sens/amp/velocity/BP' style = "width: 5em"; onchange = "javascript: Lunar (this);" /></td>
+<td><input type = number class = granular min = -8192 max = 8192 step = 128 id = 'vco/1/sens/amp/velocity/right' style = "width: 5em"; onchange = "javascript: Lunar (this);" /></td>
+</tr>
+<tr><td>RATIO:</td><td><input type = number min = 1 max = 24 step = 128 id = 'vco/1/ratio' style = "width: 5em"; onchange = "javascript: Lunar (this);" /></td>
+<td><input type = number class = granular min = 0 max = 16384 step = 128 id = 'vco/1/eg/time3' style = "width: 5em"; onchange = "javascript: Lunar (this);" /></td>
+<td><input type = number class = granular min = -16384 max = 0 step = 128 id = 'vco/1/eg/level3' style = "width: 5em"; onchange = "javascript: Lunar (this);" /></td>
+<td>Pitch</td>
+<td><input type = number class = granular min = -16384 max = 16384 step = 128 id = 'vco/1/sens/freq/pitch' style = "width: 5em"; onchange = "javascript: Lunar (this);" /></td>
+<td></td><td colspan = 2 align = right>Modulation</td>
+<td><input type = number class = granular min = -8192 max = 8192 step = 128 id = 'vco/1/sens/amp/modulation/left' style = "width: 5em"; onchange = "javascript: Lunar (this);" /></td>
+<td><input type = number class = granular min = -16384 max = 16384 step = 128 id = 'vco/1/sens/amp/modulation/BP' style = "width: 5em"; onchange = "javascript: Lunar (this);" /></td>
+<td><input type = number class = granular min = -8192 max = 8192 step = 128 id = 'vco/1/sens/amp/modulation/right' style = "width: 5em"; onchange = "javascript: Lunar (this);" /></td>
+</tr>
+<tr><td>FEEDBACK:</td><td><input type = number class = granular min = 0 max = 16384 step = 128 id = 'vco/1/feedback' style = "width: 5em"; onchange = "javascript: Lunar (this);" /></td>
+<td><input type = number class = granular min = 0 max = 16384 step = 128 id = 'vco/1/eg/time4' style = "width: 5em"; onchange = "javascript: Lunar (this);" /></td>
+<td><input type = number class = granular min = -16384 max = 0 step = 128 id = 'vco/1/eg/level4' style = "width: 5em"; onchange = "javascript: Lunar (this);" /></td>
+<td>LFOs</td>
+<td><input type = number class = granular min = -16384 max = 16384 step = 128 id = 'vco/1/sens/freq/lfo/1' style = "width: 5em"; onchange = "javascript: Lunar (this);" /></td>
+<td><input type = number class = granular min = -16384 max = 16384 step = 128 id = 'vco/1/sens/freq/lfo/2' style = "width: 5em"; onchange = "javascript: Lunar (this);" /></td>
+<td colspan = 2 align = right>LFOs</td>
+<td><input type = number class = granular min = -16384 max = 16384 step = 128 id = 'vco/1/sens/amp/lfo/1' style = "width: 5em"; onchange = "javascript: Lunar (this);" /></td>
+<td><input type = number class = granular min = -16384 max = 16384 step = 128 id = 'vco/1/sens/amp/lfo/2' style = "width: 5em"; onchange = "javascript: Lunar (this);" /></td>
+</tr>
+</td></tr>
+</table>
+</div>
+
+</div>
+
 
 </div>
 
@@ -51,8 +228,24 @@ var Return = function (el) {
 var refresh = function () {
   var inputs = document . getElementById ('editor') . getElementsByTagName ('input');
   for (var ind = 0; ind < inputs . length; ind++) Return (inputs [ind]);
+  inputs = document . getElementById ('editor') . getElementsByTagName ('select');
+  for (var ind = 0; ind < inputs . length; ind++) Return (inputs [ind]);
+};
+
+document . onkeydown = function (e) {
+  switch (e . keyCode) {
+  case 90: document . getElementById ('g1') . checked = true; changeGranularity (1); break;
+  case 88: document . getElementById ('g8') . checked = true; changeGranularity (8); break;
+  case 67: document . getElementById ('g64') . checked = true; changeGranularity (64); break;
+  case 86: document . getElementById ('g128') . checked = true; changeGranularity (128); break;
+  case 66: document . getElementById ('g512') . checked = true; changeGranularity (512); break;
+  case 78: document . getElementById ('g2048') . checked = true; changeGranularity (2048); break;
+  default: break;
+  }
 };
 
 refresh ();
 
 </script>
+</font>
+</body>

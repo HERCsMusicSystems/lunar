@@ -478,7 +478,7 @@ Core also functions as an audio source (connected directly to the sound hardware
             <b>Note:</b> module adheres to <a href="#common_behaviour_of_predicates">Common Behaviour</a>.<br />
         </div>
         <div class="doc_predicate_body">
-            <b>Signals:</b> [["DRYLEFT" "DRYRIGHT" "WETLEFT" "WETRIGHT" "BALANCE"] ["LEFT" "RIGHT"]]<br />
+            <b>Signals:</b> [["DRY" "WET" "BALANCE"] ["SIGNAL"]]<br />
             Mixes two mono signals together, typically dry and wet (comming from audio processing).
             Balance range from -8192.0 to 8192.0 with shelving-linear response.
         </div>
@@ -765,7 +765,7 @@ Core also functions as an audio source (connected directly to the sound hardware
             <b>Note:</b> module adheres to <a href="#common_behaviour_of_predicates">Common Behaviour</a>.<br />
         </div>
         <div class="doc_predicate_body">
-            <b>Signals:</b> [["TRIGGER" "SPEED" "WAVE" "PULSE" "PHASE" "SYNC"] ["SIGNAL" "NEGATIVE" "POSITIVE"]]<br />
+            <b>Signals:</b> [["TRIGGER" "SPEED" "WAVE" "PULSE" "PHASE" "SYNC" "VIBRATO" "TREMOLO" "WAHWAH" "PAN"] ["SIGNAL" "NEGATIVE" "POSITIVE"]]<br />
             LFO generates low frequency oscillations, which can be used as control signals.
             Very useful for vibrato, tremolo, wah-wah effect and many more.<br />
             <b>INPUTS:</b><br />
@@ -776,6 +776,10 @@ Core also functions as an audio source (connected directly to the sound hardware
             <b>Pulse:</b> pulse width of the signal. Range between -8192.0 .. 8192.0.<br />
             <b>Phase:</b> retrigger phase. Range between 0.0 .. 16384.0.<br />
             <b>Sync:</b> controlls whether LFO can be retriggered.<br />
+            <b>Vibrato:</b> controlls the amplitude of the vibrato signal.<br />
+            <b>Tremolo:</b> controlls the amplitude of the tremolo signal.<br />
+            <b>Wahwah:</b> controlls the amplitude of the wahwah signal.<br />
+            <b>Pan:</b> controlls the amplitude of the pan signal.<br />
             <b>OUTPUTS:</b><br />
             <b>Signal:</b> output signal in range between -1.0 .. 1.0.<br />
             <b>Negative:</b> output signal in range between -1.0 .. 0.0.<br />

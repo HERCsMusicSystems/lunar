@@ -1,5 +1,7 @@
 <body>
 <font face = arial>
+Instrument: <input value = "VF-0" onkeyup = "javascript: VonForman = this . value;" />
+Host: <input value = "http://localhost:30019" onkeyup = "javascript: HOST = this . value;" />
 
 Graularity:
 <input type = radio name = granulars id =    g1 onclick = "javascript: changeGranularity (1);" />1
@@ -936,9 +938,10 @@ Graularity:
 <script>
 
 var VonForman = 'VF-0';
+var HOST = "http://localhost:30019";
 
 var Lunar = function (el) {
-  var url = "http://localhost:30019/Lunar/" + el . value + "/" + VonForman + "/" + el . id;
+  var url = HOST + "/Lunar/" + el . value + "/" + VonForman + "/" + el . id;
   console . log (url);
   var req = new XMLHttpRequest ();
   req . onreadystatechange = function () {
@@ -955,7 +958,7 @@ var changeGranularity = function (step) {
 };
 
 var Return = function (el) {
-  var url = "http://localhost:30019/return/" + VonForman + "/" + el . id;
+  var url = HOST + "/return/" + VonForman + "/" + el . id;
   console . log (url);
   var req = new XMLHttpRequest ();
   req . onreadystatechange = function () {

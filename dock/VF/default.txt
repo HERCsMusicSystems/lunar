@@ -106,6 +106,12 @@ poly
 [vco noise egscal BP]0.0
 [vco noise egscal left]0.0
 [vco noise egscal right]0.0
+[vco noise sens key BP]0.0
+[vco noise sens key left]0.0
+[vco noise sens key right]0.0
+[vco noise sens velocity BP]0.0
+[vco noise sens velocity left]0.0
+[vco noise sens velocity right]0.0
 [filter freq]5120.0
 [filter resonance]0.0
 [filter amp]0.0
@@ -512,6 +518,11 @@ poly
 [vco 6 sens freq lfo 2]0.0
 [vco 6 sens amp lfo 1]0.0
 [vco 6 sens amp lfo 2]0.0
+[vco noise sens modulation BP]0.0
+[vco noise sens modulation left]0.0
+[vco noise sens modulation right]0.0
+[vco noise sens lfo 1]0.0
+[vco noise sens lfo 2]0.0
 [filter sens pitch]0.0
 [filter sens modulation BP]0.0
 [filter sens modulation left]0.0

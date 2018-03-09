@@ -64,6 +64,7 @@ program vonforman [BuildVonForman BuildVonFormanPart VF LGV LGT LGP STK STV AEG 
 	[LGP *pitchfreqf *pitch]
 	[parameter_block *modulation "index"]
 	[sensitivity *modulationfreqf] [*modulationfreqf *modulation]
+	[sensitivity *noise_modbias] [*noise_modbias *modulation]
 	[lfo *lfo1] [lfo *lfo2]
 		[gateway *vibrato] [*vibrato *modulation] [*lfo1 "vibrato" *vibrato]
 		[gateway *tremolo] [*tremolo *modulation] [*lfo1 "tremolo" *tremolo]
@@ -72,6 +73,7 @@ program vonforman [BuildVonForman BuildVonFormanPart VF LGV LGT LGP STK STV AEG 
 		[gateway *lfo1x] [gateway *lfo1y] [gateway *lfo2x] [gateway *lfo2y]
 		[*lfo1x *lfo1] [*lfo1y *lfo1] [*lfo2x *lfo2] [*lfo2y *lfo2]
 	[BuildOscillatorControllers *order1 *pitch *modulation *lfo1 *lfo2 *ctrls]
+	[LGT *noise_lfo1amp *lfo1] [LGT *noise_lfo2amp *lfo2]
 	[stereo_pan *pan] [stereo_gateway *dry] [delay *delay] [drywet *drywet] [volume *volume] [stereo_chorus *chorus]
 	[*pan "pan" *lfo1 "pan"] [*pan "pan" *lfo2 "pan"]
 	[ConnectStereo *pan *chorus] [ConnectStereo *dry *pan] [ConnectStereo *delay *dry] [ConnectDryWet *drywet *dry *delay]
@@ -113,9 +115,12 @@ program vonforman [BuildVonForman BuildVonFormanPart VF LGV LGT LGP STK STV AEG 
 	;==========================================
 	[REPEAT *polyphony [BuildVonFormanPart *order1 *order2 *VonForman *VonFormanCB *chorus *key_map
 						*lfo1 *lfo2 *XData *YData *lfo1x *lfo1y *lfo2x *lfo2y
-						*pitchfreqf *modulationfreqf *ctrls]
+						*pitchfreqf *modulationfreqf *noise_modbias *noise_lfo1amp *noise_lfo2amp *ctrls]
 	]
 	[InsertOscillatorControllers 1 *VonForman *ctrls]
+	[Insert *noise_modbias *VonForman vco noise sens modulation]
+	[Insert *noise_lfo1amp *VonForman vco noise sens lfo 1]
+	[Insert *noise_lfo2amp *VonForman vco noise sens lfo 2]
 	[Insert *pitchfreqf *VonForman filter sens pitch]
 	[Insert *modulationfreqf *VonForman filter sens modulation]
 	;==============================
@@ -289,7 +294,7 @@ program vonforman [BuildVonForman BuildVonFormanPart VF LGV LGT LGP STK STV AEG 
 
 [[BuildVonFormanPart *order1 *order2 *VF *cb *line *key_map
 						*lfo1 *lfo2 *XData *YData *lfo1x *lfo1y *lfo2x *lfo2y
-						*pitchfreqf *modulationfreqf *ctrls
+						*pitchfreqf *modulationfreqf *noise_modbias *noise_lfo1amp *noise_lfo2amp *ctrls
 	]
 	;========== TRIGGER ==============
 	[trigger *trigger *key_map] [*cb *trigger] [*lfo1 "trigger" *trigger "trigger"] [*lfo2 "trigger" *trigger "trigger"]
@@ -304,6 +309,8 @@ program vonforman [BuildVonForman BuildVonFormanPart VF LGV LGT LGP STK STV AEG 
 	[egscal *freqeg *fegscal *trigger]
 	;========== NOISE ================
 	[noise_operator *noise] [egscal *noise_eg *noise_egscal *trigger] [*noise "amp" *noise_eg]
+	[STK *noise_keyamp *noise "amp" *trigger] [STV *noise_velocityamp *noise "amp" *trigger]
+	[*noise "amp" *noise_modbias] [*noise "amp" *noise_lfo1amp] [*noise "amp" *noise_lfo2amp]
 	[MORPHFM *noisegain *noise "gain" *X *Y *lfo1x *lfo1y *lfo2x *lfo2y]
 	;========== FM VCO ===============
 	[BuildOscillatorBlock *order1 *fm *trigger *freqeg *X *Y *lfo1x *lfo1y *lfo2x *lfo2y *oscillators *ctrls]
@@ -335,6 +342,8 @@ program vonforman [BuildVonForman BuildVonFormanPart VF LGV LGT LGP STK STV AEG 
 	[Insert *noise *VF vco noise]
 	[Insert *noise_eg *VF vco noise eg]
 	[Insert *noise_egscal *VF vco noise egscal]
+	[Insert *noise_keyamp *VF vco noise sens key]
+	[Insert *noise_velocityamp *VF vco noise sens velocity]
 	[Insert *filter *VF filter]
 	[Insert *cteg *VF filter eg]
 	[Insert *ctegscal *VF filter eg egscal]

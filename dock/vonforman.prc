@@ -70,7 +70,7 @@ program vonforman [BuildVonForman BuildVonFormanPart VF LGV LGT LGP STK STV AEG 
 		[gateway *tremolo] [*tremolo *modulation] [*lfo1 "tremolo" *tremolo]
 		[gateway *wahwah] [*wahwah *modulation] [*lfo1 "wahwah" *wahwah]
 		[gateway *lfopan] [*lfopan *modulation] [*lfo1 "pan" *lfopan]
-		[gateway *lfo1x] [gateway *lfo1y] [gateway *lfo2x] [gateway *lfo2y]
+		[control *lfo1x] [control *lfo1y] [control *lfo2x] [control *lfo2y]
 		[*lfo1x *lfo1] [*lfo1y *lfo1] [*lfo2x *lfo2] [*lfo2y *lfo2]
 	[BuildOscillatorControllers *order1 *pitch *modulation *lfo1 *lfo2 *ctrls]
 	[LGT *noise_lfo1amp *lfo1] [LGT *noise_lfo2amp *lfo2]

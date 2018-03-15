@@ -198,9 +198,9 @@ Graularity:
 </tr>
 <tr>
 <td></td><td></td>
-<td><input type = number class = granular min = 0 max = 16384 step = 128 id = 'filter/eg/time1' style = "width: 5em;" onchange = "javascript: Lunar (this);" /></td>
-<td><input type = number class = granular min = -16384 max = 16384 step = 128 id = 'filter/eg/level1' style = "width: 5em;" onchange = "javascript: Lunar (this);" /></td>
-<td><input type = number class = granular min = -8192 max = 8192 step = 128 id = 'filter/eg/egscal/left' style = "width: 5em;" onchange = "javascript: Lunar (this);" /></td>
+<td><input type = number class = granular min = 0 max = 16384 step = 128 id = 'filter/eg/time4' style = "width: 5em;" onchange = "javascript: Lunar (this);" /></td>
+<td><input type = number class = granular min = -16384 max = 16384 step = 128 id = 'filter/eg/level4' style = "width: 5em;" onchange = "javascript: Lunar (this);" /></td>
+<td></td>
 <td>Pitch</td>
 <td><input type = number class = granular min = -16384 max = 16384 step = 128 id = 'filter/sens/pitch' style = "width: 5em;" onchange = "javascript: Lunar (this);" /></td>
 <td>EG</td>
@@ -1005,6 +1005,13 @@ document . onkeydown = function (e) {
 };
 
 refresh ();
+
+if (document . getElementById ('g1') . checked) changeGranularity (1);
+if (document . getElementById ('g8') . checked) changeGranularity (8);
+if (document . getElementById ('g64') . checked) changeGranularity (64);
+if (document . getElementById ('g128') . checked) changeGranularity (128);
+if (document . getElementById ('g512') . checked) changeGranularity (512);
+if (document . getElementById ('g2048') . checked) changeGranularity (2048);
 
 </script>
 </font>

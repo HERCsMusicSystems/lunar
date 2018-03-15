@@ -316,7 +316,7 @@ program vonforman [BuildVonForman BuildVonFormanPart VF LGV LGT LGP STK STV AEG 
 	[BuildOscillatorBlock *order1 *fm *trigger *freqeg *X *Y *lfo1x *lfo1y *lfo2x *lfo2y *oscillators *ctrls]
 	;========== FILTER ===============
 	[filter *filter]
-	[*filter *noise] [*filter *fm]
+	;[*filter *noise] [*filter *fm]
 	[STK *filter_key *filter "freq" *trigger]
 	[FEGS *freqegf *freqeg *filter "freq"]
 	[*filter "freq" *pitchfreqf] [*filter "freq" *modulationfreqf]

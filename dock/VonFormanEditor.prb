@@ -14,7 +14,7 @@
 
 [[VonForman_route *req *res GET return : *route]
   [Lunar *value : *route]
-  [show [Lunar *value : *route]]
+  ;[show [Lunar *value : *route]]
   [*res "HTTP/1.0 200 OK\nAccess-Control-Allow-Origin: *\n\n<value>" [*value] "</value>"]
 ]
 

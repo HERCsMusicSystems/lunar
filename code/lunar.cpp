@@ -220,14 +220,14 @@ double orbiter_core :: WaitingTime (double time) {
 double orbiter_core :: WaitingTime16384 (double time) {
 	int ind = (int) time;
 	if (ind < 0) return * waiting_times_16384;
-	if (ind > 16384) return * (waiting_times_16384 + 16383);
+	if (ind > 16383) return * (waiting_times_16384 + 16383);
 	return waiting_times_16384 [ind];
 }
 
 double orbiter_core :: WaitingPower (double time) {
 	int ind = (int) time;
 	if (ind < 0) return * waiting_powers;
-	if (ind > 16384) return * (waiting_powers + 16383);
+	if (ind > 16383) return * (waiting_powers + 16383);
 	return waiting_powers [ind];
 }
 

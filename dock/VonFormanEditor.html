@@ -984,7 +984,7 @@ var Return = function (el) {
   var req = new XMLHttpRequest ();
   req . onreadystatechange = function () {
     if (req . readyState == 4 && req . status == 200)
-      el . value = Number (req . responseXML . childNodes [0] . innerHTML);
+      el . value = Number (req . responseText);
   }
   req . open ("GET", url, true);
   req . send (null);

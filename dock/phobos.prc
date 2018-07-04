@@ -42,7 +42,7 @@ program phobos [BuildPhobos BuildPhobosPart PhobosEditor Operator-1 Operator-2 O
 	;==============
 	[stereo_pan *pan] [stereo_gateway *dry] [delay *delay] [drywet *drywet] [volume *volume] [stereo_chorus *chorus]
 	[*pan "pan" *lfo2 "pan"]
-	[ConnectStereo *pan *chorus] [ConnectStereo *dry *pan] [ConnectStereo *delay *dry] [ConnectDryWet *drywet *pan *delay] [ConnectStereo *volume *drywet]
+	[ConnectStereo *pan *chorus] [ConnectStereo *dry *pan] [ConnectStereo *delay *dry] [ConnectDryWet *drywet *dry *delay] [ConnectStereo *volume *drywet]
 	[Insert *volume *Phobos core]
 	[Insert *pan *Phobos core]
 	[Insert *chorus *Phobos core chorus]

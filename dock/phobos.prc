@@ -40,12 +40,13 @@ program phobos [BuildPhobos BuildPhobosPart PhobosEditor Operator-1 Operator-2 O
 	[gateway *lfo1filter] [gateway *lfo2filter]
 	[*lfo1filter "enter" *lfo1 "vibrato"] [*lfo2filter "enter" *lfo2 "wahwah"]
 	;==============
-	[stereo_pan *pan] [delay *delay] [drywet *drywet] [volume *volume] [stereo_chorus *chorus]
+	[stereo_pan *pan] [stereo_gateway *dry] [delay *delay] [drywet *drywet] [volume *volume] [stereo_chorus *chorus]
 	[*pan "pan" *lfo2 "pan"]
-	[ConnectStereo *pan *chorus] [ConnectStereo *delay *pan] [ConnectDryWet *drywet *pan *delay] [ConnectStereo *volume *drywet]
+	[ConnectStereo *pan *chorus] [ConnectStereo *dry *pan] [ConnectStereo *delay *dry] [ConnectDryWet *drywet *pan *delay] [ConnectStereo *volume *drywet]
 	[Insert *volume *Phobos core]
 	[Insert *pan *Phobos core]
 	[Insert *chorus *Phobos core chorus]
+	[Insert *dry *Phobos core delay]
 	[Insert *drywet *Phobos core delay]
 	[Insert *delay *Phobos core delay]
 	[InsertPB *X *Phobos core X]
@@ -111,6 +112,7 @@ program phobos [BuildPhobos BuildPhobosPart PhobosEditor Operator-1 Operator-2 O
 	[InsertController 79 *Phobos lfo 2 vibrato]
 	[InsertController 128 -64 *Phobos core pitch]
 	; INVISIBLE....
+	[InsertController 11 *Phobos core delay gateway]
 	[InsertController 64 *Phobos portamento hold]
 	[InsertController 84 *Phobos portamento legato]
 	[InsertController 81 -48 *Phobos portamento transpose]

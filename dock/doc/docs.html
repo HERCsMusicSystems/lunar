@@ -1687,11 +1687,12 @@ A typical construction of an instrument and inserting it into the superstructure
 <div class="doc_predicate">
     <a id="predicate_multitrack">
         <div class="doc_predicate_header">
-            [multitrack clock [seq1 1] [se2 2] ....].<br />
+            [multitrack clock [seq1 1] [se2 2] .... pseq ....].<br />
             Utility for building several sequencers connected to one timingclock.
         </div>
         <div class="doc_predicate_body">
-            This definition makes it easy to build a polysequencer constructed from several separate sequencers.
+            This definition makes it easy to build a polysequencer constructed from several separate
+            <a href="#predicate_sequencer">sequencers</a> or <a href="#predicate_prolog_sequencer">prolog sequencers</a>
             The clock will be constructed as timingclock.
             Each separate sequencer will be connected to instrument present in the superstructure and identified by numbers.
             The speed of all sequencers will be set to zero.
@@ -1756,6 +1757,7 @@ A typical construction of an instrument and inserting it into the superstructure
             Triggers sequences of prolog commands.<br />
             The variation input selects the current variation.
             Variation can change at the beginning of sequence.
+            <br />
             <b>INPUTS:</b><br />
             <b>Speed:</b> determines beats per minute (assuming 24 ticks in a beat).<br />
             <b>Trigger:</b> starts playing sequence if greated than zero. If equals or greater than 256.0 then plays in a loop.<br />

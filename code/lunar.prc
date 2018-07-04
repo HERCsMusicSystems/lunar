@@ -930,10 +930,13 @@ program lunar #machine := "lunar"
 	[SELECT [[ConnectStereo *reactor *line]/] [[*reactor *line]/]]/
 ]
 
-[[multitrack *clock [*seq *index] : *seqs]
-	[TRY [timingclock *clock] [show "timingclock constructed"]]
-	[Moons *name *index *cb : *]
-	[sequencer *seq *cb]
+[[multitrack *clock *seq_specification : *seqs]
+	[TRY [timingclock *clock]]
+	[SELECT [[= *seq_specification [*seq *index]]
+				[Moons *name *index *cb : *]
+				[sequencer *seq *cb]
+			]
+			[[= *seq_specification *seq] [prolog_sequencer *seq]]]
 	[*seq "speed" 0]
 	[*seq "timingclock" *clock]
 	[*seq "trigger" *clock "trigger"]

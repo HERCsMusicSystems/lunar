@@ -1,7 +1,7 @@
 <body>
 <font face = arial>
-Instrument: <input value = "VF-0" onkeyup = "javascript: VonForman = this . value;" />
-Host: <input value = "http://localhost:30019" onkeyup = "javascript: HOST = this . value;" />
+Instrument: <input value = "VF-0" id = "von_forman_id" onchange = "javascript: VonForman = this . value;" />
+Host: <input value = "http://localhost:30019" id = "host_id" onchange = "javascript: HOST = this . value;" />
 
 Graularity:
 <input type = radio name = granulars id =    g1 onclick = "javascript: changeGranularity (1);" />1
@@ -958,8 +958,8 @@ Graularity:
 
 <script>
 
-var VonForman = 'VF-0';
-var HOST = "http://localhost:30019";
+var VonForman = document . getElementById ('von_forman_id') . value;
+var HOST = document . getElementById ('host_id') . value;
 
 var Lunar = function (el) {
   var url = HOST + "/Lunar/" + el . value + "/" + VonForman + "/" + el . id;

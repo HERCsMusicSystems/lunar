@@ -195,7 +195,7 @@ program phobos [BuildPhobos BuildPhobosPart PhobosEditor Operator-1 Operator-2 O
 	[sensitivity *velocity1] [sensitivity *velocity2] [sensitivity *velocity3] [sensitivity *velocity4]
 	[*velocity1 "signal" *trigger "velocity"] [*velocity2 "signal" *trigger "velocity"] [*velocity3 "signal" *trigger "velocity"] [*velocity4 "signal" *trigger "velocity"]
 	[*fm "amp1" *velocity1] [*fm "amp2" *velocity2] [*fm "amp3" *velocity3] [*fm "amp4" *velocity4]
-	[sensitivity *velocity] [*filter "amp" *velocity]
+	[sensitivity *velocity] [*velocity "signal" *trigger "velocity"] [*filter "amp" *velocity]
 	;====> VELOCITY FREQ SENSITIVITY
 	[sensitivity *ctvelocity] [*ctvelocity "signal" *trigger "velocity"] [*filter "freq" *ctvelocity]
 	;====> AMP EG

@@ -1,10 +1,12 @@
 Phobos
 poly
-[core volume]12800.0
+[core volume]8064.0
 [core pan]-8192.0
 [core chorus level]3584.0
 [core chorus time]384.0
+[core chorus bias]0.0
 [core chorus speed]128.0
+[core chorus phase]0.0
 [core chorus amp]6656.0
 [core delay balance]-4864.0
 [core delay feedback]8192.0
@@ -12,6 +14,8 @@ poly
 [core delay highdamp]0.0
 [core X]0.0
 [core Y]0.0
+[core auto control]0.0
+[core auto speed]0.0
 [core pitch]0.0
 [arpeggiator speed]140.0
 [arpeggiator subdivision]24.0
@@ -31,53 +35,126 @@ poly
 [lfo 2 sync]0.0
 [lfo 2 vibrato]1536.0
 [lfo 2 tremolo]0.0
+[lfo 2 wahwah]0.0
 [lfo 2 pan]0.0
-[operator algo 1 2]0.0
-[operator algo 1 3]0.0
-[operator algo 1 4]0.0
-[operator algo 2 3]0.0
-[operator algo 2 4]0.0
-[operator algo 3 4]0.0
-[operator 1 freq]0.0
-[operator 1 amp]0.0
-[operator 1 ratio]1.0
-[operator 1 feedback]0.0
-[operator 2 freq]0.0
-[operator 2 amp]-1280.0
-[operator 2 ratio]1.0
-[operator 2 feedback]3840.0
-[operator 3 freq]0.0
-[operator 3 amp]-16384.0
-[operator 3 ratio]1.0
-[operator 3 feedback]0.0
-[operator 4 freq]0.0
-[operator 4 amp]-16384.0
-[operator 4 ratio]1.0
-[operator 4 feedback]0.0
-[operator 1 sens freq key BP]0.0
-[operator 1 sens freq key left]-128.0
-[operator 1 sens freq key right]128.0
-[operator 2 sens freq key BP]0.0
-[operator 2 sens freq key left]-128.0
-[operator 2 sens freq key right]128.0
-[operator 3 sens freq key BP]0.0
-[operator 3 sens freq key left]-128.0
-[operator 3 sens freq key right]128.0
-[operator 4 sens freq key BP]0.0
-[operator 4 sens freq key left]-128.0
-[operator 4 sens freq key right]128.0
-[operator 1 sens amp key BP]0.0
-[operator 1 sens amp key left]0.0
-[operator 1 sens amp key right]0.0
-[operator 2 sens amp key BP]0.0
-[operator 2 sens amp key left]0.0
-[operator 2 sens amp key right]0.0
-[operator 3 sens amp key BP]0.0
-[operator 3 sens amp key left]0.0
-[operator 3 sens amp key right]0.0
-[operator 4 sens amp key BP]0.0
-[operator 4 sens amp key left]0.0
-[operator 4 sens amp key right]0.0
+[vco algo 1 2]0.0
+[vco algo 1 3]0.0
+[vco algo 1 4]0.0
+[vco algo 2 3]1.0
+[vco algo 2 4]0.0
+[vco algo 3 4]0.0
+[vco 1 freq]0.0
+[vco 1 amp]0.0
+[vco 1 ratio]1.0
+[vco 1 feedback]0.0
+[vco 2 freq]0.0
+[vco 2 amp]-1280.0
+[vco 2 ratio]1.0
+[vco 2 feedback]3840.0
+[vco 3 freq]0.0
+[vco 3 amp]0.0
+[vco 3 ratio]1.0
+[vco 3 feedback]0.0
+[vco 4 freq]0.0
+[vco 4 amp]-16384.0
+[vco 4 ratio]1.0
+[vco 4 feedback]0.0
+[vco 1 eg time1]0.0
+[vco 1 eg time2]0.0
+[vco 1 eg time3]0.0
+[vco 1 eg time4]0.0
+[vco 1 eg level1]0.0
+[vco 1 eg level2]0.0
+[vco 1 eg level3]0.0
+[vco 1 eg level4]0.0
+[vco 2 eg time1]0.0
+[vco 2 eg time2]8576.0
+[vco 2 eg time3]0.0
+[vco 2 eg time4]8576.0
+[vco 2 eg level1]0.0
+[vco 2 eg level2]-16384.0
+[vco 2 eg level3]-16384.0
+[vco 2 eg level4]-16384.0
+[vco 3 eg time1]0.0
+[vco 3 eg time2]0.0
+[vco 3 eg time3]0.0
+[vco 3 eg time4]0.0
+[vco 3 eg level1]0.0
+[vco 3 eg level2]0.0
+[vco 3 eg level3]0.0
+[vco 3 eg level4]0.0
+[vco 4 eg time1]0.0
+[vco 4 eg time2]0.0
+[vco 4 eg time3]0.0
+[vco 4 eg time4]0.0
+[vco 4 eg level1]0.0
+[vco 4 eg level2]0.0
+[vco 4 eg level3]0.0
+[vco 4 eg level4]0.0
+[vco 1 eg egscal BP]0.0
+[vco 1 eg egscal left]0.0
+[vco 1 eg egscal right]0.0
+[vco 2 eg egscal BP]0.0
+[vco 2 eg egscal left]0.0
+[vco 2 eg egscal right]0.0
+[vco 3 eg egscal BP]0.0
+[vco 3 eg egscal left]0.0
+[vco 3 eg egscal right]0.0
+[vco 4 eg egscal BP]0.0
+[vco 4 eg egscal left]0.0
+[vco 4 eg egscal right]0.0
+[vco 1 vector A]16384.0
+[vco 1 vector B]16384.0
+[vco 1 vector C]16384.0
+[vco 1 vector D]16384.0
+[vco 2 vector A]16384.0
+[vco 2 vector B]16384.0
+[vco 2 vector C]16384.0
+[vco 2 vector D]16384.0
+[vco 3 vector A]16384.0
+[vco 3 vector B]16384.0
+[vco 3 vector C]16384.0
+[vco 3 vector D]16384.0
+[vco 4 vector A]16384.0
+[vco 4 vector B]16384.0
+[vco 4 vector C]16384.0
+[vco 4 vector D]16384.0
+[vco 1 sens freq key BP]0.0
+[vco 1 sens freq key left]-128.0
+[vco 1 sens freq key right]128.0
+[vco 2 sens freq key BP]0.0
+[vco 2 sens freq key left]-128.0
+[vco 2 sens freq key right]128.0
+[vco 3 sens freq key BP]0.0
+[vco 3 sens freq key left]-128.0
+[vco 3 sens freq key right]128.0
+[vco 4 sens freq key BP]0.0
+[vco 4 sens freq key left]-128.0
+[vco 4 sens freq key right]128.0
+[vco 1 sens amp key BP]0.0
+[vco 1 sens amp key left]0.0
+[vco 1 sens amp key right]0.0
+[vco 2 sens amp key BP]0.0
+[vco 2 sens amp key left]0.0
+[vco 2 sens amp key right]0.0
+[vco 3 sens amp key BP]0.0
+[vco 3 sens amp key left]0.0
+[vco 3 sens amp key right]0.0
+[vco 4 sens amp key BP]0.0
+[vco 4 sens amp key left]0.0
+[vco 4 sens amp key right]0.0
+[vco 1 sens amp velocity BP]0.0
+[vco 1 sens amp velocity left]0.0
+[vco 1 sens amp velocity right]0.0
+[vco 2 sens amp velocity BP]0.0
+[vco 2 sens amp velocity left]0.0
+[vco 2 sens amp velocity right]0.0
+[vco 3 sens amp velocity BP]0.0
+[vco 3 sens amp velocity left]0.0
+[vco 3 sens amp velocity right]0.0
+[vco 4 sens amp velocity BP]0.0
+[vco 4 sens amp velocity left]0.0
+[vco 4 sens amp velocity right]0.0
 [noise amp]-16384.0
 [noise time1]0.0
 [noise time2]0.0
@@ -87,52 +164,61 @@ poly
 [noise level2]0.0
 [noise level3]0.0
 [noise level4]0.0
-[operator 1 eg time1]0.0
-[operator 1 eg time2]0.0
-[operator 1 eg time3]0.0
-[operator 1 eg time4]0.0
-[operator 1 eg level1]0.0
-[operator 1 eg level2]0.0
-[operator 1 eg level3]0.0
-[operator 1 eg level4]0.0
-[operator 2 eg time1]0.0
-[operator 2 eg time2]8576.0
-[operator 2 eg time3]0.0
-[operator 2 eg time4]8576.0
-[operator 2 eg level1]0.0
-[operator 2 eg level2]-16384.0
-[operator 2 eg level3]-16384.0
-[operator 2 eg level4]-16384.0
-[operator 3 eg time1]0.0
-[operator 3 eg time2]0.0
-[operator 3 eg time3]0.0
-[operator 3 eg time4]0.0
-[operator 3 eg level1]0.0
-[operator 3 eg level2]0.0
-[operator 3 eg level3]0.0
-[operator 3 eg level4]0.0
-[operator 4 eg time1]0.0
-[operator 4 eg time2]0.0
-[operator 4 eg time3]0.0
-[operator 4 eg time4]0.0
-[operator 4 eg level1]0.0
-[operator 4 eg level2]0.0
-[operator 4 eg level3]0.0
-[operator 4 eg level4]0.0
+[vco 1 sens freq eg]0.0
+[vco 2 sens freq eg]0.0
+[vco 3 sens freq eg]0.0
+[vco 4 sens freq eg]0.0
 [filter freq]1536.0
 [filter resonance]14848.0
 [filter amp]0.0
+[filter sens eg]0.0
+[filter sens key BP]0.0
+[filter sens key left]0.0
+[filter sens key right]0.0
 [adsr amp attack]5760.0
-[adsr amp decay]9216.0
+[adsr amp decay]8064.0
 [adsr amp sustain]-16384.0
 [adsr amp release]9216.0
 [adsr amp egscal BP]0.0
 [adsr amp egscal left]0.0
 [adsr amp egscal right]0.0
+[adsr freq time1]0.0
+[adsr freq time2]0.0
+[adsr freq time3]0.0
+[adsr freq time4]0.0
+[adsr freq level1]0.0
+[adsr freq level2]0.0
+[adsr freq level3]0.0
+[adsr freq level4]0.0
+[adsr freq egscal BP]0.0
+[adsr freq egscal left]0.0
+[adsr freq egscal right]0.0
 [portamento porta]0.0
 [portamento time]0.0
 [portamento legato]0.0
+[portamento ramp]0.0
 [portamento hold]0.0
+[portamento transpose]0.0
+[portamento mode]-128.0
+[vco 1 sens freq pitch]512.0
+[vco 2 sens freq pitch]512.0
+[vco 3 sens freq pitch]512.0
+[vco 4 sens freq pitch]512.0
+[vco 1 sens freq lfo 1]128.0
+[vco 2 sens freq lfo 1]128.0
+[vco 3 sens freq lfo 1]128.0
+[vco 4 sens freq lfo 1]128.0
+[vco 1 sens freq lfo 2]0.0
+[vco 2 sens freq lfo 2]0.0
+[vco 3 sens freq lfo 2]0.0
+[vco 4 sens freq lfo 2]0.0
+[vco 1 sens amp lfo]0.0
+[vco 2 sens amp lfo]0.0
+[vco 3 sens amp lfo]0.0
+[vco 4 sens amp lfo]0.0
+[filter sens pitch]0.0
+[filter sens lfo 1]0.0
+[filter sens lfo 2]0.0
 [vector X][]
 [vector Y][]
 [key_map][[]]

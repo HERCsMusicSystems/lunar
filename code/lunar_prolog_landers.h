@@ -333,9 +333,12 @@ public:
 };
 
 class timingclock_class : public PrologNativeOrbiterCreator {
+private:
+	PrologDirectory * dir;
 public:
 	virtual orbiter * create_orbiter (PrologElement * parameters);
-	timingclock_class (orbiter_core * core);
+	virtual PrologNativeOrbiter * create_native_orbiter (PrologAtom * atom, orbiter * module);
+	timingclock_class (PrologDirectory * dir, orbiter_core * core);
 };
 
 class detector_class : public PrologNativeOrbiterCreator {

@@ -24,7 +24,7 @@ program lunar #machine := "lunar"
 				legato ramp time speed wave pulse phase poly feedback highdamp diffusion
 				mono left right mic mic_left mic_right breakpoint BP algo key_ratio
 				key velocity keyon keyoff polyaftertouch control programchange aftertouch pitch
-				sysex timingclock START CONTINUE STOP activesensing
+				sysex timingclock accelerando ritardando atempo START CONTINUE STOP activesensing
 				subdivision active
 				Lunar Lander Activate Deactivate
 				Connect ConnectStereo ConnectDryWet Disconnect DisconnectStereo DisconnectDryWet

@@ -707,7 +707,7 @@ PrologNativeCode * PrologLunarServiceClass :: getNativeCode (char * name) {
 	if (strcmp (name, "sequencer") == 0) return new sequencer_class (directory, & core);
 	if (strcmp (name, "prolog_sequencer") == 0) return new prolog_sequencer_class (root, directory, & core);
 	if (strcmp (name, "polysequencer") == 0) return new polysequencer_class (directory, & core);
-	if (strcmp (name, "timingclock") == 0) return new timingclock_class (& core);
+	if (strcmp (name, "timingclock") == 0) return new timingclock_class (directory, & core);
 	if (strcmp (name, "detector") == 0) return new detector_class (root, & core);
 	if (strcmp (name, "orbiter") == 0) return new orbiter_statistics ();
 	if (strcmp (name, "arranger_array") == 0) return new arranger_array (this);

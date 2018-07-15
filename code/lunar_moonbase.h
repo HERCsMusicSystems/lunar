@@ -91,6 +91,7 @@ private:
 	double variation;
 	double output_variation;
 	double time;
+	double accelerator, accelerated, accelerator_fastest, accelerator_slowest;
 public:
 	virtual int numberOfInputs (void);
 	virtual char * inputName (int ind);
@@ -99,6 +100,9 @@ public:
 	virtual char * outputName (int ind);
 	virtual double * outputAddress (int ind);
 	virtual void move (void);
+	void atempo (void);
+	void accelerando (double ratio, double fastest = 2.0, double slowest = 0.5);
+	void ritardando (double ratio, double slowest = 2.0, double fastest = 0.5);
 	lunar_timingclock (orbiter_core * core);
 };
 

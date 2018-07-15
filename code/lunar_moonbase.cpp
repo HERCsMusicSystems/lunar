@@ -25,6 +25,7 @@
 ///////////////////////////////////////////////////////////////
 
 #include "lunar_moonbase.h"
+#include <math.h>
 
 CommandModule :: CommandModule (orbiter_core * core) : orbiter (core) {}
 
@@ -200,10 +201,27 @@ void lunar_timingclock :: move (void) {
 	output_variation = variation;
 	if (signal != 0.0) signal = 0.0;
 	if (trigger < 1.0) return;
-	if (time >= 1.0) {signal = 1.0; time = 0.0;}
-	time += core -> sample_duration * tempo * 0.4;
+	if (time >= 1.0) {
+		signal = 1.0; time = 0.0;
+		accelerated *= accelerator;
+		if (accelerated > accelerator_fastest) accelerated = accelerator_fastest;
+		if (accelerated < accelerator_slowest) accelerated = accelerator_slowest;
+	}
+	time += core -> sample_duration * tempo * 0.4 * accelerated;
 }
-lunar_timingclock :: lunar_timingclock (orbiter_core * core) : orbiter (core) {time = trigger = output_trigger = variation = output_variation = 0.0; tempo = 140.0; initialise (); activate ();}
+void lunar_timingclock :: atempo (void) {accelerated = 1.0; accelerator = 1.0; accelerator_fastest = 2.0; accelerator_slowest = 0.5;}
+void lunar_timingclock :: accelerando (double ratio, double fastest, double slowest) {
+	accelerator = pow (ratio, 1.0 / 24.0); accelerator_fastest = fastest; accelerator_slowest = slowest;
+}
+void lunar_timingclock :: ritardando (double ratio, double slowest, double fastest) {
+	accelerator = ratio == 0.0 ? 1.0 : pow (1.0 / ratio, 1.0 / 24.0);
+	accelerator_slowest = slowest == 0.0 ? 0.5 : 1.0 / slowest;
+	accelerator_fastest = fastest == 0.0 ? 2.0 : 1.0 / fastest;
+}
+lunar_timingclock :: lunar_timingclock (orbiter_core * core) : orbiter (core) {
+	time = trigger = output_trigger = variation = output_variation = 0.0; tempo = 140.0; initialise (); activate ();
+	atempo ();
+}
 
 void up1 (arpeggiator * arp) {
 	if (arp -> index < 0) arp -> index = 0;

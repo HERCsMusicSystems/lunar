@@ -1335,8 +1335,54 @@ public:
 	~ lunar_detector (void) {if (query != 0) delete query;}
 };
 
+class timingclock_native_orbiter : public PrologNativeOrbiter {
+private:
+	PrologAtom * accelerando, * ritardando, * atempo;
+public:
+	virtual bool code (PrologElement * parameters, PrologResolution * resolution) {
+		PrologAtom * command = 0;
+		PrologElement * ratio = 0, * limit1 = 0, * limit2 = 0;
+		PrologElement * pr = parameters;
+		while (pr -> isPair ()) {
+			PrologElement * el = pr -> getLeft ();
+			if (el -> isAtom ()) command = el -> getAtom ();
+			if (el -> isDouble ()) {
+				if (ratio == 0) ratio = el;
+				else if (limit1 = 0) limit1 = el;
+				else limit2 = el;
+			}
+			pr = pr -> getRight ();
+		}
+		lunar_timingclock * timingclock = (lunar_timingclock *) module;
+		if (command == accelerando) {
+			if (ratio == 0) return false;
+			if (limit1 == 0) timingclock -> accelerando (ratio -> getDouble ());
+			else if (limit2 == 0) timingclock -> accelerando (ratio -> getDouble (), limit1 -> getDouble ());
+			else timingclock -> accelerando (ratio -> getDouble (), limit1 -> getDouble (), limit2 -> getDouble ());
+			return true;
+		}
+		else if (command == ritardando) {
+			if (ratio == 0) return false;
+			if (limit1 == 0) timingclock -> ritardando (ratio -> getDouble ());
+			else if (limit2 == 0) timingclock -> ritardando (ratio -> getDouble (), limit1 -> getDouble ());
+			else timingclock -> ritardando (ratio -> getDouble (), limit1 -> getDouble (), limit2 -> getDouble ());
+			return true;
+		} else if (command == atempo) {timingclock -> atempo (); return true;}
+		return PrologNativeOrbiter :: code (parameters, resolution);
+	}
+	timingclock_native_orbiter (PrologDirectory * dir, PrologAtom * atom, orbiter_core * core, orbiter * module) : PrologNativeOrbiter (atom, core, module) {
+		accelerando = ritardando = atempo = 0;
+		if (dir == 0) return;
+		accelerando = dir -> searchAtom ("accelerando");
+		ritardando = dir -> searchAtom ("ritardando");
+		atempo = dir -> searchAtom ("atempo");
+	}
+};
 orbiter * timingclock_class :: create_orbiter (PrologElement * parameters) {return new lunar_timingclock (core);}
-timingclock_class :: timingclock_class (orbiter_core * core) : PrologNativeOrbiterCreator (core) {}
+PrologNativeOrbiter * timingclock_class :: create_native_orbiter (PrologAtom * atom, orbiter * module) {
+	return new timingclock_native_orbiter (dir, atom, core, module);
+}
+timingclock_class :: timingclock_class (PrologDirectory * dir, orbiter_core * core) : PrologNativeOrbiterCreator (core) {this -> dir = dir;}
 
 orbiter * detector_class :: create_orbiter (PrologElement * parameters) {
 	PrologElement * detector = 0;

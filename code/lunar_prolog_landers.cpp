@@ -1346,9 +1346,9 @@ public:
 		while (pr -> isPair ()) {
 			PrologElement * el = pr -> getLeft ();
 			if (el -> isAtom ()) command = el -> getAtom ();
-			if (el -> isDouble ()) {
+			if (el -> isNumber ()) {
 				if (ratio == 0) ratio = el;
-				else if (limit1 = 0) limit1 = el;
+				else if (limit1 == 0) limit1 = el;
 				else limit2 = el;
 			}
 			pr = pr -> getRight ();
@@ -1356,16 +1356,16 @@ public:
 		lunar_timingclock * timingclock = (lunar_timingclock *) module;
 		if (command == accelerando) {
 			if (ratio == 0) return false;
-			if (limit1 == 0) timingclock -> accelerando (ratio -> getDouble ());
-			else if (limit2 == 0) timingclock -> accelerando (ratio -> getDouble (), limit1 -> getDouble ());
-			else timingclock -> accelerando (ratio -> getDouble (), limit1 -> getDouble (), limit2 -> getDouble ());
+			if (limit1 == 0) timingclock -> accelerando (ratio -> getNumber ());
+			else if (limit2 == 0) timingclock -> accelerando (ratio -> getNumber (), limit1 -> getNumber ());
+			else timingclock -> accelerando (ratio -> getNumber (), limit1 -> getNumber (), limit2 -> getNumber ());
 			return true;
 		}
 		else if (command == ritardando) {
 			if (ratio == 0) return false;
-			if (limit1 == 0) timingclock -> ritardando (ratio -> getDouble ());
-			else if (limit2 == 0) timingclock -> ritardando (ratio -> getDouble (), limit1 -> getDouble ());
-			else timingclock -> ritardando (ratio -> getDouble (), limit1 -> getDouble (), limit2 -> getDouble ());
+			if (limit1 == 0) timingclock -> ritardando (ratio -> getNumber ());
+			else if (limit2 == 0) timingclock -> ritardando (ratio -> getNumber (), limit1 -> getNumber ());
+			else timingclock -> ritardando (ratio -> getNumber (), limit1 -> getNumber (), limit2 -> getNumber ());
 			return true;
 		} else if (command == atempo) {timingclock -> atempo (); return true;}
 		return PrologNativeOrbiter :: code (parameters, resolution);

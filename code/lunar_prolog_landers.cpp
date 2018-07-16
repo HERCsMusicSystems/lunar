@@ -778,11 +778,12 @@ public:
 	pthread_mutex_t critical;
 	prolog_sequence_element * current_frame;
 	prolog_sequence_element * elements [128];
+	prolog_sequence_element * start_frame;
 private:
 	void private_signal (void) {
 		while (tick < 1) {
 			if (current_frame == 0) {
-				if (trigger >= 256.0) current_frame = elements [get_variation (variation)];
+				if (trigger >= 256.0) {current_frame = elements [get_variation (variation)]; start_frame = 0;}
 				else return;
 				if (current_frame == 0) return;
 			}
@@ -836,11 +837,22 @@ public:
 		if (trigger < 1.0) {if (time < 0.0) return; time = -1.0; return;}
 		if (clock > previous_clock && clock > 0.0) {pthread_mutex_lock (& critical); feedback = clock; private_signal (); pthread_mutex_unlock (& critical);}
 		previous_clock = clock;
-		if (time < 0.0) {time = speed > 0.0 ? 1.0 : 0.0; tick = 0; current_frame = elements [get_variation (variation)];}
+		if (time < 0.0) {
+			time = speed > 0.0 ? 1.0 : 0.0; tick = 0;
+			if (start_frame == 0) current_frame = elements [get_variation (variation)];
+			else {current_frame = start_frame; start_frame = 0;}
+		}
 		while (time >= 1.0) {time -= 1.0; pthread_mutex_lock (& critical); feedback = 1.0; private_signal (); pthread_mutex_unlock (& critical);}
 		time += core -> sample_duration * speed * 0.4;
 	}
 	void move (void) {signal = feedback; feedback = 0.0;}
+	void rewind (int tick, int variation = -1) {
+		if (variation < 0) variation = this -> variation;
+		prolog_sequence_element * seq = elements [get_variation (variation)];
+		if (seq == 0) return;
+		while (seq != 0 && tick > 0) {if (seq -> query == 0) tick -= seq -> ticks; seq = seq -> next;}
+		if (seq != 0) {pthread_mutex_lock (& critical); start_frame = current_frame = seq; pthread_mutex_unlock (& critical);}
+	}
 	prolog_sequencer (PrologRoot * root, orbiter_core * core) : CommandModule (core) {
 		pthread_mutex_init (& critical, 0);
 		this -> root = root;
@@ -848,7 +860,7 @@ public:
 		trigger = variation = clock = previous_clock = 0.0;
 		time = -1.0; tick = 0;
 		feedback = 0.0;
-		current_frame = 0;
+		start_frame = current_frame = 0;
 		for (int ind = 0; ind < 128; ind++) elements [ind] = 0;
 		initialise (); activate ();
 	}
@@ -857,10 +869,24 @@ public:
 
 class native_prolog_sequencer : public native_moonbase {
 public:
+	PrologAtom * rewind;
 	bool code (PrologElement * parameters, PrologResolution * resolution) {
 		if (parameters -> isPair ()) {
 			int variation = 0;
 			PrologElement * el = parameters -> getLeft ();
+			if (el -> isAtom () && el -> getAtom () == rewind) {
+				PrologElement * sub = parameters -> getRight ();
+				prolog_sequencer * seq = (prolog_sequencer *) module;
+				if (sub -> isEarth ()) {seq -> rewind (0); return true;}
+				if (! sub -> isPair ()) return false;
+				PrologElement * position = sub -> getLeft (); if (! position -> isInteger ()) return false;
+				sub = sub -> getRight ();
+				if (sub -> isEarth ()) {seq -> rewind (position -> getInteger ()); return true;}
+				if (! sub -> isPair ()) return false;
+				sub = sub -> getLeft (); if (! sub -> isInteger ()) return false;
+				seq -> rewind (position -> getInteger (), sub -> getInteger ());
+				return true;
+			}
 			if (el -> isInteger ()) {
 				variation = el -> getInteger ();
 				if (variation < 0) variation = 0; if (variation > 127) variation = 127;
@@ -901,7 +927,11 @@ public:
 		}
 		return native_moonbase :: code (parameters, resolution);
 	}
-	native_prolog_sequencer (PrologDirectory * dir, PrologAtom * atom, orbiter_core * core, orbiter * module) : native_moonbase (dir, atom, core, module) {}
+	native_prolog_sequencer (PrologDirectory * dir, PrologAtom * atom, orbiter_core * core, orbiter * module) : native_moonbase (dir, atom, core, module) {
+		rewind = 0;
+		if (dir == 0) return;
+		rewind = dir -> searchAtom ("rewind");
+	}
 };
 
 class native_sequencer : public native_moonbase {

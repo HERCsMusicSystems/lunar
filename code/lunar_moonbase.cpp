@@ -840,10 +840,7 @@ void sequencer :: rewind (int tick, int variation) {
 	if (variation < 0) variation = this -> variation;
 	sequence_element * seq = elements [get_variation (variation)];
 	if (seq == 0) return;
-	while (seq != 0 && tick > 0) {
-		if (seq -> type == 0) tick -= seq -> key;
-		seq = seq -> next;
-	}
+	while (seq != 0 && tick > 0) {if (seq -> type == 0) tick -= seq -> key; seq = seq -> next;}
 	if (seq != 0) {pthread_mutex_lock (& critical); start_frame = current_frame = seq; pthread_mutex_unlock (& critical);}
 }
 

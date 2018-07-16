@@ -907,11 +907,18 @@ public:
 class native_sequencer : public native_moonbase {
 public:
 	PrologAtom * keyon, * keyoff, * control, * busy, * impulse;
+	PrologAtom * rewind;
 	chromatograph graph;
 	bool code (PrologElement * parameters, PrologResolution * resolution) {
 		if (parameters -> isPair ()) {
 			int variation = 0;
 			PrologElement * el = parameters -> getLeft ();
+			if (el -> isAtom () && el -> getAtom () == rewind) {
+				PrologElement * sub = parameters -> getRight ();
+				sequencer * seq = (sequencer *) module;
+				if (sub -> isEarth ()) seq -> rewind (0);
+				return true;
+			}
 			if (el -> isInteger ()) {
 				variation = el -> getInteger ();
 				if (variation < 0) variation = 0; if (variation > 127) variation = 127;
@@ -1068,6 +1075,7 @@ public:
 		control = dir -> searchAtom ("control");
 		busy = dir -> searchAtom ("busy");
 		impulse = dir -> searchAtom ("impulse");
+		rewind = dir -> searchAtom ("rewind");
 	}
 };
 

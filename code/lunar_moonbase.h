@@ -220,6 +220,7 @@ public:
 	void control (int ctrl, double value);
 	double getControl (int ctrl);
 	void timing_clock (void);
+	void rewind (int tick);
 public:
 	virtual int numberOfInputs (void);
 	virtual char * inputName (int ind);

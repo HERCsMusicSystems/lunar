@@ -831,6 +831,16 @@ void sequencer :: private_signal (void) {
 	tick--;
 }
 
+void sequencer :: rewind (int tick) {
+	sequence_element * seq = elements [get_variation (variation)];
+	if (seq == 0) return;
+	while (seq != 0 && tick > 0) {
+		if (seq -> type == 0) tick -= seq -> key;
+		seq = seq -> next;
+	}
+	if (seq != 0) {pthread_mutex_lock (& critical); current_frame = seq; pthread_mutex_unlock (& critical);}
+}
+
 void sequencer :: move (void) {signal = impulse_level; impulse_level = busy_level;}
 
 bool sequencer :: insert_trigger (lunar_trigger * trigger) {return false;}

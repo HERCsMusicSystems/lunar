@@ -916,7 +916,14 @@ public:
 			if (el -> isAtom () && el -> getAtom () == rewind) {
 				PrologElement * sub = parameters -> getRight ();
 				sequencer * seq = (sequencer *) module;
-				if (sub -> isEarth ()) seq -> rewind (0);
+				if (sub -> isEarth ()) {seq -> rewind (0); return true;}
+				if (! sub -> isPair ()) return false;
+				PrologElement * position = sub -> getLeft (); if (! position -> isInteger ()) return false;
+				sub = sub -> getRight ();
+				if (sub -> isEarth ()) {seq -> rewind (position -> getInteger ()); return true;}
+				if (! sub -> isPair ()) return false;
+				sub = sub -> getLeft (); if (! sub -> isInteger ()) return false;
+				seq -> rewind (position -> getInteger (), sub -> getInteger ());
 				return true;
 			}
 			if (el -> isInteger ()) {

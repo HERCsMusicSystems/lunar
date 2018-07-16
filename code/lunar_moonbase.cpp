@@ -802,7 +802,12 @@ void sequencer :: propagate_signals (void) {
 	}
 	if (clock > previous_clock && clock > 0.0) {pthread_mutex_lock (& critical); private_signal (); pthread_mutex_unlock (& critical);}
 	previous_clock = clock;
-	if (time < 0.0) {time = tempo > 0.0 ? 1.0 : 0.0; tick = 0; current_frame = elements [get_variation (variation)]; busy_level = 1.0;}
+	if (time < 0.0) {
+		time = tempo > 0.0 ? 1.0 : 0.0; tick = 0;
+		if (start_frame == 0) current_frame = elements [get_variation (variation)];
+		else {current_frame = start_frame; start_frame = 0;}
+		busy_level = 1.0;
+	}
 	while (time >= 1.0) {time -= 1.0; pthread_mutex_lock (& critical); private_signal (); pthread_mutex_unlock (& critical);}
 	time += core -> sample_duration * tempo * 0.4;
 }
@@ -811,7 +816,7 @@ void sequencer :: private_signal (void) {
 	if (base == 0) {impulse_level = busy_level = 0.0; return;}
 	while (tick < 1) {
 		if (current_frame == 0) {
-			if (trigger >= 256.0) {current_frame = elements [get_variation (variation)]; impulse_level = 0.0; busy_level = 1.0;}
+			if (trigger >= 256.0) {current_frame = elements [get_variation (variation)]; start_frame = 0; impulse_level = 0.0; busy_level = 1.0;}
 			else {impulse_level = busy_level = 0.0; return;}
 			if (current_frame == 0) {impulse_level = busy_level = 0.0; return;}
 		}
@@ -831,14 +836,15 @@ void sequencer :: private_signal (void) {
 	tick--;
 }
 
-void sequencer :: rewind (int tick) {
+void sequencer :: rewind (int tick, int variation) {
+	if (variation < 0) variation = this -> variation;
 	sequence_element * seq = elements [get_variation (variation)];
 	if (seq == 0) return;
 	while (seq != 0 && tick > 0) {
 		if (seq -> type == 0) tick -= seq -> key;
 		seq = seq -> next;
 	}
-	if (seq != 0) {pthread_mutex_lock (& critical); current_frame = seq; pthread_mutex_unlock (& critical);}
+	if (seq != 0) {pthread_mutex_lock (& critical); start_frame = current_frame = seq; pthread_mutex_unlock (& critical);}
 }
 
 void sequencer :: move (void) {signal = impulse_level; impulse_level = busy_level;}
@@ -875,7 +881,7 @@ sequencer :: sequencer (orbiter_core * core, CommandModule * base) : CommandModu
 	trigger = variation = previous_clock = clock = 0.0; time = -1.0;
 	tick = 0;
 	this -> base = base; if (base != 0) base -> hold ();
-	current_frame = 0;
+	start_frame = current_frame = 0;
 	for (int ind = 0; ind < 128; ind++) elements [ind] = 0;
 	initialise (); activate ();
 }

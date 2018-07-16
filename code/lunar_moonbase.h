@@ -207,6 +207,7 @@ public:
 	pthread_mutex_t critical;
 	sequence_element * current_frame;
 	sequence_element * elements [128];
+	sequence_element * start_frame;
 public:
 	bool insert_trigger (lunar_trigger * trigger);
 	bool insert_controller (orbiter * controller, int location, double shift);
@@ -220,7 +221,7 @@ public:
 	void control (int ctrl, double value);
 	double getControl (int ctrl);
 	void timing_clock (void);
-	void rewind (int tick);
+	void rewind (int tick, int variation = -1);
 public:
 	virtual int numberOfInputs (void);
 	virtual char * inputName (int ind);

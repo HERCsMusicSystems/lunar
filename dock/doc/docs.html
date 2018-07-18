@@ -1751,6 +1751,7 @@ A typical construction of an instrument and inserting it into the superstructure
             [module variation [command-1 command-2 .... command-n]] => Enters a new sequence at specified variation..<br />
             [module *x] => Returns the current sequence (at variation 0).<br />
             [module variation *x] => Returns the current sequence at specified variation.<br />
+            [module rewind position variation] => Rewinds to specified position at variation.<br />
         </div>
         <div class="doc_predicate_body">
             <b>Signals:</b> [["SPEED" "TRIGGER" "VARIATION" "TIMINGCLOCK"] ["TIMINGCLOCK"]]<br />
@@ -1758,6 +1759,9 @@ A typical construction of an instrument and inserting it into the superstructure
             The variation input selects the current variation.
             Variation can change at the beginning of sequence.
             <br />
+            Sequencer can be moved to a specified tick.
+            The default position is the beginning.
+            The default variation is -1, which is the variation controlled by the "VARIATION" input.<br />
             <b>INPUTS:</b><br />
             <b>Speed:</b> determines beats per minute (assuming 24 ticks in a beat).<br />
             <b>Trigger:</b> starts playing sequence if greated than zero. If equals or greater than 256.0 then plays in a loop.<br />
@@ -1799,12 +1803,16 @@ A typical construction of an instrument and inserting it into the superstructure
             [module variation [command-1 command-2 .... command-n]] => Enters a new sequence at specified variation..<br />
             [module *x] => Returns the current sequence (at variation 0).<br />
             [module variation *x] => Returns the current sequence at specified variation.<br />
+            [module rewind position variation] => Rewinds to specified position at variation.<br />
         </div>
         <div class="doc_predicate_body">
             <b>Signals:</b> [["SPEED" "TRIGGER" "VARIATION" "TIMINGCLOCK"] ["BUSY"]]<br />
             Plays sequences on the connected (moon)base module.<br />
             The variation input selects the current variation.
             Variation can change at the beginning of sequence.<br />
+            Sequencer can be moved to a specified tick.
+            The default position is the beginning.
+            The default variation is -1, which is the variation controlled by the "VARIATION" input.<br />
             <b>INPUTS:</b><br />
             <b>Speed:</b> determines beats per minute (assuming 24 ticks in a beat).<br />
             <b>Trigger:</b> starts playing sequence if greated than zero. If equals or greater than 256.0 then plays in a loop.<br />
@@ -1845,10 +1853,19 @@ A typical construction of an instrument and inserting it into the superstructure
         <div class="doc_predicate_header">
             [timingclock module] => Creates an external timing clock.<br />
             <b>Note:</b> module adheres to the behaviour of a <a href="#predicate_base">base</a> module.<br />
+            <b>Additional usage:</b><br />
+            [module accelerando ratio fastest_limit slowest_limit] => accelerando.<br />
+            [module ritardando ratio slowest_limit fastest_limit] => ritardando.<br />
+            [module atempo]<br />
         </div>
         <div class="doc_predicate_body">
             <b>Signals:</b> [["SPEED" "TRIGGER" "VARIATION"] ["SIGNAL" "TRIGGER" "VARIATION"]]<br />
             Generates timing clock impulses, which can be used to synchronise arpeggiators and (poly)sequencers.<br />
+            Timing clock can accelerate, decelerate or return to its original speed.<br />
+            When accelerating the ratio controls the ratio of speed after 24 ticks (quarter note) compared to the original.
+            The default values of limits are 2.0 for the fastest and 0.5 for the lowest.<br />
+            When decelerating the ratio and the limits are the reciprocals of the accelerating values.<br />
+            Atempo returns the timingclock to its original speed.<br />
             <b>INPUTS:</b><br />
             <b>Speed:</b> determines beats per minute (assuming 24 ticks in a beat).<br />
             <b>Trigger:</b> activates (ONE) or deactivates (ZERO) timing clock.<br />

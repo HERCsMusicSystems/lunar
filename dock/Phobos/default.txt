@@ -13,6 +13,11 @@ mono
 [core delay feedback]8192.0
 [core delay time]8192.0
 [core delay highdamp]0.0
+[core freeverb feedback]0.0
+[core freeverb diffusion]0.0
+[core freeverb highdamp]0.0
+[core freeverb dry]16384.0
+[core freeverb wet]0.0
 [core X]8192.0
 [core Y]8192.0
 [core auto control]0.0

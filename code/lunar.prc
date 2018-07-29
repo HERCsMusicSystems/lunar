@@ -1232,20 +1232,20 @@ program lunar #machine := "lunar"
 	[AddParameterBlock *parameters feedback "feedback4" *op *selector4 0 "index"]
 ]
 
-[[InsertIO *parameters *op *selector [["1 => 2" "1 => 3" "1 => 4" "2 => 3" "2 => 4" "3 => 4" "TRIGGER"
+[[InsertIO *parameters *op *selector [["2 => 1" "3 => 1" "3 => 2" "4 => 1" "4 => 2" "4 => 3" "TRIGGER"
 									"FREQ1" "AMP1" "GAIN1" "RATIO1" "FEEDBACK1"
 									"FREQ2" "AMP2" "GAIN2" "RATIO2" "FEEDBACK2"
 									"FREQ3" "AMP3" "GAIN3" "RATIO3" "FEEDBACK3"
 									"FREQ4" "AMP4" "GAIN4" "RATIO4" "FEEDBACK4"] ["SIGNAL"]]]
-	[APPEND *selector [algo 1] *algo_selector1]
-	[AddParameterBlock *parameters 2 "1 => 2" *op *algo_selector1 0 "index"]
-	[AddParameterBlock *parameters 3 "1 => 3" *op *algo_selector1 0 "index"]
-	[AddParameterBlock *parameters 4 "1 => 4" *op *algo_selector1 0 "index"]
-	[APPEND *selector [algo 2] *algo_selector2]
-	[AddParameterBlock *parameters 3 "2 => 3" *op *algo_selector2 0 "index"]
-	[AddParameterBlock *parameters 4 "2 => 4" *op *algo_selector2 0 "index"]
-	[APPEND *selector [algo 3] *algo_selector3]
-	[AddParameterBlock *parameters 4 "3 => 4" *op *algo_selector3 0 "index"]
+	[APPEND *selector [algo 2] *algo_selector1]
+	[AddParameterBlock *parameters 1 "2 => 1" *op *algo_selector1 0 "index"]
+	[APPEND *selector [algo 3] *algo_selector2]
+	[AddParameterBlock *parameters 1 "3 => 1" *op *algo_selector2 0 "index"]
+	[AddParameterBlock *parameters 2 "3 => 2" *op *algo_selector2 0 "index"]
+	[APPEND *selector [algo 4] *algo_selector3]
+	[AddParameterBlock *parameters 1 "4 => 1" *op *algo_selector3 0 "index"]
+	[AddParameterBlock *parameters 2 "4 => 2" *op *algo_selector3 0 "index"]
+	[AddParameterBlock *parameters 3 "4 => 3" *op *algo_selector3 0 "index"]
 	[APPEND *selector [1] *selector1]
 	[AddParameterBlock *parameters freq "freq1" *op *selector1 0 "freq"]
 	[AddParameterBlock *parameters amp "amp1" *op *selector1 0 "amp"]

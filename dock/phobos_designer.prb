@@ -1,0 +1,20 @@
+
+[import "studio" "lunar" "setup" "phobos"]
+
+[BuildPhobos 6]
+
+[[ctrl : *command] [income_midi : *command]]
+[[hctrl keyon * 100 127] [CommanderHardwareAction]]
+
+
+[setup]
+
+[CommandCentre commander]
+[oscilloscope radar] [ConnectAllMoons radar]
+
+[batch "VonFormanEditor.prb"]
+
+[gtk_command]
+
+[exit]
+

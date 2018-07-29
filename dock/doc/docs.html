@@ -610,7 +610,7 @@ Core also functions as an audio source (connected directly to the sound hardware
             <b>Note:</b> module adheres to <a href="#common_behaviour_of_predicates">Common Behaviour</a>.<br />
         </div>
         <div class="doc_predicate_body">
-            <b>Signals:</b> [["1 => 2" "1 => 3" "1 => 4" "2 => 3" "2 => 4" "3 => 4" "TRIGGER"
+            <b>Signals:</b> [["2 => 1" "3 => 1" "3 => 2" "4 => 1" "4 => 2" "4 => 3" "TRIGGER"
             "FREQ1" "AMP1" "GAIN1" "RATIO1" "FEEDBACK1"
             "FREQ2" "AMP2" "GAIN2" "RATIO2" "FEEDBACK2"
             "FREQ3" "AMP3" "GAIN3" "RATIO3" "FEEDBACK3"
@@ -618,7 +618,7 @@ Core also functions as an audio source (connected directly to the sound hardware
             ] ["SIGNAL"]]<br />
             FM4 Block containing 4 FM operators.<br />
             <b>INPUTS:</b><br />
-            <b>1 => 2, 1 => 3....</b> numeric multipliers. Determines the interconnections between all operators.<br />
+            <b>2 => 1, 3 => 1 ....</b> numeric multipliers. Determines the interconnections between all operators.<br />
             <b>Trigger:</b> value of 16384.0 or higher keeps the internal clock at time = ZERO.<br />
             <b>Freq1..4:</b> signal's frequency. Range between -8192.0 .. 8192.0 exponential. Zero = middle E with 128 steps per semitone.<br />
             <b>Amp1..4:</b> signal's amplitude. Range between -16384.0 .. 0.0 exponential. Zero = 0 dB. Every 1536 divides the amplitude by half.<br />
@@ -2664,7 +2664,7 @@ A typical construction of an instrument and inserting it into the superstructure
 <div class="doc_predicate">
     <a id="predicate_FM4Panel">
         <div class="doc_predicate_header">
-            [FM4Panel module 1=>2 1=>3 .... 3=>4 freq1 amp1 ratio1 feedback1 .... freq4 amp4 ratio4 feedback4] => Creates a panel for a FM4 module block.<br />
+            [FM4Panel module 2=>1 3=>1 .... 4=>3 freq1 amp1 ratio1 feedback1 .... freq4 amp4 ratio4 feedback4] => Creates a panel for a FM4 module block.<br />
             [module *x *y] => reposition on the screen<br />
             [module] => closes the panel<br />
         </div>
@@ -2681,7 +2681,7 @@ A typical construction of an instrument and inserting it into the superstructure
 <div class="doc_predicate">
     <a id="predicate_FM6Panel">
         <div class="doc_predicate_header">
-            [FM6Panel module 1=>2 1=>3 .... 5=>6 freq1 amp1 ratio1 feedback1 .... freq6 amp6 ratio6 feedback6] => Creates a panel for a FM6 module block.<br />
+            [FM6Panel module 2=>1 3=>1 .... 6=>5 freq1 amp1 ratio1 feedback1 .... freq6 amp6 ratio6 feedback6] => Creates a panel for a FM6 module block.<br />
             [module *x *y] => reposition on the screen<br />
             [module] => closes the panel<br />
         </div>

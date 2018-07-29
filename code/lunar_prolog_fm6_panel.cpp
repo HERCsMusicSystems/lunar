@@ -28,7 +28,7 @@
 
 class fm6_panel_action : public AudioModulePanel {
 public:
-	PrologAtom * algo, * a12, * a13, * a14, * a15, * a16, * a23, * a24, * a25, * a26, * a34, * a35, * a36, * a45, * a46, * a56;
+	PrologAtom * algo, * a21, * a31, * a32, * a41, * a42, * a43, * a51, * a52, * a53, * a54, * a61, * a62, * a63, * a64, * a65;
 	PrologAtom * freq1, * amp1, * ratio1, * feedback1;
 	PrologAtom * freq2, * amp2, * ratio2, * feedback2;
 	PrologAtom * freq3, * amp3, * ratio3, * feedback3;
@@ -42,7 +42,7 @@ public:
 	knob_active_graphics FREQ4, AMP4, RATIO4, FEEDBACK4;
 	knob_active_graphics FREQ5, AMP5, RATIO5, FEEDBACK5;
 	knob_active_graphics FREQ6, AMP6, RATIO6, FEEDBACK6;
-	button_active_graphics feed12, feed13, feed14, feed15, feed16, feed23, feed24, feed25, feed26, feed34, feed35, feed36, feed45, feed46, feed56;
+	button_active_graphics feed21, feed31, feed32, feed41, feed42, feed43, feed51, feed52, feed53, feed54, feed61, feed62, feed63, feed64, feed65;
 	cairo_surface_t * algo_image;
 	bool dx;
 	void move (PrologAtom * a, double v) {
@@ -234,56 +234,56 @@ public:
 		query = root -> pair (root -> pair (root -> atom (ratio1), root -> pair (root -> var (17), root -> earth ())), query);
 		query = root -> pair (root -> pair (root -> atom (amp1), root -> pair (root -> var (16), root -> earth ())), query);
 		query = root -> pair (root -> pair (root -> atom (freq1), root -> pair (root -> var (15), root -> earth ())), query);
-		query = root -> pair (root -> pair (root -> atom (a56), root -> pair (root -> var (14), root -> earth ())), query);
-		query = root -> pair (root -> pair (root -> atom (a46), root -> pair (root -> var (13), root -> earth ())), query);
-		query = root -> pair (root -> pair (root -> atom (a45), root -> pair (root -> var (12), root -> earth ())), query);
-		query = root -> pair (root -> pair (root -> atom (a36), root -> pair (root -> var (11), root -> earth ())), query);
-		query = root -> pair (root -> pair (root -> atom (a35), root -> pair (root -> var (10), root -> earth ())), query);
-		query = root -> pair (root -> pair (root -> atom (a34), root -> pair (root -> var (9), root -> earth ())), query);
-		query = root -> pair (root -> pair (root -> atom (a26), root -> pair (root -> var (8), root -> earth ())), query);
-		query = root -> pair (root -> pair (root -> atom (a25), root -> pair (root -> var (7), root -> earth ())), query);
-		query = root -> pair (root -> pair (root -> atom (a24), root -> pair (root -> var (6), root -> earth ())), query);
-		query = root -> pair (root -> pair (root -> atom (a23), root -> pair (root -> var (5), root -> earth ())), query);
-		query = root -> pair (root -> pair (root -> atom (a16), root -> pair (root -> var (4), root -> earth ())), query);
-		query = root -> pair (root -> pair (root -> atom (a15), root -> pair (root -> var (3), root -> earth ())), query);
-		query = root -> pair (root -> pair (root -> atom (a14), root -> pair (root -> var (2), root -> earth ())), query);
-		query = root -> pair (root -> pair (root -> atom (a13), root -> pair (root -> var (1), root -> earth ())), query);
-		query = root -> pair (root -> pair (root -> atom (a12), root -> pair (root -> var (0), root -> earth ())), query);
+		query = root -> pair (root -> pair (root -> atom (a65), root -> pair (root -> var (14), root -> earth ())), query);
+		query = root -> pair (root -> pair (root -> atom (a64), root -> pair (root -> var (13), root -> earth ())), query);
+		query = root -> pair (root -> pair (root -> atom (a63), root -> pair (root -> var (12), root -> earth ())), query);
+		query = root -> pair (root -> pair (root -> atom (a62), root -> pair (root -> var (11), root -> earth ())), query);
+		query = root -> pair (root -> pair (root -> atom (a61), root -> pair (root -> var (10), root -> earth ())), query);
+		query = root -> pair (root -> pair (root -> atom (a54), root -> pair (root -> var (9), root -> earth ())), query);
+		query = root -> pair (root -> pair (root -> atom (a53), root -> pair (root -> var (8), root -> earth ())), query);
+		query = root -> pair (root -> pair (root -> atom (a52), root -> pair (root -> var (7), root -> earth ())), query);
+		query = root -> pair (root -> pair (root -> atom (a51), root -> pair (root -> var (6), root -> earth ())), query);
+		query = root -> pair (root -> pair (root -> atom (a43), root -> pair (root -> var (5), root -> earth ())), query);
+		query = root -> pair (root -> pair (root -> atom (a42), root -> pair (root -> var (4), root -> earth ())), query);
+		query = root -> pair (root -> pair (root -> atom (a41), root -> pair (root -> var (3), root -> earth ())), query);
+		query = root -> pair (root -> pair (root -> atom (a32), root -> pair (root -> var (2), root -> earth ())), query);
+		query = root -> pair (root -> pair (root -> atom (a31), root -> pair (root -> var (1), root -> earth ())), query);
+		query = root -> pair (root -> pair (root -> atom (a21), root -> pair (root -> var (0), root -> earth ())), query);
 		query = root -> pair (variables, query);
 		if (root -> resolution (query) == 1) {
 			PrologElement * el = query;
 			if (! el -> isPair ()) {delete query; return;}
 			el = el -> getLeft (); if (! el -> isPair ()) {delete query; return;}
 			PrologElement * sub = el -> getLeft ();
-			if (sub -> isNumber ()) feed12 . engaged = (sub -> getNumber () != 0.0);
+			if (sub -> isNumber ()) feed21 . engaged = (sub -> getNumber () != 0.0);
 			el = el -> getRight (); if (! el -> isPair ()) {delete query; return;} sub = el -> getLeft ();
-			if (sub -> isNumber ()) feed13 . engaged = (sub -> getNumber () != 0.0);
+			if (sub -> isNumber ()) feed31 . engaged = (sub -> getNumber () != 0.0);
 			el = el -> getRight (); if (! el -> isPair ()) {delete query; return;} sub = el -> getLeft ();
-			if (sub -> isNumber ()) feed14 . engaged = (sub -> getNumber () != 0.0);
+			if (sub -> isNumber ()) feed32 . engaged = (sub -> getNumber () != 0.0);
 			el = el -> getRight (); if (! el -> isPair ()) {delete query; return;} sub = el -> getLeft ();
-			if (sub -> isNumber ()) feed15 . engaged = (sub -> getNumber () != 0.0);
+			if (sub -> isNumber ()) feed41 . engaged = (sub -> getNumber () != 0.0);
 			el = el -> getRight (); if (! el -> isPair ()) {delete query; return;} sub = el -> getLeft ();
-			if (sub -> isNumber ()) feed16 . engaged = (sub -> getNumber () != 0.0);
+			if (sub -> isNumber ()) feed42 . engaged = (sub -> getNumber () != 0.0);
 			el = el -> getRight (); if (! el -> isPair ()) {delete query; return;} sub = el -> getLeft ();
-			if (sub -> isNumber ()) feed23 . engaged = (sub -> getNumber () != 0.0);
+			if (sub -> isNumber ()) feed43 . engaged = (sub -> getNumber () != 0.0);
 			el = el -> getRight (); if (! el -> isPair ()) {delete query; return;} sub = el -> getLeft ();
-			if (sub -> isNumber ()) feed24 . engaged = (sub -> getNumber () != 0.0);
+			if (sub -> isNumber ()) feed51 . engaged = (sub -> getNumber () != 0.0);
 			el = el -> getRight (); if (! el -> isPair ()) {delete query; return;} sub = el -> getLeft ();
-			if (sub -> isNumber ()) feed25 . engaged = (sub -> getNumber () != 0.0);
+			if (sub -> isNumber ()) feed52 . engaged = (sub -> getNumber () != 0.0);
 			el = el -> getRight (); if (! el -> isPair ()) {delete query; return;} sub = el -> getLeft ();
-			if (sub -> isNumber ()) feed26 . engaged = (sub -> getNumber () != 0.0);
+			if (sub -> isNumber ()) feed53 . engaged = (sub -> getNumber () != 0.0);
 			el = el -> getRight (); if (! el -> isPair ()) {delete query; return;} sub = el -> getLeft ();
-			if (sub -> isNumber ()) feed34 . engaged = (sub -> getNumber () != 0.0);
+			if (sub -> isNumber ()) feed54 . engaged = (sub -> getNumber () != 0.0);
 			el = el -> getRight (); if (! el -> isPair ()) {delete query; return;} sub = el -> getLeft ();
-			if (sub -> isNumber ()) feed35 . engaged = (sub -> getNumber () != 0.0);
+			if (sub -> isNumber ()) feed61 . engaged = (sub -> getNumber () != 0.0);
 			el = el -> getRight (); if (! el -> isPair ()) {delete query; return;} sub = el -> getLeft ();
-			if (sub -> isNumber ()) feed36 . engaged = (sub -> getNumber () != 0.0);
+			if (sub -> isNumber ()) feed62 . engaged = (sub -> getNumber () != 0.0);
 			el = el -> getRight (); if (! el -> isPair ()) {delete query; return;} sub = el -> getLeft ();
-			if (sub -> isNumber ()) feed45 . engaged = (sub -> getNumber () != 0.0);
+			if (sub -> isNumber ()) feed63 . engaged = (sub -> getNumber () != 0.0);
 			el = el -> getRight (); if (! el -> isPair ()) {delete query; return;} sub = el -> getLeft ();
-			if (sub -> isNumber ()) feed46 . engaged = (sub -> getNumber () != 0.0);
+			if (sub -> isNumber ()) feed64 . engaged = (sub -> getNumber () != 0.0);
 			el = el -> getRight (); if (! el -> isPair ()) {delete query; return;} sub = el -> getLeft ();
-			if (sub -> isNumber ()) feed56 . engaged = (sub -> getNumber () != 0.0);
+			if (sub -> isNumber ()) feed65 . engaged = (sub -> getNumber () != 0.0);
 			el = el -> getRight (); if (! el -> isPair ()) {delete query; return;} sub = el -> getLeft ();
 			if (sub -> isNumber ()) FREQ1 . setValue (sub -> getNumber ());
 			el = el -> getRight (); if (! el -> isPair ()) {delete query; return;} sub = el -> getLeft ();
@@ -339,9 +339,9 @@ public:
 	void redraw (cairo_t * cr) {
 		if (dx) {cairo_set_source_surface (cr, algo_image, 598, 98); cairo_paint (cr); ALGO . draw (cr);}
 		else {
-			feed12 . draw (cr); feed13 . draw (cr); feed14 . draw (cr); feed15 . draw (cr); feed16 . draw (cr);
-			feed23 . draw (cr); feed24 . draw (cr); feed25 . draw (cr); feed26 . draw (cr);
-			feed34 . draw (cr); feed35 . draw (cr); feed36 . draw (cr); feed45 . draw (cr); feed46 . draw (cr); feed56 . draw (cr);
+			feed21 . draw (cr); feed31 . draw (cr); feed32 . draw (cr); feed41 . draw (cr); feed42 . draw (cr);
+			feed43 . draw (cr); feed51 . draw (cr); feed52 . draw (cr); feed53 . draw (cr);
+			feed54 . draw (cr); feed61 . draw (cr); feed62 . draw (cr); feed63 . draw (cr); feed64 . draw (cr); feed65 . draw (cr);
 		}
 		FREQ1 . draw (cr); AMP1 . draw (cr); RATIO1 . draw (cr); FEEDBACK1 . draw (cr);
 		FREQ2 . draw (cr); AMP2 . draw (cr); RATIO2 . draw (cr); FEEDBACK2 . draw (cr);
@@ -358,21 +358,21 @@ public:
 		FREQ4 . keyon (location); AMP4 . keyon (location); RATIO4 . keyon (location); FEEDBACK4 . keyon (location);
 		FREQ5 . keyon (location); AMP5 . keyon (location); RATIO5 . keyon (location); FEEDBACK5 . keyon (location);
 		FREQ6 . keyon (location); AMP6 . keyon (location); RATIO6 . keyon (location); FEEDBACK6 . keyon (location);
-		if (feed12 . keyon (location)) {feed12 . engaged = ! feed12 . engaged; interconnection_changed (a12, feed12 . engaged); update ();}
-		if (feed13 . keyon (location)) {feed13 . engaged = ! feed13 . engaged; interconnection_changed (a13, feed13 . engaged); update ();}
-		if (feed14 . keyon (location)) {feed14 . engaged = ! feed14 . engaged; interconnection_changed (a14, feed14 . engaged); update ();}
-		if (feed15 . keyon (location)) {feed15 . engaged = ! feed15 . engaged; interconnection_changed (a15, feed15 . engaged); update ();}
-		if (feed16 . keyon (location)) {feed16 . engaged = ! feed16 . engaged; interconnection_changed (a16, feed16 . engaged); update ();}
-		if (feed23 . keyon (location)) {feed23 . engaged = ! feed23 . engaged; interconnection_changed (a23, feed23 . engaged); update ();}
-		if (feed24 . keyon (location)) {feed24 . engaged = ! feed24 . engaged; interconnection_changed (a24, feed24 . engaged); update ();}
-		if (feed25 . keyon (location)) {feed25 . engaged = ! feed25 . engaged; interconnection_changed (a25, feed25 . engaged); update ();}
-		if (feed26 . keyon (location)) {feed26 . engaged = ! feed26 . engaged; interconnection_changed (a26, feed26 . engaged); update ();}
-		if (feed34 . keyon (location)) {feed34 . engaged = ! feed34 . engaged; interconnection_changed (a34, feed34 . engaged); update ();}
-		if (feed35 . keyon (location)) {feed35 . engaged = ! feed35 . engaged; interconnection_changed (a35, feed35 . engaged); update ();}
-		if (feed36 . keyon (location)) {feed36 . engaged = ! feed36 . engaged; interconnection_changed (a36, feed36 . engaged); update ();}
-		if (feed45 . keyon (location)) {feed45 . engaged = ! feed45 . engaged; interconnection_changed (a45, feed45 . engaged); update ();}
-		if (feed46 . keyon (location)) {feed46 . engaged = ! feed46 . engaged; interconnection_changed (a46, feed46 . engaged); update ();}
-		if (feed56 . keyon (location)) {feed56 . engaged = ! feed56 . engaged; interconnection_changed (a56, feed56 . engaged); update ();}
+		if (feed21 . keyon (location)) {feed21 . engaged = ! feed21 . engaged; interconnection_changed (a21, feed21 . engaged); update ();}
+		if (feed31 . keyon (location)) {feed31 . engaged = ! feed31 . engaged; interconnection_changed (a31, feed31 . engaged); update ();}
+		if (feed32 . keyon (location)) {feed32 . engaged = ! feed32 . engaged; interconnection_changed (a32, feed32 . engaged); update ();}
+		if (feed41 . keyon (location)) {feed41 . engaged = ! feed41 . engaged; interconnection_changed (a41, feed41 . engaged); update ();}
+		if (feed42 . keyon (location)) {feed42 . engaged = ! feed42 . engaged; interconnection_changed (a42, feed42 . engaged); update ();}
+		if (feed43 . keyon (location)) {feed43 . engaged = ! feed43 . engaged; interconnection_changed (a43, feed43 . engaged); update ();}
+		if (feed51 . keyon (location)) {feed51 . engaged = ! feed51 . engaged; interconnection_changed (a51, feed51 . engaged); update ();}
+		if (feed52 . keyon (location)) {feed52 . engaged = ! feed52 . engaged; interconnection_changed (a52, feed52 . engaged); update ();}
+		if (feed53 . keyon (location)) {feed53 . engaged = ! feed53 . engaged; interconnection_changed (a53, feed53 . engaged); update ();}
+		if (feed54 . keyon (location)) {feed54 . engaged = ! feed54 . engaged; interconnection_changed (a54, feed54 . engaged); update ();}
+		if (feed61 . keyon (location)) {feed61 . engaged = ! feed61 . engaged; interconnection_changed (a61, feed61 . engaged); update ();}
+		if (feed62 . keyon (location)) {feed62 . engaged = ! feed62 . engaged; interconnection_changed (a62, feed62 . engaged); update ();}
+		if (feed63 . keyon (location)) {feed63 . engaged = ! feed63 . engaged; interconnection_changed (a63, feed63 . engaged); update ();}
+		if (feed64 . keyon (location)) {feed64 . engaged = ! feed64 . engaged; interconnection_changed (a64, feed64 . engaged); update ();}
+		if (feed65 . keyon (location)) {feed65 . engaged = ! feed65 . engaged; interconnection_changed (a65, feed65 . engaged); update ();}
 	}
 	void MouseKeyoff (point location, int button) {
 		if (dx) ALGO . keyoff (location);
@@ -449,40 +449,40 @@ public:
 	AMP6 (point (380, 186), 0, resources, true, active, -16384.0, 0.0),
 	RATIO6 (point (450, 186), 0, resources, true, active, 1.0, 33.0),
 	FEEDBACK6 (point (520, 186), 0, resources, true, active, 0.0, 16384.0),
-	feed12 (point (600, 20), 0, resources, true),
-	feed13 (point (600, 40), 0, resources, true),
-	feed14 (point (600, 60), 0, resources, true),
-	feed15 (point (600, 80), 0, resources, true),
-	feed16 (point (600, 100), 0, resources, true),
-	feed23 (point (640, 20), 0, resources, true),
-	feed24 (point (640, 40), 0, resources, true),
-	feed25 (point (640, 60), 0, resources, true),
-	feed26 (point (640, 80), 0, resources, true),
-	feed34 (point (600, 140), 0, resources, true),
-	feed35 (point (600, 160), 0, resources, true),
-	feed36 (point (600, 180), 0, resources, true),
-	feed45 (point (640, 140), 0, resources, true),
-	feed46 (point (640, 160), 0, resources, true),
-	feed56 (point (640, 200), 0, resources, true),
+	feed21 (point (600, 20), 0, resources, true),
+	feed31 (point (600, 40), 0, resources, true),
+	feed32 (point (600, 60), 0, resources, true),
+	feed41 (point (600, 80), 0, resources, true),
+	feed42 (point (600, 100), 0, resources, true),
+	feed43 (point (640, 20), 0, resources, true),
+	feed51 (point (640, 40), 0, resources, true),
+	feed52 (point (640, 60), 0, resources, true),
+	feed53 (point (640, 80), 0, resources, true),
+	feed54 (point (600, 140), 0, resources, true),
+	feed61 (point (600, 160), 0, resources, true),
+	feed62 (point (600, 180), 0, resources, true),
+	feed63 (point (640, 140), 0, resources, true),
+	feed64 (point (640, 160), 0, resources, true),
+	feed65 (point (640, 200), 0, resources, true),
 	AudioModulePanel (root, atom, resources != 0 ? resources -> fm6_panel_surface : 0) {
 		this -> dx = dx;
 		algo_image = resources != 0 ? resources -> fm4_algo_surface : 0;
 		this -> algo = algo; if (algo != 0) {COLLECTOR_REFERENCE_INC (algo);}
-		this -> a12 = a12; if (a12 != 0) {COLLECTOR_REFERENCE_INC (a12);}
-		this -> a13 = a13; if (a13 != 0) {COLLECTOR_REFERENCE_INC (a13);}
-		this -> a14 = a14; if (a14 != 0) {COLLECTOR_REFERENCE_INC (a14);}
-		this -> a15 = a15; if (a15 != 0) {COLLECTOR_REFERENCE_INC (a15);}
-		this -> a16 = a16; if (a16 != 0) {COLLECTOR_REFERENCE_INC (a16);}
-		this -> a23 = a23; if (a23 != 0) {COLLECTOR_REFERENCE_INC (a23);}
-		this -> a24 = a24; if (a24 != 0) {COLLECTOR_REFERENCE_INC (a24);}
-		this -> a25 = a25; if (a25 != 0) {COLLECTOR_REFERENCE_INC (a25);}
-		this -> a26 = a26; if (a26 != 0) {COLLECTOR_REFERENCE_INC (a26);}
-		this -> a34 = a34; if (a34 != 0) {COLLECTOR_REFERENCE_INC (a34);}
-		this -> a35 = a35; if (a35 != 0) {COLLECTOR_REFERENCE_INC (a35);}
-		this -> a36 = a36; if (a36 != 0) {COLLECTOR_REFERENCE_INC (a36);}
-		this -> a45 = a45; if (a45 != 0) {COLLECTOR_REFERENCE_INC (a45);}
-		this -> a46 = a46; if (a46 != 0) {COLLECTOR_REFERENCE_INC (a46);}
-		this -> a56 = a56; if (a56 != 0) {COLLECTOR_REFERENCE_INC (a56);}
+		this -> a21 = a21; if (a21 != 0) {COLLECTOR_REFERENCE_INC (a21);}
+		this -> a31 = a31; if (a31 != 0) {COLLECTOR_REFERENCE_INC (a31);}
+		this -> a32 = a32; if (a32 != 0) {COLLECTOR_REFERENCE_INC (a32);}
+		this -> a41 = a41; if (a41 != 0) {COLLECTOR_REFERENCE_INC (a41);}
+		this -> a42 = a42; if (a42 != 0) {COLLECTOR_REFERENCE_INC (a42);}
+		this -> a43 = a43; if (a43 != 0) {COLLECTOR_REFERENCE_INC (a43);}
+		this -> a51 = a51; if (a51 != 0) {COLLECTOR_REFERENCE_INC (a51);}
+		this -> a52 = a52; if (a52 != 0) {COLLECTOR_REFERENCE_INC (a52);}
+		this -> a53 = a53; if (a53 != 0) {COLLECTOR_REFERENCE_INC (a53);}
+		this -> a54 = a54; if (a54 != 0) {COLLECTOR_REFERENCE_INC (a54);}
+		this -> a61 = a61; if (a61 != 0) {COLLECTOR_REFERENCE_INC (a61);}
+		this -> a62 = a62; if (a62 != 0) {COLLECTOR_REFERENCE_INC (a62);}
+		this -> a63 = a63; if (a63 != 0) {COLLECTOR_REFERENCE_INC (a63);}
+		this -> a64 = a64; if (a64 != 0) {COLLECTOR_REFERENCE_INC (a64);}
+		this -> a65 = a65; if (a65 != 0) {COLLECTOR_REFERENCE_INC (a65);}
 		this -> freq1 = freq1; COLLECTOR_REFERENCE_INC (freq1);
 		this -> amp1 = amp1; COLLECTOR_REFERENCE_INC (amp1);
 		this -> ratio1 = ratio1; COLLECTOR_REFERENCE_INC (ratio1);
@@ -511,10 +511,10 @@ public:
 	}
 	~ fm6_panel_action (void) {
 		if (algo != 0) algo -> removeAtom ();
-		if (a12 != 0) a12 -> removeAtom (); if (a13 != 0) a13 -> removeAtom (); if (a14 != 0) a14 -> removeAtom (); if (a15 != 0) a15 -> removeAtom (); if (a16 != 0) a16 -> removeAtom ();
-		if (a23 != 0) a23 -> removeAtom (); if (a24 != 0) a24 -> removeAtom (); if (a25 != 0) a25 -> removeAtom (); if (a26 != 0) a26 -> removeAtom ();
-		if (a34 != 0) a34 -> removeAtom (); if (a35 != 0) a35 -> removeAtom (); if (a36 != 0) a36 -> removeAtom ();
-		if (a45 != 0) a45 -> removeAtom (); if (a46 != 0) a46 -> removeAtom (); if (a56 != 0) a56 -> removeAtom ();
+		if (a21= 0) a21 -> removeAtom (); if (a31 != 0) a31 -> removeAtom (); if (a32 != 0) a32 -> removeAtom (); if (a41 != 0) a41 -> removeAtom (); if (a42 != 0) a42 -> removeAtom ();
+		if (a43 != 0) a43 -> removeAtom (); if (a51 != 0) a51 -> removeAtom (); if (a52 != 0) a52 -> removeAtom (); if (a53 != 0) a53 -> removeAtom ();
+		if (a54 != 0) a54 -> removeAtom (); if (a61 != 0) a61 -> removeAtom (); if (a62 != 0) a62 -> removeAtom ();
+		if (a63 != 0) a63 -> removeAtom (); if (a64 != 0) a64 -> removeAtom (); if (a65 != 0) a65 -> removeAtom ();
 		freq1 -> removeAtom (); amp1 -> removeAtom (); ratio1 -> removeAtom (); feedback1 -> removeAtom ();
 		freq2 -> removeAtom (); amp2 -> removeAtom (); ratio2 -> removeAtom (); feedback2 -> removeAtom ();
 		freq3 -> removeAtom (); amp3 -> removeAtom (); ratio3 -> removeAtom (); feedback3 -> removeAtom ();

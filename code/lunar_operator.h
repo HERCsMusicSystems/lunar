@@ -193,11 +193,11 @@ private:
 	double gain1, gain2, gain3, gain4, gain5, gain6;
 	double ratio1, ratio2, ratio3, ratio4, ratio5, ratio6;
 	double feedback1, feedback2, feedback3, feedback4, feedback5, feedback6;
-	double feed12, feed13, feed14, feed15, feed16;
-	double feed23, feed24, feed25, feed26;
-	double feed34, feed35, feed36;
-	double feed45, feed46;
-	double feed56;
+	double feed21;
+	double feed31, feed32;
+	double feed41, feed42, feed43;
+	double feed51, feed52, feed53, feed54;
+	double feed61, feed62, feed63, feed64, feed65;
 public:
 	virtual int numberOfInputs (void);
 	virtual char * inputName (int ind);

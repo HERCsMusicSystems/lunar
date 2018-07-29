@@ -1,5 +1,5 @@
 Phobos
-mono
+poly
 [core volume]12800.0
 [core pan]0.0
 [core chorus level]0.0

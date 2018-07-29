@@ -169,7 +169,6 @@ program phobos [BuildPhobos BuildPhobosPart PhobosEditor Operator-1 Operator-2 O
 	[Lunar 12800 *Phobos core velocity BP]
 	[Lunar -64 *Phobos core velocity left]
 	[Lunar 1 *Phobos portamento porta]
-	[*PhobosCB mono]
 ]
 
 [[BuildPhobosPart *Phobos *cb *line *key_map *XData *YData *lfo1 *lfo2

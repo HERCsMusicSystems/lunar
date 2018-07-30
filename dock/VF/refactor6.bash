@@ -1,3 +1,4 @@
+Echo $1
 sed -i '' 's/\[vco algo 1 2\]/\[vco algo 6 5\]/g' $1
 sed -i '' 's/\[vco algo 1 3\]/\[vco algo 6 4\]/g' $1
 sed -i '' 's/\[vco algo 1 4\]/\[vco algo 6 3\]/g' $1

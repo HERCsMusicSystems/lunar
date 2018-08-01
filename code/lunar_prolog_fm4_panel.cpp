@@ -306,12 +306,12 @@ public:
 	AMP4 (point (380, 98), 0, resources, true, active, -16384.0, 0.0),
 	RATIO4 (point (450, 98), 0, resources, true, active, 1.0, 33.0),
 	FEEDBACK4 (point (520, 98), 0, resources, true, active, 0.0, 16384.0),
-	feed21 (point (584, 118), 0, resources, true),
-	feed31 (point (610, 118), 0, resources, true),
-	feed32 (point (636, 118), 0, resources, true),
-	feed41 (point (610, 138), 0, resources, true),
-	feed42 (point (636, 138), 0, resources, true),
-	feed43 (point (636, 158), 0, resources, true),
+	feed43 (point (584, 118), 0, resources, true),
+	feed42 (point (610, 118), 0, resources, true),
+	feed41 (point (636, 118), 0, resources, true),
+	feed32 (point (610, 138), 0, resources, true),
+	feed31 (point (636, 138), 0, resources, true),
+	feed21 (point (636, 158), 0, resources, true),
 	AudioModulePanel (root, atom, resources != 0 ? resources -> fm4_panel_surface : 0) {
 		this -> dx = dx;
 		algo_image = resources != 0 ? resources -> fm4_algo_surface : 0;

@@ -174,6 +174,7 @@ program vonforman [BuildVonForman BuildVonFormanPart VF LGV LGT LGP STK STV AEG 
 	[Lunar 16384 *VonForman vector noise B]
 	[Lunar 16384 *VonForman vector noise C]
 	[Lunar 16384 *VonForman vector noise D]
+	[Lunar 1 *VonForman portamento porta]
 	[Preset 1 *order1 *VonForman]
 	[FormantPreset 1 *order2 *VonForman]
 ]

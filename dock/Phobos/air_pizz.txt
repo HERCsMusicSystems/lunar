@@ -37,52 +37,28 @@ poly
 [lfo 2 tremolo]0.0
 [lfo 2 wahwah]0.0
 [lfo 2 pan]0.0
-[vco algo 1 2]0.0
-[vco algo 1 3]0.0
-[vco algo 1 4]0.0
-[vco algo 2 3]1.0
-[vco algo 2 4]0.0
-[vco algo 3 4]0.0
-[vco 1 freq]0.0
-[vco 1 amp]0.0
-[vco 1 ratio]1.0
-[vco 1 feedback]0.0
-[vco 2 freq]0.0
-[vco 2 amp]-1280.0
-[vco 2 ratio]1.0
-[vco 2 feedback]3840.0
-[vco 3 freq]0.0
-[vco 3 amp]0.0
-[vco 3 ratio]1.0
-[vco 3 feedback]0.0
+[vco algo 4 3]0.0
+[vco algo 4 2]0.0
+[vco algo 4 1]0.0
+[vco algo 3 2]1.0
+[vco algo 3 1]0.0
+[vco algo 2 1]0.0
 [vco 4 freq]0.0
-[vco 4 amp]-16384.0
+[vco 4 amp]0.0
 [vco 4 ratio]1.0
 [vco 4 feedback]0.0
-[vco 1 eg time1]0.0
-[vco 1 eg time2]0.0
-[vco 1 eg time3]0.0
-[vco 1 eg time4]0.0
-[vco 1 eg level1]0.0
-[vco 1 eg level2]0.0
-[vco 1 eg level3]0.0
-[vco 1 eg level4]0.0
-[vco 2 eg time1]0.0
-[vco 2 eg time2]8576.0
-[vco 2 eg time3]0.0
-[vco 2 eg time4]8576.0
-[vco 2 eg level1]0.0
-[vco 2 eg level2]-16384.0
-[vco 2 eg level3]-16384.0
-[vco 2 eg level4]-16384.0
-[vco 3 eg time1]0.0
-[vco 3 eg time2]0.0
-[vco 3 eg time3]0.0
-[vco 3 eg time4]0.0
-[vco 3 eg level1]0.0
-[vco 3 eg level2]0.0
-[vco 3 eg level3]0.0
-[vco 3 eg level4]0.0
+[vco 3 freq]0.0
+[vco 3 amp]-1280.0
+[vco 3 ratio]1.0
+[vco 3 feedback]3840.0
+[vco 2 freq]0.0
+[vco 2 amp]0.0
+[vco 2 ratio]1.0
+[vco 2 feedback]0.0
+[vco 1 freq]0.0
+[vco 1 amp]-16384.0
+[vco 1 ratio]1.0
+[vco 1 feedback]0.0
 [vco 4 eg time1]0.0
 [vco 4 eg time2]0.0
 [vco 4 eg time3]0.0
@@ -91,70 +67,94 @@ poly
 [vco 4 eg level2]0.0
 [vco 4 eg level3]0.0
 [vco 4 eg level4]0.0
-[vco 1 eg egscal BP]0.0
-[vco 1 eg egscal left]0.0
-[vco 1 eg egscal right]0.0
-[vco 2 eg egscal BP]0.0
-[vco 2 eg egscal left]0.0
-[vco 2 eg egscal right]0.0
-[vco 3 eg egscal BP]0.0
-[vco 3 eg egscal left]0.0
-[vco 3 eg egscal right]0.0
+[vco 3 eg time1]0.0
+[vco 3 eg time2]8576.0
+[vco 3 eg time3]0.0
+[vco 3 eg time4]8576.0
+[vco 3 eg level1]0.0
+[vco 3 eg level2]-16384.0
+[vco 3 eg level3]-16384.0
+[vco 3 eg level4]-16384.0
+[vco 2 eg time1]0.0
+[vco 2 eg time2]0.0
+[vco 2 eg time3]0.0
+[vco 2 eg time4]0.0
+[vco 2 eg level1]0.0
+[vco 2 eg level2]0.0
+[vco 2 eg level3]0.0
+[vco 2 eg level4]0.0
+[vco 1 eg time1]0.0
+[vco 1 eg time2]0.0
+[vco 1 eg time3]0.0
+[vco 1 eg time4]0.0
+[vco 1 eg level1]0.0
+[vco 1 eg level2]0.0
+[vco 1 eg level3]0.0
+[vco 1 eg level4]0.0
 [vco 4 eg egscal BP]0.0
 [vco 4 eg egscal left]0.0
 [vco 4 eg egscal right]0.0
-[vco 1 vector A]16384.0
-[vco 1 vector B]16384.0
-[vco 1 vector C]16384.0
-[vco 1 vector D]16384.0
-[vco 2 vector A]16384.0
-[vco 2 vector B]16384.0
-[vco 2 vector C]16384.0
-[vco 2 vector D]16384.0
-[vco 3 vector A]16384.0
-[vco 3 vector B]16384.0
-[vco 3 vector C]16384.0
-[vco 3 vector D]16384.0
+[vco 3 eg egscal BP]0.0
+[vco 3 eg egscal left]0.0
+[vco 3 eg egscal right]0.0
+[vco 2 eg egscal BP]0.0
+[vco 2 eg egscal left]0.0
+[vco 2 eg egscal right]0.0
+[vco 1 eg egscal BP]0.0
+[vco 1 eg egscal left]0.0
+[vco 1 eg egscal right]0.0
 [vco 4 vector A]16384.0
 [vco 4 vector B]16384.0
 [vco 4 vector C]16384.0
 [vco 4 vector D]16384.0
-[vco 1 sens freq key BP]0.0
-[vco 1 sens freq key left]-128.0
-[vco 1 sens freq key right]128.0
-[vco 2 sens freq key BP]0.0
-[vco 2 sens freq key left]-128.0
-[vco 2 sens freq key right]128.0
-[vco 3 sens freq key BP]0.0
-[vco 3 sens freq key left]-128.0
-[vco 3 sens freq key right]128.0
+[vco 3 vector A]16384.0
+[vco 3 vector B]16384.0
+[vco 3 vector C]16384.0
+[vco 3 vector D]16384.0
+[vco 2 vector A]16384.0
+[vco 2 vector B]16384.0
+[vco 2 vector C]16384.0
+[vco 2 vector D]16384.0
+[vco 1 vector A]16384.0
+[vco 1 vector B]16384.0
+[vco 1 vector C]16384.0
+[vco 1 vector D]16384.0
 [vco 4 sens freq key BP]0.0
 [vco 4 sens freq key left]-128.0
 [vco 4 sens freq key right]128.0
-[vco 1 sens amp key BP]0.0
-[vco 1 sens amp key left]0.0
-[vco 1 sens amp key right]0.0
-[vco 2 sens amp key BP]0.0
-[vco 2 sens amp key left]0.0
-[vco 2 sens amp key right]0.0
-[vco 3 sens amp key BP]0.0
-[vco 3 sens amp key left]0.0
-[vco 3 sens amp key right]0.0
+[vco 3 sens freq key BP]0.0
+[vco 3 sens freq key left]-128.0
+[vco 3 sens freq key right]128.0
+[vco 2 sens freq key BP]0.0
+[vco 2 sens freq key left]-128.0
+[vco 2 sens freq key right]128.0
+[vco 1 sens freq key BP]0.0
+[vco 1 sens freq key left]-128.0
+[vco 1 sens freq key right]128.0
 [vco 4 sens amp key BP]0.0
 [vco 4 sens amp key left]0.0
 [vco 4 sens amp key right]0.0
-[vco 1 sens amp velocity BP]0.0
-[vco 1 sens amp velocity left]0.0
-[vco 1 sens amp velocity right]0.0
-[vco 2 sens amp velocity BP]0.0
-[vco 2 sens amp velocity left]0.0
-[vco 2 sens amp velocity right]0.0
-[vco 3 sens amp velocity BP]0.0
-[vco 3 sens amp velocity left]0.0
-[vco 3 sens amp velocity right]0.0
+[vco 3 sens amp key BP]0.0
+[vco 3 sens amp key left]0.0
+[vco 3 sens amp key right]0.0
+[vco 2 sens amp key BP]0.0
+[vco 2 sens amp key left]0.0
+[vco 2 sens amp key right]0.0
+[vco 1 sens amp key BP]0.0
+[vco 1 sens amp key left]0.0
+[vco 1 sens amp key right]0.0
 [vco 4 sens amp velocity BP]0.0
 [vco 4 sens amp velocity left]0.0
 [vco 4 sens amp velocity right]0.0
+[vco 3 sens amp velocity BP]0.0
+[vco 3 sens amp velocity left]0.0
+[vco 3 sens amp velocity right]0.0
+[vco 2 sens amp velocity BP]0.0
+[vco 2 sens amp velocity left]0.0
+[vco 2 sens amp velocity right]0.0
+[vco 1 sens amp velocity BP]0.0
+[vco 1 sens amp velocity left]0.0
+[vco 1 sens amp velocity right]0.0
 [noise amp]-16384.0
 [noise time1]0.0
 [noise time2]0.0
@@ -164,10 +164,10 @@ poly
 [noise level2]0.0
 [noise level3]0.0
 [noise level4]0.0
-[vco 1 sens freq eg]0.0
-[vco 2 sens freq eg]0.0
-[vco 3 sens freq eg]0.0
 [vco 4 sens freq eg]0.0
+[vco 3 sens freq eg]0.0
+[vco 2 sens freq eg]0.0
+[vco 1 sens freq eg]0.0
 [filter freq]1536.0
 [filter resonance]14848.0
 [filter amp]0.0
@@ -200,22 +200,22 @@ poly
 [portamento hold]0.0
 [portamento transpose]0.0
 [portamento mode]-128.0
-[vco 1 sens freq pitch]512.0
-[vco 2 sens freq pitch]512.0
-[vco 3 sens freq pitch]512.0
 [vco 4 sens freq pitch]512.0
-[vco 1 sens freq lfo 1]128.0
-[vco 2 sens freq lfo 1]128.0
-[vco 3 sens freq lfo 1]128.0
+[vco 3 sens freq pitch]512.0
+[vco 2 sens freq pitch]512.0
+[vco 1 sens freq pitch]512.0
 [vco 4 sens freq lfo 1]128.0
-[vco 1 sens freq lfo 2]0.0
-[vco 2 sens freq lfo 2]0.0
-[vco 3 sens freq lfo 2]0.0
+[vco 3 sens freq lfo 1]128.0
+[vco 2 sens freq lfo 1]128.0
+[vco 1 sens freq lfo 1]128.0
 [vco 4 sens freq lfo 2]0.0
-[vco 1 sens amp lfo]0.0
-[vco 2 sens amp lfo]0.0
-[vco 3 sens amp lfo]0.0
+[vco 3 sens freq lfo 2]0.0
+[vco 2 sens freq lfo 2]0.0
+[vco 1 sens freq lfo 2]0.0
 [vco 4 sens amp lfo]0.0
+[vco 3 sens amp lfo]0.0
+[vco 2 sens amp lfo]0.0
+[vco 1 sens amp lfo]0.0
 [filter sens pitch]0.0
 [filter sens lfo 1]0.0
 [filter sens lfo 2]0.0

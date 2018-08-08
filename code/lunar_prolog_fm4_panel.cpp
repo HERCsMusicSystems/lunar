@@ -28,7 +28,7 @@
 
 class fm4_panel_action : public AudioModulePanel {
 public:
-	PrologAtom * algo, * a12, * a13, * a14, * a23, * a24, * a34;
+	PrologAtom * algo, * a21, * a31, * a32, * a41, * a42, * a43;
 	PrologAtom * freq1, * amp1, * ratio1, * feedback1;
 	PrologAtom * freq2, * amp2, * ratio2, * feedback2;
 	PrologAtom * freq3, * amp3, * ratio3, * feedback3;
@@ -38,7 +38,7 @@ public:
 	knob_active_graphics FREQ2, AMP2, RATIO2, FEEDBACK2;
 	knob_active_graphics FREQ3, AMP3, RATIO3, FEEDBACK3;
 	knob_active_graphics FREQ4, AMP4, RATIO4, FEEDBACK4;
-	button_active_graphics feed12, feed13, feed14, feed23, feed24, feed34;
+	button_active_graphics feed21, feed31, feed32, feed41, feed42, feed43;
 	cairo_surface_t * algo_image;
 	bool dx;
 	void move (PrologAtom * a, double v) {
@@ -173,29 +173,29 @@ public:
 		query = root -> pair (root -> pair (root -> atom (ratio1), root -> pair (root -> var (8), root -> earth ())), query);
 		query = root -> pair (root -> pair (root -> atom (amp1), root -> pair (root -> var (7), root -> earth ())), query);
 		query = root -> pair (root -> pair (root -> atom (freq1), root -> pair (root -> var (6), root -> earth ())), query);
-		query = root -> pair (root -> pair (root -> atom (a34), root -> pair (root -> var (5), root -> earth ())), query);
-		query = root -> pair (root -> pair (root -> atom (a24), root -> pair (root -> var (4), root -> earth ())), query);
-		query = root -> pair (root -> pair (root -> atom (a23), root -> pair (root -> var (3), root -> earth ())), query);
-		query = root -> pair (root -> pair (root -> atom (a14), root -> pair (root -> var (2), root -> earth ())), query);
-		query = root -> pair (root -> pair (root -> atom (a13), root -> pair (root -> var (1), root -> earth ())), query);
-		query = root -> pair (root -> pair (root -> atom (a12), root -> pair (root -> var (0), root -> earth ())), query);
+		query = root -> pair (root -> pair (root -> atom (a43), root -> pair (root -> var (5), root -> earth ())), query);
+		query = root -> pair (root -> pair (root -> atom (a42), root -> pair (root -> var (4), root -> earth ())), query);
+		query = root -> pair (root -> pair (root -> atom (a41), root -> pair (root -> var (3), root -> earth ())), query);
+		query = root -> pair (root -> pair (root -> atom (a32), root -> pair (root -> var (2), root -> earth ())), query);
+		query = root -> pair (root -> pair (root -> atom (a31), root -> pair (root -> var (1), root -> earth ())), query);
+		query = root -> pair (root -> pair (root -> atom (a21), root -> pair (root -> var (0), root -> earth ())), query);
 		query = root -> pair (variables, query);
 		if (root -> resolution (query) == 1) {
 			PrologElement * el = query;
 			if (! el -> isPair ()) {delete query; return;}
 			el = el -> getLeft (); if (! el -> isPair ()) {delete query; return;}
 			PrologElement * sub = el -> getLeft ();
-			if (sub -> isNumber ()) feed12 . engaged = (sub -> getNumber () != 0.0);
+			if (sub -> isNumber ()) feed21 . engaged = (sub -> getNumber () != 0.0);
 			el = el -> getRight (); if (! el -> isPair ()) {delete query; return;} sub = el -> getLeft ();
-			if (sub -> isNumber ()) feed13 . engaged = (sub -> getNumber () != 0.0);
+			if (sub -> isNumber ()) feed31 . engaged = (sub -> getNumber () != 0.0);
 			el = el -> getRight (); if (! el -> isPair ()) {delete query; return;} sub = el -> getLeft ();
-			if (sub -> isNumber ()) feed14 . engaged = (sub -> getNumber () != 0.0);
+			if (sub -> isNumber ()) feed32 . engaged = (sub -> getNumber () != 0.0);
 			el = el -> getRight (); if (! el -> isPair ()) {delete query; return;} sub = el -> getLeft ();
-			if (sub -> isNumber ()) feed23 . engaged = (sub -> getNumber () != 0.0);
+			if (sub -> isNumber ()) feed41 . engaged = (sub -> getNumber () != 0.0);
 			el = el -> getRight (); if (! el -> isPair ()) {delete query; return;} sub = el -> getLeft ();
-			if (sub -> isNumber ()) feed24 . engaged = (sub -> getNumber () != 0.0);
+			if (sub -> isNumber ()) feed42 . engaged = (sub -> getNumber () != 0.0);
 			el = el -> getRight (); if (! el -> isPair ()) {delete query; return;} sub = el -> getLeft ();
-			if (sub -> isNumber ()) feed34 . engaged = (sub -> getNumber () != 0.0);
+			if (sub -> isNumber ()) feed43 . engaged = (sub -> getNumber () != 0.0);
 			el = el -> getRight (); if (! el -> isPair ()) {delete query; return;} sub = el -> getLeft ();
 			if (sub -> isNumber ()) FREQ1 . setValue (sub -> getNumber ());
 			el = el -> getRight (); if (! el -> isPair ()) {delete query; return;} sub = el -> getLeft ();
@@ -234,7 +234,7 @@ public:
 	void feedback (void) {if (dx) feedback_dx (); else feedback_fm ();}
 	void redraw (cairo_t * cr) {
 		if (dx) {cairo_set_source_surface (cr, algo_image, 598, 98); cairo_paint (cr); ALGO . draw (cr);}
-		else {feed12 . draw (cr); feed13 . draw (cr); feed14 . draw (cr); feed23 . draw (cr); feed24 . draw (cr); feed34 . draw (cr);}
+		else {feed21 . draw (cr); feed31 . draw (cr); feed32 . draw (cr); feed41 . draw (cr); feed42 . draw (cr); feed43 . draw (cr);}
 		FREQ1 . draw (cr); AMP1 . draw (cr); RATIO1 . draw (cr); FEEDBACK1 . draw (cr);
 		FREQ2 . draw (cr); AMP2 . draw (cr); RATIO2 . draw (cr); FEEDBACK2 . draw (cr);
 		FREQ3 . draw (cr); AMP3 . draw (cr); RATIO3 . draw (cr); FEEDBACK3 . draw (cr);
@@ -246,12 +246,12 @@ public:
 		FREQ2 . keyon (location); AMP2 . keyon (location); RATIO2 . keyon (location); FEEDBACK2 . keyon (location);
 		FREQ3 . keyon (location); AMP3 . keyon (location); RATIO3 . keyon (location); FEEDBACK3 . keyon (location);
 		FREQ4 . keyon (location); AMP4 . keyon (location); RATIO4 . keyon (location); FEEDBACK4 . keyon (location);
-		if (feed12 . keyon (location)) {feed12 . engaged = ! feed12 . engaged; interconnection_changed (a12, feed12 . engaged); update ();}
-		if (feed13 . keyon (location)) {feed13 . engaged = ! feed13 . engaged; interconnection_changed (a13, feed13 . engaged); update ();}
-		if (feed14 . keyon (location)) {feed14 . engaged = ! feed14 . engaged; interconnection_changed (a14, feed14 . engaged); update ();}
-		if (feed23 . keyon (location)) {feed23 . engaged = ! feed23 . engaged; interconnection_changed (a23, feed23 . engaged); update ();}
-		if (feed24 . keyon (location)) {feed24 . engaged = ! feed24 . engaged; interconnection_changed (a24, feed24 . engaged); update ();}
-		if (feed34 . keyon (location)) {feed34 . engaged = ! feed34 . engaged; interconnection_changed (a34, feed34 . engaged); update ();}
+		if (feed21 . keyon (location)) {feed21 . engaged = ! feed21 . engaged; interconnection_changed (a21, feed21 . engaged); update ();}
+		if (feed31 . keyon (location)) {feed31 . engaged = ! feed31 . engaged; interconnection_changed (a31, feed31 . engaged); update ();}
+		if (feed32 . keyon (location)) {feed32 . engaged = ! feed32 . engaged; interconnection_changed (a32, feed32 . engaged); update ();}
+		if (feed41 . keyon (location)) {feed41 . engaged = ! feed41 . engaged; interconnection_changed (a41, feed41 . engaged); update ();}
+		if (feed42 . keyon (location)) {feed42 . engaged = ! feed42 . engaged; interconnection_changed (a42, feed42 . engaged); update ();}
+		if (feed43 . keyon (location)) {feed43 . engaged = ! feed43 . engaged; interconnection_changed (a43, feed43 . engaged); update ();}
 	}
 	void MouseKeyoff (point location, int button) {
 		if (dx) ALGO . keyoff (location);
@@ -306,22 +306,22 @@ public:
 	AMP4 (point (380, 98), 0, resources, true, active, -16384.0, 0.0),
 	RATIO4 (point (450, 98), 0, resources, true, active, 1.0, 33.0),
 	FEEDBACK4 (point (520, 98), 0, resources, true, active, 0.0, 16384.0),
-	feed12 (point (584, 118), 0, resources, true),
-	feed13 (point (610, 118), 0, resources, true),
-	feed14 (point (636, 118), 0, resources, true),
-	feed23 (point (610, 138), 0, resources, true),
-	feed24 (point (636, 138), 0, resources, true),
-	feed34 (point (636, 158), 0, resources, true),
+	feed43 (point (584, 118), 0, resources, true),
+	feed42 (point (610, 118), 0, resources, true),
+	feed41 (point (636, 118), 0, resources, true),
+	feed32 (point (610, 138), 0, resources, true),
+	feed31 (point (636, 138), 0, resources, true),
+	feed21 (point (636, 158), 0, resources, true),
 	AudioModulePanel (root, atom, resources != 0 ? resources -> fm4_panel_surface : 0) {
 		this -> dx = dx;
 		algo_image = resources != 0 ? resources -> fm4_algo_surface : 0;
 		this -> algo = algo; if (algo != 0) {COLLECTOR_REFERENCE_INC (algo);}
-		this -> a12 = a12; if (a12 != 0) {COLLECTOR_REFERENCE_INC (a12);}
-		this -> a13 = a13; if (a13 != 0) {COLLECTOR_REFERENCE_INC (a13);}
-		this -> a14 = a14; if (a14 != 0) {COLLECTOR_REFERENCE_INC (a14);}
-		this -> a23 = a23; if (a23 != 0) {COLLECTOR_REFERENCE_INC (a23);}
-		this -> a24 = a24; if (a24 != 0) {COLLECTOR_REFERENCE_INC (a24);}
-		this -> a34 = a34; if (a34 != 0) {COLLECTOR_REFERENCE_INC (a34);}
+		this -> a21 = a21; if (a21 != 0) {COLLECTOR_REFERENCE_INC (a21);}
+		this -> a31 = a31; if (a31 != 0) {COLLECTOR_REFERENCE_INC (a31);}
+		this -> a32 = a32; if (a32 != 0) {COLLECTOR_REFERENCE_INC (a32);}
+		this -> a41 = a41; if (a41 != 0) {COLLECTOR_REFERENCE_INC (a41);}
+		this -> a42 = a42; if (a42 != 0) {COLLECTOR_REFERENCE_INC (a42);}
+		this -> a43 = a43; if (a43 != 0) {COLLECTOR_REFERENCE_INC (a43);}
 		this -> freq1 = freq1; COLLECTOR_REFERENCE_INC (freq1);
 		this -> amp1 = amp1; COLLECTOR_REFERENCE_INC (amp1);
 		this -> ratio1 = ratio1; COLLECTOR_REFERENCE_INC (ratio1);
@@ -342,8 +342,8 @@ public:
 	}
 	~ fm4_panel_action (void) {
 		if (algo != 0) algo -> removeAtom ();
-		if (a12 != 0) a12 -> removeAtom (); if (a13 != 0) a13 -> removeAtom (); if (a14 != 0) a14 -> removeAtom ();
-		if (a23 != 0) a23 -> removeAtom (); if (a24 != 0) a24 -> removeAtom (); if (a34 != 0) a34 -> removeAtom ();
+		if (a21 != 0) a21 -> removeAtom (); if (a31 != 0) a31 -> removeAtom (); if (a32 != 0) a32 -> removeAtom ();
+		if (a41 != 0) a41 -> removeAtom (); if (a42 != 0) a42 -> removeAtom (); if (a43 != 0) a43 -> removeAtom ();
 		freq1 -> removeAtom (); amp1 -> removeAtom (); ratio1 -> removeAtom (); feedback1 -> removeAtom ();
 		freq2 -> removeAtom (); amp2 -> removeAtom (); ratio2 -> removeAtom (); feedback2 -> removeAtom ();
 		freq3 -> removeAtom (); amp3 -> removeAtom (); ratio3 -> removeAtom (); feedback3 -> removeAtom ();

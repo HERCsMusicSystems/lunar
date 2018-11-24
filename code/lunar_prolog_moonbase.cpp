@@ -578,6 +578,16 @@ bool jack_class :: code (PrologElement * parameters, PrologResolution * resoluti
 	jack_midi_in = jack_port_register (jack_client, "MIDI INPUT", JACK_DEFAULT_MIDI_TYPE, JackPortIsInput, 0);
 	jack_midi_out = jack_port_register (jack_client, "MIDI OUTPUT", JACK_DEFAULT_MIDI_TYPE, JackPortIsOutput, 0);
 	if (jack_activate (jack_client) != 0) return false;
+	char * * names = (char * *) jack_get_ports (jack_client, 0, 0, 0);
+	char * * np = names;
+	int counter = 0; while (* np != 0) {counter++; np++;}
+	if (counter >= 8) {
+		printf ("JACK CONNECT: [%s] => [%s] = [%s]\n", names [0], names [4], jack_connect (jack_client, names [0], names [4]) == 0 ? "OK" : "FAILED");
+		printf ("JACK CONNECT: [%s] => [%s] = [%s]\n", names [1], names [5], jack_connect (jack_client, names [1], names [5]) == 0 ? "OK" : "FAILED");
+		printf ("JACK CONNECT: [%s] => [%s] = [%s]\n", names [6], names [2], jack_connect (jack_client, names [6], names [2]) == 0 ? "OK" : "FAILED");
+		printf ("JACK CONNECT: [%s] => [%s] = [%s]\n", names [7], names [3], jack_connect (jack_client, names [7], names [3]) == 0 ? "OK" : "FAILED");
+	}
+	free (names);
 	return true;
 }
 

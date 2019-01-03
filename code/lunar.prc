@@ -10,7 +10,7 @@ program lunar #machine := "lunar"
 				small_keyboard keyboard big_keyboard small_keyboard_long keyboard_long big_keyboard_long
 				oscilloscope spectroscope big_oscilloscope big_spectroscope vector CommandCentre detector
 				noise orbiter X Y modulation vibrato tremolo wahwah range
-				core jack base moonbase arpeggiator sequencer prolog_sequencer polysequencer multitrack rewind
+				core jack jack_default jack_connect jack_disconnect base moonbase arpeggiator sequencer prolog_sequencer polysequencer multitrack rewind
 				operator parameter_block latch morph auto auto_data key_map velocity_map impulse
 				trigger delay1 delay2 mixer stereo_mixer gateway stereo_gateway amplifier stereo_amplifier volume mono_volume
 				lfo envelope adsr adsr-linear eg eg-linear-expo egscaling egscal adsrscal vca vca-adsr vca-eg vco ring ringmod DCOffsetFilter DCOffsetFilterMono
@@ -137,6 +137,8 @@ program lunar #machine := "lunar"
 
 #machine core := "core"
 #machine jack := "jack"
+#machine jack_connect := "jack_connect"
+#machine jack_disconnect := "jack_disconnect"
 #machine operator := "operator"
 #machine dx := "dx"
 #machine fm := "fm"
@@ -186,6 +188,8 @@ program lunar #machine := "lunar"
 #machine integrated_microdot := "integrated_microdot"
 #machine integrated_abakos := "integrated_abakos"
 #machine integrated_phobos := "integrated_phobos"
+
+[[jack_default : *command] [jack : *command] [jack_connect]]
 
 [[fm4 *module] [fm *module 4]]
 [[fm6 *module] [fm *module 6]]

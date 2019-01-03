@@ -218,6 +218,13 @@ public:
 	jack_class (PrologRoot * root, PrologDirectory * directory, orbiter_core * core);
 };
 
+class jack_connect_class : public PrologNativeCode {
+public:
+	bool disconnect;
+	bool code (PrologElement * parameters, PrologResolution * resolution);
+	jack_connect_class (bool disconnect = false);
+};
+
 class operator_class : public PrologNativeOrbiterCreator {
 public:
 	virtual orbiter * create_orbiter (PrologElement * parameters);

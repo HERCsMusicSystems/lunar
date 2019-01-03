@@ -534,6 +534,7 @@ bool jack_class :: code (PrologElement * parameters, PrologResolution * resoluti
 	if (cores > 0 || jack_client != 0) return false;
 	PrologElement * atom = 0;
 	PrologElement * name = 0;
+	PrologElement * left_output = 0, * right_output = 0, * left_input = 0, * right_input = 0, * midi_input = 0, * midi_output = 0;
 	PrologElement * midi_callback = 0;
 	double centre_frequency = -1.0;
 	double headroom_fraction = -1.0;
@@ -542,7 +543,15 @@ bool jack_class :: code (PrologElement * parameters, PrologResolution * resoluti
 		PrologElement * el = parameters -> getLeft ();
 		if (el -> isVar ()) atom = el;
 		if (el -> isAtom ()) {if (atom == 0) atom = el; else if (midi_callback == 0) midi_callback = el;}
-		if (el -> isText ()) name = el;
+		if (el -> isText ()) {
+			if (name == 0) name = el;
+			else if (left_output == 0) left_output = el;
+			else if (right_output == 0) right_output = el;
+			else if (left_input == 0) left_input = el;
+			else if (right_input == 0) right_input = el;
+			else if (midi_input == 0) midi_input = el;
+			else if (midi_output == 0) midi_output = el;
+		}
 		if (el -> isInteger ()) {
 			if (centre_frequency < 0.0) centre_frequency = (double) el -> getInteger ();
 			else requested_number_of_actives = el -> getInteger ();
@@ -571,25 +580,41 @@ bool jack_class :: code (PrologElement * parameters, PrologResolution * resoluti
 	if (! atom -> getAtom () -> setMachine (machine)) {delete machine; return false;}
 	jack_set_process_callback (jack_client, jack_process, machine);
 	jack_on_shutdown (jack_client, jack_shutdown, machine);
-	jack_input_left = jack_port_register (jack_client, "LEFT INPUT", JACK_DEFAULT_AUDIO_TYPE, JackPortIsInput, 0);
-	jack_input_right = jack_port_register (jack_client, "RIGHT INPUT", JACK_DEFAULT_AUDIO_TYPE, JackPortIsInput, 0);
-	jack_output_left = jack_port_register (jack_client, "LEFT OUTPUT", JACK_DEFAULT_AUDIO_TYPE, JackPortIsOutput, 0);
-	jack_output_right = jack_port_register (jack_client, "RIGHT OUTPUT", JACK_DEFAULT_AUDIO_TYPE, JackPortIsOutput, 0);
-	jack_midi_in = jack_port_register (jack_client, "MIDI INPUT", JACK_DEFAULT_MIDI_TYPE, JackPortIsInput, 0);
-	jack_midi_out = jack_port_register (jack_client, "MIDI OUTPUT", JACK_DEFAULT_MIDI_TYPE, JackPortIsOutput, 0);
+	jack_input_left = jack_port_register (jack_client, left_input == 0 ? "LEFT INPUT" : left_input -> getText (), JACK_DEFAULT_AUDIO_TYPE, JackPortIsInput, 0);
+	jack_input_right = jack_port_register (jack_client, right_input == 0 ? "RIGHT INPUT" : right_input -> getText (), JACK_DEFAULT_AUDIO_TYPE, JackPortIsInput, 0);
+	jack_output_left = jack_port_register (jack_client, left_output == 0 ? "LEFT OUTPUT" : left_output -> getText (), JACK_DEFAULT_AUDIO_TYPE, JackPortIsOutput, 0);
+	jack_output_right = jack_port_register (jack_client, right_output == 0 ? "RIGHT OUTPUT" : right_output -> getText (), JACK_DEFAULT_AUDIO_TYPE, JackPortIsOutput, 0);
+	jack_midi_in = jack_port_register (jack_client, midi_input == 0 ? "MIDI INPUT" : midi_input -> getText (), JACK_DEFAULT_MIDI_TYPE, JackPortIsInput, 0);
+	jack_midi_out = jack_port_register (jack_client, midi_output == 0 ? "MIDI OUTPUT" : midi_output -> getText (), JACK_DEFAULT_MIDI_TYPE, JackPortIsOutput, 0);
 	if (jack_activate (jack_client) != 0) return false;
-	char * * names = (char * *) jack_get_ports (jack_client, 0, 0, 0);
-	char * * np = names;
-	int counter = 0; while (* np != 0) {counter++; np++;}
-	if (counter >= 8) {
-		printf ("JACK CONNECT: [%s] => [%s] = [%s]\n", names [0], names [4], jack_connect (jack_client, names [0], names [4]) == 0 ? "OK" : "FAILED");
-		printf ("JACK CONNECT: [%s] => [%s] = [%s]\n", names [1], names [5], jack_connect (jack_client, names [1], names [5]) == 0 ? "OK" : "FAILED");
-		printf ("JACK CONNECT: [%s] => [%s] = [%s]\n", names [6], names [2], jack_connect (jack_client, names [6], names [2]) == 0 ? "OK" : "FAILED");
-		printf ("JACK CONNECT: [%s] => [%s] = [%s]\n", names [7], names [3], jack_connect (jack_client, names [7], names [3]) == 0 ? "OK" : "FAILED");
-	}
-	free (names);
 	return true;
 }
+
+bool jack_connect_class :: code (PrologElement * parameters, PrologResolution * resolution) {
+	PrologElement * destination = 0, * source = 0;
+	while (parameters -> isPair ()) {
+		PrologElement * el = parameters -> getLeft ();
+		if (el -> isText ()) {if (destination == 0) destination = el; else source = el;}
+		parameters = parameters -> getRight ();
+	}
+	if (destination == 0 || source == 0) {
+		char * * names = (char * *) jack_get_ports (jack_client, 0, 0, 0);
+		char * * np = names;
+		int counter = 0; while (* np != 0) {counter++; np++;}
+		if (counter >= 8) {
+			printf ("JACK CONNECT: [%s] => [%s] = [%s]\n", names [0], names [4], jack_connect (jack_client, names [0], names [4]) == 0 ? "OK" : "FAILED");
+			printf ("JACK CONNECT: [%s] => [%s] = [%s]\n", names [1], names [5], jack_connect (jack_client, names [1], names [5]) == 0 ? "OK" : "FAILED");
+			printf ("JACK CONNECT: [%s] => [%s] = [%s]\n", names [6], names [2], jack_connect (jack_client, names [6], names [2]) == 0 ? "OK" : "FAILED");
+			printf ("JACK CONNECT: [%s] => [%s] = [%s]\n", names [7], names [3], jack_connect (jack_client, names [7], names [3]) == 0 ? "OK" : "FAILED");
+		}
+		free (names);
+		return true;
+	}
+	if (disconnect) return jack_disconnect (jack_client, source -> getText (), destination -> getText ()) == 0;
+	return jack_connect (jack_client, source -> getText (), destination -> getText ()) == 0;
+}
+
+jack_connect_class :: jack_connect_class (bool disconnect) {this -> disconnect = disconnect;}
 
 jack_class :: jack_class (PrologRoot * root, PrologDirectory * directory, orbiter_core * core) {
 	this -> root = root; this -> directory = directory, this -> core = core;
